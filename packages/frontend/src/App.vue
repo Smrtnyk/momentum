@@ -1,15 +1,33 @@
 <template>
   <div id="app">
-    <h1>Welcome to Momentum!</h1>
-    <p>This is your simple fitness app.</p>
+    <div v-if="!user">
+      <AuthForm />
+    </div>
+    <div v-else>
+      <h1>Welcome, you are logged in!</h1>
+      <button @click="logout">Logout</button>
+      <!-- Your main app content goes here -->
+    </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { User } from "firebase/auth";
 
-<style scoped>
-#app {
-  text-align: center;
-  margin-top: 2rem;
+import { onAuthStateChanged } from "firebase/auth";
+import { ref } from "vue";
+
+import AuthForm from "./components/AuthForm.vue";
+import { auth } from "./firebase";
+import { logoutUser } from "./services/auth";
+
+const user = ref<null | User>(null);
+
+onAuthStateChanged(auth, (currentUser) => {
+  user.value = currentUser;
+});
+
+async function logout(): Promise<void> {
+  await logoutUser();
 }
-</style>
+</script>

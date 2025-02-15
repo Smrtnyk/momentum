@@ -1,9 +1,16 @@
+import type { ComponentPublicInstance } from "vue";
+
 import { createApp } from "vue";
 
 import App from "./App.vue";
-import { firebaseApp } from "./firebase";
+import { auth } from "./firebase";
 import "./css/tailwind.css";
+import router from "./router";
 
-console.log(firebaseApp);
+let app: ComponentPublicInstance | null = null;
 
-createApp(App).mount("#app");
+auth.onAuthStateChanged(() => {
+  if (!app) {
+    app = createApp(App).use(router).mount("#app");
+  }
+});

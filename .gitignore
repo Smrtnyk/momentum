@@ -1,3 +1,16 @@
+.idea
+
+# Compiled JavaScript files
+lib/**/*.js
+lib/**/*.js.map
+
+# TypeScript v1 declaration files
+typings/
+
+# Node.js dependency directory
+node_modules/
+*.local
+
 # Firebase build and deployment files
 /firebase-debug.log
 /firebase-debug.*.log
@@ -26,3 +39,7 @@ yarn-error.log*
 
 # Environment files (local configs)
 /.env.*
+.env
+
+node_modules
+apphosting.local.yaml

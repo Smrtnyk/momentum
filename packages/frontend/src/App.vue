@@ -6,7 +6,7 @@
     <div v-else>
       <h1>Welcome, you are logged in!</h1>
       <button @click="logout">Logout</button>
-      <!-- Your main app content goes here -->
+      <WorkoutLogger />
     </div>
   </div>
 </template>
@@ -18,6 +18,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { ref } from "vue";
 
 import AuthForm from "./components/AuthForm.vue";
+import WorkoutLogger from "./components/WorkoutLogger.vue";
 import { auth } from "./firebase";
 import { logoutUser } from "./services/auth";
 

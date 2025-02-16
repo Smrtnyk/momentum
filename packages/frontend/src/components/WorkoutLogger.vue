@@ -10,32 +10,40 @@
         <div
           v-for="(set, index) in sets"
           :key="index"
-          class="flex space-x-2 items-center"
+          class="flex items-center space-x-2"
         >
-          <v-text-field
-            v-model.number="set.reps"
-            variant="outlined"
-            type="number"
-            label="Reps"
-            min="1"
-            class="w-20"
-          />
-          <v-text-field
-            v-model.number="set.weight"
-            variant="outlined"
-            type="number"
-            label="Weight (kg)"
-            min="0"
-            class="w-20"
-          />
-          <v-btn
-            type="button"
-            @click="removeSet(index)"
-            class="text-destructive"
-          >
-            Remove
-          </v-btn>
+          <v-row class="align-center">
+            <v-col cols="auto">
+              <v-text-field
+                v-model.number="set.reps"
+                variant="outlined"
+                type="number"
+                label="Reps"
+                dense
+                style="max-width: 6rem"
+              />
+            </v-col>
+            <v-col cols="auto">
+              <v-text-field
+                v-model.number="set.weight"
+                variant="outlined"
+                type="number"
+                label="Weight (kg)"
+                dense
+                style="max-width: 6rem"
+              />
+            </v-col>
+            <v-col cols="auto">
+              <v-btn
+                @click="removeSet(index)"
+                icon="mdi-trash-can"
+                color="error"
+                size="small"
+              />
+            </v-col>
+          </v-row>
         </div>
+
         <v-btn type="button" @click="addSet"> Add Set </v-btn>
       </div>
       <div>

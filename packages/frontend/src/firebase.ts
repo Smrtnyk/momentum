@@ -46,7 +46,7 @@ function initEmulators(
   connectAuthEmulator(auth, `http://${location.hostname}:9099/`, {
     disableWarnings: true,
   });
-  connectFirestoreEmulator(firestore, location.hostname, 4000);
+  connectFirestoreEmulator(firestore, location.hostname, 8080);
   connectFunctionsEmulator(functions, location.hostname, 5001);
   connectStorageEmulator(storage, location.hostname, 9199);
 }

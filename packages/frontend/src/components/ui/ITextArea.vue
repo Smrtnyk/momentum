@@ -31,7 +31,7 @@ import type { HTMLAttributes } from "vue";
 import { useVModel } from "@vueuse/core";
 import { computed, ref } from "vue";
 
-import { cn } from "../lib/utils";
+import { cn } from "../../lib/utils";
 
 defineOptions({
   inheritAttrs: false,

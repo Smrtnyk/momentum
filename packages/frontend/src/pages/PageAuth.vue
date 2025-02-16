@@ -42,9 +42,9 @@ import { Motion } from "motion-v";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
-import AuroraBackground from "../components/AuroraBackground.vue";
-import IInput from "../components/IInput.vue";
-import RippleButton from "../components/RippleButton.vue";
+import AuroraBackground from "../components/ui/AuroraBackground.vue";
+import IInput from "../components/ui/IInput.vue";
+import RippleButton from "../components/ui/RippleButton.vue";
 import { loginUser, registerUser } from "../services/auth";
 
 const router = useRouter();

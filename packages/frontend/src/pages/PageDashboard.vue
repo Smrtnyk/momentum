@@ -47,9 +47,9 @@
 import { Timestamp } from "firebase/firestore";
 import { ref } from "vue";
 
-import IInput from "../components/IInput.vue";
-import ITextArea from "../components/ITextArea.vue";
-import RippleButton from "../components/RippleButton.vue";
+import IInput from "../components/ui/IInput.vue";
+import ITextArea from "../components/ui/ITextArea.vue";
+import RippleButton from "../components/ui/RippleButton.vue";
 import { auth } from "../firebase";
 import { addWorkout } from "../services/workout";
 

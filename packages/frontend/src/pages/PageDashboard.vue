@@ -3,6 +3,7 @@
     <h2>Log a New Workout</h2>
     <form @submit.prevent="submitWorkout">
       <div>
+        <ExcercisePicker />
         <label for="exercise">Exercise:</label>
         <IInput
           id="exercise"
@@ -47,6 +48,7 @@
 import { Timestamp } from "firebase/firestore";
 import { ref } from "vue";
 
+import ExcercisePicker from "../components/ExcercisePicker.vue";
 import IInput from "../components/ui/IInput.vue";
 import ITextArea from "../components/ui/ITextArea.vue";
 import RippleButton from "../components/ui/RippleButton.vue";

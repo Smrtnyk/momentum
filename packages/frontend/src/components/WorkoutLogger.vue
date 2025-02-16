@@ -129,6 +129,7 @@ import { useDate } from "vuetify";
 import type { Exercise } from "../data/excercises";
 import type { ExerciseEntry, Workout } from "../services/workout";
 
+import { notify } from "../composables/useNotify";
 import { getExercises } from "../data/excercises";
 import { auth } from "../firebase";
 import { addWorkout } from "../services/workout";
@@ -174,12 +175,12 @@ function removeSet(exerciseIndex: number, setIndex: number): void {
 
 async function submitWorkout(): Promise<void> {
     if (!auth.currentUser) {
-        alert("You must be logged in to log a workout.");
+        notify("You must be logged in to log a workout.", "error");
         return;
     }
     for (const entry of exerciseEntries.value) {
         if (!entry.exerciseId) {
-            alert("Please select an exercise for all entries.");
+            notify("Please select an exercise for all entries.", "error");
             return;
         }
     }
@@ -192,7 +193,7 @@ async function submitWorkout(): Promise<void> {
     };
     try {
         await addWorkout(workout);
-        alert("Workout logged successfully!");
+        notify("Workout logged successfully!");
         workoutName.value = "Workout";
         workoutDate.value = new Date();
         overallNotes.value = "";
@@ -200,7 +201,7 @@ async function submitWorkout(): Promise<void> {
             { exerciseId: "", exerciseNotes: "", sets: [{ reps: 0, weight: 0 }] },
         ];
     } catch (error: any) {
-        alert(`Error logging workout: ${error.message}`);
+        notify(`Error logging workout: ${error.message}`, "error");
     }
 }
 </script>

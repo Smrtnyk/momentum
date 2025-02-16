@@ -2,9 +2,16 @@
   <div>
     <h2>{{ isLogin ? "Login" : "Register" }}</h2>
     <form @submit.prevent="handleSubmit">
-      <v-text-field v-model="email" type="email" label="Email" required />
+      <v-text-field
+        v-model="email"
+        variant="outlined"
+        type="email"
+        label="Email"
+        required
+      />
       <v-text-field
         v-model="password"
+        variant="outlined"
         type="password"
         label="Password"
         required

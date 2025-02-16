@@ -14,6 +14,7 @@
         >
           <v-text-field
             v-model.number="set.reps"
+            variant="outlined"
             type="number"
             label="Reps"
             min="1"
@@ -21,6 +22,7 @@
           />
           <v-text-field
             v-model.number="set.weight"
+            variant="outlined"
             type="number"
             label="Weight (kg)"
             min="0"
@@ -37,7 +39,13 @@
         <v-btn type="button" @click="addSet"> Add Set </v-btn>
       </div>
       <div>
-        <v-textarea id="notes" v-model="notes" label="Notes" class="w-full" />
+        <v-textarea
+          variant="outlined"
+          id="notes"
+          v-model="notes"
+          label="Notes"
+          class="w-full"
+        />
       </div>
       <v-btn type="submit">Log Workout</v-btn>
     </form>

@@ -1,7 +1,9 @@
 <template>
   <v-app>
     <TopMenu v-if="user" />
-    <router-view />
+    <v-main>
+      <router-view />
+    </v-main>
   </v-app>
 </template>
 

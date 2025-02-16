@@ -66,6 +66,7 @@ import { ref } from "vue";
 
 import type { Workout, WorkoutSet } from "../services/workout";
 
+import { notify } from "../composables/useNotify";
 import { initializeFirebase } from "../firebase";
 import { addWorkout } from "../services/workout";
 import ExercisePicker from "./ExercisePicker.vue";
@@ -107,7 +108,7 @@ async function submitWorkout(): Promise<void> {
 
   try {
     await addWorkout(workout);
-    alert("Workout logged successfully!");
+    notify("Workout logged successfully!", "success");
     // Reset fields
     selectedExercise.value = "";
     sets.value = [{ reps: 0, weight: 0 }];

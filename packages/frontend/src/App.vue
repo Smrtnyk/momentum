@@ -4,6 +4,8 @@
     <v-main>
       <router-view />
     </v-main>
+
+    <GlobalSnackbar />
   </v-app>
 </template>
 
@@ -13,6 +15,7 @@ import type { User } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { ref } from "vue";
 
+import GlobalSnackbar from "./components/GlobalSnackbar.vue";
 import TopMenu from "./components/TopMenu.vue";
 import { initializeFirebase } from "./firebase";
 

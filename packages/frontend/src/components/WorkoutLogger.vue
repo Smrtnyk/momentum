@@ -4,21 +4,41 @@
     <form @submit.prevent="submitWorkout">
       <div>
         <label for="exercise">Exercise:</label>
-        <input id="exercise" v-model="exercise" type="text" required />
+        <IInput
+          id="exercise"
+          container-class="w-full max-w-sm"
+          v-model="exercise"
+          type="text"
+          required
+        />
       </div>
       <div>
         <label for="sets">Sets:</label>
-        <input id="sets" v-model.number="sets" type="number" min="1" required />
+        <IInput
+          id="sets"
+          container-class="w-full max-w-sm"
+          v-model.number="sets"
+          type="number"
+          min="1"
+          required
+        />
       </div>
       <div>
         <label for="reps">Reps:</label>
-        <input id="reps" v-model.number="reps" type="number" min="1" required />
+        <IInput
+          id="reps"
+          container-class="w-full max-w-sm"
+          v-model.number="reps"
+          type="number"
+          min="1"
+          required
+        />
       </div>
       <div>
         <label for="notes">Notes:</label>
         <textarea id="notes" v-model="notes"></textarea>
       </div>
-      <button type="submit">Log Workout</button>
+      <RippleButton>Log workout</RippleButton>
     </form>
   </div>
 </template>
@@ -29,6 +49,8 @@ import { ref } from "vue";
 
 import { auth } from "../firebase";
 import { addWorkout } from "../services/workout";
+import IInput from "./IInput.vue";
+import RippleButton from "./RippleButton.vue";
 
 const exercise = ref("");
 const sets = ref(1);

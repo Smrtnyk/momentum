@@ -27,8 +27,6 @@ import type { Exercise } from "../data/excercises";
 import MorphingTabs from "../components/ui/MorphingTabs.vue";
 import { getExercises } from "../data/excercises";
 
-// Define tabs: first "All", then the muscle groups.
-// The tabs are strings that will be displayed as-is.
 const tabs = ref([
   "All",
   "Chest",
@@ -40,15 +38,8 @@ const tabs = ref([
   "Calves",
 ]);
 
-// Active tab will be one of these strings. "All" means no filtering.
 const activeTab = ref("All");
-
-// Load all exercises from our data source.
 const exercises: Exercise[] = getExercises();
-
-// Compute filtered exercises based on the selected muscle group.
-// We assume that exercise.muscleIds use lowercase (e.g. "chest").
-// When activeTab is not "All", we convert it to lowercase for matching.
 const filteredExercises = computed((): Exercise[] => {
   if (activeTab.value === "All") {
     return exercises;

@@ -7,10 +7,14 @@ import { db } from "../firebase";
 export interface Workout {
   date: Timestamp;
   exercise: string;
-  notes?: string;
-  reps: number;
-  sets: number;
+  notes: string;
+  sets: WorkoutSet[];
   userId: string;
+}
+
+export interface WorkoutSet {
+  reps: number;
+  weight: number;
 }
 
 export async function addWorkout(workout: Workout): Promise<void> {

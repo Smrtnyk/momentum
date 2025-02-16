@@ -1,20 +1,23 @@
 <template>
   <header
-    class="bg-primary text-primary-foreground p-4 flex justify-between items-center"
+    class="flex items-center justify-between px-4 py-3 bg-[hsl(var(--background))] text-[hsl(var(--foreground))]"
   >
     <div class="text-xl font-bold">Momentum</div>
     <nav>
       <ul class="flex space-x-4">
         <li>
-          <router-link to="/dashboard" class="hover:underline"
-            >Home</router-link
+          <router-link
+            to="/dashboard"
+            class="hover:underline transition-colors"
           >
+            Home
+          </router-link>
         </li>
       </ul>
     </nav>
     <button
       @click="handleLogout"
-      class="px-4 py-2 bg-destructive text-white rounded"
+      class="px-4 py-2 rounded text-destructive-foreground hover:opacity-90 transition-opacity"
     >
       Logout
     </button>

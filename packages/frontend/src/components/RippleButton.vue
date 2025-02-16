@@ -59,7 +59,7 @@ const buttonRipples = ref<
   Array<{ key: number; size: number; x: number; y: number }>
 >([]);
 
-function createRipple(event: MouseEvent) {
+function createRipple(event: MouseEvent): void {
   const button = rippleButtonRef.value;
   if (!button) return;
 

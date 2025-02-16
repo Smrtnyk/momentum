@@ -18,18 +18,20 @@
       >
         <h2>{{ isLogin ? "Login" : "Register" }}</h2>
         <form @submit.prevent="handleSubmit">
-          <input v-model="email" type="email" placeholder="Email" required />
-          <input
+          <IInput v-model="email" type="email" placeholder="Email" required />
+          <IInput
             v-model="password"
             type="password"
             placeholder="Password"
             required
           />
-          <button type="submit">{{ isLogin ? "Login" : "Register" }}</button>
+          <RippleButton type="submit">{{
+            isLogin ? "Login" : "Register"
+          }}</RippleButton>
         </form>
-        <button @click="toggleMode">
+        <RippleButton @click="toggleMode">
           Switch to {{ isLogin ? "Register" : "Login" }}
-        </button>
+        </RippleButton>
       </Motion>
     </AuroraBackground>
   </div>
@@ -41,6 +43,8 @@ import { ref } from "vue";
 
 import { loginUser, registerUser } from "../services/auth";
 import AuroraBackground from "./AuroraBackground.vue";
+import IInput from "./IInput.vue";
+import RippleButton from "./RippleButton.vue";
 
 const isLogin = ref(true);
 const email = ref("");

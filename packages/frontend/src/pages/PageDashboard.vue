@@ -36,7 +36,7 @@
       </div>
       <div>
         <label for="notes">Notes:</label>
-        <textarea id="notes" v-model="notes"></textarea>
+        <ITextArea id="notes" v-model="notes" />
       </div>
       <RippleButton>Log workout</RippleButton>
     </form>
@@ -48,6 +48,7 @@ import { Timestamp } from "firebase/firestore";
 import { ref } from "vue";
 
 import IInput from "../components/IInput.vue";
+import ITextArea from "../components/ITextArea.vue";
 import RippleButton from "../components/RippleButton.vue";
 import { auth } from "../firebase";
 import { addWorkout } from "../services/workout";

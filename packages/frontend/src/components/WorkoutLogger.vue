@@ -1,15 +1,31 @@
 <template>
   <v-container fluid class="pa-4">
-    <!-- Workout Header -->
-    <v-row>
-      <v-col cols="12">
+    <!-- Workout Header with Title and Date Picker -->
+    <v-row class="align-center mb-4">
+      <v-col cols="8">
         <v-text-field
           v-model="workoutName"
           variant="outlined"
           label="Workout Title"
           dense
-          class="mb-4"
+          hide-details
         />
+      </v-col>
+      <v-col cols="4" class="d-flex align-center">
+        <v-menu
+          v-model="menu"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+        >
+          <template #activator="{ props }">
+            <v-btn icon v-bind="props">
+              <v-icon>mdi-calendar</v-icon>
+            </v-btn>
+          </template>
+          <v-date-picker v-model="workoutDate" />
+        </v-menu>
+        <span class="ml-2">{{ formattedWorkoutDate }}</span>
       </v-col>
     </v-row>
 
@@ -111,7 +127,8 @@
 
 <script setup lang="ts">
 import { Timestamp } from "firebase/firestore";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { useDate } from "vuetify";
 
 import type { Exercise } from "../data/excercises";
 import type { ExerciseEntry, Workout } from "../services/workout";
@@ -122,7 +139,15 @@ import { addWorkout } from "../services/workout";
 
 const exercises: Exercise[] = getExercises();
 
-const workoutName = ref(`Workout ${new Date().toLocaleDateString()}`);
+const workoutName = ref("Workout");
+const workoutDate = ref(new Date());
+const menu = ref(false);
+
+const dateAdapter = useDate();
+const formattedWorkoutDate = computed(() =>
+  dateAdapter.format(workoutDate.value, "keyboardDate"),
+);
+
 const overallNotes = ref("");
 const exerciseEntries = ref<ExerciseEntry[]>([
   { exerciseId: "", exerciseNotes: "", sets: [{ reps: 0, weight: 0 }] },
@@ -174,8 +199,8 @@ async function submitWorkout(): Promise<void> {
   try {
     await addWorkout(workout);
     alert("Workout logged successfully!");
-    // Reset the form
-    workoutName.value = `Workout ${new Date().toLocaleDateString()}`;
+    workoutName.value = "Workout";
+    workoutDate.value = new Date();
     overallNotes.value = "";
     exerciseEntries.value = [
       { exerciseId: "", exerciseNotes: "", sets: [{ reps: 0, weight: 0 }] },

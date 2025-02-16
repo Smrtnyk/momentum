@@ -1,27 +1,10 @@
 <template>
-  <header
-    class="flex items-center justify-between px-4 py-3 bg-[hsl(var(--background))] text-[hsl(var(--foreground))]"
-  >
-    <div class="text-xl font-bold">Momentum</div>
-    <nav>
-      <ul class="flex space-x-4">
-        <li>
-          <router-link
-            to="/dashboard"
-            class="hover:underline transition-colors"
-          >
-            Home
-          </router-link>
-        </li>
-      </ul>
-    </nav>
-    <button
-      @click="handleLogout"
-      class="px-4 py-2 rounded text-destructive-foreground hover:opacity-90 transition-opacity"
-    >
-      Logout
-    </button>
-  </header>
+  <v-app-bar app flat color="background" dark>
+    <v-toolbar-title>Momentum</v-toolbar-title>
+    <v-spacer></v-spacer>
+    <v-btn to="/dashboard"> Home </v-btn>
+    <v-btn @click="handleLogout" color="error"> Logout </v-btn>
+  </v-app-bar>
 </template>
 
 <script setup lang="ts">

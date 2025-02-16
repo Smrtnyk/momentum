@@ -1,6 +1,8 @@
 <template>
-  <TopMenu v-if="user" />
-  <router-view />
+  <v-app>
+    <TopMenu v-if="user" />
+    <router-view />
+  </v-app>
 </template>
 
 <script setup lang="ts">
@@ -13,7 +15,6 @@ import TopMenu from "./components/TopMenu.vue";
 import { auth } from "./firebase";
 
 const user = ref<null | User>(null);
-
 onAuthStateChanged(auth, function (currentUser: null | User): void {
   user.value = currentUser;
 });

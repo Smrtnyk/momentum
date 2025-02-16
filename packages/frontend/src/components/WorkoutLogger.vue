@@ -2,12 +2,9 @@
   <div class="p-4">
     <h2 class="text-xl font-bold mb-4">Log a New Workout</h2>
     <form @submit.prevent="submitWorkout" class="space-y-4">
-      <!-- Exercise selection -->
       <div>
-        <!-- ExercisePicker should be a component that allows the user to pick an exercise -->
         <ExercisePicker v-model="selectedExercise" />
       </div>
-      <!-- Sets entry -->
       <div>
         <h3 class="text-lg font-semibold mb-2">Sets</h3>
         <div
@@ -15,37 +12,34 @@
           :key="index"
           class="flex space-x-2 items-center"
         >
-          <IInput
+          <v-text-field
             v-model.number="set.reps"
             type="number"
+            label="Reps"
             min="1"
-            placeholder="Reps"
             class="w-20"
           />
-          <IInput
+          <v-text-field
             v-model.number="set.weight"
             type="number"
+            label="Weight (kg)"
             min="0"
-            placeholder="Weight (kg)"
             class="w-20"
           />
-          <button
+          <v-btn
             type="button"
             @click="removeSet(index)"
             class="text-destructive"
           >
             Remove
-          </button>
+          </v-btn>
         </div>
-        <RippleButton type="button" @click="addSet"> Add Set </RippleButton>
+        <v-btn type="button" @click="addSet"> Add Set </v-btn>
       </div>
-      <!-- Notes -->
       <div>
-        <label for="notes" class="block mb-1">Notes:</label>
-        <ITextArea id="notes" v-model="notes" class="w-full" />
+        <v-textarea id="notes" v-model="notes" label="Notes" class="w-full" />
       </div>
-      <!-- Submission -->
-      <RippleButton type="submit">Log Workout</RippleButton>
+      <v-btn type="submit">Log Workout</v-btn>
     </form>
   </div>
 </template>
@@ -56,9 +50,6 @@ import { ref } from "vue";
 
 import type { Workout, WorkoutSet } from "../services/workout";
 
-import IInput from "../components/ui/IInput.vue";
-import ITextArea from "../components/ui/ITextArea.vue";
-import RippleButton from "../components/ui/RippleButton.vue";
 import { auth } from "../firebase";
 import { addWorkout } from "../services/workout";
 import ExercisePicker from "./ExercisePicker.vue";

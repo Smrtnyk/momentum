@@ -22,6 +22,20 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
 };
 
+function initEmulators(
+  firestore: Firestore,
+  auth: Auth,
+  functions: Functions,
+  storage: FirebaseStorage,
+): void {
+  connectAuthEmulator(auth, `http://${location.hostname}:9099/`, {
+    disableWarnings: true,
+  });
+  connectFirestoreEmulator(firestore, location.hostname, 8080);
+  connectFunctionsEmulator(functions, location.hostname, 5001);
+  connectStorageEmulator(storage, location.hostname, 9199);
+}
+
 export const initializeFirebase = memoize(() => {
   const firebaseApp = initializeApp(firebaseConfig);
   const firestore = getFirestore(firebaseApp);
@@ -37,16 +51,4 @@ export const initializeFirebase = memoize(() => {
   return { auth, firebaseApp, firestore, functions, storage };
 });
 
-function initEmulators(
-  firestore: Firestore,
-  auth: Auth,
-  functions: Functions,
-  storage: FirebaseStorage,
-): void {
-  connectAuthEmulator(auth, `http://${location.hostname}:9099/`, {
-    disableWarnings: true,
-  });
-  connectFirestoreEmulator(firestore, location.hostname, 8080);
-  connectFunctionsEmulator(functions, location.hostname, 5001);
-  connectStorageEmulator(storage, location.hostname, 9199);
-}
+export const { auth } = initializeFirebase();

@@ -6,17 +6,23 @@ import { initializeFirebase } from "../firebase";
 
 const { firestore } = initializeFirebase();
 
-export interface Workout {
-  date: Timestamp;
-  exercise: string;
-  notes: string;
-  sets: WorkoutSet[];
-  userId: string;
+export interface ExerciseEntry {
+  exerciseId: string;
+  exerciseNotes?: string;
+  sets: ExerciseSet[];
 }
 
-export interface WorkoutSet {
+export interface ExerciseSet {
   reps: number;
   weight: number;
+}
+
+export interface Workout {
+  date: Timestamp;
+  exerciseEntries: ExerciseEntry[];
+  name: string;
+  overallNotes: string;
+  userId: string;
 }
 
 export async function addWorkout(workout: Workout): Promise<void> {

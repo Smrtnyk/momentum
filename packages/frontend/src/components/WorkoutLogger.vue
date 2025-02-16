@@ -1,19 +1,52 @@
 <template>
-  <div class="p-4">
-    <h2 class="text-xl font-bold mb-4">Log a New Workout</h2>
-    <form @submit.prevent="submitWorkout" class="space-y-4">
-      <div>
-        <ExercisePicker v-model="selectedExercise" />
-      </div>
-      <div>
-        <h3 class="text-lg font-semibold mb-2">Sets</h3>
-        <div
-          v-for="(set, index) in sets"
-          :key="index"
-          class="flex items-center space-x-2"
-        >
-          <v-row class="align-center">
-            <v-col cols="auto">
+  <v-container fluid class="pa-4">
+    <!-- Workout Header -->
+    <v-row>
+      <v-col cols="12">
+        <v-text-field
+          v-model="workoutName"
+          variant="outlined"
+          label="Workout Title"
+          dense
+          class="mb-4"
+        />
+      </v-col>
+    </v-row>
+
+    <!-- Exercise Entries -->
+    <v-row v-for="(entry, idx) in exerciseEntries" :key="idx" class="mb-4">
+      <v-col cols="12">
+        <v-card outlined>
+          <v-card-title class="d-flex align-center">
+            <v-autocomplete
+              v-model="entry.exerciseId"
+              :items="exercises"
+              item-title="name"
+              item-value="id"
+              label="Select Exercise"
+              dense
+              variant="outlined"
+              clearable
+              hide-details
+              class="flex-grow-1"
+            />
+            <v-btn icon color="error" @click="removeExercise(idx)">
+              <v-icon>mdi-trash-can</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text>
+            <v-text-field
+              v-model="entry.exerciseNotes"
+              variant="outlined"
+              label="Exercise Notes"
+              dense
+              class="mb-2"
+            />
+            <div
+              v-for="(set, sIdx) in entry.sets"
+              :key="sIdx"
+              class="d-flex align-center mb-2"
+            >
               <v-text-field
                 v-model.number="set.reps"
                 variant="outlined"
@@ -21,9 +54,8 @@
                 label="Reps"
                 dense
                 style="max-width: 6rem"
+                class="mr-2"
               />
-            </v-col>
-            <v-col cols="auto">
               <v-text-field
                 v-model.number="set.weight"
                 variant="outlined"
@@ -31,60 +63,93 @@
                 label="Weight (kg)"
                 dense
                 style="max-width: 6rem"
+                class="mr-2"
               />
-            </v-col>
-            <v-col cols="auto">
-              <v-btn
-                @click="removeSet(index)"
-                icon="mdi-trash-can"
-                color="error"
-                size="small"
-              />
-            </v-col>
-          </v-row>
-        </div>
+              <v-btn icon color="error" @click="removeSet(idx, sIdx)">
+                <v-icon>mdi-trash-can</v-icon>
+              </v-btn>
+            </div>
+            <v-btn small color="primary" @click="addSet(idx)"> Add Set </v-btn>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
 
-        <v-btn type="button" @click="addSet"> Add Set </v-btn>
-      </div>
-      <div>
+    <!-- Add Exercise Button -->
+    <v-row>
+      <v-col cols="12">
+        <v-btn color="secondary" @click="addExercise" class="mb-4">
+          Add Exercise
+        </v-btn>
+      </v-col>
+    </v-row>
+
+    <!-- Overall Workout Notes -->
+    <v-row>
+      <v-col cols="12">
         <v-textarea
+          v-model="overallNotes"
           variant="outlined"
-          id="notes"
-          v-model="notes"
-          label="Notes"
-          class="w-full"
+          label="Workout Notes"
+          dense
+          rows="3"
+          class="mb-4"
         />
-      </div>
-      <v-btn type="submit">Log Workout</v-btn>
-    </form>
-  </div>
+      </v-col>
+    </v-row>
+
+    <!-- Submit Workout -->
+    <v-row>
+      <v-col cols="12">
+        <v-btn block color="primary" @click="submitWorkout">
+          Log Workout
+        </v-btn>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script setup lang="ts">
 import { Timestamp } from "firebase/firestore";
 import { ref } from "vue";
 
-import type { Workout, WorkoutSet } from "../services/workout";
+import type { Exercise } from "../data/excercises";
+import type { ExerciseEntry, Workout } from "../services/workout";
 
-import { notify } from "../composables/useNotify";
-import { initializeFirebase } from "../firebase";
+import { getExercises } from "../data/excercises";
+import { auth } from "../firebase";
 import { addWorkout } from "../services/workout";
-import ExercisePicker from "./ExercisePicker.vue";
 
-const { auth } = initializeFirebase();
+const exercises: Exercise[] = getExercises();
 
-const selectedExercise = ref("");
+const workoutName = ref(`Workout ${new Date().toLocaleDateString()}`);
+const overallNotes = ref("");
+const exerciseEntries = ref<ExerciseEntry[]>([
+  { exerciseId: "", exerciseNotes: "", sets: [{ reps: 0, weight: 0 }] },
+]);
 
-const sets = ref<WorkoutSet[]>([{ reps: 0, weight: 0 }]);
-const notes = ref("");
-
-function addSet(): void {
-  sets.value.push({ reps: 0, weight: 0 });
+function addExercise(): void {
+  exerciseEntries.value.push({
+    exerciseId: "",
+    exerciseNotes: "",
+    sets: [{ reps: 0, weight: 0 }],
+  });
 }
 
-function removeSet(index: number): void {
-  if (sets.value.length > 1) {
-    sets.value.splice(index, 1);
+function addSet(exerciseIndex: number): void {
+  exerciseEntries.value[exerciseIndex].sets.push({ reps: 0, weight: 0 });
+}
+
+function removeExercise(index: number): void {
+  if (exerciseEntries.value.length > 1) {
+    exerciseEntries.value.splice(index, 1);
+  }
+}
+
+function removeSet(exerciseIndex: number, setIndex: number): void {
+  const sets = exerciseEntries.value[exerciseIndex].sets;
+  if (sets.length > 1) {
+    sets.splice(setIndex, 1);
   }
 }
 
@@ -93,34 +158,30 @@ async function submitWorkout(): Promise<void> {
     alert("You must be logged in to log a workout.");
     return;
   }
-  if (!selectedExercise.value) {
-    alert("Please select an exercise.");
-    return;
+  for (const entry of exerciseEntries.value) {
+    if (!entry.exerciseId) {
+      alert("Please select an exercise for all entries.");
+      return;
+    }
   }
-
   const workout: Workout = {
     date: Timestamp.now(),
-    exercise: selectedExercise.value,
-    notes: notes.value,
-    sets: sets.value,
+    exerciseEntries: exerciseEntries.value,
+    name: workoutName.value,
+    overallNotes: overallNotes.value,
     userId: auth.currentUser.uid,
   };
-
   try {
     await addWorkout(workout);
-    notify("Workout logged successfully!", "success");
-    // Reset fields
-    selectedExercise.value = "";
-    sets.value = [{ reps: 0, weight: 0 }];
-    notes.value = "";
+    alert("Workout logged successfully!");
+    // Reset the form
+    workoutName.value = `Workout ${new Date().toLocaleDateString()}`;
+    overallNotes.value = "";
+    exerciseEntries.value = [
+      { exerciseId: "", exerciseNotes: "", sets: [{ reps: 0, weight: 0 }] },
+    ];
   } catch (error: any) {
     alert(`Error logging workout: ${error.message}`);
   }
 }
 </script>
-
-<style scoped>
-form > div {
-  margin-bottom: 1rem;
-}
-</style>

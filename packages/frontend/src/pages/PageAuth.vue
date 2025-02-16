@@ -42,10 +42,10 @@ import { Motion } from "motion-v";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
+import AuroraBackground from "../components/AuroraBackground.vue";
+import IInput from "../components/IInput.vue";
+import RippleButton from "../components/RippleButton.vue";
 import { loginUser, registerUser } from "../services/auth";
-import AuroraBackground from "./AuroraBackground.vue";
-import IInput from "./IInput.vue";
-import RippleButton from "./RippleButton.vue";
 
 const router = useRouter();
 const isLogin = ref(true);

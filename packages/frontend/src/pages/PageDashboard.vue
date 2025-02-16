@@ -47,10 +47,10 @@
 import { Timestamp } from "firebase/firestore";
 import { ref } from "vue";
 
+import IInput from "../components/IInput.vue";
+import RippleButton from "../components/RippleButton.vue";
 import { auth } from "../firebase";
 import { addWorkout } from "../services/workout";
-import IInput from "./IInput.vue";
-import RippleButton from "./RippleButton.vue";
 
 const exercise = ref("");
 const sets = ref(1);

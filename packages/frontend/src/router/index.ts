@@ -1,18 +1,18 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import AuthForm from "../components/AuthForm.vue";
-import WorkoutLogger from "../components/WorkoutLogger.vue";
 import { auth } from "../firebase";
+import PageAuth from "../pages/PageAuth.vue";
+import PageDashboard from "../pages/PageDashboard.vue";
 
 const routes = [
   {
-    component: AuthForm,
+    component: PageAuth,
     meta: { guest: true },
     name: "Auth",
     path: "/auth",
   },
   {
-    component: WorkoutLogger,
+    component: PageDashboard,
     meta: { requiresAuth: true },
     name: "Dashboard",
     path: "/dashboard",

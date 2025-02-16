@@ -1,8 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import { auth } from "../firebase";
+import { initializeFirebase } from "../firebase";
 import PageAuth from "../pages/PageAuth.vue";
 import PageDashboard from "../pages/PageDashboard.vue";
+
+const { auth } = initializeFirebase();
 
 const routes = [
   {

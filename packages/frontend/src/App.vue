@@ -14,7 +14,9 @@ import { onAuthStateChanged } from "firebase/auth";
 import { ref } from "vue";
 
 import TopMenu from "./components/TopMenu.vue";
-import { auth } from "./firebase";
+import { initializeFirebase } from "./firebase";
+
+const { auth } = initializeFirebase();
 
 const user = ref<null | User>(null);
 onAuthStateChanged(auth, function (currentUser: null | User): void {

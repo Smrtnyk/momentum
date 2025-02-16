@@ -6,7 +6,9 @@ import {
   signOut,
 } from "firebase/auth";
 
-import { auth } from "../firebase";
+import { initializeFirebase } from "../firebase";
+
+const { auth } = initializeFirebase();
 
 export function loginUser(
   email: string,

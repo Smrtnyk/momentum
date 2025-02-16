@@ -9,8 +9,10 @@ import "vuetify/styles";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 
 import App from "./App.vue";
-import { auth } from "./firebase";
+import { initializeFirebase } from "./firebase";
 import router from "./router";
+
+const { auth } = initializeFirebase();
 
 function createVuetifyInstance(): ReturnType<typeof createVuetify> {
   return createVuetify({

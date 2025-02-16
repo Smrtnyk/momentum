@@ -58,9 +58,11 @@ import { ref } from "vue";
 
 import type { Workout, WorkoutSet } from "../services/workout";
 
-import { auth } from "../firebase";
+import { initializeFirebase } from "../firebase";
 import { addWorkout } from "../services/workout";
 import ExercisePicker from "./ExercisePicker.vue";
+
+const { auth } = initializeFirebase();
 
 const selectedExercise = ref("");
 

@@ -2,7 +2,9 @@ import type { Timestamp } from "firebase/firestore";
 
 import { addDoc, collection } from "firebase/firestore";
 
-import { db } from "../firebase";
+import { initializeFirebase } from "../firebase";
+
+const { firestore } = initializeFirebase();
 
 export interface Workout {
   date: Timestamp;
@@ -18,5 +20,5 @@ export interface WorkoutSet {
 }
 
 export async function addWorkout(workout: Workout): Promise<void> {
-  await addDoc(collection(db, "workouts"), workout);
+  await addDoc(collection(firestore, "workouts"), workout);
 }

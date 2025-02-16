@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
+    "lint:fix": "eslint --fix .",
+    "start:emulators": "firebase emulators:start --import=./local-db --export-on-exit=./local-db"
   },
   "devDependencies": {
     "@eslint/eslintrc": "3.2.0",

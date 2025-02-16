@@ -7,24 +7,24 @@ import { initializeFirebase } from "../firebase";
 const { firestore } = initializeFirebase();
 
 export interface ExerciseEntry {
-  exerciseId: string;
-  exerciseNotes?: string;
-  sets: ExerciseSet[];
+    exerciseId: string;
+    exerciseNotes?: string;
+    sets: ExerciseSet[];
 }
 
 export interface ExerciseSet {
-  reps: number;
-  weight: number;
+    reps: number;
+    weight: number;
 }
 
 export interface Workout {
-  date: Timestamp;
-  exerciseEntries: ExerciseEntry[];
-  name: string;
-  overallNotes: string;
-  userId: string;
+    date: Timestamp;
+    exerciseEntries: ExerciseEntry[];
+    name: string;
+    overallNotes: string;
+    userId: string;
 }
 
 export async function addWorkout(workout: Workout): Promise<void> {
-  await addDoc(collection(firestore, "workouts"), workout);
+    await addDoc(collection(firestore, "workouts"), workout);
 }

@@ -1,12 +1,12 @@
 <template>
-  <v-app>
-    <TopMenu v-if="user" />
-    <v-main>
-      <router-view />
-    </v-main>
+    <v-app>
+        <TopMenu v-if="user" />
+        <v-main>
+            <router-view />
+        </v-main>
 
-    <GlobalSnackbar />
-  </v-app>
+        <GlobalSnackbar />
+    </v-app>
 </template>
 
 <script setup lang="ts">
@@ -23,6 +23,6 @@ const { auth } = initializeFirebase();
 
 const user = ref<null | User>(null);
 onAuthStateChanged(auth, function (currentUser: null | User): void {
-  user.value = currentUser;
+    user.value = currentUser;
 });
 </script>

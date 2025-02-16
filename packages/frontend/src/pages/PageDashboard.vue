@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <WorkoutLogger />
-  </div>
+    <div>
+        <WorkoutLogger />
+    </div>
 </template>
 
 <script setup lang="ts">

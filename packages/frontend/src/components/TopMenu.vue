@@ -26,8 +26,9 @@ import { useRouter } from "vue-router";
 
 import { logoutUser } from "../services/auth";
 
+const router = useRouter();
+
 async function handleLogout(): Promise<void> {
-  const router = useRouter();
   await logoutUser();
   await router.push("/auth");
 }

@@ -32,7 +32,6 @@ const router = createRouter({
   routes,
 });
 
-// Navigation guard to enforce authentication
 router.beforeEach((to, from, next) => {
   const currentUser = auth.currentUser;
   if (to.meta.requiresAuth && !currentUser) {

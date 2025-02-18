@@ -4,6 +4,7 @@ import { initializeFirebase } from "../firebase";
 import PageAuth from "../pages/PageAuth.vue";
 import PageDashboard from "../pages/PageDashboard.vue";
 import PageWorkoutDetail from "../pages/PageWorkoutDetail.vue";
+import PageWorkoutLogger from "../pages/PageWorkoutLogger.vue";
 
 const { auth } = initializeFirebase();
 
@@ -25,6 +26,12 @@ const routes = [
         meta: { requiresAuth: true },
         name: "WorkoutDetail",
         path: "/workout/:id",
+    },
+    {
+        component: PageWorkoutLogger,
+        meta: { requiresAuth: true },
+        name: "WorkoutLogger",
+        path: "/workout/new",
     },
     {
         path: "/",

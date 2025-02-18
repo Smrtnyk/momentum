@@ -33,3 +33,15 @@ export function notify(message: string, color = "success", timeout = 3000): void
         notificationState.show = true;
     }, 0);
 }
+
+export function notifyError(error: unknown, timeout = 3000): void {
+    let message: string;
+    if (error instanceof Error) {
+        message = error.message;
+    } else if (typeof error === "string") {
+        message = error;
+    } else {
+        message = "An unknown error occurred.";
+    }
+    notify(message, "error", timeout);
+}

@@ -15,6 +15,7 @@
 import { onMounted, ref } from "vue";
 
 import WorkoutListItem from "../components/WorkoutListItem.vue";
+import { notifyError } from "../composables/useNotify";
 import { auth } from "../firebase";
 import { getWorkouts, type WorkoutWithId } from "../services/workout";
 
@@ -25,7 +26,7 @@ async function fetchWorkouts(): Promise<void> {
         try {
             workouts.value = await getWorkouts(auth.currentUser.uid);
         } catch (error) {
-            console.error("Error fetching workouts:", error);
+            notifyError(error);
         }
     }
 }

@@ -20,6 +20,7 @@
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
+import { notifyError } from "../composables/useNotify";
 import { loginUser, registerUser } from "../services/auth";
 
 const router = useRouter();
@@ -35,8 +36,8 @@ async function handleSubmit(): Promise<void> {
             await registerUser(email.value, password.value);
         }
         await router.push("/dashboard");
-    } catch (error: any) {
-        console.error(error.message);
+    } catch (error) {
+        notifyError(error);
     }
 }
 

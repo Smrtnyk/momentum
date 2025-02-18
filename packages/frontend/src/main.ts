@@ -2,7 +2,6 @@ import type { ComponentPublicInstance } from "vue";
 
 import { createApp } from "vue";
 import { createVuetify } from "vuetify";
-import { md3 } from "vuetify/blueprints";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
@@ -19,7 +18,6 @@ const { auth } = initializeFirebase();
 
 function createVuetifyInstance(): ReturnType<typeof createVuetify> {
     return createVuetify({
-        blueprint: md3,
         components: {
             ...components,
             VCalendar,

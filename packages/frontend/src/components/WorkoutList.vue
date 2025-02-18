@@ -1,12 +1,15 @@
 <template>
     <v-container fluid class="pa-4">
-        <!-- Toggle between List and Calendar views -->
-        <v-tabs v-model="view" background-color="primary" dark>
-            <v-tab value="list">List</v-tab>
-            <v-tab value="calendar">Calendar</v-tab>
-        </v-tabs>
+        <v-btn-toggle v-model="view" mandatory color="primary" class="mb-4">
+            <v-btn value="list" variant="tonal">
+                <v-icon start icon="mdi-format-list-bulleted"></v-icon>
+            </v-btn>
 
-        <!-- List View -->
+            <v-btn value="calendar" variant="tonal">
+                <v-icon start icon="mdi-calendar-month"></v-icon>
+            </v-btn>
+        </v-btn-toggle>
+
         <div v-if="view === 'list'">
             <v-list two-line>
                 <WorkoutListItem

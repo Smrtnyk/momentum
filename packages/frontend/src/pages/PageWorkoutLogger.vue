@@ -1,123 +1,183 @@
+<
 <template>
-    <v-container fluid class="pa-4">
-        <!-- Workout Header with Title and Date Picker -->
-        <v-row class="align-center mb-4">
-            <v-col cols="8">
-                <v-text-field
-                    v-model="workoutName"
-                    variant="outlined"
-                    label="Workout Title"
-                    dense
-                    hide-details
-                />
-            </v-col>
-            <v-col cols="4" class="d-flex align-center">
-                <v-menu
-                    v-model="menu"
-                    :close-on-content-click="false"
-                    transition="scale-transition"
-                    offset-y
-                >
-                    <template #activator="{ props }">
-                        <v-btn icon v-bind="props">
-                            <v-icon>mdi-calendar</v-icon>
-                        </v-btn>
-                    </template>
-                    <v-date-picker v-model="workoutDate" />
-                </v-menu>
-                <span class="ml-2">{{ formattedWorkoutDate }}</span>
-            </v-col>
-        </v-row>
-
-        <!-- Exercise Entries -->
-        <v-row v-for="(entry, idx) in exerciseEntries" :key="idx" class="mb-4">
-            <v-col cols="12">
-                <v-card outlined>
-                    <v-card-title class="d-flex align-center">
-                        <v-autocomplete
-                            v-model="entry.exerciseId"
-                            :items="exercises"
-                            item-title="name"
-                            item-value="id"
-                            label="Select Exercise"
-                            dense
-                            variant="outlined"
-                            clearable
-                            hide-details
-                            class="flex-grow-1"
-                        />
-                        <v-btn icon color="error" @click="removeExercise(idx)">
-                            <v-icon>mdi-trash-can</v-icon>
-                        </v-btn>
-                    </v-card-title>
-                    <v-card-text>
+    <v-container fluid class="pa-4 pa-sm-6">
+        <!-- Header Section -->
+        <v-card flat class="mb-6" color="surface">
+            <v-card-text>
+                <v-row dense>
+                    <v-col cols="12" md="8">
                         <v-text-field
-                            v-model="entry.exerciseNotes"
+                            v-model="workoutName"
                             variant="outlined"
-                            label="Exercise Notes"
-                            dense
-                            class="mb-2"
+                            label="Workout Name"
+                            density="comfortable"
+                            bg-color="background"
+                            hide-details
+                            class="mb-4"
                         />
-                        <div
+                    </v-col>
+                    <v-col cols="12" md="4">
+                        <v-menu v-model="menu" :close-on-content-click="false">
+                            <template #activator="{ props }">
+                                <v-text-field
+                                    v-model="formattedWorkoutDate"
+                                    variant="outlined"
+                                    density="comfortable"
+                                    readonly
+                                    v-bind="props"
+                                    label="Workout Date"
+                                    prepend-inner-icon="mdi-calendar"
+                                    bg-color="background"
+                                    hide-details
+                                />
+                            </template>
+                            <v-date-picker v-model="workoutDate" />
+                        </v-menu>
+                    </v-col>
+                </v-row>
+            </v-card-text>
+        </v-card>
+
+        <!-- Exercise Cards -->
+        <transition-group name="list" tag="div">
+            <v-card v-for="(entry, idx) in exerciseEntries" :key="idx" class="mb-4" elevation="2">
+                <v-card-title class="d-flex align-center bg-primary">
+                    <span class="text-h6 text-white">Exercise {{ idx + 1 }}</span>
+                    <v-spacer />
+                    <v-btn icon variant="text" color="white" @click="removeExercise(idx)">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                </v-card-title>
+
+                <v-card-text class="pt-4">
+                    <v-autocomplete
+                        v-model="entry.exerciseId"
+                        :items="exercises"
+                        item-title="name"
+                        item-value="id"
+                        label="Select Exercise"
+                        variant="outlined"
+                        density="comfortable"
+                        :rules="[required]"
+                        clearable
+                        class="mb-4"
+                    />
+
+                    <v-textarea
+                        v-model="entry.exerciseNotes"
+                        variant="outlined"
+                        label="Exercise Notes"
+                        density="comfortable"
+                        rows="2"
+                        auto-grow
+                        class="mb-4"
+                    />
+
+                    <v-divider class="my-4" />
+
+                    <div class="text-subtitle-1 mb-2">Sets</div>
+
+                    <transition-group name="list" tag="div">
+                        <v-row
                             v-for="(set, sIdx) in entry.sets"
                             :key="sIdx"
-                            class="d-flex align-center mb-2"
+                            align="center"
+                            class="mb-2"
                         >
-                            <v-text-field
-                                v-model.number="set.reps"
-                                variant="outlined"
-                                type="number"
-                                label="Reps"
-                                dense
-                                style="max-width: 6rem"
-                                class="mr-2"
-                            />
-                            <v-text-field
-                                v-model.number="set.weight"
-                                variant="outlined"
-                                type="number"
-                                label="Weight (kg)"
-                                dense
-                                style="max-width: 6rem"
-                                class="mr-2"
-                            />
-                            <v-btn icon color="error" @click="removeSet(idx, sIdx)">
-                                <v-icon>mdi-trash-can</v-icon>
-                            </v-btn>
-                        </div>
-                        <v-btn small color="primary" @click="addSet(idx)"> Add Set </v-btn>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
+                            <v-col cols="12" sm="3">
+                                <div class="text-caption text-medium-emphasis">
+                                    Set {{ sIdx + 1 }}
+                                </div>
+                            </v-col>
+                            <v-col cols="6" sm="3">
+                                <v-text-field
+                                    v-model.number="set.reps"
+                                    variant="outlined"
+                                    type="number"
+                                    label="Reps"
+                                    density="comfortable"
+                                    min="0"
+                                    :rules="[positiveNumber]"
+                                />
+                            </v-col>
+                            <v-col cols="6" sm="3">
+                                <v-text-field
+                                    v-model.number="set.weight"
+                                    variant="outlined"
+                                    type="number"
+                                    label="Weight (kg)"
+                                    density="comfortable"
+                                    min="0"
+                                    :rules="[positiveNumber]"
+                                />
+                            </v-col>
+                            <v-col cols="12" sm="3" class="text-right">
+                                <v-btn
+                                    icon
+                                    variant="text"
+                                    color="error"
+                                    size="small"
+                                    @click="removeSet(idx, sIdx)"
+                                >
+                                    <v-icon>mdi-delete</v-icon>
+                                </v-btn>
+                            </v-col>
+                        </v-row>
+                    </transition-group>
+
+                    <v-btn
+                        color="secondary"
+                        variant="tonal"
+                        prepend-icon="mdi-plus"
+                        @click="addSet(idx)"
+                    >
+                        Add Set
+                    </v-btn>
+                </v-card-text>
+            </v-card>
+        </transition-group>
 
         <!-- Add Exercise Button -->
-        <v-row>
-            <v-col cols="12">
-                <v-btn color="secondary" @click="addExercise" class="mb-4"> Add Exercise </v-btn>
-            </v-col>
-        </v-row>
+        <v-btn
+            block
+            color="primary"
+            variant="flat"
+            class="my-4"
+            prepend-icon="mdi-dumbbell"
+            @click="addExercise"
+        >
+            Add Exercise
+        </v-btn>
 
-        <!-- Overall Workout Notes -->
-        <v-row>
-            <v-col cols="12">
+        <!-- Workout Notes -->
+        <v-card class="mb-4" elevation="2">
+            <v-card-title class="bg-primary">
+                <span class="text-h6 text-white">Workout Notes</span>
+            </v-card-title>
+            <v-card-text>
                 <v-textarea
                     v-model="overallNotes"
                     variant="outlined"
-                    label="Workout Notes"
-                    dense
+                    label="Overall workout notes"
+                    density="comfortable"
                     rows="3"
-                    class="mb-4"
+                    auto-grow
+                    hide-details
                 />
-            </v-col>
-        </v-row>
+            </v-card-text>
+        </v-card>
 
-        <!-- Submit Workout -->
-        <v-row>
-            <v-col cols="12">
-                <v-btn block color="primary" @click="submitWorkout"> Log Workout </v-btn>
-            </v-col>
-        </v-row>
+        <!-- Submit Button -->
+        <v-btn
+            block
+            color="success"
+            size="large"
+            :loading="isSubmitting"
+            prepend-icon="mdi-content-save"
+            @click="submitWorkout"
+        >
+            Save Workout
+        </v-btn>
     </v-container>
 </template>
 
@@ -139,6 +199,13 @@ const exercises: Exercise[] = getExercises();
 const workoutName = ref("Workout");
 const workoutDate = ref(new Date());
 const menu = ref(false);
+function positiveNumber(value: number): boolean | string {
+    return value >= 0 || "Must be zero or positive";
+}
+function required(value: unknown): boolean | string {
+    return Boolean(value) || "Required";
+}
+const isSubmitting = ref(false);
 
 const dateAdapter = useDate();
 const formattedWorkoutDate = computed(() => dateAdapter.format(workoutDate.value, "keyboardDate"));
@@ -178,6 +245,7 @@ async function submitWorkout(): Promise<void> {
         notify("You must be logged in to log a workout.", "error");
         return;
     }
+
     for (const entry of exerciseEntries.value) {
         if (!entry.exerciseId) {
             notify("Please select an exercise for all entries.", "error");
@@ -192,6 +260,20 @@ async function submitWorkout(): Promise<void> {
         userId: auth.currentUser.uid,
     };
     try {
+        // Add validation check
+        const isValid = exerciseEntries.value.every(
+            (entry) =>
+                entry.exerciseId &&
+                entry.sets.every(
+                    (set) => typeof set.reps === "number" && typeof set.weight === "number",
+                ),
+        );
+
+        if (!isValid) {
+            notify("Please fill all required fields correctly", "error");
+            return;
+        }
+
         await addWorkout(workout);
         notify("Workout logged successfully!");
         workoutName.value = "Workout";
@@ -202,6 +284,8 @@ async function submitWorkout(): Promise<void> {
         ];
     } catch (error: any) {
         notify(`Error logging workout: ${error.message}`, "error");
+    } finally {
+        isSubmitting.value = false;
     }
 }
 </script>

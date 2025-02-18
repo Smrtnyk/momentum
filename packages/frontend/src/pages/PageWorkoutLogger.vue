@@ -1,7 +1,5 @@
-<
 <template>
     <v-container fluid class="pa-4 pa-sm-6">
-        <!-- Header Section -->
         <v-card flat class="mb-6" color="surface">
             <v-card-text>
                 <v-row dense>
@@ -41,7 +39,7 @@
         <!-- Exercise Cards -->
         <transition-group name="list" tag="div">
             <v-card v-for="(entry, idx) in exerciseEntries" :key="idx" class="mb-4" elevation="2">
-                <v-card-title class="d-flex align-center bg-primary">
+                <v-card-title class="d-flex align-center">
                     <span class="text-h6 text-white">Exercise {{ idx + 1 }}</span>
                     <v-spacer />
                     <v-btn icon variant="text" color="white" @click="removeExercise(idx)">
@@ -90,24 +88,22 @@
                                 </div>
                             </v-col>
                             <v-col cols="6" sm="3">
-                                <v-text-field
+                                <v-number-input
                                     v-model.number="set.reps"
                                     variant="outlined"
-                                    type="number"
+                                    control-variant="split"
                                     label="Reps"
                                     density="comfortable"
-                                    min="0"
                                     :rules="[positiveNumber]"
                                 />
                             </v-col>
                             <v-col cols="6" sm="3">
-                                <v-text-field
+                                <v-number-input
                                     v-model.number="set.weight"
                                     variant="outlined"
-                                    type="number"
+                                    control-variant="split"
                                     label="Weight (kg)"
                                     density="comfortable"
-                                    min="0"
                                     :rules="[positiveNumber]"
                                 />
                             </v-col>
@@ -151,7 +147,7 @@
 
         <!-- Workout Notes -->
         <v-card class="mb-4" elevation="2">
-            <v-card-title class="bg-primary">
+            <v-card-title>
                 <span class="text-h6 text-white">Workout Notes</span>
             </v-card-title>
             <v-card-text>
@@ -189,7 +185,7 @@ import { useDate } from "vuetify";
 import type { Exercise } from "../data/excercises";
 import type { ExerciseEntry, Workout } from "../services/workout";
 
-import { notify } from "../composables/useNotify";
+import { notify, notifyError } from "../composables/useNotify";
 import { getExercises } from "../data/excercises";
 import { auth } from "../firebase";
 import { addWorkout } from "../services/workout";
@@ -242,13 +238,13 @@ function removeSet(exerciseIndex: number, setIndex: number): void {
 
 async function submitWorkout(): Promise<void> {
     if (!auth.currentUser) {
-        notify("You must be logged in to log a workout.", "error");
+        notifyError("You must be logged in to log a workout.");
         return;
     }
 
     for (const entry of exerciseEntries.value) {
         if (!entry.exerciseId) {
-            notify("Please select an exercise for all entries.", "error");
+            notifyError("Please select an exercise for all entries.");
             return;
         }
     }
@@ -269,7 +265,7 @@ async function submitWorkout(): Promise<void> {
         );
 
         if (!isValid) {
-            notify("Please fill all required fields correctly", "error");
+            notifyError("Please fill all required fields correctly");
             return;
         }
 
@@ -281,8 +277,8 @@ async function submitWorkout(): Promise<void> {
         exerciseEntries.value = [
             { exerciseId: "", exerciseNotes: "", sets: [{ reps: 0, weight: 0 }] },
         ];
-    } catch (error: any) {
-        notify(`Error logging workout: ${error.message}`, "error");
+    } catch (error) {
+        notifyError(error);
     } finally {
         isSubmitting.value = false;
     }

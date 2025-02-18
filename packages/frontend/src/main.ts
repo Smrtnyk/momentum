@@ -5,9 +5,10 @@ import { createVuetify } from "vuetify";
 import { md3 } from "vuetify/blueprints";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
+import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "@mdi/font/css/materialdesignicons.css";
 import "vuetify/styles";
-import { aliases, mdi } from "vuetify/iconsets/mdi";
+import { VCalendar } from "vuetify/labs/VCalendar";
 
 import App from "./App.vue";
 import { initializeFirebase } from "./firebase";
@@ -18,7 +19,10 @@ const { auth } = initializeFirebase();
 function createVuetifyInstance(): ReturnType<typeof createVuetify> {
     return createVuetify({
         blueprint: md3,
-        components,
+        components: {
+            ...components,
+            VCalendar,
+        },
         directives,
         icons: {
             aliases,

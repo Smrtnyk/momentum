@@ -1,47 +1,53 @@
 <template>
-    <div>
-        <h2>{{ isLogin ? "Login" : "Register" }}</h2>
-        <form @submit.prevent="handleSubmit">
-            <v-text-field v-model="email" variant="outlined" type="email" label="Email" required />
-            <v-text-field
-                v-model="password"
-                variant="outlined"
-                type="password"
-                label="Password"
-                required
-            />
-            <v-btn type="submit">{{ isLogin ? "Login" : "Register" }}</v-btn>
-        </form>
-        <v-btn @click="toggleMode"> Switch to {{ isLogin ? "Register" : "Login" }} </v-btn>
-    </div>
+    <v-container class="auth-container" fluid>
+        <v-row align="center" justify="center">
+            <v-col cols="12" sm="8" md="4">
+                <v-card class="pa-5 auth-card">
+                    <v-card-title class="headline justify-center">
+                        Welcome to Momentum
+                    </v-card-title>
+                    <v-card-text>
+                        <p>Please sign in with your Google account to continue.</p>
+                    </v-card-text>
+                    <v-card-actions class="justify-center">
+                        <v-btn color="primary" large block @click="handleGoogleLogin">
+                            <v-icon left>mdi-google</v-icon>
+                            Sign in with Google
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-col>
+        </v-row>
+    </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 import { notifyError } from "../composables/useNotify";
-import { loginUser, registerUser } from "../services/auth";
+import { loginWithGoogle } from "../services/auth";
 
 const router = useRouter();
-const isLogin = ref(true);
-const email = ref("");
-const password = ref("");
 
-async function handleSubmit(): Promise<void> {
+async function handleGoogleLogin(): Promise<void> {
     try {
-        if (isLogin.value) {
-            await loginUser(email.value, password.value);
-        } else {
-            await registerUser(email.value, password.value);
-        }
-        await router.push("/dashboard");
+        await loginWithGoogle();
+        router.push("/dashboard");
     } catch (error) {
         notifyError(error);
     }
 }
-
-function toggleMode(): void {
-    isLogin.value = !isLogin.value;
-}
 </script>
+
+<style scoped>
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, #232e36, #212425);
+}
+
+.auth-card {
+    text-align: center;
+}
+</style>

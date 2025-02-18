@@ -52,12 +52,9 @@ import { notifyError } from "../composables/useNotify";
 import { getExercises } from "../data/excercises";
 import { getWorkoutById } from "../services/workout";
 
-// Get the workout ID from route params
 const route = useRoute();
-const router = useRouter();
 const workoutId = route.params.id as string;
 
-// State for the workout
 const workout = ref<null | WorkoutWithId>(null);
 
 onMounted(async () => {

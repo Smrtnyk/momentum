@@ -260,7 +260,6 @@ async function submitWorkout(): Promise<void> {
         userId: auth.currentUser.uid,
     };
     try {
-        // Add validation check
         const isValid = exerciseEntries.value.every(
             (entry) =>
                 entry.exerciseId &&

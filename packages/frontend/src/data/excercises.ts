@@ -42,7 +42,7 @@ export function getExercises(): Exercise[] {
         },
         { id: "leg-extension", muscleIds: ["legs"], name: "Leg Extension" },
         { id: "leg-curl", muscleIds: ["legs"], name: "Leg Curl" },
-        { id: "calf-raises", muscleIds: ["calves"], name: "Calf Raises" },
+        { id: "calf-raises", muscleIds: ["legs"], name: "Calf Raises" },
 
         { id: "pull-ups", muscleIds: ["back", "arms"], name: "Pull-ups" },
         { id: "lat-pulldown", muscleIds: ["back", "arms"], name: "Lat Pulldown" },
@@ -82,6 +82,30 @@ export function getExercises(): Exercise[] {
         { id: "plank", muscleIds: ["core"], name: "Plank" },
         { id: "russian-twist", muscleIds: ["core"], name: "Russian Twist" },
         { id: "leg-raises", muscleIds: ["core"], name: "Leg Raises" },
+
+        { id: "lunges", muscleIds: ["legs", "core"], name: "Lunges" },
+        { id: "chin-ups", muscleIds: ["back", "arms"], name: "Chin-ups" },
+        {
+            id: "arnold-press",
+            muscleIds: ["shoulders", "arms", "chest"],
+            name: "Arnold Press",
+        },
+        {
+            id: "kettlebell-swings",
+            muscleIds: ["legs", "core"],
+            name: "Kettlebell Swings",
+        },
+        {
+            id: "mountain-climbers",
+            muscleIds: ["core", "legs"],
+            name: "Mountain Climbers",
+        },
+        { id: "hip-thrusts", muscleIds: ["legs", "core"], name: "Hip Thrusts" },
+        {
+            id: "tricep-kickbacks",
+            muscleIds: ["arms"],
+            name: "Tricep Kickbacks",
+        },
     ];
 }
 
@@ -93,6 +117,5 @@ export function getMuscleGroups(): Muscle[] {
         { id: "shoulders", name: "Shoulders" },
         { id: "arms", name: "Arms" },
         { id: "core", name: "Core" },
-        { id: "calves", name: "Calves" },
     ];
 }

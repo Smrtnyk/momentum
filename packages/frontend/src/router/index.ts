@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { initializeFirebase } from "../firebase";
 import PageAuth from "../pages/PageAuth.vue";
 import PageDashboard from "../pages/PageDashboard.vue";
+import PageWorkoutDetail from "../pages/PageWorkoutDetail.vue";
 
 const { auth } = initializeFirebase();
 
@@ -18,6 +19,12 @@ const routes = [
         meta: { requiresAuth: true },
         name: "Dashboard",
         path: "/dashboard",
+    },
+    {
+        component: PageWorkoutDetail,
+        meta: { requiresAuth: true },
+        name: "WorkoutDetail",
+        path: "/workout/:id",
     },
     {
         path: "/",

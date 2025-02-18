@@ -13,6 +13,7 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 
 import WorkoutListItem from "../components/WorkoutListItem.vue";
 import { notifyError } from "../composables/useNotify";
@@ -20,6 +21,7 @@ import { auth } from "../firebase";
 import { getWorkouts, type WorkoutWithId } from "../services/workout";
 
 const workouts = ref<WorkoutWithId[]>([]);
+const router = useRouter();
 
 async function fetchWorkouts(): Promise<void> {
     if (auth.currentUser) {
@@ -36,8 +38,6 @@ onMounted(() => {
 });
 
 function viewWorkout(workout: WorkoutWithId): void {
-    // For now, simply log the workout.
-    // Later you might navigate to a detailed view.
-    console.log("Workout clicked:", workout);
+    router.push({ name: "WorkoutDetail", params: { id: workout.id } });
 }
 </script>

@@ -1,6 +1,6 @@
 import type { Timestamp } from "firebase/firestore";
 
-import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 
 import { initializeFirebase } from "../firebase";
 
@@ -25,13 +25,25 @@ export interface Workout {
     userId: string;
 }
 
-// Extend Workout to include a document id.
 export interface WorkoutWithId extends Workout {
     id: string;
 }
 
 export async function addWorkout(workout: Workout): Promise<void> {
     await addDoc(collection(firestore, "workouts"), workout);
+}
+
+/**
+ * Retrieves a single workout by its document ID.
+ * Throws an error if the workout is not found.
+ */
+export async function getWorkoutById(id: string): Promise<WorkoutWithId> {
+    const docRef = doc(firestore, "workouts", id);
+    const snapshot = await getDoc(docRef);
+    if (snapshot.exists()) {
+        return { id: snapshot.id, ...snapshot.data() } as WorkoutWithId;
+    }
+    throw new Error("Workout not found");
 }
 
 /**
@@ -47,7 +59,7 @@ export async function getWorkouts(userId?: string): Promise<WorkoutWithId[]> {
         queryVal = query(workoutsRef);
     }
     const snapshot = await getDocs(queryVal);
-    return snapshot.docs.map((doc) => {
-        return { id: doc.id, ...doc.data() } as WorkoutWithId;
+    return snapshot.docs.map(function (document) {
+        return { id: document.id, ...document.data() } as WorkoutWithId;
     });
 }

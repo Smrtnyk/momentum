@@ -1,9 +1,5 @@
 <template>
     <v-container fluid class="pa-4">
-        <v-btn icon @click="goBack" class="mb-4">
-            <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
-
         <div v-if="workout">
             <v-card outlined class="mb-4">
                 <v-card-title class="text-h5">{{ workout.name }}</v-card-title>
@@ -86,9 +82,5 @@ const exercisesList: Exercise[] = getExercises();
 function getExerciseName(id: string): string | undefined {
     const exercise = exercisesList.find((exer) => exer.id === id);
     return exercise?.name;
-}
-
-function goBack(): void {
-    router.back();
 }
 </script>

@@ -7,6 +7,7 @@
         <v-toolbar-title>Momentum</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn to="/dashboard">Home</v-btn>
+        <v-btn to="/profile">Profile</v-btn>
         <v-btn @click="handleLogout" color="error">Logout</v-btn>
     </v-app-bar>
 </template>
@@ -32,6 +33,6 @@ function goBack(): void {
 
 async function handleLogout(): Promise<void> {
     await logoutUser();
-    router.push("/auth");
+    await router.push("/auth");
 }
 </script>

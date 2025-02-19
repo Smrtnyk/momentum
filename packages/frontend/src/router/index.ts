@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import { initializeFirebase } from "../firebase";
 import PageAuth from "../pages/PageAuth.vue";
 import PageDashboard from "../pages/PageDashboard.vue";
+import PageProfile from "../pages/PageProfile.vue";
 import PageWorkoutDetail from "../pages/PageWorkoutDetail.vue";
 import PageWorkoutLogger from "../pages/PageWorkoutLogger.vue";
 
@@ -32,6 +33,12 @@ const routes = [
         meta: { requiresAuth: true },
         name: "WorkoutLogger",
         path: "/workout/new",
+    },
+    {
+        component: PageProfile,
+        meta: { requiresAuth: true },
+        name: "Profile",
+        path: "/profile",
     },
     {
         path: "/",

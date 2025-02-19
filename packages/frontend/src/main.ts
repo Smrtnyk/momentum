@@ -8,6 +8,7 @@ import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "@mdi/font/css/materialdesignicons.css";
 import "vuetify/styles";
 import { VCalendar } from "vuetify/labs/VCalendar";
+import { VDateInput } from "vuetify/labs/VDateInput";
 import { VNumberInput } from "vuetify/labs/VNumberInput";
 
 import App from "./App.vue";
@@ -21,6 +22,7 @@ function createVuetifyInstance(): ReturnType<typeof createVuetify> {
         components: {
             ...components,
             VCalendar,
+            VDateInput,
             VNumberInput,
         },
         directives,

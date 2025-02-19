@@ -1,14 +1,21 @@
 <template>
     <v-container fluid class="pa-4">
         <div v-if="workout">
+            <!-- Workout Card with Delete Button -->
             <v-card outlined class="mb-4">
-                <v-card-title class="text-h5">{{ workout.name }}</v-card-title>
+                <v-card-title class="d-flex align-center">
+                    <div class="flex-grow-1 text-h5">{{ workout.name }}</div>
+                    <v-btn icon color="error" @click="confirmDelete = true" title="Delete Workout">
+                        <v-icon>mdi-trash-can</v-icon>
+                    </v-btn>
+                </v-card-title>
                 <v-card-subtitle>{{ formattedDate }}</v-card-subtitle>
                 <v-card-text>
                     <p>{{ workout.overallNotes }}</p>
                 </v-card-text>
             </v-card>
 
+            <!-- Exercise Entries -->
             <div v-for="(entry, index) in workout.exerciseEntries" :key="index" class="mb-4">
                 <v-card outlined>
                     <v-card-title class="d-flex align-center">
@@ -37,6 +44,21 @@
         <div v-else>
             <v-alert type="error" color="error"> Workout not found. </v-alert>
         </div>
+
+        <!-- Delete Confirmation Dialog -->
+        <v-dialog v-model="confirmDelete" max-width="500">
+            <v-card>
+                <v-card-title class="text-h6">Confirm Delete</v-card-title>
+                <v-card-text>
+                    Are you sure you want to delete this workout? This action cannot be undone.
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer />
+                    <v-btn @click="confirmDelete = false">Cancel</v-btn>
+                    <v-btn color="error" @click="handleDeleteWorkout">Delete</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -48,14 +70,16 @@ import { useDate } from "vuetify";
 import type { Exercise } from "../data/excercises";
 import type { WorkoutWithId } from "../services/workout";
 
-import { notifyError } from "../composables/useNotify";
+import { notify, notifyError } from "../composables/useNotify";
 import { getExercises } from "../data/excercises";
-import { getWorkoutById } from "../services/workout";
+import { deleteWorkout as deleteWorkoutService, getWorkoutById } from "../services/workout";
 
 const route = useRoute();
+const router = useRouter();
 const workoutId = route.params.id as string;
 
 const workout = ref<null | WorkoutWithId>(null);
+const confirmDelete = ref(false);
 
 onMounted(async () => {
     try {
@@ -79,5 +103,18 @@ const exercisesList: Exercise[] = getExercises();
 function getExerciseName(id: string): string | undefined {
     const exercise = exercisesList.find((exer) => exer.id === id);
     return exercise?.name;
+}
+
+async function handleDeleteWorkout(): Promise<void> {
+    if (!workout.value) return;
+    try {
+        await deleteWorkoutService(workout.value.id);
+        notify("Workout deleted successfully!");
+        await router.replace({ name: "Dashboard" });
+    } catch (error) {
+        notifyError(error);
+    } finally {
+        confirmDelete.value = false;
+    }
 }
 </script>

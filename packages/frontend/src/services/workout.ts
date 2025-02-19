@@ -1,6 +1,15 @@
 import type { Timestamp } from "firebase/firestore";
 
-import { addDoc, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import {
+    addDoc,
+    collection,
+    deleteDoc,
+    doc,
+    getDoc,
+    getDocs,
+    query,
+    where,
+} from "firebase/firestore";
 
 import { initializeFirebase } from "../firebase";
 
@@ -32,6 +41,10 @@ export interface WorkoutWithId extends Workout {
 export async function addWorkout(workout: Workout): Promise<string> {
     const docRef = await addDoc(collection(firestore, "workouts"), workout);
     return docRef.id;
+}
+
+export async function deleteWorkout(id: string): Promise<void> {
+    await deleteDoc(doc(firestore, "workouts", id));
 }
 
 /**

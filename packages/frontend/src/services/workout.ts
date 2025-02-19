@@ -29,8 +29,9 @@ export interface WorkoutWithId extends Workout {
     id: string;
 }
 
-export async function addWorkout(workout: Workout): Promise<void> {
-    await addDoc(collection(firestore, "workouts"), workout);
+export async function addWorkout(workout: Workout): Promise<string> {
+    const docRef = await addDoc(collection(firestore, "workouts"), workout);
+    return docRef.id;
 }
 
 /**

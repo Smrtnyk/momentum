@@ -180,6 +180,7 @@
 <script setup lang="ts">
 import { Timestamp } from "firebase/firestore";
 import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useDate } from "vuetify";
 
 import type { Exercise } from "../data/excercises";
@@ -191,7 +192,7 @@ import { auth } from "../firebase";
 import { addWorkout } from "../services/workout";
 
 const exercises: Exercise[] = getExercises();
-
+const router = useRouter();
 const workoutName = ref("Workout");
 const workoutDate = ref(new Date());
 const menu = ref(false);
@@ -269,14 +270,9 @@ async function submitWorkout(): Promise<void> {
             return;
         }
 
-        await addWorkout(workout);
+        const workoutId = await addWorkout(workout);
         notify("Workout logged successfully!");
-        workoutName.value = "Workout";
-        workoutDate.value = new Date();
-        overallNotes.value = "";
-        exerciseEntries.value = [
-            { exerciseId: "", exerciseNotes: "", sets: [{ reps: 0, weight: 0 }] },
-        ];
+        await router.replace({ name: "WorkoutDetail", params: { id: workoutId } });
     } catch (error) {
         notifyError(error);
     } finally {

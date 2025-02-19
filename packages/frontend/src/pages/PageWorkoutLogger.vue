@@ -172,15 +172,15 @@
             prepend-icon="mdi-content-save"
             @click="submitWorkout"
         >
-            Save Workout
+            {{ isEditing ? "Update Workout" : "Save Workout" }}
         </v-btn>
     </v-container>
 </template>
 
 <script setup lang="ts">
 import { Timestamp } from "firebase/firestore";
-import { computed, ref } from "vue";
-import { useRouter } from "vue-router";
+import { computed, onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useDate } from "vuetify";
 
 import type { Exercise } from "../data/excercises";
@@ -189,13 +189,20 @@ import type { ExerciseEntry, Workout } from "../services/workout";
 import { notify, notifyError } from "../composables/useNotify";
 import { getExercises } from "../data/excercises";
 import { auth } from "../firebase";
-import { addWorkout } from "../services/workout";
+import { addWorkout, getWorkoutById, updateWorkout } from "../services/workout";
 
 const exercises: Exercise[] = getExercises();
 const router = useRouter();
+const route = useRoute();
+
+// If there's an ID parameter, we're editing
+const workoutId = route.params.id as string | undefined;
+const isEditing = ref(Boolean(workoutId));
+
 const workoutName = ref("Workout");
 const workoutDate = ref(new Date());
 const menu = ref(false);
+
 function positiveNumber(value: number): boolean | string {
     return value >= 0 || "Must be zero or positive";
 }
@@ -220,8 +227,28 @@ function addExercise(): void {
     });
 }
 
+onMounted(() => {
+    if (isEditing.value && workoutId) {
+        loadWorkout(workoutId);
+    }
+});
+
 function addSet(exerciseIndex: number): void {
     exerciseEntries.value[exerciseIndex].sets.push({ reps: 0, weight: 0 });
+}
+
+// Load the workout details if editing
+async function loadWorkout(id: string): Promise<void> {
+    try {
+        const workoutData = await getWorkoutById(id);
+        workoutName.value = workoutData.name;
+        overallNotes.value = workoutData.overallNotes;
+
+        workoutDate.value = workoutData.date.toDate();
+        exerciseEntries.value = workoutData.exerciseEntries;
+    } catch (error) {
+        notifyError("Failed to load workout for editing.");
+    }
 }
 
 function removeExercise(index: number): void {
@@ -249,6 +276,7 @@ async function submitWorkout(): Promise<void> {
             return;
         }
     }
+    // Create the workout payload. Note: We always use the current timestamp for simplicity.
     const workout: Workout = {
         date: Timestamp.now(),
         exerciseEntries: exerciseEntries.value,
@@ -256,6 +284,7 @@ async function submitWorkout(): Promise<void> {
         overallNotes: overallNotes.value,
         userId: auth.currentUser.uid,
     };
+
     try {
         const isValid = exerciseEntries.value.every(
             (entry) =>
@@ -270,9 +299,17 @@ async function submitWorkout(): Promise<void> {
             return;
         }
 
-        const workoutId = await addWorkout(workout);
-        notify("Workout logged successfully!");
-        await router.replace({ name: "WorkoutDetail", params: { id: workoutId } });
+        if (isEditing.value && workoutId) {
+            // Update existing workout
+            await updateWorkout(workoutId, workout);
+            notify("Workout updated successfully!");
+            await router.replace({ name: "WorkoutDetail", params: { id: workoutId } });
+        } else {
+            // Create new workout
+            const newWorkoutId = await addWorkout(workout);
+            notify("Workout logged successfully!");
+            await router.replace({ name: "WorkoutDetail", params: { id: newWorkoutId } });
+        }
     } catch (error) {
         notifyError(error);
     } finally {

@@ -35,6 +35,12 @@ const routes = [
         path: "/workout/new",
     },
     {
+        component: PageWorkoutLogger,
+        meta: { requiresAuth: true },
+        name: "WorkoutEdit",
+        path: "/workout/:id/edit",
+    },
+    {
         component: PageProfile,
         meta: { requiresAuth: true },
         name: "Profile",

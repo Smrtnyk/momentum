@@ -8,6 +8,7 @@ import {
     getDoc,
     getDocs,
     query,
+    updateDoc,
     where,
 } from "firebase/firestore";
 
@@ -76,4 +77,9 @@ export async function getWorkouts(userId?: string): Promise<WorkoutWithId[]> {
     return snapshot.docs.map(function (document) {
         return { id: document.id, ...document.data() } as WorkoutWithId;
     });
+}
+
+export async function updateWorkout(id: string, workout: Workout): Promise<void> {
+    const workoutRef = doc(firestore, "workouts", id);
+    await updateDoc(workoutRef, { ...workout });
 }

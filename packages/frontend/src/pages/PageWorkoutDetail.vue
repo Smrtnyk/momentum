@@ -1,10 +1,14 @@
 <template>
     <v-container fluid class="pa-4">
         <div v-if="workout">
-            <!-- Workout Card with Delete Button -->
             <v-card outlined class="mb-4">
                 <v-card-title class="d-flex align-center">
                     <div class="flex-grow-1 text-h5">{{ workout.name }}</div>
+                    <!-- Edit Button -->
+                    <v-btn icon color="primary" @click="handleEditWorkout" title="Edit Workout">
+                        <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                    <!-- Delete Button -->
                     <v-btn icon color="error" @click="confirmDelete = true" title="Delete Workout">
                         <v-icon>mdi-trash-can</v-icon>
                     </v-btn>
@@ -42,10 +46,9 @@
             </div>
         </div>
         <div v-else>
-            <v-alert type="error" color="error"> Workout not found. </v-alert>
+            <v-alert type="error" color="error">Workout not found.</v-alert>
         </div>
 
-        <!-- Delete Confirmation Dialog -->
         <v-dialog v-model="confirmDelete" max-width="500">
             <v-card>
                 <v-card-title class="text-h6">Confirm Delete</v-card-title>
@@ -116,5 +119,12 @@ async function handleDeleteWorkout(): Promise<void> {
     } finally {
         confirmDelete.value = false;
     }
+}
+
+function handleEditWorkout(): void {
+    if (!workout.value) {
+        return;
+    }
+    router.push({ name: "WorkoutEdit", params: { id: workout.value.id } });
 }
 </script>

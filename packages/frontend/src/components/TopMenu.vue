@@ -5,9 +5,16 @@
         </v-btn>
 
         <v-spacer></v-spacer>
-        <v-btn to="/dashboard">Home</v-btn>
-        <v-btn to="/profile">Profile</v-btn>
-        <v-btn @click="handleLogout" color="error">Logout</v-btn>
+
+        <v-btn to="/dashboard" icon>
+            <v-icon>mdi-home</v-icon>
+        </v-btn>
+        <v-btn to="/profile" icon>
+            <v-icon>mdi-account</v-icon>
+        </v-btn>
+        <v-btn @click="handleLogout" icon color="error">
+            <v-icon>mdi-logout</v-icon>
+        </v-btn>
     </v-app-bar>
 </template>
 

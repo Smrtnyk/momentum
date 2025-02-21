@@ -115,7 +115,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { useAsyncState } from "@vueuse/core";
+import { computed, ref, watch } from "vue";
 
 import type { UserProfile } from "../services/user";
 
@@ -126,7 +127,21 @@ import { getUserProfile, updateUserProfile } from "../services/user";
 const defaultAvatar = "https://placehold.co/150x150.png";
 const genderOptions = ["Male", "Female"];
 
-const profile = ref<null | UserProfile>(null);
+const { error, state: profile } = useAsyncState<null | UserProfile>(async () => {
+    if (!auth.currentUser) return null;
+    try {
+        return await getUserProfile(auth.currentUser.uid);
+    } catch (err) {
+        return null;
+    }
+}, null);
+
+watch(error, function (err) {
+    if (err) {
+        notifyError(err);
+    }
+});
+
 const editDialog = ref(false);
 const form = ref();
 const formValid = ref(false);
@@ -146,17 +161,6 @@ const editedProfile = ref<UserProfile>({
 const rules = {
     required: (value: unknown) => Boolean(value) || "Required.",
 };
-
-onMounted(async () => {
-    if (!auth.currentUser) {
-        return;
-    }
-    try {
-        profile.value = await getUserProfile(auth.currentUser.uid);
-    } catch (error) {
-        profile.value = null;
-    }
-});
 
 function openEditDialog(): void {
     if (profile.value) {
@@ -178,17 +182,15 @@ function openEditDialog(): void {
 }
 
 async function saveProfile(): Promise<void> {
-    if (!auth.currentUser) {
-        return;
-    }
+    if (!auth.currentUser) return;
 
     try {
         await updateUserProfile(auth.currentUser.uid, editedProfile.value);
         notify("Profile saved successfully!");
         profile.value = { ...editedProfile.value };
         editDialog.value = false;
-    } catch (error) {
-        notifyError("Failed to save profile.");
+    } catch (e) {
+        notifyError(e);
     }
 }
 

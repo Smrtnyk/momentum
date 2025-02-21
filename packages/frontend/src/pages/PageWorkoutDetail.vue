@@ -9,7 +9,7 @@
                         <v-icon>mdi-pencil</v-icon>
                     </v-btn>
                     <!-- Delete Button -->
-                    <v-btn icon color="error" @click="confirmDelete = true" title="Delete Workout">
+                    <v-btn icon color="error" @click="handleDeleteWorkout" title="Delete Workout">
                         <v-icon>mdi-trash-can</v-icon>
                     </v-btn>
                 </v-card-title>
@@ -45,20 +45,6 @@
         <div v-else>
             <v-alert type="error" color="error">Workout not found.</v-alert>
         </div>
-
-        <v-dialog v-model="confirmDelete" max-width="500">
-            <v-card>
-                <v-card-title class="text-h6">Confirm Delete</v-card-title>
-                <v-card-text>
-                    Are you sure you want to delete this workout? This action cannot be undone.
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer />
-                    <v-btn @click="confirmDelete = false">Cancel</v-btn>
-                    <v-btn color="error" @click="handleDeleteWorkout">Delete</v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
     </v-container>
 </template>
 
@@ -71,6 +57,7 @@ import { useDate } from "vuetify";
 import type { Exercise } from "../data/excercises";
 import type { WorkoutWithId } from "../services/workout";
 
+import { useGlobalConfirm } from "../composables/useConfirmDialog";
 import { notify, notifyError } from "../composables/useNotify";
 import { getExercises } from "../data/excercises";
 import { deleteWorkout as deleteWorkoutService, getWorkoutById } from "../services/workout";
@@ -91,7 +78,7 @@ watch(error, function (err) {
         notifyError(err);
     }
 });
-
+const { openConfirm } = useGlobalConfirm();
 const dateAdapter = useDate();
 const formattedDate = computed(() => {
     if (!workout.value) return "";
@@ -109,6 +96,16 @@ function getExerciseName(id: string): string | undefined {
 
 async function handleDeleteWorkout(): Promise<void> {
     if (!workout.value) return;
+
+    const confirmed = await openConfirm({
+        message: "Are you sure you want to delete this workout? This action cannot be undone.",
+        title: "Confirm Delete",
+    });
+
+    if (!confirmed) {
+        return;
+    }
+
     try {
         await deleteWorkoutService(workout.value.id);
         notify("Workout deleted successfully!");

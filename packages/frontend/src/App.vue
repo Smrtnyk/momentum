@@ -7,6 +7,7 @@
 
         <GlobalSnackbar />
         <GenericDialog />
+        <GlobalConfirmDialog />
     </v-app>
 </template>
 
@@ -18,6 +19,7 @@ import { ref } from "vue";
 
 import TopMenu from "./components/TopMenu.vue";
 import GenericDialog from "./components/ui/GenericDialog.vue";
+import GlobalConfirmDialog from "./components/ui/GlobalConfirmDialog.vue";
 import GlobalSnackbar from "./components/ui/GlobalSnackbar.vue";
 import { initializeFirebase } from "./firebase";
 

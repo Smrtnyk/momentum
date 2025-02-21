@@ -1,32 +1,33 @@
 {
-  "name": "momentum",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
-    "start:emulators": "firebase emulators:start --import=./local-db --export-on-exit=./local-db"
-  },
-  "devDependencies": {
-    "@eslint/eslintrc": "3.2.0",
-    "@eslint/js": "9.20.0",
-    "@regru/eslint-plugin-prefer-early-return": "1.0.0",
-    "eslint": "9.20.1",
-    "eslint-config-prettier": "10.0.1",
-    "eslint-import-resolver-typescript": "3.8.2",
-    "eslint-plugin-import-x": "4.6.1",
-    "eslint-plugin-perfectionist": "4.9.0",
-    "eslint-plugin-prettier": "5.2.3",
-    "eslint-plugin-promise": "7.2.1",
-    "eslint-plugin-quasar": "1.1.0",
-    "eslint-plugin-unicorn": "57.0.0",
-    "eslint-plugin-vue": "9.32.0",
-    "firebase-tools": "13.31.1",
-    "globals": "15.15.0",
-    "prettier": "3.5.1",
-    "typescript": "5.8.1-rc",
-    "typescript-eslint": "8.24.1",
-    "vue-eslint-parser": "9.4.3"
-  }
+    "name": "momentum",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "lint": "eslint .",
+        "lint:fix": "eslint --fix .",
+        "start:emulators": "firebase emulators:start --import=./local-db --export-on-exit=./local-db",
+        "deploy:hosting": "firebase deploy --only hosting"
+    },
+    "devDependencies": {
+        "@eslint/eslintrc": "3.2.0",
+        "@eslint/js": "9.20.0",
+        "@regru/eslint-plugin-prefer-early-return": "1.0.0",
+        "eslint": "9.20.1",
+        "eslint-config-prettier": "10.0.1",
+        "eslint-import-resolver-typescript": "3.8.3",
+        "eslint-plugin-import-x": "4.6.1",
+        "eslint-plugin-perfectionist": "4.9.0",
+        "eslint-plugin-prettier": "5.2.3",
+        "eslint-plugin-promise": "7.2.1",
+        "eslint-plugin-quasar": "1.1.0",
+        "eslint-plugin-unicorn": "57.0.0",
+        "eslint-plugin-vue": "9.32.0",
+        "firebase-tools": "13.31.2",
+        "globals": "16.0.0",
+        "prettier": "3.5.1",
+        "typescript": "5.8.1-rc",
+        "typescript-eslint": "8.24.1",
+        "vue-eslint-parser": "9.4.3"
+    }
 }

@@ -17,7 +17,6 @@ export function useGlobalConfirm() {
     async function openConfirm(options: ConfirmOptions): Promise<boolean> {
         confirmState.title = options.title;
         confirmState.message = options.message;
-        // reveal() returns a promise with { data, isCanceled }
         const { data, isCanceled } = await reveal();
         return !isCanceled && data === true;
     }

@@ -24,9 +24,10 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 
-import { notifyError } from "../composables/useNotify";
 import { loginWithGoogle } from "../services/auth";
+import { useGlobalStore } from "../stores/global";
 
+const globalStore = useGlobalStore();
 const router = useRouter();
 
 async function handleGoogleLogin(): Promise<void> {
@@ -34,7 +35,7 @@ async function handleGoogleLogin(): Promise<void> {
         await loginWithGoogle();
         await router.push("/home");
     } catch (error) {
-        notifyError(error);
+        globalStore.notifyError(error);
     }
 }
 </script>

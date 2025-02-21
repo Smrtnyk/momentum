@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid class="pa-4">
+    <v-container fluid class="pa-0">
         <v-btn-toggle v-model="view" mandatory color="primary" class="mb-4">
             <v-btn value="list" variant="tonal">
                 <v-icon start icon="mdi-format-list-bulleted"></v-icon>
@@ -42,10 +42,11 @@ import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import WorkoutListItem from "../components/WorkoutListItem.vue";
-import { notifyError } from "../composables/useNotify";
 import { auth } from "../firebase";
 import { getWorkouts, type WorkoutWithId } from "../services/workout";
+import { useGlobalStore } from "../stores/global";
 
+const globalStore = useGlobalStore();
 const router = useRouter();
 const view = ref<"calendar" | "list">("list");
 
@@ -58,7 +59,7 @@ const { error, state: workouts } = useAsyncState<WorkoutWithId[]>(() => {
 
 watch(error, function (err) {
     if (err) {
-        notifyError(err);
+        globalStore.notifyError(err);
     }
 });
 

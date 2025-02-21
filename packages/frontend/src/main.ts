@@ -1,12 +1,13 @@
 import type { ComponentPublicInstance } from "vue";
 
+import { createPinia } from "pinia";
 import { createApp } from "vue";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
-import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "@mdi/font/css/materialdesignicons.css";
 import "vuetify/styles";
+import { aliases, mdi } from "vuetify/iconsets/mdi";
 import { VCalendar } from "vuetify/labs/VCalendar";
 import { VDateInput } from "vuetify/labs/VDateInput";
 import { VNumberInput } from "vuetify/labs/VNumberInput";
@@ -16,6 +17,8 @@ import { initializeFirebase } from "./firebase";
 import router from "./router";
 
 const { auth } = initializeFirebase();
+
+const pinia = createPinia();
 
 function createVuetifyInstance(): ReturnType<typeof createVuetify> {
     return createVuetify({
@@ -63,6 +66,6 @@ let app: ComponentPublicInstance | null = null;
 auth.onAuthStateChanged(function () {
     if (!app) {
         const vuetify = createVuetifyInstance();
-        app = createApp(App).use(router).use(vuetify).mount("#app");
+        app = createApp(App).use(router).use(pinia).use(vuetify).mount("#app");
     }
 });

@@ -58,12 +58,13 @@ import type { Exercise } from "../data/excercises";
 import type { WorkoutWithId } from "../services/workout";
 
 import { useGlobalConfirm } from "../composables/useConfirmDialog";
-import { notify, notifyError } from "../composables/useNotify";
 import { getExercises } from "../data/excercises";
 import { deleteWorkout as deleteWorkoutService, getWorkoutById } from "../services/workout";
+import { useGlobalStore } from "../stores/global";
 
 const route = useRoute();
 const router = useRouter();
+const globalStore = useGlobalStore();
 const workoutId = route.params.id as string;
 
 const confirmDelete = ref(false);
@@ -75,7 +76,7 @@ const { error, state: workout } = useAsyncState<null | WorkoutWithId>(
 
 watch(error, function (err) {
     if (err) {
-        notifyError(err);
+        globalStore.notifyError(err);
     }
 });
 const { openConfirm } = useGlobalConfirm();
@@ -108,10 +109,10 @@ async function handleDeleteWorkout(): Promise<void> {
 
     try {
         await deleteWorkoutService(workout.value.id);
-        notify("Workout deleted successfully!");
+        globalStore.notify("Workout deleted successfully!");
         await router.replace({ name: "Home" });
     } catch (e) {
-        notifyError(e);
+        globalStore.notifyError(e);
     } finally {
         confirmDelete.value = false;
     }

@@ -73,9 +73,9 @@ import { computed, ref } from "vue";
 
 import type { UserProfile } from "../services/user";
 
-import { notify, notifyError } from "../composables/useNotify";
 import { auth } from "../firebase";
 import { updateUserProfile } from "../services/user";
+import { useGlobalStore } from "../stores/global";
 
 const props = defineProps<{
     initialProfile: null | UserProfile;
@@ -86,12 +86,12 @@ const emit = defineEmits<{
     (e: "close"): void;
 }>();
 
+const globalStore = useGlobalStore();
 const genderOptions = ["Male", "Female"];
 const rules = {
     required: (value: unknown) => Boolean(value) || "Required.",
 };
 
-// Initialize local state. If an initial profile exists, copy it; otherwise use defaults.
 const editedProfile = ref<UserProfile>({
     bio: "",
     birthDate: "",
@@ -132,11 +132,11 @@ async function saveProfile(): Promise<void> {
     if (!auth.currentUser) return;
     try {
         await updateUserProfile(auth.currentUser.uid, editedProfile.value);
-        notify("Profile saved successfully!");
+        globalStore.notify("Profile saved successfully!");
         emit("profileSaved", { ...editedProfile.value });
         emit("close");
     } catch (error) {
-        notifyError("Failed to save profile.");
+        globalStore.notifyError("Failed to save profile.");
     }
 }
 </script>

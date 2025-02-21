@@ -48,10 +48,11 @@ import type { UserProfile } from "../services/user";
 
 import EditProfileForm from "../components/EditProfileForm.vue";
 import { useDialog } from "../composables/useDialog";
-import { notifyError } from "../composables/useNotify";
 import { auth } from "../firebase";
 import { getUserProfile } from "../services/user";
+import { useGlobalStore } from "../stores/global";
 
+const globalStore = useGlobalStore();
 const defaultAvatar = "https://placehold.co/150x150.png";
 
 const { error, state: profile } = useAsyncState<null | UserProfile>(async () => {
@@ -65,7 +66,7 @@ const { error, state: profile } = useAsyncState<null | UserProfile>(async () => 
 
 watch(error, (err) => {
     if (err) {
-        notifyError(err);
+        globalStore.notifyError(err);
     }
 });
 

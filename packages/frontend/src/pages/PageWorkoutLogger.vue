@@ -186,14 +186,15 @@ import { useDate } from "vuetify";
 import type { Exercise } from "../data/excercises";
 import type { ExerciseEntry, Workout } from "../services/workout";
 
-import { notify, notifyError } from "../composables/useNotify";
 import { getExercises } from "../data/excercises";
 import { auth } from "../firebase";
 import { addWorkout, getWorkoutById, updateWorkout } from "../services/workout";
+import { useGlobalStore } from "../stores/global";
 
 const exercises: Exercise[] = getExercises();
 const router = useRouter();
 const route = useRoute();
+const globalStore = useGlobalStore();
 
 // If there's an ID parameter, we're editing
 const workoutId = route.params.id as string | undefined;
@@ -237,7 +238,6 @@ function addSet(exerciseIndex: number): void {
     exerciseEntries.value[exerciseIndex].sets.push({ reps: 0, weight: 0 });
 }
 
-// Load the workout details if editing
 async function loadWorkout(id: string): Promise<void> {
     try {
         const workoutData = await getWorkoutById(id);
@@ -247,7 +247,7 @@ async function loadWorkout(id: string): Promise<void> {
         workoutDate.value = workoutData.date.toDate();
         exerciseEntries.value = workoutData.exerciseEntries;
     } catch (error) {
-        notifyError("Failed to load workout for editing.");
+        globalStore.notifyError("Failed to load workout for editing.");
     }
 }
 
@@ -266,17 +266,16 @@ function removeSet(exerciseIndex: number, setIndex: number): void {
 
 async function submitWorkout(): Promise<void> {
     if (!auth.currentUser) {
-        notifyError("You must be logged in to log a workout.");
+        globalStore.notifyError("You must be logged in to log a workout.");
         return;
     }
 
     for (const entry of exerciseEntries.value) {
         if (!entry.exerciseId) {
-            notifyError("Please select an exercise for all entries.");
+            globalStore.notifyError("Please select an exercise for all entries.");
             return;
         }
     }
-    // Create the workout payload. Note: We always use the current timestamp for simplicity.
     const workout: Workout = {
         date: Timestamp.now(),
         exerciseEntries: exerciseEntries.value,
@@ -295,23 +294,21 @@ async function submitWorkout(): Promise<void> {
         );
 
         if (!isValid) {
-            notifyError("Please fill all required fields correctly");
+            globalStore.notifyError("Please fill all required fields correctly");
             return;
         }
 
         if (isEditing.value && workoutId) {
-            // Update existing workout
             await updateWorkout(workoutId, workout);
-            notify("Workout updated successfully!");
+            globalStore.notify("Workout updated successfully!");
             await router.replace({ name: "WorkoutDetail", params: { id: workoutId } });
         } else {
-            // Create new workout
             const newWorkoutId = await addWorkout(workout);
-            notify("Workout logged successfully!");
+            globalStore.notify("Workout logged successfully!");
             await router.replace({ name: "WorkoutDetail", params: { id: newWorkoutId } });
         }
     } catch (error) {
-        notifyError(error);
+        globalStore.notifyError(error);
     } finally {
         isSubmitting.value = false;
     }

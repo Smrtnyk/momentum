@@ -1,16 +1,18 @@
 <template>
     <v-snackbar
-        v-model="notificationState.show"
-        :color="notificationState.color"
-        :timeout="notificationState.timeout"
+        v-model="globalStore.notification.show"
+        :color="globalStore.notification.color"
+        :timeout="globalStore.notification.timeout"
         top
         right
         elevation="2"
     >
-        {{ notificationState.message }}
+        {{ globalStore.notification.message }}
     </v-snackbar>
 </template>
 
 <script setup lang="ts">
-import { notificationState } from "../../composables/useNotify";
+import { useGlobalStore } from "../../stores/global";
+
+const globalStore = useGlobalStore();
 </script>

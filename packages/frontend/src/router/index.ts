@@ -6,6 +6,7 @@ import PageHome from "../pages/PageHome.vue";
 import PageProfile from "../pages/PageProfile.vue";
 import PageWorkoutDetail from "../pages/PageWorkoutDetail.vue";
 import PageWorkoutLogger from "../pages/PageWorkoutLogger.vue";
+import { useGlobalStore } from "../stores/global";
 
 const { auth } = initializeFirebase();
 
@@ -61,7 +62,10 @@ const router = createRouter({
     routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+    const globalStore = useGlobalStore();
+    globalStore.setLoading(true);
+
     const currentUser = auth.currentUser;
     if (to.meta.requiresAuth && !currentUser) {
         next("/auth");
@@ -70,6 +74,11 @@ router.beforeEach((to, from, next) => {
     } else {
         next();
     }
+});
+
+router.afterEach(() => {
+    const globalStore = useGlobalStore();
+    globalStore.setLoading(false);
 });
 
 export default router;

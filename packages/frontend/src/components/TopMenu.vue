@@ -4,7 +4,6 @@
             <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
 
-        <v-toolbar-title>Momentum</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-btn to="/dashboard">Home</v-btn>
         <v-btn to="/profile">Profile</v-btn>

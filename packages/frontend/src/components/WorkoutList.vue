@@ -4,14 +4,18 @@
             <v-btn value="list" variant="tonal">
                 <v-icon start icon="mdi-format-list-bulleted"></v-icon>
             </v-btn>
-
             <v-btn value="calendar" variant="tonal">
                 <v-icon start icon="mdi-calendar-month"></v-icon>
             </v-btn>
         </v-btn-toggle>
 
         <div v-if="view === 'list'">
-            <v-list two-line>
+            <!-- If no workouts, show a message -->
+            <div v-if="workouts.length === 0">
+                <v-alert type="info" border="end" prominent> No workouts available. </v-alert>
+            </div>
+            <!-- Otherwise show the workouts list -->
+            <v-list v-else two-line>
                 <WorkoutListItem
                     v-for="workout in workouts"
                     :key="workout.id"
@@ -27,6 +31,9 @@
                 @click:event="onEventClick"
                 view-mode="month"
             ></v-calendar>
+            <div v-if="workouts.length === 0" class="text-center mt-4">
+                <v-alert type="info" border="end" prominent> No workouts available. </v-alert>
+            </div>
         </div>
     </v-container>
 </template>

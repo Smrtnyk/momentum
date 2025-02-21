@@ -33,12 +33,9 @@
                     <v-card-text>
                         <v-list dense>
                             <v-list-item v-for="(set, sIdx) in entry.sets" :key="sIdx">
-                                <v-list-item-content>
-                                    <v-list-item-title>
-                                        Set {{ sIdx + 1 }}: {{ set.reps }} reps @
-                                        {{ set.weight }} kg
-                                    </v-list-item-title>
-                                </v-list-item-content>
+                                <v-list-item-title>
+                                    Set {{ sIdx + 1 }}: {{ set.reps }} reps @ {{ set.weight }} kg
+                                </v-list-item-title>
                             </v-list-item>
                         </v-list>
                     </v-card-text>

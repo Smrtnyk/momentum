@@ -66,7 +66,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { useAsyncState } from "@vueuse/core";
+import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDate } from "vuetify";
 
@@ -81,15 +82,16 @@ const route = useRoute();
 const router = useRouter();
 const workoutId = route.params.id as string;
 
-const workout = ref<null | WorkoutWithId>(null);
 const confirmDelete = ref(false);
 
-onMounted(async () => {
-    try {
-        workout.value = await getWorkoutById(workoutId);
-    } catch (error) {
-        notifyError(error);
-        workout.value = null;
+const { error, state: workout } = useAsyncState<null | WorkoutWithId>(
+    () => getWorkoutById(workoutId),
+    null,
+);
+
+watch(error, function (err) {
+    if (err) {
+        notifyError(err);
     }
 });
 
@@ -114,8 +116,8 @@ async function handleDeleteWorkout(): Promise<void> {
         await deleteWorkoutService(workout.value.id);
         notify("Workout deleted successfully!");
         await router.replace({ name: "Dashboard" });
-    } catch (error) {
-        notifyError(error);
+    } catch (e) {
+        notifyError(e);
     } finally {
         confirmDelete.value = false;
     }

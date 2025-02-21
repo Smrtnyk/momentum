@@ -45,7 +45,6 @@ async function handleGoogleLogin(): Promise<void> {
     min-height: 100vh;
     display: flex;
     align-items: center;
-    background: linear-gradient(135deg, #232e36, #212425);
 }
 
 .auth-card {

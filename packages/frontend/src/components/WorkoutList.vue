@@ -10,11 +10,9 @@
         </v-btn-toggle>
 
         <div v-if="view === 'list'">
-            <!-- If no workouts, show a message -->
             <div v-if="workouts.length === 0">
-                <v-alert type="info" border="end" prominent> No workouts available. </v-alert>
+                <v-alert type="info" border="start" prominent> No workouts available. </v-alert>
             </div>
-            <!-- Otherwise show the workouts list -->
             <v-list v-else two-line>
                 <WorkoutListItem
                     v-for="workout in workouts"
@@ -26,20 +24,21 @@
         </div>
 
         <div v-else>
+            <div v-if="workouts.length === 0" class="text-center mt-4">
+                <v-alert type="info" border="start" prominent> No workouts available. </v-alert>
+            </div>
             <v-calendar
                 :events="calendarEvents"
                 @click:event="onEventClick"
                 view-mode="month"
             ></v-calendar>
-            <div v-if="workouts.length === 0" class="text-center mt-4">
-                <v-alert type="info" border="end" prominent> No workouts available. </v-alert>
-            </div>
         </div>
     </v-container>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { useAsyncState } from "@vueuse/core";
+import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import WorkoutListItem from "../components/WorkoutListItem.vue";
@@ -47,22 +46,20 @@ import { notifyError } from "../composables/useNotify";
 import { auth } from "../firebase";
 import { getWorkouts, type WorkoutWithId } from "../services/workout";
 
-const workouts = ref<WorkoutWithId[]>([]);
 const router = useRouter();
 const view = ref<"calendar" | "list">("list");
 
-async function fetchWorkouts(): Promise<void> {
+const { error, state: workouts } = useAsyncState<WorkoutWithId[]>(() => {
     if (auth.currentUser) {
-        try {
-            workouts.value = await getWorkouts(auth.currentUser.uid);
-        } catch (error) {
-            notifyError(error);
-        }
+        return getWorkouts(auth.currentUser.uid);
     }
-}
+    return Promise.resolve([]);
+}, []);
 
-onMounted(() => {
-    fetchWorkouts();
+watch(error, function (err) {
+    if (err) {
+        notifyError(err);
+    }
 });
 
 function viewWorkout(workout: WorkoutWithId): void {

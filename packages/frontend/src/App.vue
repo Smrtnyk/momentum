@@ -16,9 +16,9 @@ import type { User } from "firebase/auth";
 import { onAuthStateChanged } from "firebase/auth";
 import { ref } from "vue";
 
-import GlobalSnackbar from "./components/GlobalSnackbar.vue";
 import TopMenu from "./components/TopMenu.vue";
 import GenericDialog from "./components/ui/GenericDialog.vue";
+import GlobalSnackbar from "./components/ui/GlobalSnackbar.vue";
 import { initializeFirebase } from "./firebase";
 
 const { auth } = initializeFirebase();

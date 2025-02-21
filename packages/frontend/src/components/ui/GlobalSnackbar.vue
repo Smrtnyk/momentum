@@ -12,5 +12,5 @@
 </template>
 
 <script setup lang="ts">
-import { notificationState } from "../composables/useNotify";
+import { notificationState } from "../../composables/useNotify";
 </script>

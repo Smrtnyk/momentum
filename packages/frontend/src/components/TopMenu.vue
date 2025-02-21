@@ -6,7 +6,7 @@
 
         <v-spacer></v-spacer>
 
-        <v-btn to="/dashboard" icon>
+        <v-btn to="/home" icon>
             <v-icon>mdi-home</v-icon>
         </v-btn>
         <v-btn to="/profile" icon>
@@ -27,7 +27,7 @@ import { logoutUser } from "../services/auth";
 const router = useRouter();
 const route = useRoute();
 
-const mainRoutes = ["Dashboard", "Auth"];
+const mainRoutes = ["Home", "Auth"];
 
 const showBackButton = computed(() => {
     return !mainRoutes.includes(route.name as string);

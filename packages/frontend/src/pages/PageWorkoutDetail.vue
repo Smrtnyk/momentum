@@ -112,7 +112,7 @@ async function handleDeleteWorkout(): Promise<void> {
     try {
         await deleteWorkoutService(workout.value.id);
         notify("Workout deleted successfully!");
-        await router.replace({ name: "Dashboard" });
+        await router.replace({ name: "Home" });
     } catch (e) {
         notifyError(e);
     } finally {

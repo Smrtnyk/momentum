@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import { initializeFirebase } from "../firebase";
 import PageAuth from "../pages/PageAuth.vue";
-import PageDashboard from "../pages/PageDashboard.vue";
+import PageHome from "../pages/PageHome.vue";
 import PageProfile from "../pages/PageProfile.vue";
 import PageWorkoutDetail from "../pages/PageWorkoutDetail.vue";
 import PageWorkoutLogger from "../pages/PageWorkoutLogger.vue";
@@ -17,10 +17,10 @@ const routes = [
         path: "/auth",
     },
     {
-        component: PageDashboard,
+        component: PageHome,
         meta: { requiresAuth: true },
-        name: "Dashboard",
-        path: "/dashboard",
+        name: "Home",
+        path: "/home",
     },
     {
         component: PageWorkoutDetail,
@@ -48,7 +48,7 @@ const routes = [
     },
     {
         path: "/",
-        redirect: "/dashboard",
+        redirect: "/home",
     },
     {
         path: "/:catchAll(.*)",
@@ -66,7 +66,7 @@ router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth && !currentUser) {
         next("/auth");
     } else if (to.meta.guest && currentUser) {
-        next("/dashboard");
+        next("/home");
     } else {
         next();
     }

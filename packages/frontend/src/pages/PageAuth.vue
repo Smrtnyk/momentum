@@ -32,7 +32,7 @@ const router = useRouter();
 async function handleGoogleLogin(): Promise<void> {
     try {
         await loginWithGoogle();
-        router.push("/dashboard");
+        await router.push("/home");
     } catch (error) {
         notifyError(error);
     }

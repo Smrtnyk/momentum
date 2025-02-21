@@ -1,14 +1,12 @@
 <template>
     <v-list-item @click="handleClick" class="workout-list-item">
-        <v-list-item-content>
-            <v-list-item-title class="text-h6">{{ workout.name }}</v-list-item-title>
-            <v-list-item-subtitle>
-                {{ formattedDate }} • {{ workout.exerciseEntries.length }} exercises
-            </v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-icon>
+        <v-list-item-title class="text-h6">{{ workout.name }}</v-list-item-title>
+        <v-list-item-subtitle>
+            {{ formattedDate }} • {{ workout.exerciseEntries.length }} exercises
+        </v-list-item-subtitle>
+        <v-list-item-action>
             <v-icon>mdi-chevron-right</v-icon>
-        </v-list-item-icon>
+        </v-list-item-action>
     </v-list-item>
 </template>
 

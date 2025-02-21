@@ -61,21 +61,11 @@
                         class="mb-4"
                     />
 
-                    <v-textarea
-                        v-model="entry.exerciseNotes"
-                        variant="outlined"
-                        label="Exercise Notes"
-                        density="comfortable"
-                        rows="2"
-                        auto-grow
-                        class="mb-4"
-                    />
-
                     <v-divider class="my-4" />
 
                     <div class="text-subtitle-1 mb-1">Sets</div>
 
-                    <transition-group name="list" tag="div">
+                    <transition-group name="list" tag="div" class="mb-6">
                         <v-row v-for="(set, sIdx) in entry.sets" :key="sIdx" align="center">
                             <v-col cols="12" class="pb-1">
                                 <div class="text-caption text-medium-emphasis">
@@ -88,9 +78,10 @@
                                     variant="outlined"
                                     control-variant="split"
                                     label="Reps"
-                                    density="comfortable"
+                                    density="compact"
                                     :rules="[positiveNumber]"
                                     :min="1"
+                                    hide-details
                                 />
                             </v-col>
                             <v-col cols="5" class="pa-1 pb-0">
@@ -102,8 +93,9 @@
                                     :precision="1"
                                     control-variant="split"
                                     label="Weight (kg)"
-                                    density="comfortable"
+                                    density="compact"
                                     :rules="[positiveNumber]"
+                                    hide-details
                                 />
                             </v-col>
                             <v-col cols="2" class="text-center pa-0">
@@ -118,6 +110,18 @@
                             </v-col>
                         </v-row>
                     </transition-group>
+
+                    <v-divider class="my-3" />
+
+                    <v-textarea
+                        v-model="entry.exerciseNotes"
+                        variant="outlined"
+                        label="Exercise Notes"
+                        density="comfortable"
+                        rows="2"
+                        auto-grow
+                        class="mb-4"
+                    />
 
                     <v-btn
                         color="secondary"

@@ -77,12 +77,12 @@
 
                     <transition-group name="list" tag="div">
                         <v-row v-for="(set, sIdx) in entry.sets" :key="sIdx" align="center">
-                            <v-col cols="12" class="pb-0">
+                            <v-col cols="12" class="pb-1">
                                 <div class="text-caption text-medium-emphasis">
                                     Set {{ sIdx + 1 }}
                                 </div>
                             </v-col>
-                            <v-col cols="5" class="pb-0">
+                            <v-col cols="5" class="pa-1 pb-0">
                                 <v-number-input
                                     v-model.number="set.reps"
                                     variant="outlined"
@@ -90,12 +90,16 @@
                                     label="Reps"
                                     density="comfortable"
                                     :rules="[positiveNumber]"
+                                    :min="1"
                                 />
                             </v-col>
-                            <v-col cols="5" class="pb-0">
+                            <v-col cols="5" class="pa-1 pb-0">
                                 <v-number-input
                                     v-model.number="set.weight"
                                     variant="outlined"
+                                    :step="0.5"
+                                    :min="0"
+                                    :precision="1"
                                     control-variant="split"
                                     label="Weight (kg)"
                                     density="comfortable"

@@ -73,21 +73,16 @@
 
                     <v-divider class="my-4" />
 
-                    <div class="text-subtitle-1 mb-2">Sets</div>
+                    <div class="text-subtitle-1 mb-1">Sets</div>
 
                     <transition-group name="list" tag="div">
-                        <v-row
-                            v-for="(set, sIdx) in entry.sets"
-                            :key="sIdx"
-                            align="center"
-                            class="mb-2"
-                        >
-                            <v-col cols="12" sm="3">
+                        <v-row v-for="(set, sIdx) in entry.sets" :key="sIdx" align="center">
+                            <v-col cols="12" class="pb-0">
                                 <div class="text-caption text-medium-emphasis">
                                     Set {{ sIdx + 1 }}
                                 </div>
                             </v-col>
-                            <v-col cols="6" sm="3">
+                            <v-col cols="5" class="pb-0">
                                 <v-number-input
                                     v-model.number="set.reps"
                                     variant="outlined"
@@ -97,7 +92,7 @@
                                     :rules="[positiveNumber]"
                                 />
                             </v-col>
-                            <v-col cols="6" sm="3">
+                            <v-col cols="5" class="pb-0">
                                 <v-number-input
                                     v-model.number="set.weight"
                                     variant="outlined"
@@ -107,12 +102,11 @@
                                     :rules="[positiveNumber]"
                                 />
                             </v-col>
-                            <v-col cols="12" sm="3" class="text-right">
+                            <v-col cols="2" class="text-center pa-0">
                                 <v-btn
                                     icon
                                     variant="text"
                                     color="error"
-                                    size="small"
                                     @click="removeSet(idx, sIdx)"
                                 >
                                     <v-icon>mdi-delete</v-icon>

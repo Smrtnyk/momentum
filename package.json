@@ -10,10 +10,10 @@
         "deploy:hosting": "firebase deploy --only hosting"
     },
     "devDependencies": {
-        "@eslint/eslintrc": "3.2.0",
-        "@eslint/js": "9.20.0",
+        "@eslint/eslintrc": "3.3.0",
+        "@eslint/js": "9.21.0",
         "@regru/eslint-plugin-prefer-early-return": "1.0.0",
-        "eslint": "9.20.1",
+        "eslint": "9.21.0",
         "eslint-config-prettier": "10.0.1",
         "eslint-import-resolver-typescript": "3.8.3",
         "eslint-plugin-import-x": "4.6.1",
@@ -25,7 +25,7 @@
         "eslint-plugin-vue": "9.32.0",
         "firebase-tools": "13.31.2",
         "globals": "16.0.0",
-        "prettier": "3.5.1",
+        "prettier": "3.5.2",
         "typescript": "5.8.1-rc",
         "typescript-eslint": "8.24.1",
         "vue-eslint-parser": "9.4.3"

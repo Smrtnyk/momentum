@@ -12,17 +12,12 @@
         <v-btn to="/profile" icon>
             <v-icon>mdi-account</v-icon>
         </v-btn>
-        <v-btn @click="handleLogout" icon color="error">
-            <v-icon>mdi-logout</v-icon>
-        </v-btn>
     </v-app-bar>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-
-import { logoutUser } from "../services/auth";
 
 const router = useRouter();
 const route = useRoute();
@@ -35,10 +30,5 @@ const showBackButton = computed(() => {
 
 function goBack(): void {
     router.back();
-}
-
-async function handleLogout(): Promise<void> {
-    await logoutUser();
-    await router.push("/auth");
 }
 </script>

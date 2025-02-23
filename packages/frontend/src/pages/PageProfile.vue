@@ -33,6 +33,10 @@
                         <v-btn class="mt-4" color="primary" @click="openEditDialog">
                             {{ profile ? "Edit Profile" : "Create Profile" }}
                         </v-btn>
+
+                        <div>
+                            <v-btn class="mt-4" @click="handleLogout" color="error"> Logout </v-btn>
+                        </div>
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -43,16 +47,19 @@
 <script setup lang="ts">
 import { useAsyncState } from "@vueuse/core";
 import { computed, watch } from "vue";
+import { useRouter } from "vue-router";
 
 import type { UserProfile } from "../services/user";
 
 import EditProfileForm from "../components/EditProfileForm.vue";
 import { useDialog } from "../composables/useDialog";
 import { auth } from "../firebase";
+import { logoutUser } from "../services/auth";
 import { getUserProfile } from "../services/user";
 import { useGlobalStore } from "../stores/global";
 
 const globalStore = useGlobalStore();
+const router = useRouter();
 const defaultAvatar = "https://placehold.co/150x150.png";
 
 const { error, state: profile } = useAsyncState<null | UserProfile>(async () => {
@@ -93,6 +100,11 @@ const computedAge = computed(() => {
 });
 
 const { openDialog } = useDialog();
+
+async function handleLogout(): Promise<void> {
+    await logoutUser();
+    await router.push("/auth");
+}
 
 function handleProfileSaved(updatedProfile: UserProfile): void {
     profile.value = { ...updatedProfile };

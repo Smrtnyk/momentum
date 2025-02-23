@@ -4,7 +4,7 @@
             <v-chip
                 v-for="muscle in hitMuscles"
                 :key="muscle.id"
-                class="ma-1"
+                class="mr-1"
                 variant="tonal"
                 size="small"
             >

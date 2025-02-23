@@ -20,6 +20,8 @@ const { auth } = initializeFirebase();
 
 const pinia = createPinia();
 
+const currentLocale = new Intl.DateTimeFormat().resolvedOptions().locale;
+
 function createVuetifyInstance(): ReturnType<typeof createVuetify> {
     return createVuetify({
         components: {
@@ -27,6 +29,11 @@ function createVuetifyInstance(): ReturnType<typeof createVuetify> {
             VCalendar,
             VDateInput,
             VNumberInput,
+        },
+        date: {
+            locale: {
+                en: currentLocale,
+            },
         },
         directives,
         icons: {

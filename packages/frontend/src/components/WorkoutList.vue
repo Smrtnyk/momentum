@@ -11,7 +11,13 @@
 
         <div v-if="view === 'list'">
             <div v-if="workouts.length === 0">
-                <v-alert type="info" border="start" prominent> No workouts available. </v-alert>
+                <v-alert type="info" variant="tonal" class="mt-4" border="start" rounded="lg">
+                    <template #prepend>
+                        <v-icon icon="mdi-information" class="mr-3"></v-icon>
+                    </template>
+                    <h3 class="text-body-1 font-weight-medium mb-2">No workouts found</h3>
+                    <p class="text-caption">Start by creating your first workout routine</p>
+                </v-alert>
             </div>
             <v-list v-else two-line>
                 <WorkoutListItem
@@ -25,7 +31,13 @@
 
         <div v-else>
             <div v-if="workouts.length === 0" class="text-center mt-4">
-                <v-alert type="info" border="start" prominent> No workouts available. </v-alert>
+                <v-alert type="info" variant="tonal" class="mt-4" border="start" rounded="lg">
+                    <template #prepend>
+                        <v-icon icon="mdi-information" class="mr-3"></v-icon>
+                    </template>
+                    <h3 class="text-body-1 font-weight-medium mb-2">No workouts found</h3>
+                    <p class="text-caption">Start by creating your first workout routine</p>
+                </v-alert>
             </div>
             <v-calendar
                 :events="calendarEvents"

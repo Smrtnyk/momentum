@@ -9,13 +9,7 @@
         </v-list-item-title>
 
         <v-list-item-subtitle class="text-caption">
-            <div class="d-flex align-center gap-xs">
-                <v-icon icon="mdi-calendar" size="small"></v-icon>
-                {{ formattedDate }}
-                <v-divider vertical thickness="2" class="mx-2"></v-divider>
-                <v-icon icon="mdi-clock-outline" size="small"></v-icon>
-                {{ formattedDuration }}
-            </div>
+            <WorkoutDateInfo :workout="workout" />
         </v-list-item-subtitle>
 
         <v-list-item-subtitle class="mt-1">
@@ -29,25 +23,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useDate } from "vuetify";
-
 import type { WorkoutWithId } from "../services/workout";
 
+import WorkoutDateInfo from "./WorkoutDateInfo.vue";
 import WorkoutHitMusclesChips from "./WorkoutHitMusclesChips.vue";
 
 const { workout } = defineProps<{ workout: WorkoutWithId }>();
 const emit = defineEmits<(e: "click", workout: WorkoutWithId) => void>();
-
-const dateAdapter = useDate();
-const formattedDate = computed(() => {
-    const date = workout.date.toDate();
-    return dateAdapter.format(date, "fullDate");
-});
-
-const formattedDuration = computed(() => {
-    return `${workout.workoutDurationMinutes} minutes`;
-});
 
 function handleClick(): void {
     emit("click", workout);

@@ -13,17 +13,16 @@
                         <v-icon>mdi-trash-can</v-icon>
                     </v-btn>
                 </v-card-title>
+
                 <v-card-subtitle>
-                    {{ formattedDate }}
-                    <span v-if="workout.workoutDurationMinutes" class="ml-2">
-                        ({{ formatWorkoutDuration(workout.workoutDurationMinutes) }})
-                    </span>
+                    <WorkoutDateInfo :workout="workout" />
                 </v-card-subtitle>
 
                 <v-card-subtitle>
                     <WorkoutHitMusclesChips :workout="workout" />
                 </v-card-subtitle>
-                <v-card-text>
+
+                <v-card-text v-if="workout.overallNotes">
                     <p>{{ workout.overallNotes }}</p>
                 </v-card-text>
             </v-card>
@@ -58,13 +57,13 @@
 
 <script setup lang="ts">
 import { useAsyncState } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { useDate } from "vuetify";
 
 import type { Exercise } from "../data/excercises";
 import type { WorkoutWithId } from "../services/workout";
 
+import WorkoutDateInfo from "../components/WorkoutDateInfo.vue";
 import WorkoutHitMusclesChips from "../components/WorkoutHitMusclesChips.vue";
 import { useGlobalConfirm } from "../composables/useConfirmDialog";
 import { getExercises } from "../data/excercises";
@@ -82,6 +81,7 @@ const { error, state: workout } = useAsyncState<null | WorkoutWithId>(
     () => getWorkoutById(workoutId),
     null,
 );
+const exercisesList: Exercise[] = getExercises();
 
 watch(error, function (err) {
     if (err) {
@@ -89,21 +89,6 @@ watch(error, function (err) {
     }
 });
 const { openConfirm } = useGlobalConfirm();
-const dateAdapter = useDate();
-const formattedDate = computed(() => {
-    if (!workout.value) {
-        return "";
-    }
-    const dateObj = workout.value.date.toDate();
-    return dateAdapter.format(dateObj, "fullDate");
-});
-
-const exercisesList: Exercise[] = getExercises();
-
-function formatWorkoutDuration(durationMinutes?: number): string {
-    if (!durationMinutes || durationMinutes < 0) return "";
-    return `${durationMinutes} minutes`;
-}
 
 function getExerciseName(id: string): string | undefined {
     const exercise = exercisesList.find((exer) => exer.id === id);

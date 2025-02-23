@@ -1,17 +1,15 @@
 <template>
-    <v-card-text v-if="hitMuscles && hitMuscles.length > 0" class="pa-0">
-        <v-chip-group column>
-            <v-chip
-                v-for="muscle in hitMuscles"
-                :key="muscle.id"
-                class="mr-1"
-                variant="tonal"
-                size="small"
-            >
-                {{ muscle.name }}
-            </v-chip>
-        </v-chip-group>
-    </v-card-text>
+    <div v-if="hitMuscles && hitMuscles.length > 0" class="d-flex">
+        <v-chip
+            v-for="muscle in hitMuscles"
+            :key="muscle.id"
+            class="mr-1"
+            variant="tonal"
+            size="small"
+        >
+            {{ muscle.name }}
+        </v-chip>
+    </div>
 </template>
 
 <script setup lang="ts">

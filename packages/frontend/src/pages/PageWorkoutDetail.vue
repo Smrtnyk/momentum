@@ -19,6 +19,10 @@
                         ({{ formatWorkoutDuration(workout.workoutDurationMinutes) }})
                     </span>
                 </v-card-subtitle>
+
+                <v-card-subtitle>
+                    <WorkoutHitMusclesChips :workout="workout" />
+                </v-card-subtitle>
                 <v-card-text>
                     <p>{{ workout.overallNotes }}</p>
                 </v-card-text>
@@ -61,6 +65,7 @@ import { useDate } from "vuetify";
 import type { Exercise } from "../data/excercises";
 import type { WorkoutWithId } from "../services/workout";
 
+import WorkoutHitMusclesChips from "../components/WorkoutHitMusclesChips.vue";
 import { useGlobalConfirm } from "../composables/useConfirmDialog";
 import { getExercises } from "../data/excercises";
 import { deleteWorkout as deleteWorkoutService, getWorkoutById } from "../services/workout";
@@ -86,14 +91,15 @@ watch(error, function (err) {
 const { openConfirm } = useGlobalConfirm();
 const dateAdapter = useDate();
 const formattedDate = computed(() => {
-    if (!workout.value) return "";
-    const dateObj = (workout.value.date as any).toDate
-        ? (workout.value.date as any).toDate()
-        : workout.value.date;
+    if (!workout.value) {
+        return "";
+    }
+    const dateObj = workout.value.date.toDate();
     return dateAdapter.format(dateObj, "fullDate");
 });
 
 const exercisesList: Exercise[] = getExercises();
+
 function formatWorkoutDuration(durationMinutes?: number): string {
     if (!durationMinutes || durationMinutes < 0) return "";
     return `${durationMinutes} minutes`;

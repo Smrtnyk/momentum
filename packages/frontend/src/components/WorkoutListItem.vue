@@ -4,6 +4,11 @@
         <v-list-item-subtitle>
             {{ formattedDate }} • {{ workout.exerciseEntries.length }} exercises
         </v-list-item-subtitle>
+
+        <v-list-item-subtitle>
+            <WorkoutHitMusclesChips :workout="workout" />
+        </v-list-item-subtitle>
+
         <v-list-item-action>
             <v-icon>mdi-chevron-right</v-icon>
         </v-list-item-action>
@@ -16,19 +21,19 @@ import { useDate } from "vuetify";
 
 import type { WorkoutWithId } from "../services/workout";
 
-const props = defineProps<{ workout: WorkoutWithId }>();
+import WorkoutHitMusclesChips from "./WorkoutHitMusclesChips.vue";
+
+const { workout } = defineProps<{ workout: WorkoutWithId }>();
 const emit = defineEmits<(e: "click", workout: WorkoutWithId) => void>();
 
 const dateAdapter = useDate();
 const formattedDate = computed(() => {
-    const date = (props.workout.date as any).toDate
-        ? (props.workout.date as any).toDate()
-        : props.workout.date;
+    const date = workout.date.toDate();
     return dateAdapter.format(date, "fullDate");
 });
 
 function handleClick(): void {
-    emit("click", props.workout);
+    emit("click", workout);
 }
 </script>
 

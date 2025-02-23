@@ -13,13 +13,17 @@
                         <v-icon>mdi-trash-can</v-icon>
                     </v-btn>
                 </v-card-title>
-                <v-card-subtitle>{{ formattedDate }}</v-card-subtitle>
+                <v-card-subtitle>
+                    {{ formattedDate }}
+                    <span v-if="workout.workoutDurationMinutes" class="ml-2">
+                        ({{ formatWorkoutDuration(workout.workoutDurationMinutes) }})
+                    </span>
+                </v-card-subtitle>
                 <v-card-text>
                     <p>{{ workout.overallNotes }}</p>
                 </v-card-text>
             </v-card>
 
-            <!-- Exercise Entries -->
             <div v-for="(entry, index) in workout.exerciseEntries" :key="index" class="mb-4">
                 <v-card outlined>
                     <v-card-title class="d-flex align-center">
@@ -90,6 +94,11 @@ const formattedDate = computed(() => {
 });
 
 const exercisesList: Exercise[] = getExercises();
+function formatWorkoutDuration(durationMinutes?: number): string {
+    if (!durationMinutes || durationMinutes < 0) return "";
+    return `${durationMinutes} minutes`;
+}
+
 function getExerciseName(id: string): string | undefined {
     const exercise = exercisesList.find((exer) => exer.id === id);
     return exercise?.name;

@@ -1,56 +1,142 @@
 <template>
-    <v-container fluid class="pa-4">
+    <v-container fluid class="pa-4 pa-sm-6">
         <div v-if="workout">
-            <v-card outlined class="mb-4">
-                <v-card-title class="d-flex align-center">
-                    <div class="flex-grow-1 text-h5">{{ workout.name }}</div>
-                    <!-- Edit Button -->
-                    <v-btn icon color="primary" @click="handleEditWorkout" title="Edit Workout">
-                        <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                    <!-- Delete Button -->
-                    <v-btn icon color="error" @click="handleDeleteWorkout" title="Delete Workout">
-                        <v-icon>mdi-trash-can</v-icon>
-                    </v-btn>
-                </v-card-title>
+            <!-- Main Workout Card -->
+            <v-card variant="flat" class="mb-6" elevation="2">
+                <v-card-item class="pt-4 pb-0">
+                    <div class="d-flex align-center justify-space-between">
+                        <v-card-title class="text-h4 font-weight-bold">
+                            {{ workout.name }}
+                        </v-card-title>
 
-                <v-card-subtitle>
-                    <WorkoutDateInfo :workout="workout" />
-                </v-card-subtitle>
+                        <div class="d-flex gap-xs">
+                            <v-btn
+                                icon="mdi-pencil"
+                                variant="text"
+                                color="grey-darken-1"
+                                @click="handleEditWorkout"
+                                density="comfortable"
+                            ></v-btn>
+                            <v-btn
+                                icon="mdi-delete"
+                                variant="text"
+                                color="error"
+                                @click="handleDeleteWorkout"
+                                density="comfortable"
+                            ></v-btn>
+                        </div>
+                    </div>
+                </v-card-item>
 
-                <v-card-subtitle>
-                    <WorkoutHitMusclesChips :workout="workout" />
-                </v-card-subtitle>
+                <v-card-text>
+                    <!-- Metadata Section -->
+                    <div class="d-flex flex-column gap-y-4">
+                        <WorkoutDateInfo :workout="workout" />
 
-                <v-card-text v-if="workout.overallNotes">
-                    <p>{{ workout.overallNotes }}</p>
+                        <div class="d-flex align-center gap-x-4">
+                            <div class="d-flex align-center text-body-2 text-grey-darken-1">
+                                <v-icon icon="mdi-dumbbell" size="small" class="mr-2"></v-icon>
+                                {{ workout.exerciseEntries.length }} exercises
+                            </div>
+                            <v-divider vertical></v-divider>
+                            <div class="d-flex align-center text-body-2 text-grey-darken-1">
+                                <v-icon icon="mdi-recycle" size="small" class="mr-2"></v-icon>
+                                {{
+                                    workout.exerciseEntries.reduce(
+                                        (total, entry) => total + entry.sets.length,
+                                        0,
+                                    )
+                                }}
+                                sets
+                            </div>
+                        </div>
+
+                        <WorkoutHitMusclesChips :workout="workout" />
+                    </div>
+                </v-card-text>
+
+                <v-divider v-if="workout.overallNotes" class="mx-4"></v-divider>
+
+                <!-- Notes Section -->
+                <v-card-text v-if="workout.overallNotes" class="pt-4">
+                    <div class="text-body-1 font-weight-medium text-grey-darken-1">
+                        <v-icon icon="mdi-text" size="small" class="mr-2"></v-icon>
+                        Workout Notes
+                    </div>
+                    <p class="text-body-1 mt-2">
+                        {{ workout.overallNotes }}
+                    </p>
                 </v-card-text>
             </v-card>
 
+            <!-- Exercises Section -->
+            <div class="text-h5 font-weight-medium mb-4">Exercises</div>
+
             <div v-for="(entry, index) in workout.exerciseEntries" :key="index" class="mb-4">
-                <v-card outlined>
-                    <v-card-title class="d-flex align-center">
-                        <div class="flex-grow-1">
-                            {{ getExerciseName(entry.exerciseId) || "Unknown Exercise" }}
+                <v-card variant="outlined" class="pa-4">
+                    <div class="d-flex gap-x-4">
+                        <!-- Exercise Number -->
+                        <div class="text-h6 text-primary font-weight-bold">
+                            {{ index + 1 }}
                         </div>
-                    </v-card-title>
-                    <v-card-subtitle v-if="entry.exerciseNotes">
-                        {{ entry.exerciseNotes }}
-                    </v-card-subtitle>
-                    <v-card-text>
-                        <v-list dense>
-                            <v-list-item v-for="(set, sIdx) in entry.sets" :key="sIdx">
-                                <v-list-item-title>
-                                    Set {{ sIdx + 1 }}: {{ set.reps }} reps @ {{ set.weight }} kg
-                                </v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-card-text>
+
+                        <!-- Exercise Content -->
+                        <div class="flex-grow-1">
+                            <!-- Exercise Header -->
+                            <div class="d-flex align-center justify-space-between">
+                                <div class="text-h6 font-weight-medium">
+                                    {{ getExerciseName(entry.exerciseId) || "Unknown Exercise" }}
+                                </div>
+                            </div>
+
+                            <!-- Exercise Notes -->
+                            <div
+                                v-if="entry.exerciseNotes"
+                                class="text-body-2 text-grey-darken-2 mt-2"
+                            >
+                                <v-icon icon="mdi-note-text" size="small" class="mr-2"></v-icon>
+                                {{ entry.exerciseNotes }}
+                            </div>
+
+                            <!-- Sets Table -->
+                            <v-table density="compact" class="mt-4">
+                                <thead>
+                                    <tr>
+                                        <th class="text-left">Set</th>
+                                        <th class="text-left">Reps</th>
+                                        <th class="text-left">Weight</th>
+                                        <th class="text-left">Volume</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(set, sIdx) in entry.sets" :key="sIdx">
+                                        <td class="font-weight-medium">#{{ sIdx + 1 }}</td>
+                                        <td>{{ set.reps }}</td>
+                                        <td>{{ set.weight }} kg</td>
+                                        <td class="text-primary font-weight-medium">
+                                            {{ set.reps * set.weight }} kg
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </v-table>
+                        </div>
+                    </div>
                 </v-card>
             </div>
         </div>
+
+        <!-- Not Found State -->
         <div v-else>
-            <v-alert type="error" color="error">Workout not found.</v-alert>
+            <v-alert
+                type="error"
+                variant="tonal"
+                border="start"
+                class="my-8"
+                icon="mdi-alert-circle"
+            >
+                <h3 class="text-h6 font-weight-medium">Workout not found</h3>
+                <p class="text-body-1 mt-2">The requested workout could not be located</p>
+            </v-alert>
         </div>
     </v-container>
 </template>
@@ -125,3 +211,15 @@ function handleEditWorkout(): void {
     router.push({ name: "WorkoutEdit", params: { id: workout.value.id } });
 }
 </script>
+
+<style scoped>
+.gap-xs {
+    gap: 8px;
+}
+.gap-x-4 {
+    column-gap: 16px;
+}
+.gap-y-4 {
+    row-gap: 16px;
+}
+</style>

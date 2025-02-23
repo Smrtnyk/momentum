@@ -77,7 +77,7 @@ import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useDate } from "vuetify";
 
-import type { WorkoutWithId } from "../services/workout";
+import type { WorkoutWithId } from "../types/workout";
 
 import WorkoutList from "../components/WorkoutList.vue";
 import { auth } from "../firebase";

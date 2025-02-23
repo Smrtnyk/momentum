@@ -1,5 +1,3 @@
-import type { Timestamp } from "firebase/firestore";
-
 import {
     addDoc,
     collection,
@@ -12,33 +10,11 @@ import {
     where,
 } from "firebase/firestore";
 
+import type { CardioWorkout, StrengthWorkout, Workout, WorkoutWithId } from "../types/workout";
+
 import { initializeFirebase } from "../firebase";
 
 const { firestore } = initializeFirebase();
-
-export interface ExerciseEntry {
-    exerciseId: string;
-    exerciseNotes?: string;
-    sets: ExerciseSet[];
-}
-
-export interface ExerciseSet {
-    reps: number;
-    weight: number;
-}
-
-export interface Workout {
-    date: Timestamp;
-    exerciseEntries: ExerciseEntry[];
-    name: string;
-    overallNotes: string;
-    userId: string;
-    workoutDurationMinutes: number;
-}
-
-export interface WorkoutWithId extends Workout {
-    id: string;
-}
 
 export async function addWorkout(workout: Workout): Promise<string> {
     const docRef = await addDoc(collection(firestore, "workouts"), workout);
@@ -78,6 +54,14 @@ export async function getWorkouts(userId?: string): Promise<WorkoutWithId[]> {
     return snapshot.docs.map(function (document) {
         return { id: document.id, ...document.data() } as WorkoutWithId;
     });
+}
+
+export function isCardioWorkout(workout: Workout): workout is CardioWorkout {
+    return workout.type === "cardio";
+}
+
+export function isStrengthWorkout(workout: Workout): workout is StrengthWorkout {
+    return workout.type === "strength";
 }
 
 export async function updateWorkout(id: string, workout: Workout): Promise<void> {

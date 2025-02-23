@@ -15,16 +15,17 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import type { Exercise, Muscle } from "../data/excercises";
-import type { Workout } from "../services/workout";
+import type { Muscle } from "../data/strength-exercises";
+import type { Exercise } from "../types/exercise";
+import type { Workout } from "../types/workout";
 
-import { getExercises, getMuscleGroups } from "../data/excercises";
+import { getMuscleGroups, getStrengthExercises } from "../data/strength-exercises";
 
 const { workout } = defineProps<{
     workout: Workout;
 }>();
 
-const exercisesList: Exercise[] = getExercises();
+const exercisesList: Exercise[] = getStrengthExercises();
 const muscleGroups: Muscle[] = getMuscleGroups();
 
 const hitMuscles = computed<Muscle[]>(() => {

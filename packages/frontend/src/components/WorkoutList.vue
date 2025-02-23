@@ -53,9 +53,11 @@ import { useAsyncState } from "@vueuse/core";
 import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
+import type { WorkoutWithId } from "../types/workout";
+
 import WorkoutListItem from "../components/WorkoutListItem.vue";
 import { auth } from "../firebase";
-import { getWorkouts, type WorkoutWithId } from "../services/workout";
+import { getWorkouts } from "../services/workout";
 import { useGlobalStore } from "../stores/global";
 
 const globalStore = useGlobalStore();

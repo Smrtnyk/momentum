@@ -33,6 +33,7 @@ export interface Workout {
     name: string;
     overallNotes: string;
     userId: string;
+    workoutDurationMinutes: number;
 }
 
 export interface WorkoutWithId extends Workout {

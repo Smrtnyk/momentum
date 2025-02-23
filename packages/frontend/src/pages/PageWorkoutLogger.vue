@@ -14,7 +14,17 @@
                             class="mb-4"
                         />
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" md="4" class="d-flex align-center">
+                        <v-number-input
+                            v-model.number="workoutDurationMinutes"
+                            variant="outlined"
+                            density="comfortable"
+                            label="Workout Duration (minutes)"
+                            :min="0"
+                            hide-details
+                            class="workout-duration-input"
+                        />
+
                         <v-menu v-model="menu" :close-on-content-click="false">
                             <template #activator="{ props }">
                                 <v-text-field
@@ -206,6 +216,8 @@ const workoutName = ref("Workout");
 const workoutDate = ref(new Date());
 const menu = ref(false);
 
+const workoutDurationMinutes = ref<number>(0);
+
 function positiveNumber(value: number): boolean | string {
     return value >= 0 || "Must be zero or positive";
 }
@@ -248,6 +260,7 @@ async function loadWorkout(id: string): Promise<void> {
 
         workoutDate.value = workoutData.date.toDate();
         exerciseEntries.value = workoutData.exerciseEntries;
+        workoutDurationMinutes.value = workoutData.workoutDurationMinutes || 0;
     } catch (error) {
         globalStore.notifyError("Failed to load workout for editing.");
     }
@@ -279,27 +292,15 @@ async function submitWorkout(): Promise<void> {
         }
     }
     const workout: Workout = {
-        date: Timestamp.now(),
+        date: Timestamp.fromDate(workoutDate.value),
         exerciseEntries: exerciseEntries.value,
         name: workoutName.value,
         overallNotes: overallNotes.value,
         userId: auth.currentUser.uid,
+        workoutDurationMinutes: workoutDurationMinutes.value,
     };
 
     try {
-        const isValid = exerciseEntries.value.every(
-            (entry) =>
-                entry.exerciseId &&
-                entry.sets.every(
-                    (set) => typeof set.reps === "number" && typeof set.weight === "number",
-                ),
-        );
-
-        if (!isValid) {
-            globalStore.notifyError("Please fill all required fields correctly");
-            return;
-        }
-
         if (isEditing.value && workoutId) {
             await updateWorkout(workoutId, workout);
             globalStore.notify("Workout updated successfully!");

@@ -1,46 +1,51 @@
 <template>
     <v-container fluid class="pa-4">
         <!-- 1. Personalized Greeting -->
-        <v-row class="mb-6">
-            <v-col cols="12">
-                <h2 class="text-h5 font-weight-bold">{{ greeting }}, {{ userName }}!</h2>
-                <p class="text-subtitle-1">{{ motivationalMessage }}</p>
-            </v-col>
-        </v-row>
+        <div class="mb-4">
+            <v-card>
+                <v-card-text>
+                    <div class="d-flex align-center">
+                        <v-icon x-large>mdi-heart-pulse</v-icon>
+                        <div class="ml-4">
+                            <h2 class="text-h5 font-weight-bold">{{ greeting }}, {{ userName }}</h2>
+                            <p class="text-subtitle-1">{{ motivationalMessage }}</p>
+                        </div>
+                    </div>
+                </v-card-text>
+            </v-card>
+        </div>
 
         <!-- 2. Today's Focus Section -->
-        <v-row class="mb-6">
-            <v-col cols="12">
-                <v-card outlined>
-                    <v-card-title>Today's Focus</v-card-title>
-                    <v-card-text>
-                        <div v-if="todaysWorkouts.length > 0">
-                            <p class="mb-2">Here are your workouts for today:</p>
-                            <v-list dense>
-                                <v-list-item
-                                    v-for="workout in todaysWorkouts"
-                                    :key="workout.id"
-                                    @click="viewWorkout(workout)"
-                                    link
-                                >
-                                    <v-list-item-title>{{ workout.name }}</v-list-item-title>
-                                    <v-list-item-subtitle>
-                                        {{ formattedDate(workout.date.toDate()) }}
-                                    </v-list-item-subtitle>
-                                </v-list-item>
-                            </v-list>
-                        </div>
-                        <div v-else>
-                            <p class="mb-2">No workouts logged for today yet.</p>
-                        </div>
+        <div class="mb-4">
+            <v-card outlined>
+                <v-card-title>Today's Focus</v-card-title>
+                <v-card-text>
+                    <div v-if="todaysWorkouts.length > 0">
+                        <p class="mb-2">Here are your workouts for today:</p>
+                        <v-list dense>
+                            <v-list-item
+                                v-for="workout in todaysWorkouts"
+                                :key="workout.id"
+                                @click="viewWorkout(workout)"
+                                link
+                            >
+                                <v-list-item-title>{{ workout.name }}</v-list-item-title>
+                                <v-list-item-subtitle>
+                                    {{ formattedDate(workout.date.toDate()) }}
+                                </v-list-item-subtitle>
+                            </v-list-item>
+                        </v-list>
+                    </div>
+                    <div v-else>
+                        <p class="mb-2">No workouts logged for today yet.</p>
+                    </div>
 
-                        <v-btn block color="primary" class="mt-4" @click="goToWorkoutLogger">
-                            Log Workout
-                        </v-btn>
-                    </v-card-text>
-                </v-card>
-            </v-col>
-        </v-row>
+                    <v-btn block color="primary" class="mt-4" @click="goToWorkoutLogger">
+                        Log Workout
+                    </v-btn>
+                </v-card-text>
+            </v-card>
+        </div>
 
         <!-- 3. Progress Snippet -->
         <v-row class="mb-6">

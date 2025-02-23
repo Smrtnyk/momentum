@@ -3,6 +3,7 @@
         <v-list-item-title class="text-h6">{{ workout.name }}</v-list-item-title>
         <v-list-item-subtitle>
             {{ formattedDate }} • {{ workout.exerciseEntries.length }} exercises
+            <span class="workout-list-duration"> ({{ formattedDuration }}) </span>
         </v-list-item-subtitle>
 
         <v-list-item-subtitle>
@@ -30,6 +31,10 @@ const dateAdapter = useDate();
 const formattedDate = computed(() => {
     const date = workout.date.toDate();
     return dateAdapter.format(date, "fullDate");
+});
+
+const formattedDuration = computed(() => {
+    return `${workout.workoutDurationMinutes} minutes`;
 });
 
 function handleClick(): void {

@@ -1,48 +1,43 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import { initializeFirebase } from "../firebase";
-import PageAuth from "../pages/PageAuth.vue";
-import PageHome from "../pages/PageHome.vue";
-import PageProfile from "../pages/PageProfile.vue";
-import PageWorkoutDetail from "../pages/PageWorkoutDetail.vue";
-import PageWorkoutLogger from "../pages/PageWorkoutLogger.vue";
 import { useGlobalStore } from "../stores/global";
 
 const { auth } = initializeFirebase();
 
 const routes = [
     {
-        component: PageAuth,
+        component: () => import("../pages/PageAuth.vue"),
         meta: { guest: true },
         name: "Auth",
         path: "/auth",
     },
     {
-        component: PageHome,
+        component: () => import("../pages/PageHome.vue"),
         meta: { requiresAuth: true },
         name: "Home",
         path: "/home",
     },
     {
-        component: PageWorkoutDetail,
+        component: () => import("../pages/PageWorkoutDetail.vue"),
         meta: { requiresAuth: true },
         name: "WorkoutDetail",
         path: "/workout/:id",
     },
     {
-        component: PageWorkoutLogger,
+        component: () => import("../pages/PageWorkoutLogger.vue"),
         meta: { requiresAuth: true },
         name: "WorkoutLogger",
         path: "/workout/new",
     },
     {
-        component: PageWorkoutLogger,
+        component: () => import("../pages/PageWorkoutLogger.vue"),
         meta: { requiresAuth: true },
         name: "WorkoutEdit",
         path: "/workout/:id/edit",
     },
     {
-        component: PageProfile,
+        component: () => import("../pages/PageProfile.vue"),
         meta: { requiresAuth: true },
         name: "Profile",
         path: "/profile",
@@ -60,6 +55,9 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+    scrollBehavior(to, from, savedPosition) {
+        return savedPosition ?? { top: 0 };
+    },
 });
 
 router.beforeEach((to, from, next) => {

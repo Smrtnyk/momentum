@@ -31,6 +31,12 @@ const routes = [
         path: "/workout/new",
     },
     {
+        component: () => import("../pages/PageWorkoutLogs.vue"),
+        meta: { requiresAuth: true },
+        name: "WorkoutLogs",
+        path: "/workouts",
+    },
+    {
         component: () => import("../pages/PageWorkoutLogger.vue"),
         meta: { requiresAuth: true },
         name: "WorkoutEdit",

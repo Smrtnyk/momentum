@@ -62,12 +62,6 @@
                 </v-card>
             </v-col>
         </v-row>
-
-        <v-row>
-            <v-col cols="12">
-                <WorkoutList title="All Workouts" />
-            </v-col>
-        </v-row>
     </v-container>
 </template>
 
@@ -79,7 +73,6 @@ import { useDate } from "vuetify";
 
 import type { WorkoutWithId } from "../types/workout";
 
-import WorkoutList from "../components/WorkoutList.vue";
 import { auth } from "../firebase";
 import { getUserProfile } from "../services/user";
 import { getWorkouts } from "../services/workout";
@@ -131,9 +124,7 @@ const { state: allWorkouts } = useAsyncState<WorkoutWithId[]>(() => {
 const todaysWorkouts = computed(() => {
     const today = new Date();
     return allWorkouts.value.filter((workout) => {
-        const workoutDate = (workout.date as any).toDate
-            ? (workout.date as any).toDate()
-            : workout.date;
+        const workoutDate = workout.date.toDate();
         return dateAdapter.isSameDay(workoutDate, today);
     });
 });

@@ -28,7 +28,7 @@ watch(error, function (err) {
     <v-container fluid class="pa-4">
         <v-row v-if="workouts.length > 0">
             <v-col cols="12">
-                <WorkoutList :workouts="workouts" title="All Workouts" />
+                <WorkoutList :workouts="workouts" />
             </v-col>
         </v-row>
         <div v-else>

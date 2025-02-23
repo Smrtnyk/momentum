@@ -29,7 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { useStorage } from "@vueuse/core";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 
 import type { WorkoutWithId } from "../types/workout";
@@ -38,7 +39,7 @@ import WorkoutListItem from "../components/WorkoutListItem.vue";
 
 const { workouts } = defineProps<{ workouts: WorkoutWithId[] }>();
 const router = useRouter();
-const view = ref<"calendar" | "list">("list");
+const view = useStorage("workout-view-preference", "list");
 
 function viewWorkout(workout: WorkoutWithId): void {
     router.push({ name: "WorkoutDetail", params: { id: workout.id } });
@@ -52,7 +53,7 @@ const calendarEvents = computed(() => {
             end: workout.date.toDate(),
             id: workout.id,
             start: workout.date.toDate(),
-            title: workout.name || "Workout",
+            title: workout.name,
         };
     });
 });

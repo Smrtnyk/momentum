@@ -1,7 +1,7 @@
 <template>
     <v-list-item @click="handleClick" class="workout-list-item" lines="three" density="comfortable">
         <template #prepend>
-            <v-icon icon="mdi-dumbbell" color="primary" class="mr-0" size="small"></v-icon>
+            <v-icon :icon="icon" color="primary" class="mr-0" size="small"></v-icon>
         </template>
 
         <v-list-item-title class="font-weight-medium">
@@ -23,13 +23,20 @@
 </template>
 
 <script setup lang="ts">
-import type { WorkoutWithId } from "../services/workout";
+import { computed } from "vue";
 
+import type { WorkoutWithId } from "../types/workout";
+
+import { isStrengthWorkout } from "../services/workout";
 import WorkoutDateInfo from "./WorkoutDateInfo.vue";
 import WorkoutHitMusclesChips from "./WorkoutHitMusclesChips.vue";
 
 const { workout } = defineProps<{ workout: WorkoutWithId }>();
 const emit = defineEmits<(e: "click", workout: WorkoutWithId) => void>();
+
+const icon = computed(() => {
+    return isStrengthWorkout(workout) ? "mdi-weight-lifter" : "mdi-run";
+});
 
 function handleClick(): void {
     emit("click", workout);

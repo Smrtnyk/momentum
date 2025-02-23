@@ -1,42 +1,73 @@
 <template>
-    <v-container fluid class="pa-4 pa-sm-6">
-        <v-card flat class="mb-6" color="surface">
+    <v-container fluid class="pa-4 pa-sm-6 max-width-800 mx-auto">
+        <!-- Workout Type Selection -->
+        <v-card class="mb-6" elevation="2">
+            <v-card-title class="text-h5 mb-4">Select Workout Type</v-card-title>
+            <v-card-text>
+                <div class="d-flex gap-4 flex-wrap">
+                    <v-btn
+                        variant="flat"
+                        size="x-large"
+                        :color="isStrengthWorkout(workout) ? 'primary' : 'surface'"
+                        @click="handleTypeChange('strength')"
+                        class="flex-grow-1"
+                    >
+                        <v-icon left>mdi-weight-lifter</v-icon>
+                        Strength Training
+                    </v-btn>
+
+                    <v-btn
+                        variant="flat"
+                        size="x-large"
+                        :color="isCardioWorkout(workout) ? 'secondary' : 'surface'"
+                        @click="handleTypeChange('cardio')"
+                        class="flex-grow-1"
+                    >
+                        <v-icon left>mdi-run</v-icon>
+                        Cardio
+                    </v-btn>
+                </div>
+            </v-card-text>
+        </v-card>
+
+        <!-- Workout Metadata -->
+        <v-card class="mb-6" elevation="2">
             <v-card-text>
                 <v-row dense>
-                    <v-col cols="12" md="8">
+                    <v-col cols="12" md="6">
                         <v-text-field
-                            v-model="workoutName"
+                            v-model="workout.name"
                             variant="outlined"
                             label="Workout Name"
                             density="comfortable"
-                            bg-color="background"
-                            hide-details
-                            class="mb-4"
+                            :rules="[required]"
+                            clearable
                         />
                     </v-col>
-                    <v-col cols="12" md="4" class="d-flex align-center">
-                        <v-number-input
-                            v-model.number="workoutDurationMinutes"
-                            variant="outlined"
-                            density="comfortable"
-                            label="Workout Duration (minutes)"
-                            :min="0"
-                            hide-details
-                            class="workout-duration-input"
-                        />
 
-                        <v-menu v-model="menu" :close-on-content-click="false">
+                    <!-- Workout Duration (Strength only) -->
+                    <v-col v-if="isStrengthWorkout(workout)" cols="12" md="3">
+                        <v-text-field
+                            v-model.number="workout.workoutDurationMinutes"
+                            label="Duration (minutes)"
+                            type="number"
+                            variant="outlined"
+                            :rules="[required, positiveNumber]"
+                            suffix="minutes"
+                        />
+                    </v-col>
+
+                    <v-col cols="12" md="6">
+                        <v-menu>
                             <template #activator="{ props }">
                                 <v-text-field
                                     v-model="formattedWorkoutDate"
                                     variant="outlined"
                                     density="comfortable"
-                                    readonly
-                                    v-bind="props"
                                     label="Workout Date"
                                     prepend-inner-icon="mdi-calendar"
-                                    bg-color="background"
-                                    hide-details
+                                    readonly
+                                    v-bind="props"
                                 />
                             </template>
                             <v-date-picker v-model="workoutDate" />
@@ -46,177 +77,234 @@
             </v-card-text>
         </v-card>
 
-        <!-- Exercise Cards -->
-        <transition-group name="list" tag="div">
-            <v-card v-for="(entry, idx) in exerciseEntries" :key="idx" class="mb-4" elevation="2">
-                <v-card-title class="d-flex align-center">
-                    <span class="text-h6 text-white">Exercise {{ idx + 1 }}</span>
-                    <v-spacer />
-                    <v-btn icon variant="text" color="white" @click="removeExercise(idx)">
-                        <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                </v-card-title>
+        <!-- Exercise Sections -->
+        <div class="text-h5 mb-4">Exercises</div>
 
-                <v-card-text class="pt-4">
-                    <v-autocomplete
-                        v-model="entry.exerciseId"
-                        :items="exercises"
-                        item-title="name"
-                        item-value="id"
-                        label="Select Exercise"
-                        variant="outlined"
-                        density="comfortable"
-                        :rules="[required]"
-                        clearable
-                        class="mb-4"
-                    />
+        <transition-group name="slide-fade">
+            <template v-if="isStrengthWorkout(workout)">
+                <div v-for="(entry, idx) in workout.exerciseEntries" :key="idx" class="mb-4">
+                    <!-- Strength Exercise -->
+                    <v-card v-if="isStrengthWorkout(workout)" elevation="2">
+                        <v-card-title class="d-flex align-center">
+                            <v-icon left>mdi-dumbbell</v-icon>
+                            Exercise {{ idx + 1 }}
+                            <v-spacer />
+                            <v-btn icon @click="removeExercise(idx)">
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                        </v-card-title>
 
-                    <v-divider class="my-4" />
+                        <v-card-text>
+                            <v-autocomplete
+                                v-model="entry.exerciseId"
+                                :items="exercises"
+                                item-title="name"
+                                item-value="id"
+                                label="Select Exercise"
+                                variant="outlined"
+                                :rules="[required]"
+                                clearable
+                            />
 
-                    <div class="text-subtitle-1 mb-1">Sets</div>
+                            <div class="text-subtitle-1 mt-4 mb-2">Sets</div>
 
-                    <transition-group name="list" tag="div" class="mb-6">
-                        <v-row v-for="(set, sIdx) in entry.sets" :key="sIdx" align="center">
-                            <v-col cols="12" class="pb-1">
-                                <div class="text-caption text-medium-emphasis">
-                                    Set {{ sIdx + 1 }}
-                                </div>
-                            </v-col>
-                            <v-col cols="5" class="pa-1 pb-0">
-                                <v-number-input
-                                    v-model.number="set.reps"
-                                    variant="outlined"
-                                    control-variant="split"
-                                    label="Reps"
-                                    density="compact"
-                                    :rules="[positiveNumber]"
-                                    :min="1"
-                                    hide-details
-                                />
-                            </v-col>
-                            <v-col cols="5" class="pa-1 pb-0">
-                                <v-number-input
-                                    v-model.number="set.weight"
-                                    variant="outlined"
-                                    :step="0.5"
-                                    :min="0"
-                                    :precision="1"
-                                    control-variant="split"
-                                    label="Weight (kg)"
-                                    density="compact"
-                                    :rules="[positiveNumber]"
-                                    hide-details
-                                />
-                            </v-col>
-                            <v-col cols="2" class="text-center pa-0">
-                                <v-btn
-                                    icon
-                                    variant="text"
-                                    color="error"
-                                    @click="removeSet(idx, sIdx)"
-                                >
-                                    <v-icon>mdi-delete</v-icon>
-                                </v-btn>
-                            </v-col>
-                        </v-row>
-                    </transition-group>
+                            <v-table density="compact">
+                                <thead>
+                                    <tr>
+                                        <th>Set</th>
+                                        <th>Reps</th>
+                                        <th>Weight</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(set, sIdx) in entry.sets" :key="sIdx">
+                                        <td>{{ sIdx + 1 }}</td>
+                                        <td>
+                                            <v-text-field
+                                                v-model.number="set.reps"
+                                                type="number"
+                                                variant="underlined"
+                                                density="compact"
+                                            />
+                                        </td>
+                                        <td>
+                                            <v-text-field
+                                                v-model.number="set.weight"
+                                                type="number"
+                                                variant="underlined"
+                                                density="compact"
+                                                suffix="kg"
+                                            />
+                                        </td>
+                                        <td>
+                                            <v-btn
+                                                icon
+                                                variant="text"
+                                                color="error"
+                                                @click="removeSet(idx, sIdx)"
+                                            >
+                                                <v-icon>mdi-delete</v-icon>
+                                            </v-btn>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </v-table>
 
-                    <v-divider class="my-3" />
+                            <v-btn color="primary" variant="text" @click="addSet(idx)" class="mt-2">
+                                <v-icon left>mdi-plus</v-icon>
+                                Add Set
+                            </v-btn>
+                        </v-card-text>
+                    </v-card>
+                </div>
+            </template>
 
-                    <v-textarea
-                        v-model="entry.exerciseNotes"
-                        variant="outlined"
-                        label="Exercise Notes"
-                        density="comfortable"
-                        rows="2"
-                        auto-grow
-                        class="mb-4"
-                    />
+            <template v-if="isCardioWorkout(workout)">
+                <div v-for="(entry, idx) in workout.exerciseEntries" :key="idx" class="mb-4">
+                    <!-- Cardio Exercise -->
+                    <v-card elevation="2">
+                        <v-card-title class="d-flex align-center">
+                            <v-icon left>mdi-run</v-icon>
+                            Cardio Activity {{ idx + 1 }}
+                            <v-spacer />
+                            <v-btn icon @click="removeExercise(idx)">
+                                <v-icon>mdi-close</v-icon>
+                            </v-btn>
+                        </v-card-title>
 
-                    <v-btn
-                        color="secondary"
-                        variant="tonal"
-                        prepend-icon="mdi-plus"
-                        @click="addSet(idx)"
-                    >
-                        Add Set
-                    </v-btn>
-                </v-card-text>
-            </v-card>
+                        <v-card-text>
+                            <v-autocomplete
+                                v-model="entry.exerciseId"
+                                :items="exercises"
+                                item-title="name"
+                                item-value="id"
+                                label="Select Activity"
+                                variant="outlined"
+                                :rules="[required]"
+                                clearable
+                            />
+
+                            <v-row class="mt-2">
+                                <v-col cols="12" md="4">
+                                    <v-text-field
+                                        v-model.number="entry.durationMinutes"
+                                        type="number"
+                                        label="Duration"
+                                        suffix="minutes"
+                                        variant="outlined"
+                                        :rules="[required, positiveNumber]"
+                                    />
+                                </v-col>
+
+                                <v-col cols="12" md="4">
+                                    <v-text-field
+                                        v-model.number="entry.distanceKm"
+                                        type="number"
+                                        label="Distance"
+                                        suffix="km"
+                                        variant="outlined"
+                                        step="0.1"
+                                    />
+                                </v-col>
+
+                                <v-col cols="12" md="4">
+                                    <v-select
+                                        v-model="entry.intensity"
+                                        :items="intensityLevels"
+                                        label="Intensity"
+                                        variant="outlined"
+                                    />
+                                </v-col>
+                            </v-row>
+                        </v-card-text>
+                    </v-card>
+                </div>
+            </template>
         </transition-group>
 
         <!-- Add Exercise Button -->
-        <v-btn
-            block
-            color="primary"
-            variant="flat"
-            class="my-4"
-            prepend-icon="mdi-dumbbell"
-            @click="addExercise"
-        >
-            Add Exercise
+        <v-btn block color="primary" variant="tonal" class="my-4" @click="addExercise">
+            <v-icon left>mdi-plus</v-icon>
+            Add {{ isStrengthWorkout(workout) ? "Exercise" : "Activity" }}
         </v-btn>
 
         <!-- Workout Notes -->
-        <v-card class="mb-4" elevation="2">
-            <v-card-title>
-                <span class="text-h6 text-white">Workout Notes</span>
+        <v-card class="mb-6" elevation="2">
+            <v-card-title class="text-h6">
+                <v-icon left>mdi-note-text</v-icon>
+                Workout Notes
             </v-card-title>
             <v-card-text>
                 <v-textarea
-                    v-model="overallNotes"
+                    v-model="workout.overallNotes"
                     variant="outlined"
-                    label="Overall workout notes"
-                    density="comfortable"
+                    label="Additional notes..."
                     rows="3"
                     auto-grow
-                    hide-details
                 />
             </v-card-text>
         </v-card>
 
-        <!-- Submit Button -->
-        <v-btn
-            block
-            color="success"
-            size="large"
-            :loading="isSubmitting"
-            prepend-icon="mdi-content-save"
-            @click="submitWorkout"
-        >
-            {{ isEditing ? "Update Workout" : "Save Workout" }}
-        </v-btn>
+        <!-- Submit Section -->
+        <v-card elevation="2">
+            <v-card-text class="text-center">
+                <v-btn x-large color="success" :loading="isSubmitting" @click="submitWorkout">
+                    <v-icon left>mdi-check</v-icon>
+                    {{ isEditing ? "Update Workout" : "Save Workout" }}
+                </v-btn>
+            </v-card-text>
+        </v-card>
     </v-container>
 </template>
 
 <script setup lang="ts">
 import { Timestamp } from "firebase/firestore";
-import { computed, onMounted, ref } from "vue";
+import { computed, onBeforeMount, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDate } from "vuetify";
 
-import type { Exercise } from "../data/excercises";
-import type { ExerciseEntry, Workout } from "../services/workout";
+import type { CardioWorkout, StrengthWorkout, Workout } from "../types/workout";
 
-import { getExercises } from "../data/excercises";
+import { getCardioExercises } from "../data/cardio-exercises";
+import { getStrengthExercises } from "../data/strength-exercises";
 import { auth } from "../firebase";
-import { addWorkout, getWorkoutById, updateWorkout } from "../services/workout";
+import {
+    addWorkout,
+    getWorkoutById,
+    isCardioWorkout,
+    isStrengthWorkout,
+    updateWorkout,
+} from "../services/workout";
 import { useGlobalStore } from "../stores/global";
 
-const exercises: Exercise[] = getExercises();
 const router = useRouter();
 const route = useRoute();
 const globalStore = useGlobalStore();
-
 // If there's an ID parameter, we're editing
 const workoutId = route.params.id as string | undefined;
 const isEditing = ref(Boolean(workoutId));
 
-const workoutName = ref("Workout");
+const workout = ref<CardioWorkout | StrengthWorkout>({
+    date: Timestamp.fromDate(new Date()),
+    exerciseEntries: [
+        {
+            exerciseId: "",
+            sets: [{ reps: 0, weight: 0 }],
+            type: "strength",
+        },
+    ],
+    name: "Workout",
+    overallNotes: "",
+    type: "strength",
+    userId: auth.currentUser?.uid || "",
+    workoutDurationMinutes: 0,
+} as StrengthWorkout);
 const workoutDate = ref(new Date());
-const menu = ref(false);
-
-const workoutDurationMinutes = ref<number>(0);
+const exercises = computed(() => {
+    return workout.value.type === "strength" ? getStrengthExercises() : getCardioExercises();
+});
+const intensityLevels = ["low", "medium", "high"];
 
 function positiveNumber(value: number): boolean | string {
     return value >= 0 || "Must be zero or positive";
@@ -229,53 +317,79 @@ const isSubmitting = ref(false);
 const dateAdapter = useDate();
 const formattedWorkoutDate = computed(() => dateAdapter.format(workoutDate.value, "keyboardDate"));
 
-const overallNotes = ref("");
-const exerciseEntries = ref<ExerciseEntry[]>([
-    { exerciseId: "", exerciseNotes: "", sets: [{ reps: 0, weight: 0 }] },
-]);
+watch(workoutDate, function (newDate) {
+    workout.value.date = Timestamp.fromDate(newDate);
+});
 
 function addExercise(): void {
-    exerciseEntries.value.push({
-        exerciseId: "",
-        exerciseNotes: "",
-        sets: [{ reps: 0, weight: 0 }],
-    });
+    if (isStrengthWorkout(workout.value)) {
+        workout.value.exerciseEntries.push({
+            exerciseId: "",
+            sets: [{ reps: 0, weight: 0 }],
+            type: "strength",
+        });
+    } else {
+        workout.value.exerciseEntries.push({
+            durationMinutes: 30,
+            exerciseId: "",
+            intensity: "medium",
+            type: "cardio",
+        });
+    }
 }
 
-onMounted(() => {
+onBeforeMount(() => {
     if (isEditing.value && workoutId) {
         loadWorkout(workoutId);
     }
 });
 
 function addSet(exerciseIndex: number): void {
-    exerciseEntries.value[exerciseIndex].sets.push({ reps: 0, weight: 0 });
+    if (isStrengthWorkout(workout.value)) {
+        workout.value.exerciseEntries[exerciseIndex].sets.push({
+            reps: 0,
+            weight: 0,
+        });
+    }
+}
+
+function handleTypeChange(type: Workout["type"]): void {
+    workout.value = {
+        ...workout.value,
+        exerciseEntries: [
+            {
+                exerciseId: "",
+                ...(type === "strength"
+                    ? { sets: [{ reps: 0, weight: 0 }], type: "strength" }
+                    : { durationMinutes: 30, intensity: "medium", type: "cardio" }),
+            },
+        ],
+        type,
+    } as Workout;
 }
 
 async function loadWorkout(id: string): Promise<void> {
     try {
-        const workoutData = await getWorkoutById(id);
-        workoutName.value = workoutData.name;
-        overallNotes.value = workoutData.overallNotes;
-
-        workoutDate.value = workoutData.date.toDate();
-        exerciseEntries.value = workoutData.exerciseEntries;
-        workoutDurationMinutes.value = workoutData.workoutDurationMinutes || 0;
+        const loadedWorkout = await getWorkoutById(id);
+        workout.value = loadedWorkout;
+        workoutDate.value = loadedWorkout.date.toDate();
     } catch (error) {
         globalStore.notifyError("Failed to load workout for editing.");
     }
 }
 
 function removeExercise(index: number): void {
-    if (exerciseEntries.value.length > 1) {
-        exerciseEntries.value.splice(index, 1);
+    if (workout.value.exerciseEntries.length > 1) {
+        workout.value.exerciseEntries.splice(index, 1);
     }
 }
 
 function removeSet(exerciseIndex: number, setIndex: number): void {
-    const sets = exerciseEntries.value[exerciseIndex].sets;
-    if (sets.length > 1) {
-        sets.splice(setIndex, 1);
+    if (isStrengthWorkout(workout.value)) {
+        const sets = workout.value.exerciseEntries[exerciseIndex].sets;
+        if (sets.length > 1) {
+            sets.splice(setIndex, 1);
+        }
     }
 }
 
@@ -285,28 +399,31 @@ async function submitWorkout(): Promise<void> {
         return;
     }
 
-    for (const entry of exerciseEntries.value) {
+    for (const entry of workout.value.exerciseEntries) {
         if (!entry.exerciseId) {
             globalStore.notifyError("Please select an exercise for all entries.");
             return;
         }
     }
-    const workout: Workout = {
-        date: Timestamp.fromDate(workoutDate.value),
-        exerciseEntries: exerciseEntries.value,
-        name: workoutName.value,
-        overallNotes: overallNotes.value,
-        userId: auth.currentUser.uid,
-        workoutDurationMinutes: workoutDurationMinutes.value,
-    };
+
+    if (
+        isStrengthWorkout(workout.value) &&
+        (!workout.value.workoutDurationMinutes || workout.value.workoutDurationMinutes <= 0)
+    ) {
+        globalStore.notifyError("Please enter a valid workout duration");
+        return;
+    }
+
+    workout.value.userId = auth.currentUser.uid;
+    workout.value.date = Timestamp.fromDate(workout.value.date.toDate());
 
     try {
         if (isEditing.value && workoutId) {
-            await updateWorkout(workoutId, workout);
+            await updateWorkout(workoutId, workout.value);
             globalStore.notify("Workout updated successfully!");
             await router.replace({ name: "WorkoutDetail", params: { id: workoutId } });
         } else {
-            const newWorkoutId = await addWorkout(workout);
+            const newWorkoutId = await addWorkout(workout.value);
             globalStore.notify("Workout logged successfully!");
             await router.replace({ name: "WorkoutDetail", params: { id: newWorkoutId } });
         }
@@ -317,3 +434,23 @@ async function submitWorkout(): Promise<void> {
     }
 }
 </script>
+
+<style>
+.max-width-800 {
+    max-width: 800px;
+}
+
+.slide-fade-enter-active {
+    transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+    transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+    transform: translateX(20px);
+    opacity: 0;
+}
+</style>

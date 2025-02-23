@@ -2,7 +2,10 @@
 import { computed } from "vue";
 import { useDate } from "vuetify";
 
-import type { Workout } from "../services/workout";
+import type { Workout } from "../types/workout";
+
+import { isCardioWorkout } from "../services/workout";
+
 const { workout } = defineProps<{ workout: Workout }>();
 const dateAdapter = useDate();
 const formattedDate = computed(() => {
@@ -10,8 +13,14 @@ const formattedDate = computed(() => {
     return dateAdapter.format(date, "fullDate");
 });
 
+const totalDuration = computed(() => {
+    if (isCardioWorkout(workout)) {
+        return workout.exerciseEntries.reduce((total, entry) => total + entry.durationMinutes, 0);
+    }
+    return workout.workoutDurationMinutes;
+});
 const formattedDuration = computed(() => {
-    return `${workout.workoutDurationMinutes} minutes`;
+    return `${totalDuration.value} minutes`;
 });
 </script>
 

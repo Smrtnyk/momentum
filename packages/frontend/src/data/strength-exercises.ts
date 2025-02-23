@@ -1,17 +1,22 @@
-export interface Exercise {
-    description?: string;
-    id: string;
-    // IDs of muscles targeted by this exercise
-    muscleIds: string[];
-    name: string;
-}
+import type { Exercise } from "../types/exercise";
 
 export interface Muscle {
     id: string;
     name: string;
 }
 
-export function getExercises(): Exercise[] {
+export function getMuscleGroups(): Muscle[] {
+    return [
+        { id: "chest", name: "Chest" },
+        { id: "back", name: "Back" },
+        { id: "legs", name: "Legs" },
+        { id: "shoulders", name: "Shoulders" },
+        { id: "arms", name: "Arms" },
+        { id: "core", name: "Core" },
+    ];
+}
+
+export function getStrengthExercises(): Exercise[] {
     return [
         {
             id: "bench-press",
@@ -106,16 +111,5 @@ export function getExercises(): Exercise[] {
             muscleIds: ["arms"],
             name: "Tricep Kickbacks",
         },
-    ];
-}
-
-export function getMuscleGroups(): Muscle[] {
-    return [
-        { id: "chest", name: "Chest" },
-        { id: "back", name: "Back" },
-        { id: "legs", name: "Legs" },
-        { id: "shoulders", name: "Shoulders" },
-        { id: "arms", name: "Arms" },
-        { id: "core", name: "Core" },
     ];
 }

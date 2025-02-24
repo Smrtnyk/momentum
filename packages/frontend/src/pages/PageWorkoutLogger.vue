@@ -88,7 +88,7 @@
                         <v-expansion-panel elevation="2">
                             <v-expansion-panel-title class="d-flex align-center">
                                 <v-icon left size="small" class="mr-2">mdi-dumbbell</v-icon>
-                                Exercise {{ idx + 1 }}
+                                {{ getExerciseName(entry) || `Exercise ${idx + 1}` }}
                                 <v-spacer />
                                 <v-btn icon @click="removeExercise(idx)" size="small" flat>
                                     <v-icon>mdi-close</v-icon>
@@ -174,7 +174,7 @@
                         <v-expansion-panel elevation="2">
                             <v-expansion-panel-title class="d-flex align-center">
                                 <v-icon left class="mr-2" size="small">mdi-run</v-icon>
-                                Cardio Activity {{ idx + 1 }}
+                                {{ getExerciseName(entry) || `Cardio Activity ${idx + 1}` }}
                                 <v-spacer />
                                 <v-btn icon @click="removeExercise(idx)" size="small" flat>
                                     <v-icon>mdi-close</v-icon>
@@ -315,9 +315,15 @@ const exercises = computed(() => {
 });
 const intensityLevels = ["low", "medium", "high"];
 
+function getExerciseName(entry: { exerciseId: string }): string {
+    const exercise = exercises.value.find(({ id }) => id === entry.exerciseId);
+    return exercise?.name || "";
+}
+
 function positiveNumber(value: number): boolean | string {
     return value >= 0 || "Must be zero or positive";
 }
+
 function required(value: unknown): boolean | string {
     return Boolean(value) || "Required";
 }

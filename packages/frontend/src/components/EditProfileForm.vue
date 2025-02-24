@@ -11,35 +11,35 @@
                     variant="outlined"
                     v-model="editedProfile.name"
                     label="Full Name"
-                    :rules="[rules.required]"
+                    :rules="[required]"
                 />
                 <v-date-input
                     v-model="birthDateModel"
                     clearable
                     label="Birth Date"
                     variant="outlined"
-                    :rules="[rules.required]"
+                    :rules="[required]"
                 />
                 <v-text-field
                     variant="outlined"
                     v-model.number="editedProfile.height"
                     label="Height (cm)"
                     type="number"
-                    :rules="[rules.required]"
+                    :rules="[required]"
                 />
                 <v-text-field
                     variant="outlined"
                     v-model.number="editedProfile.weight"
                     label="Weight (kg)"
                     type="number"
-                    :rules="[rules.required]"
+                    :rules="[required]"
                 />
                 <v-select
                     variant="outlined"
                     v-model="editedProfile.gender"
                     :items="genderOptions"
                     label="Gender"
-                    :rules="[rules.required]"
+                    :rules="[required]"
                 />
                 <v-textarea
                     variant="outlined"
@@ -74,6 +74,7 @@ import { computed, ref } from "vue";
 import type { UserProfile } from "../services/user";
 
 import { auth } from "../firebase";
+import { required } from "../helpers/form-validators";
 import { updateUserProfile } from "../services/user";
 import { useGlobalStore } from "../stores/global";
 
@@ -88,9 +89,6 @@ const emit = defineEmits<{
 
 const globalStore = useGlobalStore();
 const genderOptions = ["Male", "Female"];
-const rules = {
-    required: (value: unknown) => Boolean(value) || "Required.",
-};
 
 const editedProfile = ref<UserProfile>({
     bio: "",

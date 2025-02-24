@@ -278,6 +278,7 @@ import type { CardioWorkout, StrengthWorkout, Workout } from "../types/workout";
 import { getCardioExercises } from "../data/cardio-exercises";
 import { getStrengthExercises } from "../data/strength-exercises";
 import { auth } from "../firebase";
+import { positiveNumber, required } from "../helpers/form-validators";
 import {
     addWorkout,
     getWorkoutById,
@@ -320,13 +321,6 @@ function getExerciseName(entry: { exerciseId: string }): string {
     return exercise?.name || "";
 }
 
-function positiveNumber(value: number): boolean | string {
-    return value >= 0 || "Must be zero or positive";
-}
-
-function required(value: unknown): boolean | string {
-    return Boolean(value) || "Required";
-}
 const isSubmitting = ref(false);
 
 const dateAdapter = useDate();

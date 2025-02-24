@@ -5,7 +5,6 @@ import { initializeFirebase } from "../firebase";
 const { firestore } = initializeFirebase();
 
 export interface UserProfile {
-    bio?: string;
     birthDate: string;
     gender: "Female" | "Male";
     height: number;

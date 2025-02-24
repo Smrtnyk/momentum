@@ -41,18 +41,6 @@
                     label="Gender"
                     :rules="[required]"
                 />
-                <v-textarea
-                    variant="outlined"
-                    v-model="editedProfile.bio"
-                    label="About Me"
-                    rows="2"
-                />
-                <v-textarea
-                    variant="outlined"
-                    v-model="editedProfile.goals"
-                    label="Fitness Goals"
-                    rows="2"
-                />
                 <v-text-field
                     variant="outlined"
                     v-model="editedProfile.profilePictureUrl"
@@ -91,10 +79,8 @@ const globalStore = useGlobalStore();
 const genderOptions = ["Male", "Female"];
 
 const editedProfile = ref<UserProfile>({
-    bio: "",
     birthDate: "",
     gender: "Male",
-    goals: "",
     height: 0,
     id: auth.currentUser?.uid ?? "",
     name: "",

@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import { initializeFirebase } from "../firebase";
+import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
 const { auth } = initializeFirebase();
@@ -66,9 +67,14 @@ const router = createRouter({
     },
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     const globalStore = useGlobalStore();
+    const authStore = useAuthStore();
     globalStore.setLoading(true);
+
+    if (!authStore.isReady) {
+        await authStore.waitForAuthReady();
+    }
 
     const currentUser = auth.currentUser;
     if (to.meta.requiresAuth && !currentUser) {

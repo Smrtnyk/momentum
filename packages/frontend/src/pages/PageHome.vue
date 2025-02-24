@@ -78,12 +78,13 @@ import { useDate } from "vuetify";
 
 import type { WorkoutWithId } from "../types/workout";
 
-import { auth } from "../firebase";
 import { getUserProfile } from "../services/user";
 import { getWorkouts } from "../services/workout";
+import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
 const router = useRouter();
+const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 const dateAdapter = useDate();
 
@@ -109,21 +110,16 @@ const motivationalMessage = computed(() => {
 });
 
 onMounted(async () => {
-    if (auth.currentUser) {
-        try {
-            const profile = await getUserProfile(auth.currentUser.uid);
-            userName.value = profile.name || userName.value;
-        } catch (error) {
-            globalStore.notifyError(error);
-        }
+    try {
+        const profile = await getUserProfile(authStore.nonNullableUser.uid);
+        userName.value = profile.name || userName.value;
+    } catch (error) {
+        globalStore.notifyError(error);
     }
 });
 
 const { state: allWorkouts } = useAsyncState<WorkoutWithId[]>(() => {
-    if (auth.currentUser) {
-        return getWorkouts(auth.currentUser.uid);
-    }
-    return Promise.resolve([]);
+    return getWorkouts(authStore.nonNullableUser.uid);
 }, []);
 
 const todaysWorkouts = computed(() => {

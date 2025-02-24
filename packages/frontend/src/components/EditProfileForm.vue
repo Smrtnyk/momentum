@@ -61,9 +61,9 @@ import { computed, ref } from "vue";
 
 import type { UserProfile } from "../services/user";
 
-import { auth } from "../firebase";
 import { required } from "../helpers/form-validators";
 import { updateUserProfile } from "../services/user";
+import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
 const props = defineProps<{
@@ -75,6 +75,7 @@ const emit = defineEmits<{
     (e: "close"): void;
 }>();
 
+const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 const genderOptions = ["Male", "Female"];
 
@@ -82,7 +83,7 @@ const editedProfile = ref<UserProfile>({
     birthDate: "",
     gender: "Male",
     height: 0,
-    id: auth.currentUser?.uid ?? "",
+    id: authStore.nonNullableUser.uid,
     name: "",
     profilePictureUrl: "",
     weight: 0,
@@ -113,9 +114,8 @@ function emitClose(): void {
 }
 
 async function saveProfile(): Promise<void> {
-    if (!auth.currentUser) return;
     try {
-        await updateUserProfile(auth.currentUser.uid, editedProfile.value);
+        await updateUserProfile(authStore.nonNullableUser.uid, editedProfile.value);
         globalStore.notify("Profile saved successfully!");
         emit("profileSaved", { ...editedProfile.value });
         emit("close");

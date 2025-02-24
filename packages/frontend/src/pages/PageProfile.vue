@@ -8,7 +8,7 @@
                         <v-avatar size="100" class="elevation-4">
                             <v-img
                                 :src="
-                                    auth.currentUser?.photoURL ||
+                                    authStore.currentUser?.photoURL ||
                                     profile?.profilePictureUrl ||
                                     defaultAvatar
                                 "
@@ -142,19 +142,19 @@ import type { UserProfile } from "../services/user";
 
 import EditProfileForm from "../components/EditProfileForm.vue";
 import { useDialog } from "../composables/useDialog";
-import { auth } from "../firebase";
 import { logoutUser } from "../services/auth";
 import { getUserProfile } from "../services/user";
+import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
+const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 const router = useRouter();
 const defaultAvatar = "https://placehold.co/150x150.png";
 
 const { error, state: profile } = useAsyncState<null | UserProfile>(async () => {
-    if (!auth.currentUser) return null;
     try {
-        return await getUserProfile(auth.currentUser.uid);
+        return await getUserProfile(authStore.nonNullableUser.uid);
     } catch (err) {
         return null;
     }
@@ -207,6 +207,7 @@ const computedAge = computed(() => {
 const { openDialog } = useDialog();
 
 async function handleLogout(): Promise<void> {
+    profile.value = null;
     await logoutUser();
     await router.push("/auth");
 }

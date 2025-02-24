@@ -83,142 +83,151 @@
         <transition-group name="slide-fade">
             <template v-if="isStrengthWorkout(workout)">
                 <div v-for="(entry, idx) in workout.exerciseEntries" :key="idx" class="mb-4">
-                    <!-- Strength Exercise -->
-                    <v-card v-if="isStrengthWorkout(workout)" elevation="2">
-                        <v-card-title class="d-flex align-center">
-                            <v-icon left>mdi-dumbbell</v-icon>
-                            Exercise {{ idx + 1 }}
-                            <v-spacer />
-                            <v-btn icon @click="removeExercise(idx)">
-                                <v-icon>mdi-close</v-icon>
-                            </v-btn>
-                        </v-card-title>
+                    <v-expansion-panels>
+                        <!-- Strength Exercise -->
+                        <v-expansion-panel elevation="2">
+                            <v-expansion-panel-title class="d-flex align-center">
+                                <v-icon left size="small" class="mr-2">mdi-dumbbell</v-icon>
+                                Exercise {{ idx + 1 }}
+                                <v-spacer />
+                                <v-btn icon @click="removeExercise(idx)" size="small" flat>
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                            </v-expansion-panel-title>
 
-                        <v-card-text>
-                            <v-autocomplete
-                                v-model="entry.exerciseId"
-                                :items="exercises"
-                                item-title="name"
-                                item-value="id"
-                                label="Select Exercise"
-                                variant="outlined"
-                                :rules="[required]"
-                                clearable
-                            />
+                            <v-expansion-panel-text>
+                                <v-autocomplete
+                                    v-model="entry.exerciseId"
+                                    :items="exercises"
+                                    item-title="name"
+                                    item-value="id"
+                                    label="Select Exercise"
+                                    variant="outlined"
+                                    :rules="[required]"
+                                    clearable
+                                />
 
-                            <div class="text-subtitle-1 mt-4 mb-2">Sets</div>
+                                <div class="text-subtitle-1 mt-4 mb-2">Sets</div>
 
-                            <v-table density="compact">
-                                <thead>
-                                    <tr>
-                                        <th>Set</th>
-                                        <th>Reps</th>
-                                        <th>Weight</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(set, sIdx) in entry.sets" :key="sIdx">
-                                        <td>{{ sIdx + 1 }}</td>
-                                        <td>
-                                            <v-text-field
-                                                v-model.number="set.reps"
-                                                type="number"
-                                                variant="underlined"
-                                                density="compact"
-                                            />
-                                        </td>
-                                        <td>
-                                            <v-text-field
-                                                v-model.number="set.weight"
-                                                type="number"
-                                                variant="underlined"
-                                                density="compact"
-                                                suffix="kg"
-                                            />
-                                        </td>
-                                        <td>
-                                            <v-btn
-                                                icon
-                                                variant="text"
-                                                color="error"
-                                                @click="removeSet(idx, sIdx)"
-                                            >
-                                                <v-icon>mdi-delete</v-icon>
-                                            </v-btn>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </v-table>
+                                <v-table density="compact">
+                                    <thead>
+                                        <tr>
+                                            <th>Set</th>
+                                            <th>Reps</th>
+                                            <th>Weight</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(set, sIdx) in entry.sets" :key="sIdx">
+                                            <td>{{ sIdx + 1 }}</td>
+                                            <td>
+                                                <v-text-field
+                                                    v-model.number="set.reps"
+                                                    type="number"
+                                                    variant="underlined"
+                                                    density="compact"
+                                                />
+                                            </td>
+                                            <td>
+                                                <v-text-field
+                                                    v-model.number="set.weight"
+                                                    type="number"
+                                                    variant="underlined"
+                                                    density="compact"
+                                                    suffix="kg"
+                                                />
+                                            </td>
+                                            <td>
+                                                <v-btn
+                                                    icon
+                                                    variant="text"
+                                                    color="error"
+                                                    @click="removeSet(idx, sIdx)"
+                                                >
+                                                    <v-icon>mdi-delete</v-icon>
+                                                </v-btn>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </v-table>
 
-                            <v-btn color="primary" variant="text" @click="addSet(idx)" class="mt-2">
-                                <v-icon left>mdi-plus</v-icon>
-                                Add Set
-                            </v-btn>
-                        </v-card-text>
-                    </v-card>
+                                <v-btn
+                                    color="primary"
+                                    variant="text"
+                                    @click="addSet(idx)"
+                                    class="mt-2"
+                                >
+                                    <v-icon left>mdi-plus</v-icon>
+                                    Add Set
+                                </v-btn>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
                 </div>
             </template>
 
             <template v-if="isCardioWorkout(workout)">
                 <div v-for="(entry, idx) in workout.exerciseEntries" :key="idx" class="mb-4">
                     <!-- Cardio Exercise -->
-                    <v-card elevation="2">
-                        <v-card-title class="d-flex align-center">
-                            <v-icon left>mdi-run</v-icon>
-                            Cardio Activity {{ idx + 1 }}
-                            <v-spacer />
-                            <v-btn icon @click="removeExercise(idx)">
-                                <v-icon>mdi-close</v-icon>
-                            </v-btn>
-                        </v-card-title>
+                    <v-expansion-panels>
+                        <v-expansion-panel elevation="2">
+                            <v-expansion-panel-title class="d-flex align-center">
+                                <v-icon left class="mr-2" size="small">mdi-run</v-icon>
+                                Cardio Activity {{ idx + 1 }}
+                                <v-spacer />
+                                <v-btn icon @click="removeExercise(idx)" size="small" flat>
+                                    <v-icon>mdi-close</v-icon>
+                                </v-btn>
+                            </v-expansion-panel-title>
 
-                        <v-card-text>
-                            <v-autocomplete
-                                v-model="entry.exerciseId"
-                                :items="exercises"
-                                item-title="name"
-                                item-value="id"
-                                label="Select Activity"
-                                variant="outlined"
-                                :rules="[required]"
-                                clearable
-                            />
+                            <v-expansion-panel-text>
+                                <v-autocomplete
+                                    v-model="entry.exerciseId"
+                                    :items="exercises"
+                                    item-title="name"
+                                    item-value="id"
+                                    label="Select Activity"
+                                    variant="outlined"
+                                    :rules="[required]"
+                                    clearable
+                                />
 
-                            <v-row class="mt-2">
-                                <v-col cols="12" md="4">
-                                    <v-text-field
-                                        v-model.number="entry.durationMinutes"
-                                        type="number"
-                                        label="Duration"
-                                        suffix="minutes"
-                                        variant="outlined"
-                                        :rules="[required, positiveNumber]"
-                                    />
-                                </v-col>
+                                <v-row class="mt-2">
+                                    <v-col cols="12" md="4">
+                                        <v-text-field
+                                            v-model.number="entry.durationMinutes"
+                                            type="number"
+                                            label="Duration"
+                                            suffix="minutes"
+                                            variant="outlined"
+                                            :rules="[required, positiveNumber]"
+                                        />
+                                    </v-col>
 
-                                <v-col cols="12" md="4">
-                                    <v-text-field
-                                        v-model.number="entry.distanceKm"
-                                        type="number"
-                                        label="Distance"
-                                        suffix="km"
-                                        variant="outlined"
-                                        step="0.1"
-                                    />
-                                </v-col>
+                                    <v-col cols="12" md="4">
+                                        <v-text-field
+                                            v-model.number="entry.distanceKm"
+                                            type="number"
+                                            label="Distance"
+                                            suffix="km"
+                                            variant="outlined"
+                                            step="0.1"
+                                        />
+                                    </v-col>
 
-                                <v-col cols="12" md="4">
-                                    <v-select
-                                        v-model="entry.intensity"
-                                        :items="intensityLevels"
-                                        label="Intensity"
-                                        variant="outlined"
-                                    />
-                                </v-col>
-                            </v-row>
-                        </v-card-text>
-                    </v-card>
+                                    <v-col cols="12" md="4">
+                                        <v-select
+                                            v-model="entry.intensity"
+                                            :items="intensityLevels"
+                                            label="Intensity"
+                                            variant="outlined"
+                                        />
+                                    </v-col>
+                                </v-row>
+                            </v-expansion-panel-text>
+                        </v-expansion-panel>
+                    </v-expansion-panels>
                 </div>
             </template>
         </transition-group>
@@ -232,7 +241,7 @@
         <!-- Workout Notes -->
         <v-card class="mb-6" elevation="2">
             <v-card-title class="text-h6">
-                <v-icon left>mdi-note-text</v-icon>
+                <v-icon left size="small" class="mr-2">mdi-note-text</v-icon>
                 Workout Notes
             </v-card-title>
             <v-card-text>

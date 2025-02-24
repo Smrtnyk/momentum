@@ -8,7 +8,6 @@ export interface UserProfile {
     bio?: string;
     birthDate: string;
     gender: "Female" | "Male";
-    goals?: string;
     height: number;
     id: string;
     name: string;

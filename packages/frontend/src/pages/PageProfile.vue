@@ -5,7 +5,13 @@
                 <v-row>
                     <v-col cols="12" class="text-center">
                         <v-avatar size="120" class="elevation-6">
-                            <v-img :src="profile?.profilePictureUrl || defaultAvatar" />
+                            <v-img
+                                :src="
+                                    auth.currentUser?.photoURL ||
+                                    profile?.profilePictureUrl ||
+                                    defaultAvatar
+                                "
+                            />
                         </v-avatar>
                     </v-col>
 
@@ -24,10 +30,6 @@
                             <div v-if="profile.bio" class="mt-2">
                                 <strong>About Me:</strong>
                                 <p>{{ profile.bio }}</p>
-                            </div>
-                            <div v-if="profile.goals" class="mt-2">
-                                <strong>Fitness Goals:</strong>
-                                <p>{{ profile.goals }}</p>
                             </div>
                         </div>
                         <v-btn class="mt-4" color="primary" @click="openEditDialog">

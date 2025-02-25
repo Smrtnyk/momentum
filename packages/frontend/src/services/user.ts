@@ -1,8 +1,6 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
-import { initializeFirebase } from "../firebase";
-
-const { firestore } = initializeFirebase();
+import { firestore } from "../firebase";
 
 export interface UserProfile {
     birthDate: string;

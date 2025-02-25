@@ -12,12 +12,6 @@ export type CardioWorkout = WorkoutBase & {
     type: "cardio";
 };
 
-export interface ExerciseEntry {
-    exerciseId: string;
-    exerciseNotes?: string;
-    sets: ExerciseSet[];
-}
-
 export interface ExerciseSet {
     reps: number;
     weight: number;

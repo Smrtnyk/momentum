@@ -36,7 +36,7 @@ function initEmulators(
     connectStorageEmulator(storage, location.hostname, 9199);
 }
 
-export const initializeFirebase = memoize(() => {
+const initializeFirebase = memoize(() => {
     const firebaseApp = initializeApp(firebaseConfig);
     const firestore = getFirestore(firebaseApp);
     const functions = getFunctions(firebaseApp, "europe-west3");
@@ -48,4 +48,4 @@ export const initializeFirebase = memoize(() => {
     return { auth, firebaseApp, firestore, functions, storage };
 });
 
-export const { auth } = initializeFirebase();
+export const { auth, firestore } = initializeFirebase();

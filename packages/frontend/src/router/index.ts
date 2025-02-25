@@ -1,10 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 
-import { initializeFirebase } from "../firebase";
+import { auth } from "../firebase";
 import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
-
-const { auth } = initializeFirebase();
 
 const routes = [
     {

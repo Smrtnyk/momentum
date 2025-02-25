@@ -13,10 +13,8 @@ import { VDateInput } from "vuetify/labs/VDateInput";
 import { VNumberInput } from "vuetify/labs/VNumberInput";
 
 import App from "./App.vue";
-import { initializeFirebase } from "./firebase";
+import { auth } from "./firebase";
 import router from "./router";
-
-const { auth } = initializeFirebase();
 
 const pinia = createPinia();
 

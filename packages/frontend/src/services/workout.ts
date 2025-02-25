@@ -12,9 +12,7 @@ import {
 
 import type { CardioWorkout, StrengthWorkout, Workout, WorkoutWithId } from "../types/workout";
 
-import { initializeFirebase } from "../firebase";
-
-const { firestore } = initializeFirebase();
+import { firestore } from "../firebase";
 
 export async function addWorkout(workout: Workout): Promise<string> {
     const docRef = await addDoc(collection(firestore, "workouts"), workout);

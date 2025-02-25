@@ -11,7 +11,9 @@
         />
 
         <v-main>
-            <router-view />
+            <transition name="page" mode="out-in">
+                <router-view />
+            </transition>
         </v-main>
 
         <GlobalSnackbar />
@@ -38,3 +40,15 @@ onMounted(() => {
     onUnmounted(cleanup);
 });
 </script>
+
+<style>
+/* Fade transition */
+.page-enter-active,
+.page-leave-active {
+    transition: opacity 0.5s ease;
+}
+.page-enter-from,
+.page-leave-to {
+    opacity: 0;
+}
+</style>

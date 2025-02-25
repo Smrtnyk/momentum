@@ -1,34 +1,7 @@
 <template>
     <v-container fluid class="pa-4 pa-sm-6 max-width-800 mx-auto">
         <!-- Workout Type Selection -->
-        <v-card class="mb-6" elevation="2">
-            <v-card-title class="text-h5 mb-4">Select Workout Type</v-card-title>
-            <v-card-text>
-                <div class="d-flex gap-4 flex-wrap">
-                    <v-btn
-                        variant="flat"
-                        size="x-large"
-                        :color="isStrengthWorkout(workout) ? 'primary' : 'surface'"
-                        @click="handleTypeChange('strength')"
-                        class="flex-grow-1"
-                    >
-                        <v-icon left>mdi-weight-lifter</v-icon>
-                        Strength Training
-                    </v-btn>
-
-                    <v-btn
-                        variant="flat"
-                        size="x-large"
-                        :color="isCardioWorkout(workout) ? 'secondary' : 'surface'"
-                        @click="handleTypeChange('cardio')"
-                        class="flex-grow-1"
-                    >
-                        <v-icon left>mdi-run</v-icon>
-                        Cardio
-                    </v-btn>
-                </div>
-            </v-card-text>
-        </v-card>
+        <WorkoutTypeSelector :model-value="workout.type" @update:model-value="handleTypeChange" />
 
         <!-- Workout Metadata -->
         <v-card class="mb-6" elevation="2">
@@ -286,6 +259,7 @@ import { useDate } from "vuetify";
 
 import type { CardioWorkout, StrengthWorkout, Workout } from "../types/workout";
 
+import WorkoutTypeSelector from "../components/WorkoutTypeSelector.vue";
 import { getCardioExercises } from "../data/cardio-exercises";
 import { getStrengthExercises } from "../data/strength-exercises";
 import { auth } from "../firebase";

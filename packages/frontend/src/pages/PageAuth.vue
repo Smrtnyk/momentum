@@ -10,7 +10,14 @@
                         <p>Please sign in with your Google account to continue.</p>
                     </v-card-text>
                     <v-card-actions class="justify-center">
-                        <v-btn color="primary" large block @click="handleGoogleLogin">
+                        <v-btn
+                            color="primary"
+                            large
+                            block
+                            @click="handleGoogleLogin"
+                            :loading="isLoading"
+                            :disabled="isLoading"
+                        >
                             <v-icon left>mdi-google</v-icon>
                             Sign in with Google
                         </v-btn>
@@ -22,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 import { loginWithGoogle } from "../services/auth";
@@ -29,13 +37,21 @@ import { useGlobalStore } from "../stores/global";
 
 const globalStore = useGlobalStore();
 const router = useRouter();
+const isLoading = ref(false);
 
 async function handleGoogleLogin(): Promise<void> {
+    if (isLoading.value) {
+        return;
+    }
+
+    isLoading.value = true;
     try {
         await loginWithGoogle();
         await router.push("/home");
     } catch (error) {
         globalStore.notifyError(error);
+    } finally {
+        isLoading.value = false;
     }
 }
 </script>

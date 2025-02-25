@@ -74,7 +74,6 @@ import { useDate } from "vuetify";
 import type { WorkoutWithId } from "../types/workout";
 
 import FitnessTip from "../components/FitnessTip.vue";
-import { fitnessTips } from "../data/fitness-tips";
 import { motivationalMessages } from "../data/motivational-messages";
 import { getUserProfile } from "../services/user";
 import { getWorkouts } from "../services/workout";
@@ -146,9 +145,5 @@ const workoutsThisWeekCount = computed(() => {
             dateAdapter.isBefore(workoutDate, endOfWeek)
         );
     }).length;
-});
-
-const tipOfTheDay = computed(() => {
-    return fitnessTips[Math.floor(Math.random() * fitnessTips.length)];
 });
 </script>

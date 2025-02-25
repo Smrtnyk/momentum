@@ -25,7 +25,6 @@
 import { useRouter } from "vue-router";
 
 import { loginWithGoogle } from "../services/auth";
-import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
 const globalStore = useGlobalStore();

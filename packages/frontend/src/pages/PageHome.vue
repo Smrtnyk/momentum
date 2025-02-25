@@ -78,6 +78,7 @@ import { useDate } from "vuetify";
 
 import type { WorkoutWithId } from "../types/workout";
 
+import { motivationalMessages } from "../data/motivational-messages";
 import { getUserProfile } from "../services/user";
 import { getWorkouts } from "../services/workout";
 import { useAuthStore } from "../stores/auth";
@@ -99,12 +100,6 @@ const greeting = computed(() => {
 });
 
 const userName = ref("there");
-const motivationalMessages = [
-    "Let's smash your fitness goals today!",
-    "A little progress each day adds up to big results.",
-    "Every workout is a step closer to a healthier you.",
-    "You've got this! Let's make today count.",
-];
 const motivationalMessage = computed(() => {
     return motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
 });

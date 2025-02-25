@@ -59,10 +59,17 @@
                 </v-card>
             </v-col>
             <v-col cols="12" md="6">
-                <v-card outlined>
-                    <v-card-title>Tip of the Day</v-card-title>
+                <v-card elevation="1" class="text-white" rounded="lg">
                     <v-card-text>
-                        <p>{{ tipOfTheDay }}</p>
+                        <div class="d-flex">
+                            <v-avatar color="white" variant="outlined" class="mr-4" size="42">
+                                <v-icon color="amber-lighten-2">mdi-lightbulb-on</v-icon>
+                            </v-avatar>
+                            <div>
+                                <div class="text-h6 mb-1">Tip of the Day</div>
+                                <div class="text-body-2">{{ tipOfTheDay }}</div>
+                            </div>
+                        </div>
                     </v-card-text>
                 </v-card>
             </v-col>

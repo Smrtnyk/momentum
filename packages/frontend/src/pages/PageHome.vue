@@ -5,7 +5,7 @@
             <v-card>
                 <v-card-text>
                     <div class="d-flex align-center">
-                        <v-icon x-large>mdi-heart-pulse</v-icon>
+                        <v-icon color="red" size="x-large">mdi-heart-pulse</v-icon>
                         <div class="ml-4">
                             <h2 class="text-h5 font-weight-bold">{{ greeting }}, {{ userName }}</h2>
                             <p class="text-subtitle-1">{{ motivationalMessage }}</p>

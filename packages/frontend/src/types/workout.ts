@@ -1,6 +1,7 @@
 import type { Timestamp } from "firebase/firestore";
 
 export interface CardioExerciseEntry extends BaseExerciseEntry {
+    calories?: number;
     distanceKm?: number;
     durationMinutes: number;
     intensity: "high" | "low" | "medium";

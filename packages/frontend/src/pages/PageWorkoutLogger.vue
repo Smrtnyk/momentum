@@ -224,6 +224,17 @@
                                             variant="outlined"
                                         />
                                     </v-col>
+
+                                    <v-col cols="12" md="4">
+                                        <v-text-field
+                                            v-model.number="entry.calories"
+                                            type="number"
+                                            label="Calories"
+                                            suffix="kcal"
+                                            variant="outlined"
+                                            class="mt-2"
+                                        />
+                                    </v-col>
                                 </v-row>
                             </v-expansion-panel-text>
                         </v-expansion-panel>
@@ -339,6 +350,7 @@ function addExercise(): void {
         });
     } else {
         workout.value.exerciseEntries.push({
+            calories: 0,
             durationMinutes: 30,
             exerciseId: "",
             intensity: "medium",
@@ -370,7 +382,7 @@ function handleTypeChange(type: Workout["type"]): void {
                 exerciseId: "",
                 ...(type === "strength"
                     ? { sets: [{ reps: 0, weight: 0 }], type: "strength" }
-                    : { durationMinutes: 30, intensity: "medium", type: "cardio" }),
+                    : { calories: 0, durationMinutes: 30, intensity: "medium", type: "cardio" }),
             },
         ],
         type,

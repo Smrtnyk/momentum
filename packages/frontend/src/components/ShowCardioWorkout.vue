@@ -54,6 +54,19 @@
                                 }}
                                 km
                             </div>
+
+                            <v-divider vertical></v-divider>
+
+                            <div class="d-flex align-center text-body-2 text-grey-darken-1">
+                                <v-icon icon="mdi-fire" size="small" class="mr-2"></v-icon>
+                                {{
+                                    workout.exerciseEntries.reduce(
+                                        (total, entry) => total + (entry.calories || 0),
+                                        0,
+                                    )
+                                }}
+                                kcal
+                            </div>
                         </div>
 
                         <WorkoutHitMusclesChips :workout="workout" />
@@ -105,7 +118,7 @@
 
                             <!-- Activity Metrics -->
                             <v-row class="mt-4">
-                                <v-col cols="12" md="4">
+                                <v-col cols="6" md="4">
                                     <div class="d-flex align-center gap-2">
                                         <v-icon
                                             icon="mdi-clock-outline"
@@ -121,7 +134,7 @@
                                     </div>
                                 </v-col>
 
-                                <v-col cols="12" md="4">
+                                <v-col cols="6" md="4">
                                     <div v-if="entry.distanceKm" class="d-flex align-center gap-2">
                                         <v-icon
                                             icon="mdi-map-marker-distance"
@@ -135,7 +148,19 @@
                                     </div>
                                 </v-col>
 
-                                <v-col cols="12" md="4">
+                                <v-col cols="6" md="3">
+                                    <div class="d-flex align-center gap-2">
+                                        <v-icon icon="mdi-fire" color="secondary" class="mr-2" />
+                                        <div>
+                                            <div class="text-caption">Calories</div>
+                                            <div class="text-h6">
+                                                {{ entry.calories || 0 }} kcal
+                                            </div>
+                                        </div>
+                                    </div>
+                                </v-col>
+
+                                <v-col cols="6" md="4">
                                     <div class="d-flex align-center gap-2">
                                         <v-icon
                                             icon="mdi-speedometer"

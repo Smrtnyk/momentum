@@ -4,13 +4,14 @@
         <div class="mb-4">
             <v-card class="rounded-lg" elevation="2">
                 <v-card-text>
-                    <div class="d-flex align-center">
+                    <div class="d-flex align-center mb-4">
                         <v-icon color="red" size="x-large">mdi-heart-pulse</v-icon>
                         <div class="ml-4">
                             <h2 class="text-h5 font-weight-bold">{{ greeting }}, {{ userName }}</h2>
-                            <p class="text-subtitle-1">{{ motivationalMessage }}</p>
                         </div>
                     </div>
+
+                    <p class="text-subtitle-1">{{ motivationalMessage }}</p>
                 </v-card-text>
             </v-card>
         </div>

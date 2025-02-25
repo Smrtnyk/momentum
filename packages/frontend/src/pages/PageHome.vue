@@ -2,7 +2,7 @@
     <v-container fluid class="pa-4">
         <!-- 1. Personalized Greeting -->
         <div class="mb-4">
-            <v-card>
+            <v-card class="rounded-lg" elevation="2">
                 <v-card-text>
                     <div class="d-flex align-center">
                         <v-icon color="red" size="x-large">mdi-heart-pulse</v-icon>
@@ -17,7 +17,7 @@
 
         <!-- 2. Today's Focus Section -->
         <div class="mb-4">
-            <v-card outlined>
+            <v-card class="rounded-lg" elevation="2">
                 <v-card-title>Today's Focus</v-card-title>
                 <v-card-text>
                     <div v-if="todaysWorkouts.length > 0">
@@ -50,7 +50,7 @@
         <!-- 3. Progress Snippet -->
         <v-row class="mb-6">
             <v-col cols="12" md="6">
-                <v-card outlined>
+                <v-card class="rounded-lg" elevation="2">
                     <v-card-title>Weekly Progress</v-card-title>
                     <v-card-text>
                         <p class="text-h6 font-weight-bold">{{ workoutsThisWeekCount }} Workouts</p>
@@ -59,19 +59,7 @@
                 </v-card>
             </v-col>
             <v-col cols="12" md="6">
-                <v-card elevation="1" class="text-white" rounded="lg">
-                    <v-card-text>
-                        <div class="d-flex">
-                            <v-avatar color="white" variant="outlined" class="mr-4" size="42">
-                                <v-icon color="amber-lighten-2">mdi-lightbulb-on</v-icon>
-                            </v-avatar>
-                            <div>
-                                <div class="text-h6 mb-1">Tip of the Day</div>
-                                <div class="text-body-2">{{ tipOfTheDay }}</div>
-                            </div>
-                        </div>
-                    </v-card-text>
-                </v-card>
+                <FitnessTip />
             </v-col>
         </v-row>
     </v-container>
@@ -85,6 +73,7 @@ import { useDate } from "vuetify";
 
 import type { WorkoutWithId } from "../types/workout";
 
+import FitnessTip from "../components/FitnessTip.vue";
 import { fitnessTips } from "../data/fitness-tips";
 import { motivationalMessages } from "../data/motivational-messages";
 import { getUserProfile } from "../services/user";

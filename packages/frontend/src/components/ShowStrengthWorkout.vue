@@ -41,13 +41,13 @@
                             <v-divider vertical></v-divider>
                             <div class="d-flex align-center text-body-2 text-grey-darken-1">
                                 <v-icon icon="mdi-recycle" size="small" class="mr-2"></v-icon>
-                                {{
-                                    workout.exerciseEntries.reduce(
-                                        (total, entry) => total + entry.sets.length,
-                                        0,
-                                    )
-                                }}
+                                {{ totalSets }}
                                 sets
+                            </div>
+                            <v-divider vertical></v-divider>
+                            <div class="d-flex align-center text-body-2 text-grey-darken-1">
+                                <v-icon icon="mdi-weight" size="small" class="mr-2"></v-icon>
+                                {{ totalVolume }} kg
                             </div>
                         </div>
 
@@ -128,6 +128,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+
 import type { Exercise } from "../types/exercise";
 import type { StrengthWorkout } from "../types/workout";
 
@@ -139,6 +141,16 @@ const { workout } = defineProps<{ workout: StrengthWorkout }>();
 const emit = defineEmits<(e: "delete" | "edit") => void>();
 
 const exercisesList: Exercise[] = getStrengthExercises();
+
+const totalSets = computed(() => {
+    return workout.exerciseEntries.reduce((total, entry) => total + entry.sets.length, 0);
+});
+
+const totalVolume = computed(() => {
+    return workout.exerciseEntries.reduce((total, entry) => {
+        return entry.sets.reduce((sum, set) => sum + set.reps * set.weight, total);
+    }, 0);
+});
 
 function getExerciseName(id: string): string | undefined {
     const exercise = exercisesList.find((exer) => exer.id === id);

@@ -59,14 +59,12 @@
                     <v-expansion-panels>
                         <!-- Strength Exercise -->
                         <v-expansion-panel elevation="2">
-                            <v-expansion-panel-title class="d-flex align-center">
-                                <v-icon left size="small" class="mr-2">mdi-dumbbell</v-icon>
-                                {{ getExerciseName(entry) || `Exercise ${idx + 1}` }}
-                                <v-spacer />
-                                <v-btn icon @click="removeExercise(idx)" size="small" flat>
-                                    <v-icon>mdi-close</v-icon>
-                                </v-btn>
-                            </v-expansion-panel-title>
+                            <ExerciseEntryHeader
+                                :icon="workout.type === 'strength' ? 'mdi-dumbbell' : 'mdi-run'"
+                                :title="getExerciseName(entry)"
+                                :default-title="`Exercise ${idx + 1}`"
+                                @delete="removeExercise(idx)"
+                            />
 
                             <v-expansion-panel-text>
                                 <v-autocomplete
@@ -145,14 +143,12 @@
                     <!-- Cardio Exercise -->
                     <v-expansion-panels>
                         <v-expansion-panel elevation="2">
-                            <v-expansion-panel-title class="d-flex align-center">
-                                <v-icon left class="mr-2" size="small">mdi-run</v-icon>
-                                {{ getExerciseName(entry) || `Cardio Activity ${idx + 1}` }}
-                                <v-spacer />
-                                <v-btn icon @click="removeExercise(idx)" size="small" flat>
-                                    <v-icon>mdi-close</v-icon>
-                                </v-btn>
-                            </v-expansion-panel-title>
+                            <ExerciseEntryHeader
+                                icon="mdi-run"
+                                :title="getExerciseName(entry)"
+                                :default-title="`Cardio Activity ${idx + 1}`"
+                                @delete="removeExercise(idx)"
+                            />
 
                             <v-expansion-panel-text>
                                 <v-autocomplete
@@ -259,7 +255,8 @@ import { useDate } from "vuetify";
 
 import type { CardioWorkout, StrengthWorkout, Workout } from "../types/workout";
 
-import WorkoutTypeSelector from "../components/WorkoutTypeSelector.vue";
+import ExerciseEntryHeader from "../components/workout-logger/ExerciseEntryHeader.vue";
+import WorkoutTypeSelector from "../components/workout-logger/WorkoutTypeSelector.vue";
 import { getCardioExercises } from "../data/cardio-exercises";
 import { getStrengthExercises } from "../data/strength-exercises";
 import { auth } from "../firebase";

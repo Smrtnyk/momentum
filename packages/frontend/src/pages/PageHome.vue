@@ -78,6 +78,7 @@ import { useDate } from "vuetify";
 
 import type { WorkoutWithId } from "../types/workout";
 
+import { fitnessTips } from "../data/fitness-tips";
 import { motivationalMessages } from "../data/motivational-messages";
 import { getUserProfile } from "../services/user";
 import { getWorkouts } from "../services/workout";
@@ -151,14 +152,7 @@ const workoutsThisWeekCount = computed(() => {
     }).length;
 });
 
-const tips = [
-    "Stay hydrated by drinking water throughout the day.",
-    "Try adding a short walk after each meal to boost digestion.",
-    "Focus on compound exercises for efficient full-body workouts.",
-    "Prioritize sleep for optimal muscle recovery and growth.",
-    "Warm up before every workout and cool down afterwards.",
-];
 const tipOfTheDay = computed(() => {
-    return tips[Math.floor(Math.random() * tips.length)];
+    return fitnessTips[Math.floor(Math.random() * fitnessTips.length)];
 });
 </script>

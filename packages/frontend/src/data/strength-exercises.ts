@@ -81,14 +81,26 @@ export function getStrengthExercises(): Exercise[] {
             muscleIds: ["shoulders", "back"],
             name: "Cable Face Pulls",
         },
+        { id: "rope-pull-down", muscleIds: ["back", "arms"], name: "Rope Pull-Down" },
 
         // Shoulder exercises
-        { id: "overhead-press", muscleIds: ["shoulders", "arms", "chest"], name: "Overhead Press" },
+        {
+            id: "barbell-overhead-press",
+            muscleIds: ["shoulders", "arms", "chest"],
+            name: "Barbell Overhead Press",
+        },
+        {
+            id: "dumbbell-shoulder-press",
+            muscleIds: ["shoulders", "arms"],
+            name: "Dumbbell Shoulder Press",
+        },
         { id: "lateral-raises", muscleIds: ["shoulders"], name: "Lateral Raises" },
+        { id: "cable-lateral-raises", muscleIds: ["shoulders"], name: "Cable Lateral Raises" },
         { id: "front-raises", muscleIds: ["shoulders"], name: "Front Raises" },
         { id: "shrugs", muscleIds: ["shoulders"], name: "Shrugs" },
         { id: "upright-row", muscleIds: ["shoulders", "arms"], name: "Upright Row" },
         { id: "arnold-press", muscleIds: ["shoulders", "arms", "chest"], name: "Arnold Press" },
+        { id: "reverse-flyes", muscleIds: ["shoulders", "back"], name: "Reverse Flyes" },
 
         // Arm exercises
         { id: "bicep-curls", muscleIds: ["arms"], name: "Bicep Curls" },

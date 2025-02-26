@@ -5,6 +5,17 @@ export interface Muscle {
     name: string;
 }
 
+export function getExerciseById(id: string): Exercise {
+    return (
+        getStrengthExercises().find((exercise) => exercise.id === id) ||
+        ({ id, muscleIds: [], name: id } as Exercise)
+    );
+}
+
+export function getMuscleById(id: string): Muscle {
+    return getMuscleGroups().find((muscle) => muscle.id === id) ?? { id, name: id };
+}
+
 export function getMuscleGroups(): Muscle[] {
     return [
         { id: "chest", name: "Chest" },

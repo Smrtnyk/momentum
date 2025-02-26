@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAsyncState } from "@vueuse/core";
 import { watch } from "vue";
+import { useRouter } from "vue-router";
 
 import type { WorkoutWithId } from "../types/workout";
 
@@ -9,6 +10,7 @@ import { auth } from "../firebase";
 import { getWorkouts } from "../services/workout";
 import { useGlobalStore } from "../stores/global";
 
+const router = useRouter();
 const globalStore = useGlobalStore();
 const { error, state: workouts } = useAsyncState<WorkoutWithId[]>(() => {
     if (auth.currentUser) {
@@ -22,6 +24,10 @@ watch(error, function (err) {
         globalStore.notifyError(err);
     }
 });
+
+function goToWorkoutLogger(): void {
+    router.push({ name: "WorkoutLogger" });
+}
 </script>
 
 <template>
@@ -31,14 +37,20 @@ watch(error, function (err) {
                 <WorkoutList :workouts="workouts" />
             </v-col>
         </v-row>
-        <div v-else>
-            <v-alert type="info" variant="tonal" class="mt-4" border="start" rounded="lg">
-                <template #prepend>
-                    <v-icon icon="mdi-information" class="mr-3"></v-icon>
-                </template>
-                <h3 class="text-body-1 font-weight-medium mb-2">No workouts found</h3>
-                <p class="text-caption">Start by creating your first workout routine</p>
-            </v-alert>
+        <div v-else class="pa-8 text-center">
+            <v-icon icon="mdi-dumbbell" size="64" color="grey-lighten-3" class="mb-4"></v-icon>
+            <h3 class="text-h6 text-medium-emphasis mb-2">No workouts found</h3>
+            <p class="text-body-2 text-medium-emphasis mb-6">
+                {{ "You haven't logged any workouts yet." }}
+            </p>
+            <v-btn
+                color="primary"
+                prepend-icon="mdi-plus"
+                @click="goToWorkoutLogger"
+                variant="tonal"
+            >
+                Add Your First Workout
+            </v-btn>
         </div>
     </v-container>
 </template>

@@ -1,11 +1,12 @@
 <template>
-    <div v-if="hitMuscles && hitMuscles.length > 0" class="d-flex">
+    <div class="d-flex align-center flex-wrap gap-1">
         <v-chip
             v-for="muscle in hitMuscles"
             :key="muscle.id"
-            class="mr-1"
+            size="x-small"
+            density="comfortable"
             variant="tonal"
-            size="small"
+            class="text-body-2 font-weight-medium mr-1"
         >
             {{ muscle.name }}
         </v-chip>
@@ -15,39 +16,18 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import type { Muscle } from "../data/strength-exercises";
 import type { Exercise } from "../types/exercise";
-import type { Workout } from "../types/workout";
+import type { WorkoutWithId } from "../types/workout";
 
-import { getMuscleGroups, getStrengthExercises } from "../data/strength-exercises";
+import { getExerciseById, getMuscleById } from "../data/strength-exercises";
 
-const { workout } = defineProps<{
-    workout: Workout;
-}>();
+const { workout } = defineProps<{ workout: WorkoutWithId }>();
 
-const exercisesList: Exercise[] = getStrengthExercises();
-const muscleGroups: Muscle[] = getMuscleGroups();
-
-const hitMuscles = computed<Muscle[]>(() => {
-    if (!workout) {
-        return [];
-    }
-
-    const muscleIds = new Set<string>();
-    for (const entry of workout.exerciseEntries) {
-        const exercise = exercisesList.find((exer) => exer.id === entry.exerciseId);
-        if (exercise) {
-            exercise.muscleIds.forEach((muscleId) => muscleIds.add(muscleId));
-        }
-    }
-
-    const muscles: Muscle[] = [];
-    muscleIds.forEach(function (muscleId) {
-        const muscle = muscleGroups.find((muscleGroup) => muscleGroup.id === muscleId);
-        if (muscle) {
-            muscles.push(muscle);
-        }
-    });
-    return muscles;
+const hitMuscles = computed(() => {
+    const exerciseIds = workout.exerciseEntries.map((entry) => entry.exerciseId);
+    const exercises = exerciseIds.map((id) => getExerciseById(id)) as Exercise[];
+    const muscleIds = exercises.flatMap((exercise) => exercise.muscleIds);
+    const uniqueMuscleIds = [...new Set(muscleIds)];
+    return uniqueMuscleIds.map((id) => getMuscleById(id));
 });
 </script>

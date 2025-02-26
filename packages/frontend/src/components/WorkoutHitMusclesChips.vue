@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex align-center flex-wrap gap-1">
+    <div class="d-flex align-center flex-wrap gap-1 workout-chips">
         <v-chip
             v-for="muscle in hitMuscles"
             :key="muscle.id"
@@ -31,3 +31,13 @@ const hitMuscles = computed(() => {
     return uniqueMuscleIds.map((id) => getMuscleById(id));
 });
 </script>
+
+<style scoped>
+@media (max-width: 600px) {
+    .workout-chips :deep(.v-chip) {
+        height: 24px;
+        font-size: 11px;
+        padding: 0 8px;
+    }
+}
+</style>

@@ -11,6 +11,7 @@ import { aliases, mdi } from "vuetify/iconsets/mdi";
 import { VCalendar } from "vuetify/labs/VCalendar";
 import { VDateInput } from "vuetify/labs/VDateInput";
 import { VNumberInput } from "vuetify/labs/VNumberInput";
+import { VTimePicker } from "vuetify/labs/VTimePicker";
 
 import App from "./App.vue";
 import { auth } from "./firebase";
@@ -27,6 +28,7 @@ function createVuetifyInstance(): ReturnType<typeof createVuetify> {
             VCalendar,
             VDateInput,
             VNumberInput,
+            VTimePicker,
         },
         date: {
             locale: {

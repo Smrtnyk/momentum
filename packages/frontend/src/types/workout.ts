@@ -45,6 +45,5 @@ interface WorkoutBase {
     id: string;
     name: string;
     overallNotes: string;
-    startTime?: string;
     userId: string;
 }

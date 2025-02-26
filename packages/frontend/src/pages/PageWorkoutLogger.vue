@@ -18,6 +18,40 @@
                         />
                     </v-col>
 
+                    <v-col cols="6">
+                        <v-menu>
+                            <template #activator="{ props }">
+                                <v-text-field
+                                    v-model="formattedWorkoutDate"
+                                    variant="outlined"
+                                    density="comfortable"
+                                    label="Date"
+                                    prepend-inner-icon="mdi-calendar"
+                                    readonly
+                                    v-bind="props"
+                                />
+                            </template>
+                            <v-date-picker v-model="workoutDate" />
+                        </v-menu>
+                    </v-col>
+
+                    <v-col cols="6">
+                        <v-menu>
+                            <template #activator="{ props }">
+                                <v-text-field
+                                    v-model="formattedWorkoutTime"
+                                    variant="outlined"
+                                    density="comfortable"
+                                    label="Start time"
+                                    prepend-inner-icon="mdi-clock-outline"
+                                    readonly
+                                    v-bind="props"
+                                />
+                            </template>
+                            <v-time-picker v-model="workoutTime" />
+                        </v-menu>
+                    </v-col>
+
                     <!-- Workout Duration (Strength only) -->
                     <v-col v-if="isStrengthWorkout(workout)" cols="12" md="3">
                         <v-text-field
@@ -26,25 +60,7 @@
                             type="number"
                             variant="outlined"
                             :rules="[required, positiveNumber]"
-                            suffix="minutes"
                         />
-                    </v-col>
-
-                    <v-col cols="12" md="6">
-                        <v-menu>
-                            <template #activator="{ props }">
-                                <v-text-field
-                                    v-model="formattedWorkoutDate"
-                                    variant="outlined"
-                                    density="comfortable"
-                                    label="Workout Date"
-                                    prepend-inner-icon="mdi-calendar"
-                                    readonly
-                                    v-bind="props"
-                                />
-                            </template>
-                            <v-date-picker v-model="workoutDate" />
-                        </v-menu>
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -293,6 +309,15 @@ const workout = ref<CardioWorkout | StrengthWorkout>({
     workoutDurationMinutes: 0,
 } as StrengthWorkout);
 const workoutDate = ref(new Date());
+const workoutTime = ref(
+    new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        hour12: false,
+        minute: "2-digit",
+    }),
+);
+const formattedWorkoutTime = computed(() => workoutTime.value);
+
 const exercises = computed(() => {
     return workout.value.type === "strength" ? getStrengthExercises() : getCardioExercises();
 });
@@ -309,7 +334,13 @@ const dateAdapter = useDate();
 const formattedWorkoutDate = computed(() => dateAdapter.format(workoutDate.value, "keyboardDate"));
 
 watch(workoutDate, function (newDate) {
-    workout.value.date = Timestamp.fromDate(newDate);
+    const combinedDateTime = combineDateAndTime(newDate, workoutTime.value);
+    workout.value.date = Timestamp.fromDate(combinedDateTime);
+});
+
+watch(workoutTime, function (newTime) {
+    const combinedDateTime = combineDateAndTime(workoutDate.value, newTime);
+    workout.value.date = Timestamp.fromDate(combinedDateTime);
 });
 
 function addExercise(): void {
@@ -328,6 +359,11 @@ function addExercise(): void {
             type: "cardio",
         });
     }
+}
+
+function combineDateAndTime(date: Date, timeStr: string): Date {
+    const [hours, minutes] = timeStr.split(":").map(Number);
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate(), hours, minutes);
 }
 
 onBeforeMount(() => {
@@ -364,7 +400,17 @@ async function loadWorkout(id: string): Promise<void> {
     try {
         const loadedWorkout = await getWorkoutById(id);
         workout.value = loadedWorkout;
-        workoutDate.value = loadedWorkout.date.toDate();
+
+        // Extract date and time from the timestamp
+        const dateTime = loadedWorkout.date.toDate();
+        workoutDate.value = dateTime;
+
+        // Set the time based on the date
+        workoutTime.value = dateTime.toLocaleTimeString([], {
+            hour: "2-digit",
+            hour12: false,
+            minute: "2-digit",
+        });
     } catch (error) {
         globalStore.notifyError("Failed to load workout for editing.");
     }
@@ -407,7 +453,8 @@ async function submitWorkout(): Promise<void> {
     }
 
     workout.value.userId = auth.currentUser.uid;
-    workout.value.date = Timestamp.fromDate(workout.value.date.toDate());
+    const combinedDateTime = combineDateAndTime(workoutDate.value, workoutTime.value);
+    workout.value.date = Timestamp.fromDate(combinedDateTime);
 
     try {
         if (isEditing.value && workoutId) {

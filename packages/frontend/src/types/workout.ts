@@ -42,7 +42,9 @@ interface BaseExerciseEntry {
 
 interface WorkoutBase {
     date: Timestamp;
+    id: string;
     name: string;
     overallNotes: string;
+    startTime?: string;
     userId: string;
 }

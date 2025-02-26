@@ -1,12 +1,20 @@
 <template>
-    <v-btn-toggle v-model="view" mandatory color="primary" class="mb-4">
-        <v-btn value="list" variant="tonal">
-            <v-icon start icon="mdi-format-list-bulleted"></v-icon>
+    <div class="d-flex align-center mb-4">
+        <v-btn-toggle v-model="view" mandatory color="primary">
+            <v-btn value="list" variant="tonal">
+                <v-icon start icon="mdi-format-list-bulleted"></v-icon>
+            </v-btn>
+            <v-btn value="calendar" variant="tonal">
+                <v-icon start icon="mdi-calendar-month"></v-icon>
+            </v-btn>
+        </v-btn-toggle>
+
+        <v-spacer></v-spacer>
+
+        <v-btn color="primary" prepend-icon="mdi-plus" @click="goToWorkoutLogger">
+            New Workout
         </v-btn>
-        <v-btn value="calendar" variant="tonal">
-            <v-icon start icon="mdi-calendar-month"></v-icon>
-        </v-btn>
-    </v-btn-toggle>
+    </div>
 
     <div v-if="view === 'list'">
         <v-list two-line>
@@ -57,6 +65,10 @@ const calendarEvents = computed(() => {
         };
     });
 });
+
+function goToWorkoutLogger(): void {
+    router.push({ name: "WorkoutLogger" });
+}
 
 function onEventClick({ event }: { event: any }): void {
     const workout = workouts.find(function ({ id }) {

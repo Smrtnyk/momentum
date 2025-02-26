@@ -7,7 +7,8 @@
         "lint": "eslint .",
         "lint:fix": "eslint --fix .",
         "start:emulators": "firebase emulators:start --import=./local-db --export-on-exit=./local-db",
-        "deploy:hosting": "firebase deploy --only hosting"
+        "deploy:hosting": "firebase deploy --only hosting",
+        "deploy:rules": "firebase deploy --only firestore:rules"
     },
     "devDependencies": {
         "@eslint/eslintrc": "3.3.0",

@@ -275,7 +275,6 @@ import ExerciseEntryHeader from "../components/workout-logger/ExerciseEntryHeade
 import WorkoutTypeSelector from "../components/workout-logger/WorkoutTypeSelector.vue";
 import { getCardioExercises } from "../data/cardio-exercises";
 import { getStrengthExercises } from "../data/strength-exercises";
-import { auth } from "../firebase";
 import { positiveNumber, required } from "../helpers/form-validators";
 import {
     addWorkout,
@@ -284,10 +283,12 @@ import {
     isStrengthWorkout,
     updateWorkout,
 } from "../services/workout";
+import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
 const router = useRouter();
 const route = useRoute();
+const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 // If there's an ID parameter, we're editing
 const workoutId = route.params.id as string | undefined;
@@ -305,7 +306,7 @@ const workout = ref<CardioWorkout | StrengthWorkout>({
     name: "Workout",
     overallNotes: "",
     type: "strength",
-    userId: auth.currentUser?.uid || "",
+    userId: authStore.nonNullableUser.uid,
     workoutDurationMinutes: 0,
 } as StrengthWorkout);
 const workoutDate = ref(new Date());
@@ -398,7 +399,7 @@ function handleTypeChange(type: Workout["type"]): void {
 
 async function loadWorkout(id: string): Promise<void> {
     try {
-        const loadedWorkout = await getWorkoutById(id);
+        const loadedWorkout = await getWorkoutById(authStore.nonNullableUser.uid, id);
         workout.value = loadedWorkout;
 
         // Extract date and time from the timestamp
@@ -432,11 +433,6 @@ function removeSet(exerciseIndex: number, setIndex: number): void {
 }
 
 async function submitWorkout(): Promise<void> {
-    if (!auth.currentUser) {
-        globalStore.notifyError("You must be logged in to log a workout.");
-        return;
-    }
-
     for (const entry of workout.value.exerciseEntries) {
         if (!entry.exerciseId) {
             globalStore.notifyError("Please select an exercise for all entries.");
@@ -452,13 +448,13 @@ async function submitWorkout(): Promise<void> {
         return;
     }
 
-    workout.value.userId = auth.currentUser.uid;
+    workout.value.userId = authStore.nonNullableUser.uid;
     const combinedDateTime = combineDateAndTime(workoutDate.value, workoutTime.value);
     workout.value.date = Timestamp.fromDate(combinedDateTime);
 
     try {
         if (isEditing.value && workoutId) {
-            await updateWorkout(workoutId, workout.value);
+            await updateWorkout(authStore.nonNullableUser.uid, workoutId, workout.value);
             globalStore.notify("Workout updated successfully!");
             await router.replace({ name: "WorkoutDetail", params: { id: workoutId } });
         } else {

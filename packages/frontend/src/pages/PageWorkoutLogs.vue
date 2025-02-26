@@ -6,17 +6,15 @@ import { useRouter } from "vue-router";
 import type { WorkoutWithId } from "../types/workout";
 
 import WorkoutList from "../components/WorkoutList.vue";
-import { auth } from "../firebase";
 import { getWorkouts } from "../services/workout";
+import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
 const router = useRouter();
+const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 const { error, state: workouts } = useAsyncState<WorkoutWithId[]>(() => {
-    if (auth.currentUser) {
-        return getWorkouts(auth.currentUser.uid);
-    }
-    return Promise.resolve([]);
+    return getWorkouts(authStore.nonNullableUser.uid);
 }, []);
 
 watch(error, function (err) {

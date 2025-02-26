@@ -40,17 +40,19 @@ import {
     isCardioWorkout,
     isStrengthWorkout,
 } from "../services/workout";
+import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
 const route = useRoute();
 const router = useRouter();
+const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 const workoutId = route.params.id as string;
 
 const confirmDelete = ref(false);
 
 const { error, state: workout } = useAsyncState<null | WorkoutWithId>(
-    () => getWorkoutById(workoutId),
+    () => getWorkoutById(authStore.nonNullableUser.uid, workoutId),
     null,
 );
 
@@ -74,7 +76,7 @@ async function handleDeleteWorkout(): Promise<void> {
     }
 
     try {
-        await deleteWorkoutService(workout.value.id);
+        await deleteWorkoutService(authStore.nonNullableUser.uid, workout.value.id);
         globalStore.notify("Workout deleted successfully!");
         await router.replace({ name: "Home" });
     } catch (e) {

@@ -214,6 +214,7 @@ async function addFoodToMeal(
     mealType: "breakfast" | "dinner" | "lunch" | "snack",
 ): Promise<void> {
     try {
+        globalStore.setLoading(true);
         const userId = authStore.nonNullableUser.uid;
         const dateString = selectedDate.value;
 
@@ -233,6 +234,8 @@ async function addFoodToMeal(
     } catch (error) {
         logger.error(error, "PageCalories", { mealType });
         globalStore.notifyError("Failed to add food to meal");
+    } finally {
+        globalStore.setLoading(false);
     }
 }
 
@@ -340,6 +343,7 @@ async function removeFoodFromMeal(
     index: number,
 ): Promise<void> {
     try {
+        globalStore.setLoading(true);
         const userId = authStore.nonNullableUser.uid;
         const dateString = selectedDate.value;
 
@@ -364,11 +368,14 @@ async function removeFoodFromMeal(
     } catch (error) {
         logger.error(error, "PageCalories", { index, mealType });
         globalStore.notifyError("Failed to remove food");
+    } finally {
+        globalStore.setLoading(false);
     }
 }
 
 async function removeMeal(mealId: string): Promise<void> {
     try {
+        globalStore.setLoading(true);
         const userId = authStore.nonNullableUser.uid;
         await deleteMeal(userId, mealId, selectedDate.value);
         await refreshData();
@@ -376,6 +383,8 @@ async function removeMeal(mealId: string): Promise<void> {
     } catch (error) {
         logger.error(error, "PageCalories", { mealId });
         globalStore.notifyError("Failed to delete meal");
+    } finally {
+        globalStore.setLoading(false);
     }
 }
 

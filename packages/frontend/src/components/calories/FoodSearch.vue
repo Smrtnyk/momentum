@@ -241,10 +241,10 @@ import type { CustomFood } from "../../services/custom-foods";
 import type { FoodItem } from "../../types/health-metrics";
 
 import { logger } from "../../logger/app-logger";
-import { getRecentFoods } from "../../services/calories";
 import { getUserCustomFoods } from "../../services/custom-foods";
 import { combinedFoodApi } from "../../services/food-api/combined-api";
 import { NutritionixApi } from "../../services/food-api/nutritionix-api";
+import { getRecentFoods } from "../../services/recent-food-local-storage";
 import { useAuthStore } from "../../stores/auth";
 
 const { limitRecent = 10 } = defineProps<{
@@ -294,7 +294,8 @@ const filteredCustomFoods = computed(() => {
 });
 
 onMounted(async () => {
-    await Promise.all([loadRecentFoods(), loadCustomFoods()]);
+    loadRecentFoods();
+    await loadCustomFoods();
 });
 
 async function loadCustomFoods(): Promise<void> {
@@ -308,14 +309,11 @@ async function loadCustomFoods(): Promise<void> {
     }
 }
 
-async function loadRecentFoods(): Promise<void> {
+function loadRecentFoods(): void {
     try {
-        isLoading.value = true;
-        recentFoods.value = await getRecentFoods(authStore.nonNullableUser.uid, limitRecent);
+        recentFoods.value = getRecentFoods(authStore.nonNullableUser.uid, limitRecent);
     } catch (error) {
         logger.error(error, "FoodSearch");
-    } finally {
-        isLoading.value = false;
     }
 }
 

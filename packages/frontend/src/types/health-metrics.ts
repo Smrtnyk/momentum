@@ -1,12 +1,5 @@
 import type { Timestamp } from "firebase/firestore";
 
-export interface FavoriteFood extends FoodItem {
-    // When it was last used
-    lastUsed: Timestamp;
-    // How many times it's been used
-    useCount: number;
-}
-
 export interface FoodItem {
     // Alternative serving sizes (from Nutritionix)
     altMeasures?: {

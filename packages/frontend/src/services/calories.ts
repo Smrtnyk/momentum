@@ -5,22 +5,18 @@ import {
     doc,
     getDoc,
     getDocs,
-    increment,
-    limit,
     orderBy,
     query,
-    serverTimestamp,
-    setDoc,
     Timestamp,
-    updateDoc,
     where,
 } from "firebase/firestore";
 
-import type { FavoriteFood, FoodItem, Meal } from "../types/health-metrics";
+import type { FoodItem, Meal } from "../types/health-metrics";
 
 import { firestore } from "../firebase";
 import { logger } from "../logger/app-logger";
 import { updateHealthMetrics } from "./health-metrics";
+import { addRecentFood } from "./recent-food-local-storage";
 
 const DEFAULT_CALORIE_GOAL = 2000;
 
@@ -57,8 +53,7 @@ export async function addMeal(
         await updateDailyCalorieTotals(userId, dateString);
 
         for (const food of foods) {
-            // eslint-disable-next-line no-await-in-loop
-            await incrementFoodUsageCount(userId, food);
+            addRecentFood(userId, food);
         }
 
         return mealDocRef.id;
@@ -153,7 +148,6 @@ export async function getMealsForDay(
         const queryVal = query(
             mealsRef,
             where("dateString", "==", dateString),
-            where("userId", "==", userId),
             orderBy("timestamp", "asc"),
         );
 
@@ -168,30 +162,6 @@ export async function getMealsForDay(
     } catch (error) {
         logger.error(error, "CaloriesService", { dateString, userId });
         throw new Error("Failed to get meals for day");
-    }
-}
-
-/**
- * Get a user's recent food entries
- * @param userId User ID
- * @param limitVal Maximum number of items to return
- */
-export async function getRecentFoods(userId: string, limitVal = 10): Promise<FavoriteFood[]> {
-    try {
-        const favoritesRef = collection(firestore, "users", userId, "favorite_foods");
-        const queryVal = query(favoritesRef, orderBy("lastUsed", "desc"), limit(limitVal));
-
-        const querySnapshot = await getDocs(queryVal);
-        return querySnapshot.docs.map(
-            (document) =>
-                ({
-                    id: document.id,
-                    ...document.data(),
-                }) as FavoriteFood,
-        );
-    } catch (error) {
-        logger.error(error, "CaloriesService", { userId });
-        throw new Error("Failed to get recent foods");
     }
 }
 
@@ -218,38 +188,6 @@ export async function setCalorieGoal(
     } catch (error) {
         logger.error(error, "CaloriesService", { dateString, goal, userId });
         throw new Error("Failed to set calorie goal");
-    }
-}
-
-/**
- * Increment usage count for a food item
- * @param userId User ID
- * @param food Food item to increment usage for
- */
-async function incrementFoodUsageCount(userId: string, food: FoodItem): Promise<void> {
-    try {
-        const favoriteRef = doc(firestore, "users", userId, "favorite_foods", food.id);
-
-        // Check if food already exists in favorites
-        const docSnap = await getDoc(favoriteRef);
-
-        if (docSnap.exists()) {
-            // Increment usage count
-            await updateDoc(favoriteRef, {
-                lastUsed: serverTimestamp(),
-                useCount: increment(1),
-            });
-        } else {
-            // Add with initial count
-            await setDoc(favoriteRef, {
-                ...food,
-                lastUsed: serverTimestamp(),
-                useCount: 1,
-            });
-        }
-    } catch (error) {
-        logger.error(error, "CaloriesService", { food, userId });
-        // Don't throw - this is an enhancement, not critical
     }
 }
 

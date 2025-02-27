@@ -62,7 +62,7 @@
                                     color="blue"
                                     size="small"
                                     class="mx-1"
-                                    @click="showCustomWaterDialog = true"
+                                    @click="openWaterDialog()"
                                 >
                                     Custom
                                 </v-btn>
@@ -94,7 +94,7 @@
                                     variant="outlined"
                                     color="deep-purple"
                                     size="small"
-                                    @click="showWeightDialog = true"
+                                    @click="openWeightDialog()"
                                 >
                                     <v-icon small class="mr-1">mdi-scale-bathroom</v-icon>
                                     Log Weight
@@ -127,7 +127,7 @@
                                     variant="outlined"
                                     color="amber-darken-2"
                                     size="small"
-                                    @click="showBodyFatDialog = true"
+                                    @click="openBodyFatDialog()"
                                 >
                                     <v-icon small class="mr-1">mdi-percent</v-icon>
                                     Log Body Fat
@@ -160,7 +160,7 @@
                                     variant="outlined"
                                     color="green"
                                     size="small"
-                                    @click="showStepsDialog = true"
+                                    @click="openStepsDialog()"
                                 >
                                     <v-icon small class="mr-1">mdi-shoe-print</v-icon>
                                     Log Steps
@@ -179,7 +179,7 @@
                 <v-card-text>
                     <div v-if="todaysWorkouts.length > 0">
                         <p class="mb-2">Here are your workouts for today:</p>
-                        <v-list dense>
+                        <v-list density="compact">
                             <v-list-item
                                 v-for="workout in todaysWorkouts"
                                 :key="workout.id"
@@ -219,135 +219,6 @@
                 <FitnessTip />
             </v-col>
         </v-row>
-
-        <!-- Dialog for custom water amount -->
-        <v-dialog v-model="showCustomWaterDialog" max-width="400">
-            <v-card>
-                <v-card-title>Log Water Intake</v-card-title>
-                <v-card-text>
-                    <v-text-field
-                        v-model.number="customWaterAmount"
-                        type="number"
-                        label="Amount (ml)"
-                        variant="outlined"
-                        :rules="[
-                            (v) => !!v || 'Amount is required',
-                            (v) => v > 0 || 'Amount must be positive',
-                        ]"
-                    ></v-text-field>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn @click="showCustomWaterDialog = false">Cancel</v-btn>
-                    <v-btn
-                        color="primary"
-                        @click="logCustomWater"
-                        :disabled="!customWaterAmount || customWaterAmount <= 0"
-                    >
-                        Save
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-
-        <!-- Dialog for weight input -->
-        <v-dialog v-model="showWeightDialog" max-width="400">
-            <v-card>
-                <v-card-title>Log Today's Weight</v-card-title>
-                <v-card-text>
-                    <v-text-field
-                        v-model.number="weightInput"
-                        type="number"
-                        label="Weight (kg)"
-                        variant="outlined"
-                        step="0.1"
-                        :rules="[
-                            (v) => !!v || 'Weight is required',
-                            (v) => v > 0 || 'Weight must be positive',
-                        ]"
-                    ></v-text-field>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn @click="showWeightDialog = false">Cancel</v-btn>
-                    <v-btn
-                        color="primary"
-                        @click="logTodayWeight"
-                        :disabled="!weightInput || weightInput <= 0"
-                    >
-                        Save
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-
-        <!-- Body Fat Dialog -->
-        <v-dialog v-model="showBodyFatDialog" max-width="400">
-            <v-card>
-                <v-card-title>Log Body Fat Percentage</v-card-title>
-                <v-card-text>
-                    <v-text-field
-                        v-model.number="bodyFatInput"
-                        type="number"
-                        label="Body Fat (%)"
-                        variant="outlined"
-                        step="0.1"
-                        :rules="[
-                            (v) => !!v || 'Value is required',
-                            (v) => (v >= 3 && v <= 40) || 'Value must be between 3-40%',
-                        ]"
-                    ></v-text-field>
-
-                    <v-select
-                        v-model="bodyFatMethod"
-                        :items="bodyFatMethods"
-                        label="Measurement Method"
-                        variant="outlined"
-                    ></v-select>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn @click="showBodyFatDialog = false">Cancel</v-btn>
-                    <v-btn
-                        color="primary"
-                        @click="logBodyFatPercentage"
-                        :disabled="!bodyFatInput || bodyFatInput < 3 || bodyFatInput > 40"
-                    >
-                        Save
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
-
-        <!-- Steps Dialog -->
-        <v-dialog v-model="showStepsDialog" max-width="400">
-            <v-card>
-                <v-card-title>Log Daily Steps</v-card-title>
-                <v-card-text>
-                    <v-text-field
-                        v-model.number="stepsInput"
-                        type="number"
-                        label="Steps"
-                        variant="outlined"
-                        :rules="[
-                            (v) => !!v || 'Steps are required',
-                            (v) => v > 0 || 'Steps must be positive',
-                        ]"
-                    ></v-text-field>
-                </v-card-text>
-                <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <v-btn @click="showStepsDialog = false">Cancel</v-btn>
-                    <v-btn
-                        color="primary"
-                        @click="logDailySteps"
-                        :disabled="!stepsInput || stepsInput <= 0"
-                    >
-                        Save
-                    </v-btn>
-                </v-card-actions>
-            </v-card>
-        </v-dialog>
     </v-container>
 </template>
 
@@ -360,6 +231,11 @@ import { useDate } from "vuetify";
 import type { WorkoutWithId } from "../types/workout";
 
 import FitnessTip from "../components/FitnessTip.vue";
+import BodyFatDialog from "../components/health-metrics/BodyFatDialog.vue";
+import StepsEntryDialog from "../components/health-metrics/StepsEntryDialog.vue";
+import WaterIntakeDialog from "../components/health-metrics/WaterIntakeDialog.vue";
+import WeightEntryDialog from "../components/health-metrics/WeightEntryDialog.vue";
+import { useDialog } from "../composables/useDialog";
 import { motivationalMessages } from "../data/motivational-messages";
 import { logger } from "../logger/app-logger";
 import {
@@ -381,23 +257,12 @@ const router = useRouter();
 const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 const dateAdapter = useDate();
+const { openDialog } = useDialog();
 
 const waterProgress = ref({ current: 0, percentage: 0, target: 2500 });
 const latestWeight = ref<null | { date: Date; weight: number }>(null);
 const latestBodyFat = ref<null | { date: Date; method?: string; percentage: number }>(null);
 const latestSteps = ref<null | { date: Date; steps: number }>(null);
-
-const showCustomWaterDialog = ref(false);
-const showWeightDialog = ref(false);
-const showBodyFatDialog = ref(false);
-const showStepsDialog = ref(false);
-
-const customWaterAmount = ref<null | number>(null);
-const weightInput = ref<null | number>(null);
-const bodyFatInput = ref<null | number>(null);
-const bodyFatMethod = ref<string>("calipers");
-const bodyFatMethods = ["calipers", "bioimpedance", "visual estimate"];
-const stepsInput = ref<null | number>(null);
 
 const currentHour = new Date().getHours();
 const greeting = computed(() => {
@@ -455,60 +320,36 @@ function goToWorkoutLogger(): void {
     router.push({ name: "WorkoutLogger" });
 }
 
-async function logBodyFatPercentage(): Promise<void> {
-    if (bodyFatInput.value !== null && bodyFatInput.value >= 3 && bodyFatInput.value <= 40) {
-        try {
-            const userId = authStore.nonNullableUser.uid;
-            await logBodyFat(userId, bodyFatInput.value, bodyFatMethod.value);
-            globalStore.notify("Body fat logged successfully");
-            await refreshHealthData();
-            showBodyFatDialog.value = false;
-            bodyFatInput.value = null;
-        } catch (error) {
-            globalStore.notifyError("Failed to log body fat");
-            logger.error(error);
-        }
-    }
-}
-
-async function logCustomWater(): Promise<void> {
-    if (!customWaterAmount.value) {
-        return;
-    }
-
-    await logWater(customWaterAmount.value);
-    showCustomWaterDialog.value = false;
-    customWaterAmount.value = null;
-}
-
-async function logDailySteps(): Promise<void> {
-    if (stepsInput.value && stepsInput.value > 0) {
-        try {
-            const userId = authStore.nonNullableUser.uid;
-            await logSteps(userId, stepsInput.value);
-            globalStore.notify("Steps logged successfully");
-            await refreshHealthData();
-            showStepsDialog.value = false;
-            stepsInput.value = null;
-        } catch (error) {
-            globalStore.notifyError("Failed to log steps");
-            logger.error(error);
-        }
-    }
-}
-
-async function logTodayWeight(): Promise<void> {
-    if (!weightInput.value) {
-        return;
-    }
-
+async function logBodyFatPercentage(percentage: number, method: string): Promise<void> {
     try {
         const userId = authStore.nonNullableUser.uid;
-        await logWeight(userId, weightInput.value);
+        await logBodyFat(userId, percentage, method);
+        globalStore.notify("Body fat logged successfully");
+        await refreshHealthData();
+    } catch (error) {
+        globalStore.notifyError("Failed to log body fat");
+        logger.error(error);
+    }
+}
+
+async function logDailySteps(steps: number): Promise<void> {
+    try {
+        const userId = authStore.nonNullableUser.uid;
+        await logSteps(userId, steps);
+        globalStore.notify("Steps logged successfully");
+        await refreshHealthData();
+    } catch (error) {
+        globalStore.notifyError("Failed to log steps");
+        logger.error(error);
+    }
+}
+
+async function logTodayWeight(weight: number): Promise<void> {
+    try {
+        const userId = authStore.nonNullableUser.uid;
+        await logWeight(userId, weight);
         globalStore.notify("Weight logged successfully");
         await refreshHealthData();
-        showWeightDialog.value = false;
-        weightInput.value = null;
     } catch (error) {
         globalStore.notifyError("Failed to log weight");
     }
@@ -523,6 +364,39 @@ async function logWater(amount: number): Promise<void> {
     } catch (error) {
         globalStore.notifyError("Failed to log water intake");
     }
+}
+
+function openBodyFatDialog(): void {
+    openDialog(BodyFatDialog, {
+        initialMethod: "calipers",
+        onSave: async (percentage: number, method: string) => {
+            await logBodyFatPercentage(percentage, method);
+        },
+    });
+}
+
+function openStepsDialog(): void {
+    openDialog(StepsEntryDialog, {
+        onSave: async (steps: number) => {
+            await logDailySteps(steps);
+        },
+    });
+}
+
+function openWaterDialog(): void {
+    openDialog(WaterIntakeDialog, {
+        onSave: async (amount: number) => {
+            await logWater(amount);
+        },
+    });
+}
+
+function openWeightDialog(): void {
+    openDialog(WeightEntryDialog, {
+        onSave: async (weight: number) => {
+            await logTodayWeight(weight);
+        },
+    });
 }
 
 async function refreshHealthData(): Promise<void> {

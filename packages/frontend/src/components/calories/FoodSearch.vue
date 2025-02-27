@@ -14,37 +14,6 @@
                     :loading="isLoading"
                     class="flex-grow-1"
                 >
-                    <template #append>
-                        <v-menu location="bottom end">
-                            <template #activator="{ props }">
-                                <v-btn
-                                    v-bind="props"
-                                    icon
-                                    variant="outlined"
-                                    density="comfortable"
-                                    color="primary"
-                                >
-                                    <v-icon>mdi-plus</v-icon>
-                                </v-btn>
-                            </template>
-
-                            <v-list density="compact">
-                                <v-list-item @click="openCustomFoodForm()">
-                                    <template #prepend>
-                                        <v-icon>mdi-food-apple-outline</v-icon>
-                                    </template>
-                                    <v-list-item-title>Create Custom Food</v-list-item-title>
-                                </v-list-item>
-
-                                <v-list-item @click="openManualMacrosDialog">
-                                    <template #prepend>
-                                        <v-icon>mdi-calculator</v-icon>
-                                    </template>
-                                    <v-list-item-title>Log Macros Directly</v-list-item-title>
-                                </v-list-item>
-                            </v-list>
-                        </v-menu>
-                    </template>
                 </v-text-field>
             </div>
 
@@ -153,19 +122,7 @@
                         <div v-else-if="hasSearched" class="text-center pa-4 text-medium-emphasis">
                             <v-icon icon="mdi-food-off" size="48" class="mb-2"></v-icon>
                             <div>No foods found matching "{{ searchQuery }}"</div>
-                            <div class="text-caption mt-1 mb-4">
-                                Try a different search term or create a custom food
-                            </div>
-
-                            <v-btn
-                                variant="tonal"
-                                color="primary"
-                                class="mt-2"
-                                prepend-icon="mdi-plus"
-                                @click="openCustomFoodForm"
-                            >
-                                Create Custom Food
-                            </v-btn>
+                            <div class="text-caption mt-1 mb-4">Try a different search term</div>
                         </div>
                     </div>
 
@@ -206,32 +163,6 @@
                                     }}{{ food.calories }} kcal per {{ food.servingSize
                                     }}{{ food.servingUnit }}
                                 </v-list-item-subtitle>
-
-                                <template #append>
-                                    <v-menu location="bottom end">
-                                        <template #activator="{ props }">
-                                            <v-btn icon variant="text" size="small" v-bind="props">
-                                                <v-icon>mdi-dots-vertical</v-icon>
-                                            </v-btn>
-                                        </template>
-
-                                        <v-list density="compact">
-                                            <v-list-item @click.stop="editCustomFood(food)">
-                                                <template #prepend>
-                                                    <v-icon>mdi-pencil</v-icon>
-                                                </template>
-                                                <v-list-item-title>Edit</v-list-item-title>
-                                            </v-list-item>
-
-                                            <v-list-item @click.stop="confirmDeleteFood(food)">
-                                                <template #prepend>
-                                                    <v-icon color="error">mdi-delete</v-icon>
-                                                </template>
-                                                <v-list-item-title>Delete</v-list-item-title>
-                                            </v-list-item>
-                                        </v-list>
-                                    </v-menu>
-                                </template>
                             </v-list-item>
                         </v-list>
                     </div>
@@ -247,7 +178,7 @@
                             variant="tonal"
                             color="primary"
                             prepend-icon="mdi-plus"
-                            @click="openCustomFoodForm"
+                            @click="goToCustomFood"
                         >
                             Create Custom Food
                         </v-btn>
@@ -304,27 +235,19 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 
 import type { CustomFood } from "../../services/custom-foods";
 import type { FoodItem } from "../../types/health-metrics";
 
-import { useGlobalConfirm } from "../../composables/useConfirmDialog";
-import { useDialog } from "../../composables/useDialog";
 import { logger } from "../../logger/app-logger";
 import { getRecentFoods } from "../../services/calories";
-import {
-    createCustomFood,
-    deleteCustomFood,
-    getUserCustomFoods,
-    updateCustomFood,
-} from "../../services/custom-foods";
+import { getUserCustomFoods } from "../../services/custom-foods";
 import { combinedFoodApi } from "../../services/food-api/combined-api";
 import { NutritionixApi } from "../../services/food-api/nutritionix-api";
 import { useAuthStore } from "../../stores/auth";
-import CustomFoodForm from "./CustomFoodForm.vue";
-import ManualMacrosDialog from "./ManualMacrosDialog.vue";
 
-const { limitRecent = 10, mealType } = defineProps<{
+const { limitRecent = 10 } = defineProps<{
     limitRecent?: number;
     mealType: "breakfast" | "dinner" | "lunch" | "snack";
 }>();
@@ -334,9 +257,8 @@ const emit = defineEmits<{
     select: [food: FoodItem];
 }>();
 
+const router = useRouter();
 const authStore = useAuthStore();
-const { openDialog } = useDialog();
-const { openConfirm } = useGlobalConfirm();
 
 const activeTab = ref("search");
 const searchQuery = ref("");
@@ -358,9 +280,10 @@ const searchResults = ref<{
     totalPages: 0,
 });
 
-// Filter custom foods based on search query
 const filteredCustomFoods = computed(() => {
-    if (!searchQuery.value) return customFoods.value;
+    if (!searchQuery.value) {
+        return customFoods.value;
+    }
 
     const normalizedQuery = searchQuery.value.toLowerCase();
     return customFoods.value.filter(
@@ -402,22 +325,6 @@ function changePage(page: number): void {
     performSearch();
 }
 
-async function confirmDeleteFood(food: CustomFood): Promise<void> {
-    const confirmed = await openConfirm({
-        message: `Are you sure you want to delete "${food.name}"?`,
-        title: "Delete Custom Food",
-    });
-
-    if (!confirmed) return;
-
-    try {
-        await deleteCustomFood(authStore.nonNullableUser.uid, food.id);
-        await loadCustomFoods();
-    } catch (error) {
-        logger.error(error, "FoodSearch", { foodId: food.id });
-    }
-}
-
 function debounceSearch(): void {
     clearTimeout(searchTimeout);
 
@@ -429,47 +336,6 @@ function debounceSearch(): void {
     searchTimeout = globalThis.setTimeout(() => {
         performSearch();
     }, 500);
-}
-
-function editCustomFood(food: CustomFood): void {
-    openCustomFoodForm(food);
-}
-
-function openCustomFoodForm(food?: CustomFood): void {
-    openDialog(CustomFoodForm, {
-        componentProps: {
-            initialFood: food,
-            onSave: async (newFood: Omit<FoodItem, "id">) => {
-                const userId = authStore.nonNullableUser.uid;
-
-                try {
-                    if (food?.id) {
-                        await updateCustomFood(userId, food.id, newFood);
-                    } else {
-                        await createCustomFood(userId, newFood);
-                    }
-
-                    await loadCustomFoods();
-                    activeTab.value = "custom";
-                } catch (error) {
-                    logger.error(error, "FoodSearch", { food: newFood });
-                }
-            },
-        },
-        title: food ? "Edit Custom Food" : "Create Custom Food",
-    });
-}
-
-function openManualMacrosDialog(): void {
-    openDialog(ManualMacrosDialog, {
-        componentProps: {
-            mealType,
-            onSave: (food: FoodItem) => {
-                emit("select", food);
-            },
-        },
-        title: "Log Macros Directly",
-    });
 }
 
 const foodTypeFilter = ref<"ingredients" | "products">("ingredients");
@@ -486,6 +352,11 @@ watch(foodTypeFilter, () => {
         performSearch();
     }
 });
+
+function goToCustomFood(): void {
+    router.push({ name: "CustomFood" });
+    emit("close");
+}
 
 async function performSearch(): Promise<void> {
     if (!searchQuery.value || searchQuery.value.length < 2) return;

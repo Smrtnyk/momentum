@@ -54,6 +54,14 @@ const routes = [
         path: "/calories",
     },
     {
+        component: () => import("../pages/PageCustomFood.vue"),
+        meta: {
+            requiresAuth: true,
+        },
+        name: "CustomFood",
+        path: "/custom-food",
+    },
+    {
         path: "/",
         redirect: "/home",
     },

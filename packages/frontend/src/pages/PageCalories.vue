@@ -1,7 +1,17 @@
 <template>
     <v-container fluid class="pa-4">
         <h1 class="text-h4 mb-4">Calories & Nutrition</h1>
-
+        <v-btn
+            variant="text"
+            density="comfortable"
+            color="primary"
+            prepend-icon="mdi-food-apple-outline"
+            class="text-none"
+            to="/custom-food"
+            size="small"
+        >
+            My Food
+        </v-btn>
         <!-- Date Selector -->
         <v-card class="mb-4" flat>
             <v-card-text class="d-flex justify-space-between align-center pa-2">

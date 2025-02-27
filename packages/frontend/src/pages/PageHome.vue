@@ -25,7 +25,7 @@
 
             <v-card-text>
                 <v-row>
-                    <!-- Water Intake Tracker (first row, left) -->
+                    <!-- Water Intake Tracker -->
                     <v-col cols="12" sm="6" md="3">
                         <div class="d-flex flex-column align-center">
                             <div class="text-subtitle-1 mb-2">Water Intake</div>
@@ -70,7 +70,7 @@
                         </div>
                     </v-col>
 
-                    <!-- Weight Tracker (first row, right) -->
+                    <!-- Weight Tracker -->
                     <v-col cols="12" sm="6" md="3">
                         <div class="d-flex flex-column align-center">
                             <div class="text-subtitle-1 mb-2">Weight</div>
@@ -103,7 +103,7 @@
                         </div>
                     </v-col>
 
-                    <!-- Body Fat Tracker (second row, left) -->
+                    <!-- Body Fat Tracker  -->
                     <v-col cols="12" sm="6" md="3">
                         <div class="d-flex flex-column align-center">
                             <div class="text-subtitle-1 mb-2">Body Fat</div>
@@ -136,7 +136,7 @@
                         </div>
                     </v-col>
 
-                    <!-- Steps Tracker (second row, right) -->
+                    <!-- Steps Tracker -->
                     <v-col cols="12" sm="6" md="3">
                         <div class="d-flex flex-column align-center">
                             <div class="text-subtitle-1 mb-2">Daily Steps</div>

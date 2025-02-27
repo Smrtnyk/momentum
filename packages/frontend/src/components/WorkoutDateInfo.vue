@@ -17,12 +17,10 @@ const formattedDate = computed(() => {
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
-    // Format for today
     if (workoutDate.toDateString() === today.toDateString()) {
         return `Today at ${formatTime(workoutDate)}`;
     }
 
-    // Format for yesterday
     if (workoutDate.toDateString() === yesterday.toDateString()) {
         return `Yesterday at ${formatTime(workoutDate)}`;
     }

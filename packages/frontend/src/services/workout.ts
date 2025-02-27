@@ -8,7 +8,6 @@ import {
     limit,
     orderBy,
     query,
-    Timestamp,
     updateDoc,
     where,
 } from "firebase/firestore";
@@ -34,13 +33,6 @@ export async function deleteWorkout(userId: string, workoutId: string): Promise<
     }
 
     await deleteDoc(doc(firestore, "users", userId, "workouts", workoutId));
-}
-
-export function getRecentWorkouts(userId: string, count = 5): Promise<WorkoutWithId[]> {
-    return getWorkouts(userId, {
-        limit: count,
-        orderByDate: "desc",
-    });
 }
 
 export async function getWorkoutById(userId: string, workoutId: string): Promise<WorkoutWithId> {
@@ -73,44 +65,17 @@ export async function getWorkouts(
     const workoutsRef = collection(firestore, "users", userId, "workouts");
     let queryRef = query(workoutsRef);
 
-    // Apply type filter if specified
     if (options.workoutType) {
         queryRef = query(queryRef, where("type", "==", options.workoutType));
     }
 
-    // Apply ordering if specified
     if (options.orderByDate) {
         queryRef = query(queryRef, orderBy("date", options.orderByDate === "asc" ? "asc" : "desc"));
     }
 
-    // Apply limit if specified
     if (options.limit && options.limit > 0) {
         queryRef = query(queryRef, limit(options.limit));
     }
-
-    const snapshot = await getDocs(queryRef);
-
-    return snapshot.docs.map(function (document) {
-        return { id: document.id, ...document.data() } as WorkoutWithId;
-    });
-}
-
-export async function getWorkoutsByDateRange(
-    userId: string,
-    startDate: Date,
-    endDate: Date,
-): Promise<WorkoutWithId[]> {
-    if (!userId) {
-        throw new Error("UserId is required");
-    }
-
-    const workoutsRef = collection(firestore, "users", userId, "workouts");
-    const queryRef = query(
-        workoutsRef,
-        where("date", ">=", Timestamp.fromDate(startDate)),
-        where("date", "<=", Timestamp.fromDate(endDate)),
-        orderBy("date", "asc"),
-    );
 
     const snapshot = await getDocs(queryRef);
 

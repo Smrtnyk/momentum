@@ -368,33 +368,41 @@ async function logWater(amount: number): Promise<void> {
 
 function openBodyFatDialog(): void {
     openDialog(BodyFatDialog, {
-        initialMethod: "calipers",
-        onSave: async (percentage: number, method: string) => {
-            await logBodyFatPercentage(percentage, method);
+        componentProps: {
+            initialMethod: "calipers",
+            onSave: async (percentage: number, method: string) => {
+                await logBodyFatPercentage(percentage, method);
+            },
         },
     });
 }
 
 function openStepsDialog(): void {
     openDialog(StepsEntryDialog, {
-        onSave: async (steps: number) => {
-            await logDailySteps(steps);
+        componentProps: {
+            onSave: async (steps: number) => {
+                await logDailySteps(steps);
+            },
         },
     });
 }
 
 function openWaterDialog(): void {
     openDialog(WaterIntakeDialog, {
-        onSave: async (amount: number) => {
-            await logWater(amount);
+        componentProps: {
+            onSave: async (amount: number) => {
+                await logWater(amount);
+            },
         },
     });
 }
 
 function openWeightDialog(): void {
     openDialog(WeightEntryDialog, {
-        onSave: async (weight: number) => {
-            await logTodayWeight(weight);
+        componentProps: {
+            onSave: async (weight: number) => {
+                await logTodayWeight(weight);
+            },
         },
     });
 }

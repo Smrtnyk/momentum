@@ -218,8 +218,11 @@ function handleProfileSaved(updatedProfile: UserProfile): void {
 
 function openEditDialog(): void {
     openDialog(EditProfileForm, {
-        initialProfile: profile.value,
-        onProfileSaved: handleProfileSaved,
+        componentProps: {
+            initialProfile: profile.value,
+            onProfileSaved: handleProfileSaved,
+        },
+        title: profile.value ? "Edit Profile" : "Create Profile",
     });
 }
 </script>

@@ -157,7 +157,6 @@ export async function getMetricHistory(
     metric: "bodyFat" | "steps" | "waterIntake" | "weight",
     days = 30,
 ): Promise<Array<{ date: Date; value: number }>> {
-    // Calculate start date (X days ago)
     const endDate = new Date();
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);

@@ -1,59 +1,52 @@
 <template>
-    <v-card>
-        <v-card-title>
-            <span class="text-h5">
-                {{ initialProfile ? "Edit Profile" : "Create Profile" }}
-            </span>
-        </v-card-title>
-        <v-card-text>
-            <v-form ref="form" v-model="formValid">
-                <v-text-field
-                    variant="outlined"
-                    v-model="editedProfile.name"
-                    label="Full Name"
-                    :rules="[required]"
-                />
-                <v-date-input
-                    v-model="birthDateModel"
-                    clearable
-                    label="Birth Date"
-                    variant="outlined"
-                    :rules="[required]"
-                />
-                <v-text-field
-                    variant="outlined"
-                    v-model.number="editedProfile.height"
-                    label="Height (cm)"
-                    type="number"
-                    :rules="[required]"
-                />
-                <v-text-field
-                    variant="outlined"
-                    v-model.number="editedProfile.weight"
-                    label="Weight (kg)"
-                    type="number"
-                    :rules="[required]"
-                />
-                <v-select
-                    variant="outlined"
-                    v-model="editedProfile.gender"
-                    :items="genderOptions"
-                    label="Gender"
-                    :rules="[required]"
-                />
-                <v-text-field
-                    variant="outlined"
-                    v-model="editedProfile.profilePictureUrl"
-                    label="Profile Picture URL"
-                />
-            </v-form>
-        </v-card-text>
-        <v-card-actions>
-            <v-spacer />
-            <v-btn @click="emitClose">Cancel</v-btn>
-            <v-btn color="primary" :disabled="!formValid" @click="saveProfile"> Save </v-btn>
-        </v-card-actions>
-    </v-card>
+    <v-card-text>
+        <v-form ref="form" v-model="formValid">
+            <v-text-field
+                variant="outlined"
+                v-model="editedProfile.name"
+                label="Full Name"
+                :rules="[required]"
+            />
+            <v-date-input
+                v-model="birthDateModel"
+                clearable
+                label="Birth Date"
+                variant="outlined"
+                :rules="[required]"
+            />
+            <v-text-field
+                variant="outlined"
+                v-model.number="editedProfile.height"
+                label="Height (cm)"
+                type="number"
+                :rules="[required]"
+            />
+            <v-text-field
+                variant="outlined"
+                v-model.number="editedProfile.weight"
+                label="Weight (kg)"
+                type="number"
+                :rules="[required]"
+            />
+            <v-select
+                variant="outlined"
+                v-model="editedProfile.gender"
+                :items="genderOptions"
+                label="Gender"
+                :rules="[required]"
+            />
+            <v-text-field
+                variant="outlined"
+                v-model="editedProfile.profilePictureUrl"
+                label="Profile Picture URL"
+            />
+        </v-form>
+    </v-card-text>
+    <v-card-actions>
+        <v-spacer />
+        <v-btn @click="emitClose">Cancel</v-btn>
+        <v-btn color="primary" :disabled="!formValid" @click="saveProfile"> Save </v-btn>
+    </v-card-actions>
 </template>
 
 <script setup lang="ts">

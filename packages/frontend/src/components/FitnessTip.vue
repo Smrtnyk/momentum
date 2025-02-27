@@ -162,7 +162,6 @@ function getTipIcon(tip: string): { color: string; icon: string } {
         return { color: "#9C27B0", icon: "mdi-brain" };
     }
 
-    // Default icon for other tips
     return { color: "#FFC107", icon: "mdi-lightbulb-on" };
 }
 </script>

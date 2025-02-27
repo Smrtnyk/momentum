@@ -48,6 +48,12 @@ const routes = [
         path: "/profile",
     },
     {
+        component: () => import("../pages/PageCalories.vue"),
+        meta: { requiresAuth: true },
+        name: "Calories",
+        path: "/calories",
+    },
+    {
         path: "/",
         redirect: "/home",
     },

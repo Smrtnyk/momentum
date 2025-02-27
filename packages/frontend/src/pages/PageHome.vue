@@ -16,35 +16,35 @@
             </v-card>
         </div>
 
-        <!-- Health Metrics Tracking -->
+        <!-- Health Metrics Section -->
         <v-card class="rounded-lg mb-4" elevation="2">
             <v-card-title class="d-flex align-center">
                 <v-icon color="primary" class="mr-2">mdi-chart-line</v-icon>
-                Today's Health Metrics
+                Health Metrics
             </v-card-title>
 
             <v-card-text>
                 <v-row>
-                    <!-- Water Intake Tracker -->
-                    <v-col cols="12" sm="6">
+                    <!-- Water Intake Tracker (first row, left) -->
+                    <v-col cols="12" sm="6" md="3">
                         <div class="d-flex flex-column align-center">
                             <div class="text-subtitle-1 mb-2">Water Intake</div>
 
                             <v-progress-circular
                                 :model-value="waterProgress.percentage"
-                                :size="100"
-                                :width="12"
+                                :size="80"
+                                :width="8"
                                 color="blue"
-                                class="mb-3"
+                                class="mb-2"
                             >
                                 {{ waterProgress.percentage }}%
                             </v-progress-circular>
 
-                            <div class="text-body-1">
+                            <div class="text-body-2">
                                 {{ waterProgress.current }}ml / {{ waterProgress.target }}ml
                             </div>
 
-                            <div class="d-flex mt-3">
+                            <div class="d-flex mt-2">
                                 <v-btn
                                     v-for="amount in [250, 500]"
                                     :key="amount"
@@ -70,33 +70,103 @@
                         </div>
                     </v-col>
 
-                    <!-- Weight Tracker -->
-                    <v-col cols="12" sm="6" class="d-flex flex-column">
-                        <div class="text-subtitle-1 mb-2 text-center">Weight</div>
+                    <!-- Weight Tracker (first row, right) -->
+                    <v-col cols="12" sm="6" md="3">
+                        <div class="d-flex flex-column align-center">
+                            <div class="text-subtitle-1 mb-2">Weight</div>
 
-                        <div class="d-flex align-center justify-center flex-grow-1 mb-3">
-                            <div v-if="latestWeight" class="text-center">
-                                <div class="text-h4 font-weight-bold">
-                                    {{ latestWeight.weight }} kg
+                            <div class="d-flex align-center justify-center" style="height: 80px">
+                                <div v-if="latestWeight" class="text-center">
+                                    <div class="text-h5 font-weight-bold">
+                                        {{ latestWeight.weight }} kg
+                                    </div>
+                                    <div class="text-caption">
+                                        {{ formatDate(latestWeight.date) }}
+                                    </div>
                                 </div>
-                                <div class="text-caption">
-                                    Last updated: {{ formatDate(latestWeight.date) }}
+                                <div v-else class="text-center">
+                                    <div class="text-body-2">No data</div>
                                 </div>
                             </div>
-                            <div v-else class="text-center">
-                                <div class="text-body-1">No weight data recorded</div>
+
+                            <div class="mt-2">
+                                <v-btn
+                                    variant="outlined"
+                                    color="deep-purple"
+                                    size="small"
+                                    @click="showWeightDialog = true"
+                                >
+                                    <v-icon small class="mr-1">mdi-scale-bathroom</v-icon>
+                                    Log Weight
+                                </v-btn>
                             </div>
                         </div>
+                    </v-col>
 
-                        <v-btn
-                            block
-                            variant="outlined"
-                            color="primary"
-                            @click="showWeightDialog = true"
-                        >
-                            <v-icon left>mdi-scale-bathroom</v-icon>
-                            Log Today's Weight
-                        </v-btn>
+                    <!-- Body Fat Tracker (second row, left) -->
+                    <v-col cols="12" sm="6" md="3">
+                        <div class="d-flex flex-column align-center">
+                            <div class="text-subtitle-1 mb-2">Body Fat</div>
+
+                            <div class="d-flex align-center justify-center" style="height: 80px">
+                                <div v-if="latestBodyFat" class="text-center">
+                                    <div class="text-h5 font-weight-bold">
+                                        {{ latestBodyFat.percentage }}%
+                                    </div>
+                                    <div class="text-caption">
+                                        {{ formatDate(latestBodyFat.date) }}
+                                    </div>
+                                </div>
+                                <div v-else class="text-center">
+                                    <div class="text-body-2">No data</div>
+                                </div>
+                            </div>
+
+                            <div class="mt-2">
+                                <v-btn
+                                    variant="outlined"
+                                    color="amber-darken-2"
+                                    size="small"
+                                    @click="showBodyFatDialog = true"
+                                >
+                                    <v-icon small class="mr-1">mdi-percent</v-icon>
+                                    Log Body Fat
+                                </v-btn>
+                            </div>
+                        </div>
+                    </v-col>
+
+                    <!-- Steps Tracker (second row, right) -->
+                    <v-col cols="12" sm="6" md="3">
+                        <div class="d-flex flex-column align-center">
+                            <div class="text-subtitle-1 mb-2">Daily Steps</div>
+
+                            <div class="d-flex align-center justify-center" style="height: 80px">
+                                <div v-if="latestSteps" class="text-center">
+                                    <div class="text-h5 font-weight-bold">
+                                        {{ formatNumber(latestSteps.steps) }}
+                                    </div>
+                                    <div class="text-caption">
+                                        {{ formatDate(latestSteps.date) }}
+                                    </div>
+                                </div>
+                                <div v-else class="text-center">
+                                    <div class="text-body-2">No steps logged</div>
+                                </div>
+                            </div>
+
+                            <div class="mt-2">
+                                <v-btn
+                                    variant="outlined"
+                                    color="green"
+                                    size="small"
+                                    @click="showStepsDialog = true"
+                                >
+                                    <v-icon small class="mr-1">mdi-shoe-print</v-icon>
+                                    Log Steps
+                                </v-btn>
+                            </div>
+                        </div>
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -210,6 +280,74 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <!-- Body Fat Dialog -->
+        <v-dialog v-model="showBodyFatDialog" max-width="400">
+            <v-card>
+                <v-card-title>Log Body Fat Percentage</v-card-title>
+                <v-card-text>
+                    <v-text-field
+                        v-model.number="bodyFatInput"
+                        type="number"
+                        label="Body Fat (%)"
+                        variant="outlined"
+                        step="0.1"
+                        :rules="[
+                            (v) => !!v || 'Value is required',
+                            (v) => (v >= 3 && v <= 40) || 'Value must be between 3-40%',
+                        ]"
+                    ></v-text-field>
+
+                    <v-select
+                        v-model="bodyFatMethod"
+                        :items="bodyFatMethods"
+                        label="Measurement Method"
+                        variant="outlined"
+                    ></v-select>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="showBodyFatDialog = false">Cancel</v-btn>
+                    <v-btn
+                        color="primary"
+                        @click="logBodyFatPercentage"
+                        :disabled="!bodyFatInput || bodyFatInput < 3 || bodyFatInput > 40"
+                    >
+                        Save
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <!-- Steps Dialog -->
+        <v-dialog v-model="showStepsDialog" max-width="400">
+            <v-card>
+                <v-card-title>Log Daily Steps</v-card-title>
+                <v-card-text>
+                    <v-text-field
+                        v-model.number="stepsInput"
+                        type="number"
+                        label="Steps"
+                        variant="outlined"
+                        :rules="[
+                            (v) => !!v || 'Steps are required',
+                            (v) => v > 0 || 'Steps must be positive',
+                        ]"
+                    ></v-text-field>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn @click="showStepsDialog = false">Cancel</v-btn>
+                    <v-btn
+                        color="primary"
+                        @click="logDailySteps"
+                        :disabled="!stepsInput || stepsInput <= 0"
+                    >
+                        Save
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-container>
 </template>
 
@@ -223,9 +361,14 @@ import type { WorkoutWithId } from "../types/workout";
 
 import FitnessTip from "../components/FitnessTip.vue";
 import { motivationalMessages } from "../data/motivational-messages";
+import { logger } from "../logger/app-logger";
 import {
+    getLatestBodyFat,
+    getLatestSteps,
     getLatestWeight,
     getTodayWaterProgress,
+    logBodyFat,
+    logSteps,
     logWaterIntake,
     logWeight,
 } from "../services/health-metrics";
@@ -239,13 +382,22 @@ const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 const dateAdapter = useDate();
 
-// Health metrics refs
 const waterProgress = ref({ current: 0, percentage: 0, target: 2500 });
 const latestWeight = ref<null | { date: Date; weight: number }>(null);
+const latestBodyFat = ref<null | { date: Date; method?: string; percentage: number }>(null);
+const latestSteps = ref<null | { date: Date; steps: number }>(null);
+
 const showCustomWaterDialog = ref(false);
 const showWeightDialog = ref(false);
+const showBodyFatDialog = ref(false);
+const showStepsDialog = ref(false);
+
 const customWaterAmount = ref<null | number>(null);
 const weightInput = ref<null | number>(null);
+const bodyFatInput = ref<null | number>(null);
+const bodyFatMethod = ref<string>("calipers");
+const bodyFatMethods = ["calipers", "bioimpedance", "visual estimate"];
+const stepsInput = ref<null | number>(null);
 
 const currentHour = new Date().getHours();
 const greeting = computed(() => {
@@ -290,6 +442,10 @@ function formatDate(date: Date): string {
     return dateAdapter.format(dateObj, "shortDate");
 }
 
+function formatNumber(num: number): string {
+    return num.toLocaleString();
+}
+
 function formattedDate(date: Date): string {
     const dateObj = (date as any).toDate ? (date as any).toDate() : date;
     return dateAdapter.format(dateObj, "fullDate");
@@ -297,6 +453,22 @@ function formattedDate(date: Date): string {
 
 function goToWorkoutLogger(): void {
     router.push({ name: "WorkoutLogger" });
+}
+
+async function logBodyFatPercentage(): Promise<void> {
+    if (bodyFatInput.value !== null && bodyFatInput.value >= 3 && bodyFatInput.value <= 40) {
+        try {
+            const userId = authStore.nonNullableUser.uid;
+            await logBodyFat(userId, bodyFatInput.value, bodyFatMethod.value);
+            globalStore.notify("Body fat logged successfully");
+            await refreshHealthData();
+            showBodyFatDialog.value = false;
+            bodyFatInput.value = null;
+        } catch (error) {
+            globalStore.notifyError("Failed to log body fat");
+            logger.error(error);
+        }
+    }
 }
 
 async function logCustomWater(): Promise<void> {
@@ -307,6 +479,22 @@ async function logCustomWater(): Promise<void> {
     await logWater(customWaterAmount.value);
     showCustomWaterDialog.value = false;
     customWaterAmount.value = null;
+}
+
+async function logDailySteps(): Promise<void> {
+    if (stepsInput.value && stepsInput.value > 0) {
+        try {
+            const userId = authStore.nonNullableUser.uid;
+            await logSteps(userId, stepsInput.value);
+            globalStore.notify("Steps logged successfully");
+            await refreshHealthData();
+            showStepsDialog.value = false;
+            stepsInput.value = null;
+        } catch (error) {
+            globalStore.notifyError("Failed to log steps");
+            logger.error(error);
+        }
+    }
 }
 
 async function logTodayWeight(): Promise<void> {
@@ -342,8 +530,11 @@ async function refreshHealthData(): Promise<void> {
         const userId = authStore.nonNullableUser.uid;
         waterProgress.value = await getTodayWaterProgress(userId);
         latestWeight.value = await getLatestWeight(userId);
+        latestBodyFat.value = await getLatestBodyFat(userId);
+        latestSteps.value = await getLatestSteps(userId);
     } catch (error) {
         globalStore.notifyError("Failed to load health metrics");
+        logger.error(error);
     }
 }
 

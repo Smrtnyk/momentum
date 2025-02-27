@@ -231,7 +231,6 @@ const lastWorkoutMessage = computed(() => {
     const lastWorkout = sortedWorkouts[0];
     const lastWorkoutDate = lastWorkout.date.toDate();
 
-    // Format date to show relative time (today, yesterday, or date)
     const today = new Date();
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);

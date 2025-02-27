@@ -65,6 +65,59 @@ export async function getHealthMetricsRange(
 }
 
 /**
+ * Gets the latest body fat percentage
+ * @param userId User ID
+ */
+export async function getLatestBodyFat(
+    userId: string,
+): Promise<null | { date: Date; method?: string; percentage: number }> {
+    const metricsRef = collection(firestore, "users", userId, "health_metrics");
+    const queryVal = query(
+        metricsRef,
+        where("bodyFat.percentage", "!=", null),
+        orderBy("dateString", "desc"),
+        limit(1),
+    );
+
+    const querySnapshot = await getDocs(queryVal);
+    if (querySnapshot.empty) {
+        return null;
+    }
+
+    const data = querySnapshot.docs[0].data() as HealthMetrics;
+    if (!data.bodyFat) return null;
+
+    return {
+        date: data.bodyFat.timestamp.toDate(),
+        method: data.bodyFat.method,
+        percentage: data.bodyFat.percentage,
+    };
+}
+
+/**
+ * Gets the latest steps count
+ * @param userId User ID
+ */
+export async function getLatestSteps(
+    userId: string,
+): Promise<null | { date: Date; steps: number }> {
+    const today = new Date().toISOString().split("T")[0];
+    const metricsRef = doc(firestore, "users", userId, "health_metrics", today);
+
+    const docSnap = await getDoc(metricsRef);
+    if (docSnap.exists() && docSnap.data().steps) {
+        const data = docSnap.data() as HealthMetrics;
+        return {
+            date: data.stepsTimestamp?.toDate() || data.date.toDate(),
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- checked that it exists
+            steps: data.steps!,
+        };
+    }
+
+    return null;
+}
+
+/**
  * Gets the most recent weight entry
  * @param userId User ID
  */
@@ -94,6 +147,77 @@ export async function getLatestWeight(
 }
 
 /**
+ * Gets health metrics history for a specific metric
+ * @param userId User ID
+ * @param metric The metric to retrieve
+ * @param days Number of days to look back
+ */
+export async function getMetricHistory(
+    userId: string,
+    metric: "bodyFat" | "steps" | "waterIntake" | "weight",
+    days = 30,
+): Promise<Array<{ date: Date; value: number }>> {
+    // Calculate start date (X days ago)
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    // Format dates as YYYY-MM-DD
+    const startDateString = startDate.toISOString().split("T")[0];
+    const endDateString = endDate.toISOString().split("T")[0];
+
+    const metricsRef = collection(firestore, "users", userId, "health_metrics");
+    const queryVal = query(
+        metricsRef,
+        where("dateString", ">=", startDateString),
+        where("dateString", "<=", endDateString),
+        orderBy("dateString", "asc"),
+    );
+
+    const querySnapshot = await getDocs(queryVal);
+    const results: Array<{ date: Date; value: number }> = [];
+
+    querySnapshot.docs.forEach((document) => {
+        const data = document.data() as HealthMetrics;
+
+        switch (metric) {
+            case "bodyFat":
+                if (data.bodyFat?.percentage) {
+                    results.push({
+                        date: data.bodyFat.timestamp.toDate(),
+                        value: data.bodyFat.percentage,
+                    });
+                }
+                break;
+            case "steps":
+                if (data.steps) {
+                    results.push({
+                        date: data.date.toDate(),
+                        value: data.steps,
+                    });
+                }
+                break;
+            case "waterIntake":
+                results.push({
+                    date: data.date.toDate(),
+                    value: data.waterIntake,
+                });
+                break;
+            case "weight":
+                if (data.weight) {
+                    results.push({
+                        date: data.date.toDate(),
+                        value: data.weight,
+                    });
+                }
+                break;
+        }
+    });
+
+    return results;
+}
+
+/**
  * Gets the water intake progress for today
  * @param userId User ID
  * @param targetIntake Target water intake in ml (default: 2500ml)
@@ -116,6 +240,55 @@ export async function getTodayWaterProgress(
 }
 
 /**
+ * Logs body fat percentage
+ * @param userId User ID
+ * @param percentage Body fat percentage
+ * @param method Measurement method (optional)
+ * @param date Optional date (defaults to today)
+ */
+export async function logBodyFat(
+    userId: string,
+    percentage: number,
+    method?: string,
+    date: Date = new Date(),
+): Promise<void> {
+    // Format date as YYYY-MM-DD
+    const dateString = date.toISOString().split("T")[0];
+    const timestamp = Timestamp.fromDate(date);
+
+    const bodyFatData = {
+        bodyFat: {
+            percentage,
+            timestamp,
+            ...(method ? { method } : {}),
+        },
+    };
+
+    await updateHealthMetrics(userId, dateString, bodyFatData);
+}
+
+/**
+ * Logs daily steps
+ * @param userId User ID
+ * @param steps Step count
+ * @param date Optional date (defaults to today)
+ */
+export async function logSteps(
+    userId: string,
+    steps: number,
+    date: Date = new Date(),
+): Promise<void> {
+    // Format date as YYYY-MM-DD
+    const dateString = date.toISOString().split("T")[0];
+    const timestamp = Timestamp.fromDate(date);
+
+    await updateHealthMetrics(userId, dateString, {
+        steps,
+        stepsTimestamp: timestamp,
+    });
+}
+
+/**
  * Logs water intake for a user on a specific day
  * @param userId User ID
  * @param amount Amount of water in ml
@@ -134,7 +307,6 @@ export async function logWaterIntake(
     const docSnap = await getDoc(metricsRef);
 
     if (docSnap.exists()) {
-        // Update existing document
         await updateDoc(metricsRef, {
             waterIntake: increment(amount),
             waterIntakeLog: arrayUnion({
@@ -143,7 +315,6 @@ export async function logWaterIntake(
             }),
         });
     } else {
-        // Create new document
         const midnight = new Date(date);
         midnight.setHours(0, 0, 0, 0);
 
@@ -176,7 +347,6 @@ export async function logWeight(
     const dateString = date.toISOString().split("T")[0];
     const timestamp = Timestamp.fromDate(date);
 
-    // Update or create the daily metrics document
     await updateHealthMetrics(userId, dateString, {
         weight,
         weightTimestamp: timestamp,
@@ -198,10 +368,8 @@ export async function updateHealthMetrics(
     const docSnap = await getDoc(metricsRef);
 
     if (docSnap.exists()) {
-        // Document exists, update it
         await updateDoc(metricsRef, data);
     } else {
-        // Document doesn't exist, create it with initial data
         const dateObj = new Date(dateString);
         const timestamp = Timestamp.fromDate(dateObj);
 

@@ -402,11 +402,9 @@ async function loadWorkout(id: string): Promise<void> {
         const loadedWorkout = await getWorkoutById(authStore.nonNullableUser.uid, id);
         workout.value = loadedWorkout;
 
-        // Extract date and time from the timestamp
         const dateTime = loadedWorkout.date.toDate();
         workoutDate.value = dateTime;
 
-        // Set the time based on the date
         workoutTime.value = dateTime.toLocaleTimeString([], {
             hour: "2-digit",
             hour12: false,

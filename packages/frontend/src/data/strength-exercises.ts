@@ -1,6 +1,6 @@
 import type { Exercise } from "../types/exercise";
 
-export interface Muscle {
+interface Muscle {
     id: string;
     name: string;
 }
@@ -14,17 +14,6 @@ export function getExerciseById(id: string): Exercise {
 
 export function getMuscleById(id: string): Muscle {
     return getMuscleGroups().find((muscle) => muscle.id === id) ?? { id, name: id };
-}
-
-export function getMuscleGroups(): Muscle[] {
-    return [
-        { id: "chest", name: "Chest" },
-        { id: "back", name: "Back" },
-        { id: "legs", name: "Legs" },
-        { id: "shoulders", name: "Shoulders" },
-        { id: "arms", name: "Arms" },
-        { id: "core", name: "Core" },
-    ];
 }
 
 export function getStrengthExercises(): Exercise[] {
@@ -142,5 +131,16 @@ export function getStrengthExercises(): Exercise[] {
         { id: "plank", muscleIds: ["core"], name: "Plank" },
         { id: "russian-twist", muscleIds: ["core"], name: "Russian Twist" },
         { id: "leg-raises", muscleIds: ["core"], name: "Leg Raises" },
+    ];
+}
+
+function getMuscleGroups(): Muscle[] {
+    return [
+        { id: "chest", name: "Chest" },
+        { id: "back", name: "Back" },
+        { id: "legs", name: "Legs" },
+        { id: "shoulders", name: "Shoulders" },
+        { id: "arms", name: "Arms" },
+        { id: "core", name: "Core" },
     ];
 }

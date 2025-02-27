@@ -222,11 +222,43 @@ export async function setCalorieGoal(
 }
 
 /**
+ * Increment usage count for a food item
+ * @param userId User ID
+ * @param food Food item to increment usage for
+ */
+async function incrementFoodUsageCount(userId: string, food: FoodItem): Promise<void> {
+    try {
+        const favoriteRef = doc(firestore, "users", userId, "favorite_foods", food.id);
+
+        // Check if food already exists in favorites
+        const docSnap = await getDoc(favoriteRef);
+
+        if (docSnap.exists()) {
+            // Increment usage count
+            await updateDoc(favoriteRef, {
+                lastUsed: serverTimestamp(),
+                useCount: increment(1),
+            });
+        } else {
+            // Add with initial count
+            await setDoc(favoriteRef, {
+                ...food,
+                lastUsed: serverTimestamp(),
+                useCount: 1,
+            });
+        }
+    } catch (error) {
+        logger.error(error, "CaloriesService", { food, userId });
+        // Don't throw - this is an enhancement, not critical
+    }
+}
+
+/**
  * Update daily calorie totals based on all meals for the day
  * @param userId User ID
  * @param dateString Date string in YYYY-MM-DD format
  */
-export async function updateDailyCalorieTotals(userId: string, dateString: string): Promise<void> {
+async function updateDailyCalorieTotals(userId: string, dateString: string): Promise<void> {
     try {
         // Get all meals for the day
         const meals = await getMealsForDay(userId, dateString);
@@ -278,37 +310,5 @@ export async function updateDailyCalorieTotals(userId: string, dateString: strin
     } catch (error) {
         logger.error(error, "CaloriesService", { dateString, userId });
         throw new Error("Failed to update daily calorie totals");
-    }
-}
-
-/**
- * Increment usage count for a food item
- * @param userId User ID
- * @param food Food item to increment usage for
- */
-async function incrementFoodUsageCount(userId: string, food: FoodItem): Promise<void> {
-    try {
-        const favoriteRef = doc(firestore, "users", userId, "favorite_foods", food.id);
-
-        // Check if food already exists in favorites
-        const docSnap = await getDoc(favoriteRef);
-
-        if (docSnap.exists()) {
-            // Increment usage count
-            await updateDoc(favoriteRef, {
-                lastUsed: serverTimestamp(),
-                useCount: increment(1),
-            });
-        } else {
-            // Add with initial count
-            await setDoc(favoriteRef, {
-                ...food,
-                lastUsed: serverTimestamp(),
-                useCount: 1,
-            });
-        }
-    } catch (error) {
-        logger.error(error, "CaloriesService", { food, userId });
-        // Don't throw - this is an enhancement, not critical
     }
 }

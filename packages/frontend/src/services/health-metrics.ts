@@ -19,52 +19,6 @@ import type { HealthMetrics } from "../types/health-metrics";
 import { firestore } from "../firebase";
 
 /**
- * Gets health metrics for a specific day
- * @param userId User ID
- * @param dateString Date string in YYYY-MM-DD format
- */
-export async function getDailyHealthMetrics(
-    userId: string,
-    dateString: string,
-): Promise<HealthMetrics | null> {
-    const metricsRef = doc(firestore, "users", userId, "health_metrics", dateString);
-    const docSnap = await getDoc(metricsRef);
-
-    if (docSnap.exists()) {
-        return docSnap.data() as HealthMetrics;
-    }
-
-    return null;
-}
-
-/**
- * Gets health metrics for a date range
- * @param userId User ID
- * @param startDate Start date
- * @param endDate End date
- */
-export async function getHealthMetricsRange(
-    userId: string,
-    startDate: Date,
-    endDate: Date,
-): Promise<HealthMetrics[]> {
-    // Format dates as YYYY-MM-DD
-    const startDateString = startDate.toISOString().split("T")[0];
-    const endDateString = endDate.toISOString().split("T")[0];
-
-    const metricsRef = collection(firestore, "users", userId, "health_metrics");
-    const queryVal = query(
-        metricsRef,
-        where("dateString", ">=", startDateString),
-        where("dateString", "<=", endDateString),
-        orderBy("dateString", "asc"),
-    );
-
-    const querySnapshot = await getDocs(queryVal);
-    return querySnapshot.docs.map((document) => document.data() as HealthMetrics);
-}
-
-/**
  * Gets the latest body fat percentage
  * @param userId User ID
  */
@@ -144,76 +98,6 @@ export async function getLatestWeight(
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         weight: data.weight!,
     };
-}
-
-/**
- * Gets health metrics history for a specific metric
- * @param userId User ID
- * @param metric The metric to retrieve
- * @param days Number of days to look back
- */
-export async function getMetricHistory(
-    userId: string,
-    metric: "bodyFat" | "steps" | "waterIntake" | "weight",
-    days = 30,
-): Promise<Array<{ date: Date; value: number }>> {
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
-
-    // Format dates as YYYY-MM-DD
-    const startDateString = startDate.toISOString().split("T")[0];
-    const endDateString = endDate.toISOString().split("T")[0];
-
-    const metricsRef = collection(firestore, "users", userId, "health_metrics");
-    const queryVal = query(
-        metricsRef,
-        where("dateString", ">=", startDateString),
-        where("dateString", "<=", endDateString),
-        orderBy("dateString", "asc"),
-    );
-
-    const querySnapshot = await getDocs(queryVal);
-    const results: Array<{ date: Date; value: number }> = [];
-
-    querySnapshot.docs.forEach((document) => {
-        const data = document.data() as HealthMetrics;
-
-        switch (metric) {
-            case "bodyFat":
-                if (data.bodyFat?.percentage) {
-                    results.push({
-                        date: data.bodyFat.timestamp.toDate(),
-                        value: data.bodyFat.percentage,
-                    });
-                }
-                break;
-            case "steps":
-                if (data.steps) {
-                    results.push({
-                        date: data.date.toDate(),
-                        value: data.steps,
-                    });
-                }
-                break;
-            case "waterIntake":
-                results.push({
-                    date: data.date.toDate(),
-                    value: data.waterIntake,
-                });
-                break;
-            case "weight":
-                if (data.weight) {
-                    results.push({
-                        date: data.date.toDate(),
-                        value: data.weight,
-                    });
-                }
-                break;
-        }
-    });
-
-    return results;
 }
 
 /**
@@ -378,4 +262,23 @@ export async function updateHealthMetrics(
             ...data,
         });
     }
+}
+
+/**
+ * Gets health metrics for a specific day
+ * @param userId User ID
+ * @param dateString Date string in YYYY-MM-DD format
+ */
+async function getDailyHealthMetrics(
+    userId: string,
+    dateString: string,
+): Promise<HealthMetrics | null> {
+    const metricsRef = doc(firestore, "users", userId, "health_metrics", dateString);
+    const docSnap = await getDoc(metricsRef);
+
+    if (docSnap.exists()) {
+        return docSnap.data() as HealthMetrics;
+    }
+
+    return null;
 }

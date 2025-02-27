@@ -1,27 +1,9 @@
 import type { Timestamp } from "firebase/firestore";
 
-export interface CardioExerciseEntry extends BaseExerciseEntry {
-    calories?: number;
-    distanceKm?: number;
-    durationMinutes: number;
-    intensity: "high" | "low" | "medium";
-    type: "cardio";
-}
-
 export type CardioWorkout = WorkoutBase & {
     exerciseEntries: CardioExerciseEntry[];
     type: "cardio";
 };
-
-export interface ExerciseSet {
-    reps: number;
-    weight: number;
-}
-
-export interface StrengthExerciseEntry extends BaseExerciseEntry {
-    sets: ExerciseSet[];
-    type: "strength";
-}
 
 export type StrengthWorkout = WorkoutBase & {
     exerciseEntries: StrengthExerciseEntry[];
@@ -38,6 +20,24 @@ export type WorkoutWithId = Workout & {
 interface BaseExerciseEntry {
     exerciseId: string;
     exerciseNotes?: string;
+}
+
+interface CardioExerciseEntry extends BaseExerciseEntry {
+    calories?: number;
+    distanceKm?: number;
+    durationMinutes: number;
+    intensity: "high" | "low" | "medium";
+    type: "cardio";
+}
+
+interface ExerciseSet {
+    reps: number;
+    weight: number;
+}
+
+interface StrengthExerciseEntry extends BaseExerciseEntry {
+    sets: ExerciseSet[];
+    type: "strength";
 }
 
 interface WorkoutBase {

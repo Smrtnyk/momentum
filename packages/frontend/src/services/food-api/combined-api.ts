@@ -5,7 +5,7 @@ import { logger } from "../../logger/app-logger";
 import { NutritionixApi } from "./nutritionix-api";
 import { OpenFoodFactsApi } from "./open-food-facts";
 
-export class CombinedFoodApi implements FoodApiProvider {
+class CombinedFoodApi implements FoodApiProvider {
     name = "CombinedFoodApi";
     private readonly cache = new Map<string, { results: FoodSearchResult; timestamp: number }>();
     // 24 hours

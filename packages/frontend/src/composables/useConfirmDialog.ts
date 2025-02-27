@@ -6,7 +6,7 @@ interface ConfirmOptions {
     title: string;
 }
 
-export const confirmState = reactive({
+const confirmState = reactive({
     message: "",
     title: "",
 });

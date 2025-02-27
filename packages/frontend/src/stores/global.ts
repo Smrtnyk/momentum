@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-export interface NotificationState {
+interface NotificationState {
     color: string;
     message: string;
     show: boolean;

@@ -1,7 +1,7 @@
 /**
  * Log levels in ascending order of severity
  */
-export enum LogLevel {
+enum LogLevel {
     DEBUG = 0,
     ERROR = 3,
     INFO = 1,
@@ -13,7 +13,7 @@ export enum LogLevel {
 /**
  * Configuration options for the logger
  */
-export interface LoggerConfig {
+interface LoggerConfig {
     allowedContexts?: string[];
     minLevel: LogLevel;
     useColors: boolean;

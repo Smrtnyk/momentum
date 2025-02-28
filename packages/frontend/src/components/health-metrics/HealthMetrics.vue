@@ -160,144 +160,159 @@ async function refreshHealthData(): Promise<void> {
             <v-row>
                 <!-- Water Intake Tracker -->
                 <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column align-center">
+                    <div class="d-flex flex-column">
                         <div class="text-subtitle-1 mb-2">Water Intake</div>
 
-                        <v-progress-circular
-                            :model-value="waterProgress.percentage"
-                            :size="80"
-                            :width="8"
-                            color="blue"
-                            class="mb-2"
-                        >
-                            {{ waterProgress.percentage }}%
-                        </v-progress-circular>
+                        <div class="d-flex align-center justify-space-between">
+                            <div class="d-flex flex-column align-center">
+                                <v-progress-circular
+                                    :model-value="waterProgress.percentage"
+                                    :size="65"
+                                    :width="7"
+                                    color="blue"
+                                >
+                                    {{ waterProgress.percentage }}%
+                                </v-progress-circular>
 
-                        <div class="text-body-2">
-                            {{ waterProgress.current }}ml / {{ waterProgress.target }}ml
-                        </div>
+                                <div class="text-body-2 text-center mt-1">
+                                    {{ waterProgress.current }}ml / {{ waterProgress.target }}ml
+                                </div>
+                            </div>
 
-                        <div class="d-flex mt-2">
-                            <v-btn
-                                v-for="amount in [250, 500]"
-                                :key="amount"
-                                variant="outlined"
-                                color="blue"
-                                size="small"
-                                class="mx-1"
-                                @click="logWater(amount)"
-                            >
-                                +{{ amount }}ml
-                            </v-btn>
-
-                            <v-btn
-                                variant="outlined"
-                                color="blue"
-                                size="small"
-                                class="mx-1"
-                                @click="openWaterDialog()"
-                            >
-                                Custom
-                            </v-btn>
+                            <div class="d-flex flex-column">
+                                <div class="d-flex mb-1">
+                                    <v-btn
+                                        variant="outlined"
+                                        color="blue"
+                                        density="compact"
+                                        class="mr-1"
+                                        @click="logWater(250)"
+                                    >
+                                        +250ml
+                                    </v-btn>
+                                    <v-btn
+                                        variant="outlined"
+                                        color="blue"
+                                        density="compact"
+                                        @click="logWater(500)"
+                                    >
+                                        +500ml
+                                    </v-btn>
+                                </div>
+                                <v-btn
+                                    variant="outlined"
+                                    color="blue"
+                                    size="small"
+                                    @click="openWaterDialog()"
+                                >
+                                    Custom
+                                </v-btn>
+                            </div>
                         </div>
                     </div>
                 </v-col>
 
                 <!-- Weight Tracker -->
                 <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column align-center">
+                    <div class="d-flex flex-column">
                         <div class="text-subtitle-1 mb-2">Weight</div>
 
-                        <div class="d-flex align-center justify-center" style="height: 80px">
-                            <div v-if="latestWeight" class="text-center">
-                                <div class="text-h5 font-weight-bold">
-                                    {{ latestWeight.weight }} kg
+                        <div class="d-flex align-center justify-space-between">
+                            <div>
+                                <div v-if="latestWeight" class="text-left">
+                                    <div class="text-h5 font-weight-bold">
+                                        {{ latestWeight.weight }} kg
+                                    </div>
+                                    <div class="text-caption">
+                                        {{ formatDate(latestWeight.date) }}
+                                    </div>
                                 </div>
-                                <div class="text-caption">
-                                    {{ formatDate(latestWeight.date) }}
+                                <div v-else class="text-left">
+                                    <div class="text-body-2">No data</div>
                                 </div>
                             </div>
-                            <div v-else class="text-center">
-                                <div class="text-body-2">No data</div>
-                            </div>
-                        </div>
 
-                        <div class="mt-2">
-                            <v-btn
-                                variant="outlined"
-                                color="deep-purple"
-                                size="small"
-                                @click="openWeightDialog()"
-                            >
-                                <v-icon small class="mr-1">mdi-scale-bathroom</v-icon>
-                                Log Weight
-                            </v-btn>
+                            <div>
+                                <v-btn
+                                    variant="outlined"
+                                    color="deep-purple"
+                                    size="small"
+                                    @click="openWeightDialog()"
+                                >
+                                    <v-icon small class="mr-1">mdi-scale-bathroom</v-icon>
+                                    Log Weight
+                                </v-btn>
+                            </div>
                         </div>
                     </div>
                 </v-col>
 
                 <!-- Body Fat Tracker  -->
                 <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column align-center">
+                    <div class="d-flex flex-column">
                         <div class="text-subtitle-1 mb-2">Body Fat</div>
 
-                        <div class="d-flex align-center justify-center" style="height: 80px">
-                            <div v-if="latestBodyFat" class="text-center">
-                                <div class="text-h5 font-weight-bold">
-                                    {{ latestBodyFat.percentage }}%
+                        <div class="d-flex align-center justify-space-between">
+                            <div>
+                                <div v-if="latestBodyFat" class="text-left">
+                                    <div class="text-h5 font-weight-bold">
+                                        {{ latestBodyFat.percentage }}%
+                                    </div>
+                                    <div class="text-caption">
+                                        {{ formatDate(latestBodyFat.date) }}
+                                    </div>
                                 </div>
-                                <div class="text-caption">
-                                    {{ formatDate(latestBodyFat.date) }}
+                                <div v-else class="text-left">
+                                    <div class="text-body-2">No data</div>
                                 </div>
                             </div>
-                            <div v-else class="text-center">
-                                <div class="text-body-2">No data</div>
-                            </div>
-                        </div>
 
-                        <div class="mt-2">
-                            <v-btn
-                                variant="outlined"
-                                color="amber-darken-2"
-                                size="small"
-                                @click="openBodyFatDialog()"
-                            >
-                                <v-icon small class="mr-1">mdi-percent</v-icon>
-                                Log Body Fat
-                            </v-btn>
+                            <div>
+                                <v-btn
+                                    variant="outlined"
+                                    color="amber-darken-2"
+                                    size="small"
+                                    @click="openBodyFatDialog()"
+                                >
+                                    <v-icon small class="mr-1">mdi-percent</v-icon>
+                                    Log Body Fat
+                                </v-btn>
+                            </div>
                         </div>
                     </div>
                 </v-col>
 
                 <!-- Steps Tracker -->
                 <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column align-center">
+                    <div class="d-flex flex-column">
                         <div class="text-subtitle-1 mb-2">Daily Steps</div>
 
-                        <div class="d-flex align-center justify-center" style="height: 80px">
-                            <div v-if="latestSteps" class="text-center">
-                                <div class="text-h5 font-weight-bold">
-                                    {{ formatNumber(latestSteps.steps) }}
+                        <div class="d-flex align-center justify-space-between">
+                            <div>
+                                <div v-if="latestSteps" class="text-left">
+                                    <div class="text-h5 font-weight-bold">
+                                        {{ formatNumber(latestSteps.steps) }}
+                                    </div>
+                                    <div class="text-caption">
+                                        {{ formatDate(latestSteps.date) }}
+                                    </div>
                                 </div>
-                                <div class="text-caption">
-                                    {{ formatDate(latestSteps.date) }}
+                                <div v-else class="text-left">
+                                    <div class="text-body-2">No steps logged</div>
                                 </div>
                             </div>
-                            <div v-else class="text-center">
-                                <div class="text-body-2">No steps logged</div>
-                            </div>
-                        </div>
 
-                        <div class="mt-2">
-                            <v-btn
-                                variant="outlined"
-                                color="green"
-                                size="small"
-                                @click="openStepsDialog()"
-                            >
-                                <v-icon small class="mr-1">mdi-shoe-print</v-icon>
-                                Log Steps
-                            </v-btn>
+                            <div>
+                                <v-btn
+                                    variant="outlined"
+                                    color="green"
+                                    size="small"
+                                    @click="openStepsDialog()"
+                                >
+                                    <v-icon small class="mr-1">mdi-shoe-print</v-icon>
+                                    Log Steps
+                                </v-btn>
+                            </div>
                         </div>
                     </div>
                 </v-col>
@@ -305,5 +320,3 @@ async function refreshHealthData(): Promise<void> {
         </v-card-text>
     </v-card>
 </template>
-
-<style scoped></style>

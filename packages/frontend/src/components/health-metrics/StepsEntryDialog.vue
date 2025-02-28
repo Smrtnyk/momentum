@@ -1,26 +1,19 @@
 <template>
-    <v-card>
-        <v-card-title>Log Daily Steps</v-card-title>
-        <v-card-text>
-            <v-text-field
-                v-model.number="steps"
-                type="number"
-                label="Steps"
-                variant="outlined"
-                :rules="[
-                    (v) => !!v || 'Steps are required',
-                    (v) => v > 0 || 'Steps must be positive',
-                ]"
-            ></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn @click="$emit('close')">Cancel</v-btn>
-            <v-btn color="primary" @click="saveSteps" :disabled="!steps || steps <= 0">
-                Save
-            </v-btn>
-        </v-card-actions>
-    </v-card>
+    <v-card-title>Log Daily Steps</v-card-title>
+    <v-card-text>
+        <v-text-field
+            v-model.number="steps"
+            type="number"
+            label="Steps"
+            variant="outlined"
+            :rules="[(v) => !!v || 'Steps are required', (v) => v > 0 || 'Steps must be positive']"
+        ></v-text-field>
+    </v-card-text>
+    <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn @click="$emit('close')">Cancel</v-btn>
+        <v-btn color="primary" @click="saveSteps" :disabled="!steps || steps <= 0"> Save </v-btn>
+    </v-card-actions>
 </template>
 
 <script setup lang="ts">

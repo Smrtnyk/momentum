@@ -18,6 +18,18 @@ import type { HealthMetrics } from "../types/health-metrics";
 
 import { firestore } from "../firebase";
 
+export interface WaterProgress {
+    current: number;
+    percentage: number;
+    target: number;
+    waterIntakeLog?:
+        | undefined
+        | {
+              amount: number;
+              timestamp: Timestamp;
+          }[];
+}
+
 /**
  * Gets the latest body fat percentage
  * @param userId User ID
@@ -108,7 +120,7 @@ export async function getLatestWeight(
 export async function getTodayWaterProgress(
     userId: string,
     targetIntake = 2500,
-): Promise<{ current: number; percentage: number; target: number }> {
+): Promise<WaterProgress> {
     const today = new Date().toISOString().split("T")[0];
     const metrics = await getDailyHealthMetrics(userId, today);
 
@@ -119,6 +131,7 @@ export async function getTodayWaterProgress(
         current: currentIntake,
         percentage,
         target: targetIntake,
+        waterIntakeLog: metrics?.waterIntakeLog,
     };
 }
 
@@ -233,6 +246,34 @@ export async function logWeight(
     await updateHealthMetrics(userId, dateString, {
         weight,
         weightTimestamp: timestamp,
+    });
+}
+
+export async function removeWaterIntakeEntry(
+    userId: string,
+    entry: { amount: number; timestamp: Timestamp },
+): Promise<void> {
+    const today = new Date().toISOString().split("T")[0];
+    const metricsRef = doc(firestore, "users", userId, "health_metrics", today);
+
+    // First get current document
+    const docSnap = await getDoc(metricsRef);
+    if (!docSnap.exists()) return;
+
+    const data = docSnap.data() as HealthMetrics;
+
+    // Filter out the entry to remove
+    const newLog = (data.waterIntakeLog || []).filter(
+        (item) => item.timestamp.toMillis() !== entry.timestamp.toMillis(),
+    );
+
+    // Calculate new total
+    const newTotal = newLog.reduce((sum, item) => sum + item.amount, 0);
+
+    // Update document
+    await updateDoc(metricsRef, {
+        waterIntake: newTotal,
+        waterIntakeLog: newLog,
     });
 }
 

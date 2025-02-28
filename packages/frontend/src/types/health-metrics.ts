@@ -44,11 +44,7 @@ export interface HealthMetrics {
     // Total water in ml
     waterIntake: number;
     // Optional detailed log of water intake throughout day
-    waterIntakeLog?: {
-        // Amount in ml
-        amount: number;
-        timestamp: Timestamp;
-    }[];
+    waterIntakeLog?: WaterLogEntry[];
     // Weight in kg (optional, user might not log every day)
     weight?: number;
     // When the weight was recorded
@@ -73,4 +69,10 @@ export interface Meal {
     timestamp: Timestamp;
     // Sum of calories from all foods
     totalCalories: number;
+}
+
+export interface WaterLogEntry {
+    // amount in ml
+    amount: number;
+    timestamp: Timestamp;
 }

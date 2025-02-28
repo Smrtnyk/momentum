@@ -2,6 +2,9 @@
 import { onMounted, ref } from "vue";
 import { useDate } from "vuetify";
 
+import type { WaterProgress } from "../../services/health-metrics";
+import type { WaterLogEntry } from "../../types/health-metrics";
+
 import { useDialog } from "../../composables/useDialog";
 import { logger } from "../../logger/app-logger";
 import {
@@ -13,12 +16,14 @@ import {
     logSteps,
     logWaterIntake,
     logWeight,
+    removeWaterIntakeEntry,
 } from "../../services/health-metrics";
 import { useAuthStore } from "../../stores/auth";
 import { useGlobalStore } from "../../stores/global";
 import BodyFatDialog from "./BodyFatDialog.vue";
 import StepsEntryDialog from "./StepsEntryDialog.vue";
 import WaterIntakeDialog from "./WaterIntakeDialog.vue";
+import WaterLogMenu from "./WaterLogMenu.vue";
 import WeightEntryDialog from "./WeightEntryDialog.vue";
 
 const authStore = useAuthStore();
@@ -26,7 +31,8 @@ const globalStore = useGlobalStore();
 const { openDialog } = useDialog();
 const dateAdapter = useDate();
 
-const waterProgress = ref({ current: 0, percentage: 0, target: 2500 });
+const waterLogMenuOpen = ref(false);
+const waterProgress = ref<WaterProgress>({ current: 0, percentage: 0, target: 2500 });
 const latestWeight = ref<null | { date: Date; weight: number }>(null);
 const latestBodyFat = ref<null | { date: Date; method?: null | string; percentage: number }>(null);
 const latestSteps = ref<null | { date: Date; steps: number }>(null);
@@ -46,6 +52,19 @@ function formatDate(date: Date): string {
 
 function formatNumber(num: number): string {
     return num.toLocaleString();
+}
+
+async function handleWaterRemove(entry: WaterLogEntry): Promise<void> {
+    try {
+        waterLogMenuOpen.value = false;
+        const userId = authStore.nonNullableUser.uid;
+        await removeWaterIntakeEntry(userId, entry);
+        globalStore.notify(`Removed ${entry.amount}ml of water`);
+        await refreshHealthData();
+    } catch (error) {
+        globalStore.notifyError("Failed to remove water entry");
+        logger.error(error);
+    }
 }
 
 async function logBodyFatPercentage(percentage: number, method: string): Promise<void> {
@@ -161,7 +180,46 @@ async function refreshHealthData(): Promise<void> {
                 <!-- Water Intake Tracker -->
                 <v-col cols="12" sm="6" md="3">
                     <div class="d-flex flex-column">
-                        <div class="text-subtitle-1 mb-2">Water Intake</div>
+                        <div class="d-flex justify-space-between align-center mb-2">
+                            <div class="text-subtitle-1">Water Intake</div>
+                            <!-- Water Log Menu -->
+                            <v-menu
+                                v-model="waterLogMenuOpen"
+                                :close-on-content-click="false"
+                                location="bottom"
+                                min-width="300"
+                            >
+                                <template #activator="{ props }">
+                                    <v-btn
+                                        v-bind="props"
+                                        variant="text"
+                                        density="comfortable"
+                                        color="blue"
+                                        size="small"
+                                        class="ml-auto"
+                                        v-if="
+                                            waterProgress.waterIntakeLog &&
+                                            waterProgress.waterIntakeLog.length > 0
+                                        "
+                                    >
+                                        <v-icon small class="mr-1">mdi-history</v-icon>
+                                        View Log
+                                    </v-btn>
+                                </template>
+
+                                <v-card>
+                                    <v-card-title class="d-flex align-center">
+                                        <v-icon color="blue" class="mr-2">mdi-water</v-icon>
+                                        Water Intake Log
+                                    </v-card-title>
+
+                                    <WaterLogMenu
+                                        :entries="waterProgress.waterIntakeLog || []"
+                                        @remove="handleWaterRemove"
+                                    />
+                                </v-card>
+                            </v-menu>
+                        </div>
 
                         <div class="d-flex align-center justify-space-between">
                             <div class="d-flex flex-column align-center">

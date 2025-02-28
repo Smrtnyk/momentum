@@ -1,26 +1,21 @@
 <template>
-    <v-card>
-        <v-card-title>Log Water Intake</v-card-title>
-        <v-card-text>
-            <v-text-field
-                v-model.number="amount"
-                type="number"
-                label="Amount (ml)"
-                variant="outlined"
-                :rules="[
-                    (v) => !!v || 'Amount is required',
-                    (v) => v > 0 || 'Amount must be positive',
-                ]"
-            ></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn @click="$emit('close')">Cancel</v-btn>
-            <v-btn color="primary" @click="saveWaterIntake" :disabled="!amount || amount <= 0">
-                Save
-            </v-btn>
-        </v-card-actions>
-    </v-card>
+    <v-card-title>Log Water Intake</v-card-title>
+    <v-card-text>
+        <v-text-field
+            v-model.number="amount"
+            type="number"
+            label="Amount (ml)"
+            variant="outlined"
+            :rules="[(v) => !!v || 'Amount is required', (v) => v > 0 || 'Amount must be positive']"
+        ></v-text-field>
+    </v-card-text>
+    <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn @click="$emit('close')">Cancel</v-btn>
+        <v-btn color="primary" @click="saveWaterIntake" :disabled="!amount || amount <= 0">
+            Save
+        </v-btn>
+    </v-card-actions>
 </template>
 
 <script setup lang="ts">

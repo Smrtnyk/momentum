@@ -1,27 +1,20 @@
 <template>
-    <v-card>
-        <v-card-title>Log Today's Weight</v-card-title>
-        <v-card-text>
-            <v-text-field
-                v-model.number="weight"
-                type="number"
-                label="Weight (kg)"
-                variant="outlined"
-                step="0.1"
-                :rules="[
-                    (v) => !!v || 'Weight is required',
-                    (v) => v > 0 || 'Weight must be positive',
-                ]"
-            ></v-text-field>
-        </v-card-text>
-        <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn @click="$emit('close')">Cancel</v-btn>
-            <v-btn color="primary" @click="saveWeight" :disabled="!weight || weight <= 0">
-                Save
-            </v-btn>
-        </v-card-actions>
-    </v-card>
+    <v-card-title>Log Today's Weight</v-card-title>
+    <v-card-text>
+        <v-text-field
+            v-model.number="weight"
+            type="number"
+            label="Weight (kg)"
+            variant="outlined"
+            step="0.1"
+            :rules="[(v) => !!v || 'Weight is required', (v) => v > 0 || 'Weight must be positive']"
+        ></v-text-field>
+    </v-card-text>
+    <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn @click="$emit('close')">Cancel</v-btn>
+        <v-btn color="primary" @click="saveWeight" :disabled="!weight || weight <= 0"> Save </v-btn>
+    </v-card-actions>
 </template>
 
 <script setup lang="ts">

@@ -1,55 +1,11 @@
 import type { Timestamp } from "firebase/firestore";
 
-export interface FoodItem {
-    // Alternative serving sizes (from Nutritionix)
-    altMeasures?: {
-        measure: string;
-        qty: number;
-        serving_weight: number;
-    }[];
-    // Optional barcode for packaged foods
-    barcode?: string;
-    // Brand name if applicable
-    brand?: string;
-    // Calories per serving
-    calories: number;
-    // Carbs in grams
-    carbs: number;
-    // Fat in grams
-    fat: number;
-    foodType?: "ingredient" | "product";
-    // Full nutrient data (when available)
-    fullNutrients?: {
-        attr_id: number;
-        value: number;
-    }[];
-    // Database ID or API ID
-    id: string;
-    // Optional image URL
-    imageUrl: null | string;
-    // Food name
-    name: string;
-
-    // Protein in grams
-    protein: number;
-
-    // Provider name from combined API
-    provider?: string;
-
-    // Amount consumed
-    servingSize: number;
-
-    // Unit of measurement (g, ml, oz, etc.)
-    servingUnit: string;
-
-    // Source API or database
-    source?: string;
-}
+import type { FoodItem } from "./food";
 
 export interface HealthMetrics {
     bodyFat?: {
         // Measurement method (e.g., "calipers", "bioimpedance")
-        method?: string;
+        method?: null | string;
         // Body fat percentage
         percentage: number;
         // When measured

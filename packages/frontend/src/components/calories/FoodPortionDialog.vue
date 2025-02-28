@@ -10,14 +10,7 @@
 
     <v-card-text>
         <div class="text-subtitle-2 mb-4" v-if="food.brand">{{ food.brand }}</div>
-
-        <div
-            v-if="food.source === 'Nutritionix' && food.foodType === 'ingredient'"
-            class="text-caption mb-4"
-        >
-            Standard serving size data from Nutritionix
-        </div>
-
+        <div v-if="food.source" class="text-caption mb-4">Source: {{ food.source }}</div>
         <v-row>
             <v-col cols="12" sm="6">
                 <v-text-field
@@ -103,7 +96,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 
-import type { FoodItem } from "../../types/health-metrics";
+import type { FoodItem } from "../../types/food";
 
 const { food, mealType } = defineProps<{
     food: FoodItem;

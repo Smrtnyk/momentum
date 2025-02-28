@@ -261,7 +261,7 @@ const { openDialog } = useDialog();
 
 const waterProgress = ref({ current: 0, percentage: 0, target: 2500 });
 const latestWeight = ref<null | { date: Date; weight: number }>(null);
-const latestBodyFat = ref<null | { date: Date; method?: string; percentage: number }>(null);
+const latestBodyFat = ref<null | { date: Date; method?: null | string; percentage: number }>(null);
 const latestSteps = ref<null | { date: Date; steps: number }>(null);
 
 const currentHour = new Date().getHours();

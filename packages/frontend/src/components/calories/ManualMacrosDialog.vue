@@ -89,7 +89,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 
-import type { FoodItem } from "../../types/health-metrics";
+import type { FoodItem } from "../../types/food";
 
 defineProps<{
     mealType: "breakfast" | "dinner" | "lunch" | "snack";
@@ -128,6 +128,7 @@ function addMacros(): void {
     if (!isValid.value) return;
 
     const manualFood: FoodItem = {
+        barcode: null,
         calories: calories.value,
         carbs: carbs.value,
         fat: fat.value,
@@ -137,6 +138,7 @@ function addMacros(): void {
         protein: protein.value,
         servingSize: 1,
         servingUnit: "serving",
+        source: "Manual",
     };
 
     emit("save", manualFood);

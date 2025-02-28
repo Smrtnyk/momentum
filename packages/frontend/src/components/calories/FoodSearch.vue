@@ -14,6 +14,16 @@
                     :loading="isLoading"
                     class="flex-grow-1"
                 >
+                    <template v-if="isBarcodeSupported" #append-inner>
+                        <v-btn
+                            icon
+                            variant="text"
+                            @click="handleBarcodeScanner"
+                            :disabled="isScanning || isSearching || isLoading"
+                        >
+                            <v-icon>mdi-barcode-scan</v-icon>
+                        </v-btn>
+                    </template>
                 </v-text-field>
             </div>
 
@@ -238,14 +248,16 @@ import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import type { CustomFood } from "../../services/custom-foods";
-import type { FoodItem } from "../../types/health-metrics";
+import type { FoodItem } from "../../types/food";
 
+import { useBarcodeScanner } from "../../composables/useBarcodeScanner";
 import { logger } from "../../logger/app-logger";
 import { getUserCustomFoods } from "../../services/custom-foods";
 import { combinedFoodApi } from "../../services/food-api/combined-api";
 import { NutritionixApi } from "../../services/food-api/nutritionix-api";
 import { getRecentFoods } from "../../services/recent-food-local-storage";
 import { useAuthStore } from "../../stores/auth";
+import { useGlobalStore } from "../../stores/global";
 
 const { limitRecent = 10 } = defineProps<{
     limitRecent?: number;
@@ -258,7 +270,10 @@ const emit = defineEmits<{
 }>();
 
 const router = useRouter();
+const globalStore = useGlobalStore();
 const authStore = useAuthStore();
+const { checkBarcodeSupport, isBarcodeSupported, isScanning, isSearching, scanBarcode } =
+    useBarcodeScanner();
 
 const activeTab = ref("search");
 const searchQuery = ref("");
@@ -296,7 +311,22 @@ const filteredCustomFoods = computed(() => {
 onMounted(async () => {
     loadRecentFoods();
     await loadCustomFoods();
+    await checkBarcodeSupport();
 });
+
+function handleBarcodeScanner(): void {
+    scanBarcode({
+        onError(message) {
+            globalStore.notifyError(message);
+        },
+        onFoodFound(food) {
+            selectFood(food);
+        },
+        onNotFound(barcode) {
+            globalStore.notifyError(`No food found with barcode: ${barcode}`);
+        },
+    });
+}
 
 async function loadCustomFoods(): Promise<void> {
     try {

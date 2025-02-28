@@ -1,57 +1,71 @@
-import type { FoodItem } from "../../types/health-metrics";
-import type { FoodApiProvider, FoodSearchResult } from "./base-api";
+import type { FoodItem, FoodSearchResult } from "../../types/food";
 
 import { logger } from "../../logger/app-logger";
-import { NutritionixApi } from "./nutritionix-api";
-import { OpenFoodFactsApi } from "./open-food-facts";
+import { AbstractFoodApi } from "./abstract-food-api";
+import { apiRegistry } from "./api-registry";
 
-class CombinedFoodApi implements FoodApiProvider {
-    name = "CombinedFoodApi";
-    private readonly cache = new Map<string, { results: FoodSearchResult; timestamp: number }>();
+export class CombinedFoodApi extends AbstractFoodApi {
+    readonly name = "CombinedFoodApi";
+    readonly priority = 0;
+
+    readonly supportsBarcode = true;
+
+    private readonly cache = new Map<
+        string,
+        {
+            results: FoodSearchResult;
+            timestamp: number;
+        }
+    >();
     // 24 hours
     private readonly CACHE_TTL = 24 * 60 * 60 * 1000;
-    private readonly providers: FoodApiProvider[];
 
-    constructor() {
-        this.providers = [new OpenFoodFactsApi(), new NutritionixApi()];
-    }
-
+    /**
+     * Get food by barcode, trying all providers in priority order
+     */
     async getFoodByBarcode(barcode: string): Promise<FoodItem | null> {
-        for (const provider of this.providers) {
-            if (provider.getFoodByBarcode) {
-                try {
-                    // eslint-disable-next-line no-await-in-loop -- we want to try provider by provider
-                    const food = await provider.getFoodByBarcode(barcode);
-                    if (food) {
-                        return {
-                            ...food,
-                            provider: provider.name,
-                        };
-                    }
-                } catch (error) {
-                    logger.error(error, "CombinedFoodAPI", {
-                        barcode,
+        const barcodeProviders = apiRegistry.getBarcodeProviders();
+
+        // Try each provider in priority order
+        for (const provider of barcodeProviders) {
+            try {
+                // eslint-disable-next-line no-await-in-loop -- we want to do 1 by 1 until we have it
+                const food = await provider.getFoodByBarcode(barcode);
+                if (food) {
+                    return {
+                        ...food,
                         provider: provider.name,
-                    });
+                    };
                 }
+            } catch (error) {
+                logger.error(error, "CombinedFoodAPI.barcode", {
+                    barcode,
+                    provider: provider.name,
+                });
             }
         }
+
         return null;
     }
 
+    /**
+     * Search for foods across all providers
+     */
     async searchFoods(query: string, page = 1, pageSize = 10): Promise<FoodSearchResult> {
         const cacheKey = `${query}|${page}|${pageSize}`;
         const now = Date.now();
 
-        // Check cache first
         const cachedResult = this.cache.get(cacheKey);
         if (cachedResult && now - cachedResult.timestamp < this.CACHE_TTL) {
             return cachedResult.results;
         }
 
         try {
+            const providers = apiRegistry
+                .getAllProviders()
+                .filter(({ name }) => name !== this.name);
             const results = await Promise.allSettled(
-                this.providers.map((provider) => provider.searchFoods(query, page, pageSize)),
+                providers.map((provider) => provider.searchFoods(query, page, pageSize)),
             );
 
             const allFoods: FoodItem[] = [];
@@ -59,16 +73,17 @@ class CombinedFoodApi implements FoodApiProvider {
 
             results.forEach((result, index) => {
                 if (result.status === "fulfilled") {
+                    const provider = providers[index];
                     allFoods.push(
                         ...result.value.foods.map((food) => ({
                             ...food,
-                            provider: this.providers[index].name,
+                            provider: provider.name,
                         })),
                     );
                     totalCount += result.value.totalCount;
                 } else {
                     logger.error(result.reason, "CombinedFoodAPI", {
-                        provider: this.providers[index].name,
+                        provider: providers[index].name,
                         query,
                     });
                 }
@@ -91,42 +106,65 @@ class CombinedFoodApi implements FoodApiProvider {
 
             return combinedResult;
         } catch (error) {
-            logger.error(error, "CombinedFoodAPI", { query });
-            throw new Error("Failed to search for foods across providers");
+            this.logError(error, "searchFoods", { query });
+            return {
+                currentPage: page,
+                foods: [],
+                totalCount: 0,
+                totalPages: 0,
+            };
         }
     }
 
+    /**
+     * Enhance and sort search results
+     */
     private enhanceAndSortResults(foods: FoodItem[], query: string): FoodItem[] {
         const uniqueFoods = this.removeDuplicates(foods);
+        const lowerQuery = query.toLowerCase();
+        const queryWordCount = lowerQuery.split(/\s+/).length;
 
         return uniqueFoods
-            .map((food) => {
-                const nameMatch = food.name.toLowerCase().includes(query.toLowerCase());
-                const exactNameMatch = food.name.toLowerCase() === query.toLowerCase();
-                const brandMatch = food.brand?.toLowerCase().includes(query.toLowerCase());
+            .map(function (food) {
+                const lowerName = food.name.toLowerCase();
+                const nameMatch = lowerName.includes(lowerQuery);
+                const brandMatch = food.brand?.toLowerCase().includes(lowerQuery);
                 const hasCompleteNutrition = food.calories > 0 && food.protein > 0;
                 const hasImage = Boolean(food.imageUrl);
-
-                // Calculate relevance score
-                let relevance = 0;
-                if (exactNameMatch) relevance += 20;
-                if (nameMatch) relevance += 10;
+                // Start with a base relevance if the name contains the query
+                let relevance = nameMatch ? 10 : 0;
+                // If the name exactly equals the query, add a strong bonus.
+                if (lowerName === lowerQuery) {
+                    relevance += 20;
+                }
+                // Add additional bonuses for brand, nutrition, and image.
                 if (brandMatch) relevance += 5;
                 if (hasCompleteNutrition) relevance += 3;
                 if (hasImage) relevance += 2;
+                // Penalize for extra words in the name.
+                const nameWordCount = lowerName.split(/\s+/).length;
+                const wordCountDiff = nameWordCount - queryWordCount;
+                if (wordCountDiff > 0) {
+                    relevance -= wordCountDiff * 5;
+                }
 
                 return {
                     ...food,
                     relevance,
                 };
             })
-            .sort((a, b) => (b as any).relevance - (a as any).relevance);
+            .sort((a, b) => b.relevance - a.relevance);
     }
 
+    /**
+     * Remove duplicate foods based on name and brand
+     */
     private removeDuplicates(foods: FoodItem[]): FoodItem[] {
         const seen = new Set<string>();
-        return foods.filter((food) => {
-            const key = `${food.name}|${food.brand || ""}`;
+        return foods.filter(function (food) {
+            const nameKey = food.name.trim().toLowerCase();
+            const brandKey = (food.brand || "").trim().toLowerCase();
+            const key = `${nameKey}|${brandKey}`;
             if (seen.has(key)) {
                 return false;
             }

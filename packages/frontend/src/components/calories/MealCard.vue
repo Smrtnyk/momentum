@@ -120,7 +120,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import type { FoodItem, Meal } from "../../types/health-metrics";
+import type { FoodItem } from "../../types/food";
+import type { Meal } from "../../types/health-metrics";
 
 const { meal } = defineProps<{
     meal: Meal;

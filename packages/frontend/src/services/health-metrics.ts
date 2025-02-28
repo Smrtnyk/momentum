@@ -24,7 +24,7 @@ import { firestore } from "../firebase";
  */
 export async function getLatestBodyFat(
     userId: string,
-): Promise<null | { date: Date; method?: string; percentage: number }> {
+): Promise<null | { date: Date; method?: null | string; percentage: number }> {
     const metricsRef = collection(firestore, "users", userId, "health_metrics");
     const queryVal = query(
         metricsRef,
@@ -43,7 +43,7 @@ export async function getLatestBodyFat(
 
     return {
         date: data.bodyFat.timestamp.toDate(),
-        method: data.bodyFat.method,
+        method: data.bodyFat.method ?? null,
         percentage: data.bodyFat.percentage,
     };
 }

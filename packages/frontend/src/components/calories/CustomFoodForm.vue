@@ -115,7 +115,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 
-import type { FoodItem } from "../../types/health-metrics";
+import type { FoodItem } from "../../types/food";
 
 const props = defineProps<{
     initialFood?: Partial<FoodItem>;
@@ -131,6 +131,7 @@ const form = ref<any>(null);
 const servingUnits = ["g", "ml", "oz", "cup", "tbsp", "tsp", "piece", "serving"];
 
 const foodData = ref<Omit<FoodItem, "id">>({
+    barcode: null,
     brand: props.initialFood?.brand || "",
     calories: props.initialFood?.calories || 0,
     carbs: props.initialFood?.carbs || 0,
@@ -140,6 +141,7 @@ const foodData = ref<Omit<FoodItem, "id">>({
     protein: props.initialFood?.protein || 0,
     servingSize: props.initialFood?.servingSize || 100,
     servingUnit: props.initialFood?.servingUnit || "g",
+    source: "Custom Food",
 });
 
 function updateCalories(): void {

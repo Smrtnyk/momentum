@@ -12,7 +12,7 @@ import {
     updateDoc,
 } from "firebase/firestore";
 
-import type { FoodItem } from "../types/health-metrics";
+import type { FoodItem } from "../types/food";
 
 import { firestore } from "../firebase";
 import { logger } from "../logger/app-logger";

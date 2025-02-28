@@ -2,8 +2,8 @@ import { ref, shallowRef } from "vue";
 
 interface DialogContent {
     component: any;
-    props?: Record<string, unknown>;
-    title?: string;
+    props?: Record<string, unknown> | undefined;
+    title?: string | undefined;
 }
 
 interface TopProps {

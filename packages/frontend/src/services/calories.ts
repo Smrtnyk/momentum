@@ -11,7 +11,8 @@ import {
     where,
 } from "firebase/firestore";
 
-import type { FoodItem, Meal } from "../types/health-metrics";
+import type { FoodItem } from "../types/food";
+import type { Meal } from "../types/health-metrics";
 
 import { firestore } from "../firebase";
 import { logger } from "../logger/app-logger";

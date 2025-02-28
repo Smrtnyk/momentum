@@ -9,18 +9,23 @@
         "sourceMap": true,
         "resolveJsonModule": true,
         "esModuleInterop": true,
-        "exactOptionalPropertyTypes": true,
         "lib": [
             "ESNext",
             "DOM"
         ]
     },
     "include": [
-        "src/**/*"
+        "src/**/*.spec.ts",
+        "vitest.config.ts",
+        "vitest.workspace.ts"
     ],
     "exclude": [
-        "node_modules",
-        "vitest.config.ts",
-        "src/**/*.spec.ts"
+        "node_modules"
+    ],
+    "references": [
+        {
+            "path": "tsconfig.json"
+        }
     ]
 }
+

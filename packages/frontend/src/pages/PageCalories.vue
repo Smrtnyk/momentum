@@ -118,7 +118,8 @@ import { useAsyncState, useDateFormat, useStorage, whenever } from "@vueuse/core
 import { computed, ref } from "vue";
 import { useDate } from "vuetify";
 
-import type { FoodItem, Meal } from "../types/health-metrics";
+import type { FoodItem } from "../types/food";
+import type { Meal } from "../types/health-metrics";
 
 import CaloriesSummary from "../components/calories/CaloriesSummary.vue";
 import FoodPortionDialog from "../components/calories/FoodPortionDialog.vue";

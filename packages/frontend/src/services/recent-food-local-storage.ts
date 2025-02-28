@@ -1,4 +1,4 @@
-import type { FoodItem } from "../types/health-metrics";
+import type { FoodItem } from "../types/food";
 
 import { logger } from "../logger/app-logger";
 

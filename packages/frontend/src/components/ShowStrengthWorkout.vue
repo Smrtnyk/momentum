@@ -130,17 +130,14 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import type { Exercise } from "../types/exercise";
 import type { StrengthWorkout } from "../types/workout";
 
 import WorkoutDateInfo from "../components/WorkoutDateInfo.vue";
 import WorkoutHitMusclesChips from "../components/WorkoutHitMusclesChips.vue";
-import { getStrengthExercises } from "../data/strength-exercises";
+import { strengthExercises } from "../data/strength-exercises";
 
 const { workout } = defineProps<{ workout: StrengthWorkout }>();
 const emit = defineEmits<(e: "delete" | "edit") => void>();
-
-const exercisesList: Exercise[] = getStrengthExercises();
 
 const totalSets = computed(() => {
     return workout.exerciseEntries.reduce((total, entry) => total + entry.sets.length, 0);
@@ -153,7 +150,7 @@ const totalVolume = computed(() => {
 });
 
 function getExerciseName(id: string): string | undefined {
-    const exercise = exercisesList.find((exer) => exer.id === id);
+    const exercise = strengthExercises.find((exer) => exer.id === id);
     return exercise?.name;
 }
 

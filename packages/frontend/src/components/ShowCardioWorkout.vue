@@ -189,20 +189,17 @@
 </template>
 
 <script setup lang="ts">
-import type { Exercise } from "../types/exercise";
 import type { CardioWorkout } from "../types/workout";
 
 import WorkoutDateInfo from "../components/WorkoutDateInfo.vue";
 import WorkoutHitMusclesChips from "../components/WorkoutHitMusclesChips.vue";
-import { getCardioExercises } from "../data/cardio-exercises";
+import { cardioExercises } from "../data/cardio-exercises";
 
 const { workout } = defineProps<{ workout: CardioWorkout }>();
 const emit = defineEmits<(e: "delete" | "edit") => void>();
 
-const exercisesList: Exercise[] = getCardioExercises();
-
 function getExerciseName(id: string): string | undefined {
-    const exercise = exercisesList.find((exer) => exer.id === id);
+    const exercise = cardioExercises.find((exer) => exer.id === id);
     return exercise?.name;
 }
 

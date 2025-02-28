@@ -153,7 +153,6 @@ function updateCalories(): void {
     foodData.value.calories = Math.round(proteinCalories + carbCalories + fatCalories);
 }
 
-// Watch for macro changes to update calories
 watch(
     () => [foodData.value.protein, foodData.value.carbs, foodData.value.fat],
     () => updateCalories(),

@@ -273,8 +273,8 @@ import type { CardioWorkout, StrengthWorkout, Workout } from "../types/workout";
 
 import ExerciseEntryHeader from "../components/workout-logger/ExerciseEntryHeader.vue";
 import WorkoutTypeSelector from "../components/workout-logger/WorkoutTypeSelector.vue";
-import { getCardioExercises } from "../data/cardio-exercises";
-import { getStrengthExercises } from "../data/strength-exercises";
+import { cardioExercises } from "../data/cardio-exercises";
+import { strengthExercises } from "../data/strength-exercises";
 import { positiveNumber, required } from "../helpers/form-validators";
 import {
     addWorkout,
@@ -320,7 +320,7 @@ const workoutTime = ref(
 const formattedWorkoutTime = computed(() => workoutTime.value);
 
 const exercises = computed(() => {
-    return workout.value.type === "strength" ? getStrengthExercises() : getCardioExercises();
+    return workout.value.type === "strength" ? strengthExercises : cardioExercises;
 });
 const intensityLevels = ["low", "medium", "high"];
 

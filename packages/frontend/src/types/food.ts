@@ -1,10 +1,3 @@
-export interface AlternativeMeasure {
-    measure: string;
-    qty: number;
-    seq?: null | number;
-    serving_weight: number;
-}
-
 export interface FoodItem {
     // Alternative serving sizes (from Nutritionix)
     altMeasures?: AlternativeMeasure[] | null;
@@ -46,20 +39,6 @@ export interface FoodSearchResult {
     foods: FoodItem[];
     totalCount: number;
     totalPages: number;
-}
-
-export type FoodType = "ingredient" | "product";
-
-export interface Nutrient {
-    attr_id: number;
-    value: number;
-}
-
-export interface NutritionInfo {
-    calories: number;
-    carbs: number;
-    fat: number;
-    protein: number;
 }
 
 export interface NutritionixFood {
@@ -113,4 +92,16 @@ export interface OpenFoodRepoProduct {
     }>;
 }
 
-export type StandardUnit = "fl_oz" | "g" | "L" | "ml" | "oz";
+interface AlternativeMeasure {
+    measure: string;
+    qty: number;
+    seq?: null | number;
+    serving_weight: number;
+}
+
+type FoodType = "ingredient" | "product";
+
+interface Nutrient {
+    attr_id: number;
+    value: number;
+}

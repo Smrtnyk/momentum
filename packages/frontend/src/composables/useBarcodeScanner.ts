@@ -6,7 +6,7 @@ import { logger } from "../logger/app-logger";
 import { OpenFoodFactsApi } from "../services/food-api/open-food-facts";
 import { OpenFoodRepoApi } from "../services/food-api/open-food-repo";
 
-export interface BarcodeScannerOptions {
+interface BarcodeScannerOptions {
     onError: (message: string) => void;
     onFoodFound: (food: FoodItem) => void;
     onNotFound: (barcode: string) => void;

@@ -100,6 +100,11 @@ export const strengthExercises: readonly Exercise[] = [
     { id: "upright-row", muscleIds: ["shoulders", "arms"], name: "Upright Row" },
     { id: "arnold-press", muscleIds: ["shoulders", "arms", "chest"], name: "Arnold Press" },
     { id: "reverse-flyes", muscleIds: ["shoulders", "back"], name: "Reverse Flyes" },
+    {
+        id: "plate-loaded-seated-shoulder-press",
+        muscleIds: ["shoulders", "arms"],
+        name: "Plate-Loaded Seated Shoulder Press",
+    },
 
     // Arm exercises
     { id: "bicep-curls", muscleIds: ["arms"], name: "Bicep Curls" },

@@ -16,10 +16,10 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import type { Exercise } from "../types/exercise";
-import type { WorkoutWithId } from "../types/workout";
+import type { Exercise } from "../../types/exercise";
+import type { WorkoutWithId } from "../../types/workout";
 
-import { getExerciseById, getMuscleById } from "../data/strength-exercises";
+import { getExerciseById, getMuscleById } from "../../data/strength-exercises";
 
 const { workout } = defineProps<{ workout: WorkoutWithId }>();
 

@@ -189,11 +189,11 @@
 </template>
 
 <script setup lang="ts">
-import type { CardioWorkout } from "../types/workout";
+import type { CardioWorkout } from "../../types/workout";
 
-import WorkoutDateInfo from "../components/WorkoutDateInfo.vue";
-import WorkoutHitMusclesChips from "../components/WorkoutHitMusclesChips.vue";
-import { cardioExercises } from "../data/cardio-exercises";
+import { cardioExercises } from "../../data/cardio-exercises";
+import WorkoutDateInfo from "./WorkoutDateInfo.vue";
+import WorkoutHitMusclesChips from "./WorkoutHitMusclesChips.vue";
 
 const { workout } = defineProps<{ workout: CardioWorkout }>();
 const emit = defineEmits<(e: "delete" | "edit") => void>();

@@ -52,12 +52,12 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 
-import type { UserProfile } from "../services/user";
+import type { UserProfile } from "../../services/user";
 
-import { required } from "../helpers/form-validators";
-import { updateUserProfile } from "../services/user";
-import { useAuthStore } from "../stores/auth";
-import { useGlobalStore } from "../stores/global";
+import { required } from "../../helpers/form-validators";
+import { updateUserProfile } from "../../services/user";
+import { useAuthStore } from "../../stores/auth";
+import { useGlobalStore } from "../../stores/global";
 
 const props = defineProps<{
     initialProfile: null | UserProfile;

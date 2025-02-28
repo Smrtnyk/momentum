@@ -169,10 +169,10 @@ import { useStorage } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
-import type { WorkoutWithId } from "../types/workout";
+import type { WorkoutWithId } from "../../types/workout";
 
-import WorkoutListItem from "../components/WorkoutListItem.vue";
-import { isStrengthWorkout } from "../services/workout";
+import { isStrengthWorkout } from "../../services/workout";
+import WorkoutListItem from "./WorkoutListItem.vue";
 
 const { workouts } = defineProps<{ workouts: WorkoutWithId[] }>();
 const router = useRouter();

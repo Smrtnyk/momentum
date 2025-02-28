@@ -140,7 +140,7 @@ import { useRouter } from "vue-router";
 
 import type { UserProfile } from "../services/user";
 
-import EditProfileForm from "../components/EditProfileForm.vue";
+import EditProfileForm from "../components/profile/EditProfileForm.vue";
 import { useDialog } from "../composables/useDialog";
 import { logoutUser } from "../services/auth";
 import { getUserProfile } from "../services/user";

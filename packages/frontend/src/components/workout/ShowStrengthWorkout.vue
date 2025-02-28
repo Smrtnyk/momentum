@@ -130,11 +130,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import type { StrengthWorkout } from "../types/workout";
+import type { StrengthWorkout } from "../../types/workout";
 
-import WorkoutDateInfo from "../components/WorkoutDateInfo.vue";
-import WorkoutHitMusclesChips from "../components/WorkoutHitMusclesChips.vue";
-import { strengthExercises } from "../data/strength-exercises";
+import { strengthExercises } from "../../data/strength-exercises";
+import WorkoutDateInfo from "./WorkoutDateInfo.vue";
+import WorkoutHitMusclesChips from "./WorkoutHitMusclesChips.vue";
 
 const { workout } = defineProps<{ workout: StrengthWorkout }>();
 const emit = defineEmits<(e: "delete" | "edit") => void>();

@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import type { WorkoutWithId } from "../types/workout";
+import type { WorkoutWithId } from "../../types/workout";
 
 const { workout } = defineProps<{ workout: WorkoutWithId }>();
 

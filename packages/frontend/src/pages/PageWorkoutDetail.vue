@@ -31,8 +31,8 @@ import { useRoute, useRouter } from "vue-router";
 
 import type { WorkoutWithId } from "../types/workout";
 
-import ShowCardioWorkout from "../components/ShowCardioWorkout.vue";
-import ShowStrengthWorkout from "../components/ShowStrengthWorkout.vue";
+import ShowCardioWorkout from "../components/workout/ShowCardioWorkout.vue";
+import ShowStrengthWorkout from "../components/workout/ShowStrengthWorkout.vue";
 import { useGlobalConfirm } from "../composables/useConfirmDialog";
 import {
     deleteWorkout as deleteWorkoutService,

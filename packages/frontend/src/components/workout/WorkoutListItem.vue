@@ -94,9 +94,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import type { CardioWorkout, StrengthWorkout, WorkoutWithId } from "../types/workout";
+import type { CardioWorkout, StrengthWorkout, WorkoutWithId } from "../../types/workout";
 
-import { isStrengthWorkout } from "../services/workout";
+import { isStrengthWorkout } from "../../services/workout";
 import WorkoutDateInfo from "./WorkoutDateInfo.vue";
 import WorkoutHitMusclesChips from "./WorkoutHitMusclesChips.vue";
 

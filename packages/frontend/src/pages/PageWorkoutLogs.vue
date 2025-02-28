@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 
 import type { WorkoutWithId } from "../types/workout";
 
-import WorkoutList from "../components/WorkoutList.vue";
+import WorkoutList from "../components/workout/WorkoutList.vue";
 import { getWorkouts } from "../services/workout";
 import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";

@@ -60,3 +60,83 @@ export const fitnessTips = [
     "Research shows that barefoot training improves foot proprioception and can strengthen intrinsic foot muscles.",
     "Studies indicate that sauna use after workouts may increase growth hormone production and aid recovery.",
 ];
+
+const tipCategoryMap: { category: string; keywords: string[] }[] = [
+    { category: "NUTRITION", keywords: ["protein", "diet", "eat", "food", "meal", "nutrition"] },
+    { category: "RECOVERY", keywords: ["sleep", "rest", "recovery"] },
+    { category: "HYDRATION", keywords: ["water", "hydrat"] },
+    { category: "CARDIO", keywords: ["cardio", "walk", "run"] },
+    { category: "STRENGTH", keywords: ["weight", "strength", "muscle"] },
+    { category: "MOBILITY", keywords: ["stretch", "flexib", "mobility"] },
+    { category: "SUPPLEMENTS", keywords: ["supplement", "vitamin"] },
+    { category: "MINDSET", keywords: ["mental", "habit", "consist"] },
+];
+
+export function getTipCategory(tip: string): string {
+    const tipLower = tip.toLowerCase();
+    for (const mapping of tipCategoryMap) {
+        if (mapping.keywords.some((keyword) => tipLower.includes(keyword))) {
+            return mapping.category;
+        }
+    }
+    return "FITNESS";
+}
+
+const tipIconMap: { color: string; icon: string; keywords: string[] }[] = [
+    {
+        color: "#4CAF50",
+        icon: "mdi-food-apple",
+        keywords: [
+            "protein",
+            "diet",
+            "eat",
+            "food",
+            "meal",
+            "nutrition",
+            "carbohydrate",
+            "caloric",
+        ],
+    },
+    { color: "#3F51B5", icon: "mdi-sleep", keywords: ["sleep", "rest", "recovery", "nap"] },
+    { color: "#2196F3", icon: "mdi-water", keywords: ["water", "hydrat"] },
+    { color: "#FF5722", icon: "mdi-run", keywords: ["walk", "cardio", "steps", "running", "jog"] },
+    {
+        color: "#607D8B",
+        icon: "mdi-dumbbell",
+        keywords: [
+            "weight",
+            "strength",
+            "muscle",
+            "lift",
+            "resistance",
+            "dumbbell",
+            "barbell",
+            "rep",
+        ],
+    },
+    {
+        color: "#9C27B0",
+        icon: "mdi-human-handsup",
+        keywords: ["stretch", "flexib", "mobility", "range of motion", "foam roll"],
+    },
+    {
+        color: "#FFC107",
+        icon: "mdi-pill",
+        keywords: ["supplement", "vitamin", "creatine", "protein powder", "omega-3"],
+    },
+    {
+        color: "#9C27B0",
+        icon: "mdi-brain",
+        keywords: ["focus", "mental", "motivation", "habit", "consist", "journal", "track"],
+    },
+];
+
+export function getTipIcon(tip: string): { color: string; icon: string } {
+    const tipLower = tip.toLowerCase();
+    for (const mapping of tipIconMap) {
+        if (mapping.keywords.some((keyword) => tipLower.includes(keyword))) {
+            return { color: mapping.color, icon: mapping.icon };
+        }
+    }
+    return { color: "#FFC107", icon: "mdi-lightbulb-on" };
+}

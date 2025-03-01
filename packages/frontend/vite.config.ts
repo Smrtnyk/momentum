@@ -30,6 +30,44 @@ export default defineConfig({
                 theme_color: "#27293D",
             },
             registerType: "autoUpdate",
+            workbox: {
+                cleanupOutdatedCaches: true,
+                // Cache static resources
+                globPatterns: ["**/*.{js,css,html,ico,png,svg,woff,woff2}"],
+                // Cache specific routes and assets
+                runtimeCaching: [
+                    {
+                        handler: "CacheFirst",
+                        options: {
+                            cacheableResponse: {
+                                statuses: [0, 200],
+                            },
+                            cacheName: "google-fonts-cache",
+                            expiration: {
+                                maxAgeSeconds: 60 * 60 * 24 * 365,
+                                maxEntries: 10,
+                            },
+                        },
+                        urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+                    },
+                    {
+                        handler: "CacheFirst",
+                        options: {
+                            cacheableResponse: {
+                                statuses: [0, 200],
+                            },
+                            cacheName: "gstatic-fonts-cache",
+                            expiration: {
+                                maxAgeSeconds: 60 * 60 * 24 * 365,
+                                maxEntries: 10,
+                            },
+                        },
+                        urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
+                    },
+                ],
+                // Skip waiting by default - automatically activate the new SW
+                skipWaiting: true,
+            },
         }),
     ],
 });

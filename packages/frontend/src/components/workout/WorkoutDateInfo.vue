@@ -25,13 +25,11 @@ const formattedDate = computed(() => {
         return `Yesterday at ${formatTime(workoutDate)}`;
     }
 
-    // Format for this week
     const daysDiff = Math.floor((today.getTime() - workoutDate.getTime()) / (1000 * 60 * 60 * 24));
     if (daysDiff < 7) {
         return `${workoutDate.toLocaleDateString(undefined, { weekday: "long" })} at ${formatTime(workoutDate)}`;
     }
 
-    // Format for older dates
     return workoutDate.toLocaleDateString(undefined, {
         day: "numeric",
         month: "short",

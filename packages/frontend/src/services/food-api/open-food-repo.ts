@@ -12,9 +12,6 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
     private readonly API_BASE_URL = "https://www.foodrepo.org/api/v3";
     private readonly API_KEY = import.meta.env.VITE_OPEN_FOOD_REPO_API_KEY;
 
-    /**
-     * Get a food item by barcode
-     */
     async getFoodByBarcode(barcode: string): Promise<FoodItem | null> {
         if (!this.API_KEY) {
             logger.warn("OpenFoodRepo API key not set");
@@ -49,9 +46,6 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
         }
     }
 
-    /**
-     * Search for foods matching a query
-     */
     async searchFoods(query: string, page = 1, pageSize = 10): Promise<FoodSearchResult> {
         if (!this.API_KEY) {
             logger.warn("OpenFoodRepo API key not set");
@@ -109,9 +103,6 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
         }
     }
 
-    /**
-     * Maps an OpenFoodRepo product to our FoodItem interface
-     */
     private mapProductToFoodItem(product: OpenFoodRepoProduct, barcode?: string): FoodItem {
         const name =
             product.display_name_translations?.en ||

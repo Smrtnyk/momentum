@@ -61,11 +61,25 @@
                         <div class="font-weight-medium">{{ food.name }}</div>
                         <div class="text-subtitle-2">{{ food.calories }} kcal</div>
                     </div>
-                    <div class="text-caption text-medium-emphasis">
+                    <div class="text-caption text-medium-emphasis d-flex flex-wrap gap-1">
                         <span class="font-weight-medium"
                             >{{ food.servingSize }} {{ food.servingUnit }}</span
                         >
                         <template v-if="food.brand"> • {{ food.brand }}</template>
+                        <div class="d-flex gap-2 ms-auto">
+                            <span class="mr-2"
+                                ><span class="font-weight-bold">P:</span>
+                                {{ food.protein.toFixed(1) }}g</span
+                            >
+                            <span class="mr-2"
+                                ><span class="font-weight-bold">C:</span>
+                                {{ food.carbs.toFixed(1) }}g</span
+                            >
+                            <span
+                                ><span class="font-weight-bold">F:</span>
+                                {{ food.fat.toFixed(1) }}g</span
+                            >
+                        </div>
                     </div>
                 </div>
 

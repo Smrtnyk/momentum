@@ -17,10 +17,6 @@ import type { FoodItem } from "../types/food";
 import { firestore } from "../firebase";
 import { logger } from "../logger/app-logger";
 
-/**
- * Interface for custom foods stored in database
- * Extends FoodItem with metadata for user-created foods
- */
 export interface CustomFood extends FoodItem {
     createdAt: Timestamp;
     isCustom: true;
@@ -28,11 +24,6 @@ export interface CustomFood extends FoodItem {
     userId: string;
 }
 
-/**
- * Create a new custom food
- * @param userId User ID
- * @param food Food item details
- */
 export async function createCustomFood(
     userId: string,
     food: Omit<FoodItem, "id">,
@@ -40,7 +31,6 @@ export async function createCustomFood(
     try {
         const customFoodsRef = collection(firestore, "users", userId, "custom_foods");
 
-        // Add metadata to the food
         const customFoodData = {
             ...food,
             createdAt: serverTimestamp(),
@@ -57,11 +47,6 @@ export async function createCustomFood(
     }
 }
 
-/**
- * Delete a custom food
- * @param userId User ID
- * @param foodId Food ID
- */
 export async function deleteCustomFood(userId: string, foodId: string): Promise<void> {
     try {
         const foodRef = doc(firestore, "users", userId, "custom_foods", foodId);
@@ -72,10 +57,6 @@ export async function deleteCustomFood(userId: string, foodId: string): Promise<
     }
 }
 
-/**
- * Get all custom foods for a user
- * @param userId User ID
- */
 export async function getUserCustomFoods(userId: string): Promise<CustomFood[]> {
     try {
         const customFoodsRef = collection(firestore, "users", userId, "custom_foods");
@@ -95,12 +76,6 @@ export async function getUserCustomFoods(userId: string): Promise<CustomFood[]> 
     }
 }
 
-/**
- * Update an existing custom food
- * @param userId User ID
- * @param foodId Food ID
- * @param updates Updates to apply
- */
 export async function updateCustomFood(
     userId: string,
     foodId: string,

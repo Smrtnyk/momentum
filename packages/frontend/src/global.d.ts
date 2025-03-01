@@ -1,20 +1,12 @@
-interface BarcodeDetectorOptions {
-    formats: string[];
-}
+declare module "virtual:pwa-register/vue" {
+    import type { RegisterSWOptions } from "vite-plugin-pwa/types";
+    import type { Ref } from "vue";
 
-interface BarcodeDetectorResult {
-    boundingBox: DOMRectReadOnly;
-    cornerPoints: Array<{ x: number; y: number }>;
-    format: string;
-    rawValue: string;
-}
+    export type { RegisterSWOptions };
 
-interface Window {
-    BarcodeDetector: typeof BarcodeDetector;
-}
-
-declare class BarcodeDetector {
-    constructor(options?: BarcodeDetectorOptions);
-    static getSupportedFormats(): Promise<string[]>;
-    detect(image: ImageBitmapSource): Promise<BarcodeDetectorResult[]>;
+    export function useRegisterSW(options?: RegisterSWOptions): {
+        needRefresh: Ref<boolean>;
+        offlineReady: Ref<boolean>;
+        updateServiceWorker: (reloadPage?: boolean) => Promise<void>;
+    };
 }

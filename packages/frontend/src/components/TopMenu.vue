@@ -12,8 +12,14 @@
         <v-btn to="/workouts" icon>
             <v-icon>mdi-dumbbell</v-icon>
         </v-btn>
+        <v-btn to="/workout-plans" icon>
+            <v-icon>mdi-clipboard-text-outline</v-icon>
+        </v-btn>
         <v-btn to="/calories" icon>
             <v-icon>mdi-nutrition</v-icon>
+        </v-btn>
+        <v-btn to="/recipes" icon>
+            <v-icon>mdi-silverware-fork-knife</v-icon>
         </v-btn>
         <v-btn to="/profile" icon>
             <v-icon>mdi-account</v-icon>

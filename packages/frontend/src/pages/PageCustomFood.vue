@@ -1,10 +1,17 @@
 <template>
-    <v-container fluid class="pa-4">
-        <div class="d-flex align-center mb-4">
-            <h1 class="text-h5">My Custom Foods</h1>
-            <v-spacer></v-spacer>
-            <v-btn color="primary" icon="mdi-plus" @click="openCustomFoodForm()" size="default" />
-        </div>
+    <v-container class="pa-2 mx-auto">
+        <v-card class="px-4 py-4 rounded-lg mb-4">
+            <div class="d-flex align-center">
+                <h1 class="text-h5 text-white font-weight-bold">My Custom Foods</h1>
+                <v-spacer></v-spacer>
+                <v-btn
+                    color="primary"
+                    icon="mdi-plus"
+                    @click="openCustomFoodForm()"
+                    size="default"
+                />
+            </div>
+        </v-card>
 
         <!-- Loading State -->
         <div v-if="isLoading" class="d-flex justify-center my-8">
@@ -49,54 +56,8 @@
 
             <v-row>
                 <v-col v-for="food in filteredFoods" :key="food.id" cols="12" sm="6" md="4" lg="3">
-                    <v-card class="food-card h-100">
-                        <v-card-item>
-                            <template #prepend>
-                                <v-avatar
-                                    size="42"
-                                    rounded
-                                    :color="getRandomColor(food.id)"
-                                    class="mr-3"
-                                >
-                                    <v-icon color="white" size="24">mdi-food-apple</v-icon>
-                                </v-avatar>
-                            </template>
-
-                            <v-card-title>{{ food.name }}</v-card-title>
-                            <v-card-subtitle v-if="food.brand">{{ food.brand }}</v-card-subtitle>
-                        </v-card-item>
-
-                        <v-card-text>
-                            <div class="d-flex align-center mb-1">
-                                <v-icon size="small" color="primary" class="mr-1">mdi-fire</v-icon>
-                                <span class="text-body-2">{{ food.calories }} kcal</span>
-                                <span class="text-caption text-medium-emphasis ml-1">
-                                    per {{ food.servingSize }}{{ food.servingUnit }}
-                                </span>
-                            </div>
-
-                            <div class="d-flex justify-space-between mt-4">
-                                <div class="text-center">
-                                    <div class="text-body-2 font-weight-bold">
-                                        {{ food.protein }}g
-                                    </div>
-                                    <div class="text-caption">Protein</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-body-2 font-weight-bold">
-                                        {{ food.carbs }}g
-                                    </div>
-                                    <div class="text-caption">Carbs</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-body-2 font-weight-bold">{{ food.fat }}g</div>
-                                    <div class="text-caption">Fat</div>
-                                </div>
-                            </div>
-                        </v-card-text>
-
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
+                    <FoodCard :food="food" :color="getColorFromId(food.id)" icon="mdi-food-apple">
+                        <template #actions>
                             <v-btn
                                 variant="text"
                                 color="primary"
@@ -113,8 +74,8 @@
                             >
                                 Delete
                             </v-btn>
-                        </v-card-actions>
-                    </v-card>
+                        </template>
+                    </FoodCard>
                 </v-col>
             </v-row>
         </template>
@@ -127,8 +88,9 @@ import { computed, onMounted, ref } from "vue";
 import type { CustomFood } from "../services/custom-foods";
 
 import CustomFoodForm from "../components/calories/CustomFoodForm.vue";
-import { useGlobalConfirm } from "../composables/useConfirmDialog";
-import { useDialog } from "../composables/useDialog";
+import FoodCard from "../components/calories/FoodCard.vue";
+import { globalDialog } from "../composables/useDialog";
+import { getColorFromId } from "../helpers/colors";
 import { logger } from "../logger/app-logger";
 import {
     createCustomFood,
@@ -141,8 +103,6 @@ import { useGlobalStore } from "../stores/global";
 
 const authStore = useAuthStore();
 const globalStore = useGlobalStore();
-const { openDialog } = useDialog();
-const { openConfirm } = useGlobalConfirm();
 
 const customFoods = ref<CustomFood[]>([]);
 const isLoading = ref(false);
@@ -162,7 +122,7 @@ onMounted(function () {
 });
 
 async function confirmDeleteFood(food: CustomFood): Promise<void> {
-    const confirmed = await openConfirm({
+    const confirmed = await globalDialog.confirm({
         message: `Are you sure you want to delete "${food.name}"?`,
         title: "Delete Custom Food",
     });
@@ -183,24 +143,6 @@ function editCustomFood(food: CustomFood): void {
     openCustomFoodForm(food);
 }
 
-function getRandomColor(id: string): string {
-    const colors = [
-        "deep-purple",
-        "indigo",
-        "light-blue",
-        "teal",
-        "light-green",
-        "amber",
-        "deep-orange",
-    ];
-    const hash = id.split("").reduce(function (acc, char) {
-        // eslint-disable-next-line no-bitwise
-        return char.charCodeAt(0) + ((acc << 5) - acc);
-    }, 0);
-    const index = Math.abs(hash) % colors.length;
-    return `${colors[index]}-lighten-1`;
-}
-
 async function loadCustomFoods(): Promise<void> {
     try {
         isLoading.value = true;
@@ -214,8 +156,9 @@ async function loadCustomFoods(): Promise<void> {
 }
 
 function openCustomFoodForm(food?: CustomFood): void {
-    openDialog(CustomFoodForm, {
-        componentProps: {
+    globalDialog.openDialog(
+        CustomFoodForm,
+        {
             initialFood: food,
             async onSave(newFood: Omit<CustomFood, "id">) {
                 const userId = authStore.nonNullableUser.uid;
@@ -238,19 +181,9 @@ function openCustomFoodForm(food?: CustomFood): void {
                 }
             },
         },
-        title: food ? "Edit Custom Food" : "Create Custom Food",
-    });
+        {
+            title: food ? "Edit Custom Food" : "Create Custom Food",
+        },
+    );
 }
 </script>
-
-<style scoped>
-.food-card {
-    position: relative;
-    transition: all 0.2s ease;
-}
-
-.food-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
-}
-</style>

@@ -1,17 +1,36 @@
 <template>
-    <v-container fluid class="pa-4">
-        <h1 class="text-h4 mb-4">Calories & Nutrition</h1>
-        <v-btn
-            variant="text"
-            density="comfortable"
-            color="primary"
-            prepend-icon="mdi-food-apple-outline"
-            class="text-none"
-            to="/custom-food"
-            size="small"
-        >
-            My Food
-        </v-btn>
+    <v-container class="pa-2 mx-auto">
+        <v-card class="px-4 py-4 rounded-lg mb-1">
+            <div class="d-flex align-center">
+                <h1 class="text-h5 text-white font-weight-bold">Calories & Nutrition</h1>
+            </div>
+        </v-card>
+        <div class="mb-1">
+            <v-btn
+                variant="text"
+                density="comfortable"
+                color="primary"
+                prepend-icon="mdi-food-apple-outline"
+                class="text-none"
+                to="/custom-food"
+                size="small"
+            >
+                My Food
+            </v-btn>
+
+            <v-btn
+                variant="text"
+                density="comfortable"
+                color="primary"
+                prepend-icon="mdi-food-apple-outline"
+                class="text-none"
+                to="/recent-food"
+                size="small"
+            >
+                Recent Food
+            </v-btn>
+        </div>
+
         <!-- Date Selector -->
         <v-card class="mb-4" flat>
             <v-card-text class="d-flex justify-space-between align-center pa-2">
@@ -126,8 +145,7 @@ import FoodPortionDialog from "../components/calories/FoodPortionDialog.vue";
 import FoodSearch from "../components/calories/FoodSearch.vue";
 import ManualMacrosDialog from "../components/calories/ManualMacrosDialog.vue";
 import MealCard from "../components/calories/MealCard.vue";
-import { useGlobalConfirm } from "../composables/useConfirmDialog";
-import { useDialog } from "../composables/useDialog";
+import { globalDialog } from "../composables/useDialog";
 import { logger } from "../logger/app-logger";
 import {
     addMeal,
@@ -136,14 +154,13 @@ import {
     getMealsForDay,
     setCalorieGoal,
 } from "../services/calories";
+import { setDefaultCalorieGoal } from "../services/user";
 import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
 const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 const dateAdapter = useDate();
-const { openDialog } = useDialog();
-const { openConfirm } = useGlobalConfirm();
 
 const today = new Date();
 const selectedDate = useStorage("calories-selected-date", today.toISOString().split("T")[0]);
@@ -171,7 +188,7 @@ const {
         const dateString = selectedDate.value;
 
         const [summary, dayMeals] = await Promise.all([
-            getDailyCalorieSummary(userId, dateString),
+            getDailyCalorieSummary(userId, authStore.defaultCalorieGoal, dateString),
             getMealsForDay(userId, dateString),
         ]);
 
@@ -224,10 +241,10 @@ async function addFoodToMeal(
         if (existingMeal) {
             const updatedFoods = [...existingMeal.foods, food];
             // Delete old meal and add new one with updated foods
-            await deleteMeal(userId, existingMeal.id, dateString);
-            await addMeal(userId, mealType, updatedFoods, dateString);
+            await deleteMeal(userId, existingMeal.id, dateString, authStore.defaultCalorieGoal);
+            await addMeal(userId, mealType, updatedFoods, authStore.defaultCalorieGoal, dateString);
         } else {
-            await addMeal(userId, mealType, [food], dateString);
+            await addMeal(userId, mealType, [food], authStore.defaultCalorieGoal, dateString);
         }
 
         await refreshData();
@@ -253,7 +270,7 @@ function changeDate(dayOffset: number): void {
 }
 
 async function confirmDeleteMeal(mealId: string): Promise<void> {
-    const confirmed = await openConfirm({
+    const confirmed = await globalDialog.confirm({
         message: "Are you sure you want to delete this meal?",
         title: "Delete Meal",
     });
@@ -303,38 +320,41 @@ function openFoodPortionDialog(
     food: FoodItem,
     mealType: "breakfast" | "dinner" | "lunch" | "snack",
 ): void {
-    openDialog(FoodPortionDialog, {
-        componentProps: {
+    globalDialog.openDialog(
+        FoodPortionDialog,
+        {
             food,
             mealType,
             onAdd: async (adjustedFood: FoodItem) => {
                 await addFoodToMeal(adjustedFood, mealType);
             },
         },
-        title: food.name,
-    });
+        {
+            title: food.name,
+        },
+    );
 }
 
 function openFoodSearch(mealType: "breakfast" | "dinner" | "lunch" | "snack"): void {
-    openDialog(FoodSearch, {
-        componentProps: {
-            limitRecent: 5,
+    globalDialog.openDialog(
+        FoodSearch,
+        {
             mealType,
             onSelect: (food: FoodItem) => {
                 openFoodPortionDialog(food, mealType);
             },
         },
-        title: "Add Food",
-    });
+        {
+            title: "Add Food",
+        },
+    );
 }
 
 function openManualMacrosDialog(mealType: "breakfast" | "dinner" | "lunch" | "snack"): void {
-    openDialog(ManualMacrosDialog, {
-        componentProps: {
-            mealType,
-            onSave: async (food: FoodItem) => {
-                await addFoodToMeal(food, mealType);
-            },
+    globalDialog.openDialog(ManualMacrosDialog, {
+        mealType,
+        onSave(food: FoodItem) {
+            return addFoodToMeal(food, mealType);
         },
     });
 }
@@ -343,6 +363,15 @@ async function removeFoodFromMeal(
     mealType: "breakfast" | "dinner" | "lunch" | "snack",
     index: number,
 ): Promise<void> {
+    const confirmed = await globalDialog.confirm({
+        message: "Are you sure you want to delete this meal?",
+        title: "Delete Meal",
+    });
+
+    if (!confirmed) {
+        return;
+    }
+
     try {
         globalStore.setLoading(true);
         const userId = authStore.nonNullableUser.uid;
@@ -357,11 +386,11 @@ async function removeFoodFromMeal(
 
         // If no foods left delete the meal
         if (updatedFoods.length === 0) {
-            await deleteMeal(userId, existingMeal.id, dateString);
+            await deleteMeal(userId, existingMeal.id, dateString, authStore.defaultCalorieGoal);
         } else {
             // Otherwise update the meal with the remaining foods
-            await deleteMeal(userId, existingMeal.id, dateString);
-            await addMeal(userId, mealType, updatedFoods, dateString);
+            await deleteMeal(userId, existingMeal.id, dateString, authStore.defaultCalorieGoal);
+            await addMeal(userId, mealType, updatedFoods, authStore.defaultCalorieGoal, dateString);
         }
 
         await refreshData();
@@ -378,7 +407,7 @@ async function removeMeal(mealId: string): Promise<void> {
     try {
         globalStore.setLoading(true);
         const userId = authStore.nonNullableUser.uid;
-        await deleteMeal(userId, mealId, selectedDate.value);
+        await deleteMeal(userId, mealId, selectedDate.value, authStore.defaultCalorieGoal);
         await refreshData();
         globalStore.notify("Meal deleted successfully");
     } catch (error) {
@@ -389,10 +418,13 @@ async function removeMeal(mealId: string): Promise<void> {
     }
 }
 
-async function updateCalorieGoal(goal: number): Promise<void> {
+async function updateCalorieGoal(goal: number, setAsDefault: boolean): Promise<void> {
     try {
         const userId = authStore.nonNullableUser.uid;
-        await setCalorieGoal(userId, goal, selectedDate.value);
+        await setCalorieGoal(userId, goal, authStore.defaultCalorieGoal, selectedDate.value);
+        if (setAsDefault) {
+            await setDefaultCalorieGoal(userId, goal);
+        }
         await refreshData();
         globalStore.notify("Calorie goal updated successfully");
     } catch (error) {

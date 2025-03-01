@@ -5,7 +5,7 @@
             type="number"
             label="Amount (ml)"
             variant="outlined"
-            :rules="[(v) => !!v || 'Amount is required', (v) => v > 0 || 'Amount must be positive']"
+            :rules="[positiveRequired]"
         ></v-text-field>
     </v-card-text>
     <v-card-actions>
@@ -19,6 +19,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+
+import { positiveRequired } from "../../helpers/form-validators";
 
 const { initialAmount = null } = defineProps<{
     initialAmount?: number;

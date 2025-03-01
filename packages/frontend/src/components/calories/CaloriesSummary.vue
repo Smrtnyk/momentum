@@ -79,7 +79,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import { useDialog } from "../../composables/useDialog";
+import { globalDialog } from "../../composables/useDialog";
+import { useGlobalStore } from "../../stores/global";
 import CalorieGoalDialog from "./CalorieGoalDialog.vue";
 
 const props = defineProps<{
@@ -100,10 +101,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    "update:goal": [goal: number];
+    "update:goal": [goal: number, setAsDefault: boolean];
 }>();
 
-const { openDialog } = useDialog();
+const globalStore = useGlobalStore();
 
 const caloriePercentage = computed(() => {
     return Math.min(100, (props.summary.total / props.summary.goal) * 100);
@@ -135,15 +136,22 @@ const macroPercentages = computed(() => {
 });
 
 function openCalorieGoalDialog(): void {
-    openDialog(CalorieGoalDialog, {
-        componentProps: {
+    globalDialog.openDialog(
+        CalorieGoalDialog,
+        {
             currentGoal: props.summary.goal,
-            onSave: (newGoal: number) => {
-                emit("update:goal", newGoal);
+            onSave(newGoal: number, setAsDefault: boolean) {
+                emit("update:goal", newGoal, setAsDefault);
+
+                if (setAsDefault) {
+                    globalStore.notify("Default calorie goal updated");
+                }
             },
         },
-        title: "Set Daily Calorie Goal",
-    });
+        {
+            title: "Set Daily Calorie Goal",
+        },
+    );
 }
 </script>
 

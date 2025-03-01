@@ -17,22 +17,14 @@ import type { Meal } from "../types/health-metrics";
 import { firestore } from "../firebase";
 import { logger } from "../logger/app-logger";
 import { updateHealthMetrics } from "./health-metrics";
-import { addRecentFood } from "./recent-food-local-storage";
+import { addRecentFood } from "./recent-food-db";
 
-const DEFAULT_CALORIE_GOAL = 2000;
-
-/**
- * Add a meal with food items
- * @param userId User ID
- * @param mealType Meal type (breakfast, lunch, dinner, snack)
- * @param foods Array of food items in the meal
- * @param dateString Date string in YYYY-MM-DD format (defaults to today)
- */
 export async function addMeal(
     userId: string,
     mealType: "breakfast" | "dinner" | "lunch" | "snack",
     foods: FoodItem[],
-    dateString: string = new Date().toISOString().split("T")[0],
+    defaultCalorieGoal: number,
+    dateString: string,
 ): Promise<string> {
     try {
         const totalCalories = foods.reduce((sum, food) => sum + food.calories, 0);
@@ -51,11 +43,12 @@ export async function addMeal(
         };
 
         const mealDocRef = await addDoc(mealsRef, mealData);
-        await updateDailyCalorieTotals(userId, dateString);
+        await updateDailyCalorieTotals(userId, dateString, defaultCalorieGoal);
 
-        for (const food of foods) {
-            addRecentFood(userId, food);
-        }
+        const addFoodPromises = foods.map(function (food) {
+            return addRecentFood(userId, food);
+        });
+        await Promise.any(addFoodPromises);
 
         return mealDocRef.id;
     } catch (error) {
@@ -64,35 +57,26 @@ export async function addMeal(
     }
 }
 
-/**
- * Delete a meal and update calorie totals
- * @param userId User ID
- * @param mealId Meal ID to delete
- * @param dateString Date string of the meal
- */
 export async function deleteMeal(
     userId: string,
     mealId: string,
     dateString: string,
+    defaultCalorieGoal: number,
 ): Promise<void> {
     try {
         const mealRef = doc(firestore, "users", userId, "meals", mealId);
         await deleteDoc(mealRef);
-        await updateDailyCalorieTotals(userId, dateString);
+        await updateDailyCalorieTotals(userId, dateString, defaultCalorieGoal);
     } catch (error) {
         logger.error(error, "CaloriesService", { mealId, userId });
         throw new Error("Failed to delete meal");
     }
 }
 
-/**
- * Get the daily calorie summary for a user
- * @param userId User ID
- * @param dateString Date string in YYYY-MM-DD format (defaults to today)
- */
 export async function getDailyCalorieSummary(
     userId: string,
-    dateString: string = new Date().toISOString().split("T")[0],
+    defaultCalorieGoal: number,
+    dateString: string,
 ): Promise<{
     byMeal: { breakfast: number; dinner: number; lunch: number; snack: number };
     carbs: number;
@@ -112,21 +96,20 @@ export async function getDailyCalorieSummary(
                 byMeal: calories.byMeal || { breakfast: 0, dinner: 0, lunch: 0, snacks: 0 },
                 carbs: calories.carbs || 0,
                 fat: calories.fat || 0,
-                goal: calories.goal || DEFAULT_CALORIE_GOAL,
+                goal: calories.goal || defaultCalorieGoal,
                 protein: calories.protein || 0,
-                remaining: (calories.goal || DEFAULT_CALORIE_GOAL) - (calories.total || 0),
+                remaining: (calories.goal || defaultCalorieGoal) - (calories.total || 0),
                 total: calories.total || 0,
             };
         }
 
-        // Return default values if no data found
         return {
             byMeal: { breakfast: 0, dinner: 0, lunch: 0, snack: 0 },
             carbs: 0,
             fat: 0,
-            goal: DEFAULT_CALORIE_GOAL,
+            goal: defaultCalorieGoal,
             protein: 0,
-            remaining: DEFAULT_CALORIE_GOAL,
+            remaining: defaultCalorieGoal,
             total: 0,
         };
     } catch (error) {
@@ -135,15 +118,7 @@ export async function getDailyCalorieSummary(
     }
 }
 
-/**
- * Get all meals for a specific day
- * @param userId User ID
- * @param dateString Date string in YYYY-MM-DD format (defaults to today)
- */
-export async function getMealsForDay(
-    userId: string,
-    dateString: string = new Date().toISOString().split("T")[0],
-): Promise<Meal[]> {
+export async function getMealsForDay(userId: string, dateString: string): Promise<Meal[]> {
     try {
         const mealsRef = collection(firestore, "users", userId, "meals");
         const queryVal = query(
@@ -166,19 +141,14 @@ export async function getMealsForDay(
     }
 }
 
-/**
- * Set or update the user's daily calorie goal
- * @param userId User ID
- * @param goal Daily calorie goal
- * @param dateString Date string in YYYY-MM-DD format (defaults to today)
- */
 export async function setCalorieGoal(
     userId: string,
     goal: number,
-    dateString: string = new Date().toISOString().split("T")[0],
+    defaultCalorieGoal: number,
+    dateString: string,
 ): Promise<void> {
     try {
-        const summary = await getDailyCalorieSummary(userId, dateString);
+        const summary = await getDailyCalorieSummary(userId, defaultCalorieGoal, dateString);
         await updateHealthMetrics(userId, dateString, {
             calories: {
                 ...summary,
@@ -192,17 +162,14 @@ export async function setCalorieGoal(
     }
 }
 
-/**
- * Update daily calorie totals based on all meals for the day
- * @param userId User ID
- * @param dateString Date string in YYYY-MM-DD format
- */
-async function updateDailyCalorieTotals(userId: string, dateString: string): Promise<void> {
+async function updateDailyCalorieTotals(
+    userId: string,
+    dateString: string,
+    defaultCalorieGoal: number,
+): Promise<void> {
     try {
-        // Get all meals for the day
         const meals = await getMealsForDay(userId, dateString);
 
-        // Calculate totals
         const mealTypeTotals = {
             breakfast: 0,
             dinner: 0,
@@ -215,26 +182,21 @@ async function updateDailyCalorieTotals(userId: string, dateString: string): Pro
         let totalFat = 0;
 
         for (const meal of meals) {
-            // Add to meal type totals
             mealTypeTotals[meal.mealType] += meal.totalCalories;
 
-            // Add to macros
             totalProtein += meal.macros.protein;
             totalCarbs += meal.macros.carbs;
             totalFat += meal.macros.fat;
         }
 
-        // Calculate total calories
         const totalCalories = Object.values(mealTypeTotals).reduce(
             (sum, calories) => sum + calories,
             0,
         );
 
-        // Get current calorie goal
-        const currentSummary = await getDailyCalorieSummary(userId, dateString);
-        const goal = currentSummary.goal || DEFAULT_CALORIE_GOAL;
+        const currentSummary = await getDailyCalorieSummary(userId, defaultCalorieGoal, dateString);
+        const goal = currentSummary.goal || defaultCalorieGoal;
 
-        // Update health metrics with new totals
         await updateHealthMetrics(userId, dateString, {
             calories: {
                 byMeal: mealTypeTotals,

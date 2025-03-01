@@ -5,13 +5,20 @@ import { ref } from "vue";
 import type { FoodItem } from "../types/food";
 
 import { logger } from "../logger/app-logger";
-import { OpenFoodFactsApi } from "../services/food-api/open-food-facts";
-import { OpenFoodRepoApi } from "../services/food-api/open-food-repo";
+import { combinedFoodApi } from "../services/food-api/combined-api";
+import { findRecentFoodByBarcode } from "../services/recent-food-db";
+
+type BarcodeDetectedCallback = (barcode: string) => Promise<void> | void;
 
 interface BarcodeScannerOptions {
     onError: (message: string) => void;
     onFoodFound: (food: FoodItem) => void;
     onNotFound: (barcode: string) => void;
+}
+
+interface BarcodeScanOnlyOptions {
+    onBarcodeScanned: (barcode: string) => void;
+    onError: (message: string) => void;
 }
 
 export function useBarcodeScanner() {
@@ -96,21 +103,17 @@ export function useBarcodeScanner() {
         scannerOverlayRef.value = overlay;
     }
 
-    async function searchByBarcode(barcode: string, options: BarcodeScannerOptions): Promise<void> {
+    async function searchByBarcode(
+        barcode: string,
+        options: BarcodeScannerOptions & { userId: string },
+    ): Promise<void> {
         try {
             isSearching.value = true;
             logger.info(`Searching for barcode: ${barcode}`, "BarcodeScanner");
 
-            // First try OpenFoodRepo (better European product coverage)
-            const openFoodRepoApi = new OpenFoodRepoApi();
-            let food = await openFoodRepoApi.getFoodByBarcode(barcode);
-
-            // If not found, try OpenFoodFacts
-            if (!food) {
-                logger.info("Product not found in OpenFoodRepo, trying OpenFoodFacts");
-                const openFoodFactsApi = new OpenFoodFactsApi();
-                food = await openFoodFactsApi.getFoodByBarcode(barcode);
-            }
+            const food =
+                (await findRecentFoodByBarcode(options.userId, barcode)) ??
+                (await combinedFoodApi.getFoodByBarcode(barcode));
 
             if (food) {
                 logger.info(`Food found with ${food.calories} calories`, "BarcodeScanner", {
@@ -118,27 +121,19 @@ export function useBarcodeScanner() {
                     calories: food.calories,
                     foodName: food.name,
                 });
-
-                if (food.calories === 0) {
-                    options.onError(
-                        "Found product has incomplete nutrition data. Consider searching manually.",
-                    );
-                    options.onNotFound(barcode);
-                } else {
-                    options.onFoodFound(food);
-                }
+                options.onFoodFound(food);
             } else {
                 options.onNotFound(barcode);
             }
-        } catch (error) {
-            logger.error(error, "BarcodeScanner", { barcode });
-            options.onError("Error searching for barcode. Please try again or search manually.");
         } finally {
             isSearching.value = false;
         }
     }
 
-    async function scanBarcode(options: BarcodeScannerOptions): Promise<void> {
+    async function initializeScanner(
+        onBarcodeDetected: BarcodeDetectedCallback,
+        onError: (message: string) => void,
+    ): Promise<void> {
         try {
             isScanning.value = true;
             createScannerOverlay();
@@ -171,7 +166,7 @@ export function useBarcodeScanner() {
                         const barcode = res.getText();
                         logger.info(`Barcode detected: ${barcode}`, "BarcodeScanner");
                         stopBarcodeScanner();
-                        await searchByBarcode(barcode, options);
+                        await onBarcodeDetected(barcode);
                     }
 
                     if (error && error.name !== "NotFoundException") {
@@ -185,11 +180,21 @@ export function useBarcodeScanner() {
             };
         } catch (error) {
             logger.error(error, "BarcodeScanner.scanBarcode");
-            options.onError(
-                "Unable to access camera. Please check camera permissions and try again.",
-            );
+            onError("Unable to access camera. Please check camera permissions and try again.");
             stopBarcodeScanner();
         }
+    }
+
+    async function scanBarcodeOnly(options: BarcodeScanOnlyOptions): Promise<void> {
+        await initializeScanner(function (barcode: string): void {
+            options.onBarcodeScanned(barcode);
+        }, options.onError);
+    }
+
+    async function scanBarcode(options: BarcodeScannerOptions & { userId: string }): Promise<void> {
+        await initializeScanner(async function (barcode: string): Promise<void> {
+            await searchByBarcode(barcode, options);
+        }, options.onError);
     }
 
     function stopBarcodeScanner(): void {
@@ -210,6 +215,7 @@ export function useBarcodeScanner() {
         isScanning,
         isSearching,
         scanBarcode,
+        scanBarcodeOnly,
     };
 }
 
@@ -230,9 +236,7 @@ async function selectHighestResolutionCamera(): Promise<string | undefined> {
         const tempConstraints = {
             video: {
                 deviceId: device.deviceId,
-                // Request the highest possible height
                 height: { ideal: 9999 },
-                // Request the highest possible width
                 width: { ideal: 9999 },
             },
         };

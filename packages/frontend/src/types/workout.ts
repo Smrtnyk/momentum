@@ -5,13 +5,28 @@ export type CardioWorkout = WorkoutBase & {
     type: "cardio";
 };
 
+export interface CircuitExerciseEntry extends BaseExerciseEntry {
+    calories: number | undefined;
+    distanceKm: number | undefined;
+    durationSeconds: number | undefined;
+    intensity: "high" | "low" | "medium" | undefined;
+    sets: ExerciseSet[];
+    type: "circuit";
+}
+
+export type CircuitWorkout = WorkoutBase & {
+    exerciseEntries: CircuitExerciseEntry[];
+    type: "circuit";
+    workoutDurationMinutes: number;
+};
+
 export type StrengthWorkout = WorkoutBase & {
     exerciseEntries: StrengthExerciseEntry[];
     type: "strength";
     workoutDurationMinutes: number;
 };
 
-export type Workout = CardioWorkout | StrengthWorkout;
+export type Workout = CardioWorkout | CircuitWorkout | StrengthWorkout;
 
 export type WorkoutWithId = Workout & {
     id: string;

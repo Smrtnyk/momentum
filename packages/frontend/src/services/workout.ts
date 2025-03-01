@@ -8,15 +8,22 @@ import {
     limit,
     orderBy,
     query,
+    Timestamp,
     updateDoc,
     where,
 } from "firebase/firestore";
 
-import type { CardioWorkout, StrengthWorkout, Workout, WorkoutWithId } from "../types/workout";
+import type {
+    CardioWorkout,
+    CircuitWorkout,
+    StrengthWorkout,
+    Workout,
+    WorkoutWithId,
+} from "../types/workout";
 
 import { firestore } from "../firebase";
 
-export async function addWorkout(workout: Workout): Promise<string> {
+export async function addWorkout(workout: Omit<Workout, "id">): Promise<string> {
     const userId = workout.userId;
     if (!userId) {
         throw new Error("Cannot add workout: User ID is required");
@@ -84,8 +91,51 @@ export async function getWorkouts(
     });
 }
 
+export async function getWorkoutsInDateRange(
+    userId: string,
+    startDate: Date,
+    endDate: Date,
+    options: {
+        orderByDate?: "asc" | "desc";
+        workoutType?: string;
+    } = {},
+): Promise<WorkoutWithId[]> {
+    if (!userId) {
+        throw new Error("UserId is required");
+    }
+
+    const startTimestamp = Timestamp.fromDate(startDate);
+    const endTimestamp = Timestamp.fromDate(endDate);
+
+    const workoutsRef = collection(firestore, "users", userId, "workouts");
+
+    let queryRef = query(
+        workoutsRef,
+        where("date", ">=", startTimestamp),
+        where("date", "<=", endTimestamp),
+    );
+
+    if (options.workoutType) {
+        queryRef = query(queryRef, where("type", "==", options.workoutType));
+    }
+
+    if (options.orderByDate) {
+        queryRef = query(queryRef, orderBy("date", options.orderByDate === "asc" ? "asc" : "desc"));
+    }
+
+    const snapshot = await getDocs(queryRef);
+
+    return snapshot.docs.map(function (document) {
+        return { id: document.id, ...document.data() } as WorkoutWithId;
+    });
+}
+
 export function isCardioWorkout(workout: Workout): workout is CardioWorkout {
     return workout.type === "cardio";
+}
+
+export function isCircuitWorkout(workout: Workout): workout is CircuitWorkout {
+    return workout.type === "circuit";
 }
 
 export function isStrengthWorkout(workout: Workout): workout is StrengthWorkout {

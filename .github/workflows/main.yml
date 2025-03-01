@@ -1,0 +1,42 @@
+name: Build
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        types: [ opened, synchronize, reopened ]
+
+jobs:
+    prepare:
+        name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
+        runs-on: ${{ matrix.os }}
+        strategy:
+            matrix:
+                node_version: [ '22' ]
+                os: [ ubuntu-latest, macos-latest ]
+
+        steps:
+            -   uses: actions/checkout@v4
+            -   uses: pnpm/action-setup@v4
+                with:
+                    version: 10.5.2
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version: ${{ matrix.node_version }}
+                    cache: 'pnpm'
+
+            -   name: Install dependencies
+                run: pnpm install
+
+            -   name: Lint
+                run: pnpm run lint
+
+            -   name: Dead code
+                run: pnpm run find-dead-code
+
+            -   name: Test Unit
+                run: pnpm run test:unit
+
+            -   name: Build
+                run: pnpm run build

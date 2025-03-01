@@ -5,7 +5,7 @@
             type="number"
             label="Steps"
             variant="outlined"
-            :rules="[(v) => !!v || 'Steps are required', (v) => v > 0 || 'Steps must be positive']"
+            :rules="[positiveRequired]"
         ></v-text-field>
     </v-card-text>
     <v-card-actions>
@@ -17,6 +17,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+
+import { positiveRequired } from "../../helpers/form-validators";
 
 const { initialSteps = null } = defineProps<{
     initialSteps?: number;

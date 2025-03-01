@@ -22,7 +22,7 @@
                         type="number"
                         label="Calories"
                         variant="outlined"
-                        :rules="[(v) => v >= 0 || 'Must be positive']"
+                        :rules="[positiveNumber]"
                         hint="Will auto-calculate from macros"
                         persistent-hint
                     ></v-text-field>
@@ -34,7 +34,7 @@
                         type="number"
                         label="Protein (g)"
                         variant="outlined"
-                        :rules="[(v) => v >= 0 || 'Must be positive']"
+                        :rules="[positiveNumber]"
                         @update:model-value="updateCalories"
                     ></v-text-field>
                 </v-col>
@@ -45,7 +45,7 @@
                         type="number"
                         label="Carbs (g)"
                         variant="outlined"
-                        :rules="[(v) => v >= 0 || 'Must be positive']"
+                        :rules="[positiveNumber]"
                         @update:model-value="updateCalories"
                     ></v-text-field>
                 </v-col>
@@ -56,7 +56,7 @@
                         type="number"
                         label="Fat (g)"
                         variant="outlined"
-                        :rules="[(v) => v >= 0 || 'Must be positive']"
+                        :rules="[positiveNumber]"
                         @update:model-value="updateCalories"
                     ></v-text-field>
                 </v-col>
@@ -90,6 +90,8 @@
 import { computed, ref, watch } from "vue";
 
 import type { FoodItem } from "../../types/food";
+
+import { positiveNumber } from "../../helpers/form-validators";
 
 defineProps<{
     mealType: "breakfast" | "dinner" | "lunch" | "snack";

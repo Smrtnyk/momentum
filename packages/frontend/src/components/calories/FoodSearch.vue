@@ -255,11 +255,11 @@ import { logger } from "../../logger/app-logger";
 import { getUserCustomFoods } from "../../services/custom-foods";
 import { combinedFoodApi } from "../../services/food-api/combined-api";
 import { NutritionixApi } from "../../services/food-api/nutritionix-api";
-import { getRecentFoods } from "../../services/recent-food-local-storage";
+import { getRecentFoods } from "../../services/recent-food-db";
 import { useAuthStore } from "../../stores/auth";
 import { useGlobalStore } from "../../stores/global";
 
-const { limitRecent = 10 } = defineProps<{
+const { limitRecent = 30 } = defineProps<{
     limitRecent?: number;
     mealType: "breakfast" | "dinner" | "lunch" | "snack";
 }>();
@@ -308,8 +308,7 @@ const filteredCustomFoods = computed(() => {
 });
 
 onMounted(async () => {
-    loadRecentFoods();
-    await loadCustomFoods();
+    await Promise.all([loadRecentFoods(), loadCustomFoods()]);
 });
 
 function handleBarcodeScanner(): void {
@@ -323,6 +322,7 @@ function handleBarcodeScanner(): void {
         onNotFound(barcode) {
             globalStore.notifyError(`No food found with barcode: ${barcode}`);
         },
+        userId: authStore.nonNullableUser.uid,
     });
 }
 
@@ -337,9 +337,9 @@ async function loadCustomFoods(): Promise<void> {
     }
 }
 
-function loadRecentFoods(): void {
+async function loadRecentFoods(): Promise<void> {
     try {
-        recentFoods.value = getRecentFoods(authStore.nonNullableUser.uid, limitRecent);
+        recentFoods.value = await getRecentFoods(authStore.nonNullableUser.uid, limitRecent);
     } catch (error) {
         logger.error(error, "FoodSearch");
     }

@@ -23,10 +23,14 @@
             />
             <v-text-field
                 variant="outlined"
-                v-model.number="editedProfile.weight"
-                label="Weight (kg)"
+                v-model.number="editedProfile.defaultCalorieGoal"
+                label="Default Daily Calorie Goal"
                 type="number"
-                :rules="[required]"
+                :rules="[required, betweenValues(1200, 5000)]"
+                hint="This will be used as your starting goal for each day"
+                min="1200"
+                max="5000"
+                step="50"
             />
             <v-select
                 variant="outlined"
@@ -54,8 +58,7 @@ import { computed, ref } from "vue";
 
 import type { UserProfile } from "../../services/user";
 
-import { required } from "../../helpers/form-validators";
-import { updateUserProfile } from "../../services/user";
+import { betweenValues, required } from "../../helpers/form-validators";
 import { useAuthStore } from "../../stores/auth";
 import { useGlobalStore } from "../../stores/global";
 
@@ -74,16 +77,19 @@ const genderOptions = ["Male", "Female"];
 
 const editedProfile = ref<UserProfile>({
     birthDate: "",
+    defaultCalorieGoal: 2000,
     gender: "Male",
     height: 0,
     id: authStore.nonNullableUser.uid,
     name: "",
     profilePictureUrl: "",
-    weight: 0,
 });
 
 if (props.initialProfile) {
-    editedProfile.value = { ...props.initialProfile };
+    editedProfile.value = {
+        ...props.initialProfile,
+        defaultCalorieGoal: props.initialProfile.defaultCalorieGoal || 2000,
+    };
 }
 
 const form = ref();
@@ -108,7 +114,7 @@ function emitClose(): void {
 
 async function saveProfile(): Promise<void> {
     try {
-        await updateUserProfile(authStore.nonNullableUser.uid, editedProfile.value);
+        await authStore.updateProfile(editedProfile.value);
         globalStore.notify("Profile saved successfully!");
         emit("profileSaved", { ...editedProfile.value });
         emit("close");

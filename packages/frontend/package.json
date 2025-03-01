@@ -6,7 +6,6 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "serve": "vite preview",
         "typecheck": "vue-tsc --noEmit",
         "find-dead-code": "knip",
         "test:unit": "vitest run --project=unit",
@@ -14,25 +13,26 @@
     },
     "dependencies": {
         "@mdi/font": "7.4.47",
-        "@vueuse/core": "12.7.0",
+        "@vueuse/core": "13.0.0-beta.2",
         "@zxing/browser": "0.1.5",
         "@zxing/library": "0.21.3",
+        "dexie": "4.0.11",
         "es-toolkit": "1.32.0",
         "firebase": "11.4.0",
         "pinia": "3.0.1",
         "vue": "3.5.13",
         "vue-router": "4.5.0",
-        "vuetify": "3.7.14"
+        "vuetify": "3.7.15"
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "5.2.1",
-        "@vitest/browser": "3.0.7",
+        "@vitest/browser": "3.0.8",
         "knip": "5.45.0",
-        "playwright": "1.50.1",
         "vite": "6.2.0",
         "vite-plugin-pwa": "0.21.1",
         "vite-plugin-vuetify": "2.1.0",
-        "vitest": "3.0.7",
-        "vue-tsc": "2.2.4"
+        "vitest": "3.0.8",
+        "vue-tsc": "2.2.8",
+        "workbox-window": "7.3.0"
     }
 }

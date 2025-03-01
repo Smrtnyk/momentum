@@ -20,18 +20,14 @@ export class CombinedFoodApi extends AbstractFoodApi {
     // 24 hours
     private readonly CACHE_TTL = 24 * 60 * 60 * 1000;
 
-    /**
-     * Get food by barcode, trying all providers in priority order
-     */
     async getFoodByBarcode(barcode: string): Promise<FoodItem | null> {
         const barcodeProviders = apiRegistry.getBarcodeProviders();
 
-        // Try each provider in priority order
         for (const provider of barcodeProviders) {
             try {
-                // eslint-disable-next-line no-await-in-loop -- we want to do 1 by 1 until we have it
+                // eslint-disable-next-line no-await-in-loop -- we want to do 1 by 1 until we have it FIXME
                 const food = await provider.getFoodByBarcode(barcode);
-                if (food) {
+                if (food && food.calories > 0) {
                     return {
                         ...food,
                         provider: provider.name,
@@ -48,9 +44,6 @@ export class CombinedFoodApi extends AbstractFoodApi {
         return null;
     }
 
-    /**
-     * Search for foods across all providers
-     */
     async searchFoods(query: string, page = 1, pageSize = 10): Promise<FoodSearchResult> {
         const cacheKey = `${query}|${page}|${pageSize}`;
         const now = Date.now();
@@ -116,13 +109,9 @@ export class CombinedFoodApi extends AbstractFoodApi {
         }
     }
 
-    /**
-     * Enhance and sort search results
-     */
     private enhanceAndSortResults(foods: FoodItem[], query: string): FoodItem[] {
         const uniqueFoods = this.removeDuplicates(foods);
         const lowerQuery = query.toLowerCase();
-        const queryWordCount = lowerQuery.split(/\s+/).length;
 
         return uniqueFoods
             .map(function (food) {
@@ -141,12 +130,6 @@ export class CombinedFoodApi extends AbstractFoodApi {
                 if (brandMatch) relevance += 5;
                 if (hasCompleteNutrition) relevance += 3;
                 if (hasImage) relevance += 2;
-                // Penalize for extra words in the name.
-                const nameWordCount = lowerName.split(/\s+/).length;
-                const wordCountDiff = nameWordCount - queryWordCount;
-                if (wordCountDiff > 0) {
-                    relevance -= wordCountDiff * 5;
-                }
 
                 return {
                     ...food,
@@ -156,9 +139,6 @@ export class CombinedFoodApi extends AbstractFoodApi {
             .sort((a, b) => b.relevance - a.relevance);
     }
 
-    /**
-     * Remove duplicate foods based on name and brand
-     */
     private removeDuplicates(foods: FoodItem[]): FoodItem[] {
         const seen = new Set<string>();
         return foods.filter(function (food) {

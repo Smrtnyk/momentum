@@ -18,7 +18,7 @@ import type { HealthMetrics } from "../types/health-metrics";
 
 import { firestore } from "../firebase";
 
-export interface WaterProgress {
+interface WaterProgress {
     current: number;
     percentage: number;
     target: number;
@@ -30,10 +30,6 @@ export interface WaterProgress {
           }[];
 }
 
-/**
- * Gets the latest body fat percentage
- * @param userId User ID
- */
 export async function getLatestBodyFat(
     userId: string,
 ): Promise<null | { date: Date; method?: null | string; percentage: number }> {
@@ -60,10 +56,6 @@ export async function getLatestBodyFat(
     };
 }
 
-/**
- * Gets the latest steps count
- * @param userId User ID
- */
 export async function getLatestSteps(
     userId: string,
 ): Promise<null | { date: Date; steps: number }> {
@@ -75,7 +67,7 @@ export async function getLatestSteps(
         const data = docSnap.data() as HealthMetrics;
         return {
             date: data.stepsTimestamp?.toDate() || data.date.toDate(),
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- checked that it exists
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- checked that it exists -- FIXME
             steps: data.steps!,
         };
     }
@@ -83,10 +75,6 @@ export async function getLatestSteps(
     return null;
 }
 
-/**
- * Gets the most recent weight entry
- * @param userId User ID
- */
 export async function getLatestWeight(
     userId: string,
 ): Promise<null | { date: Date; weight: number }> {
@@ -107,16 +95,11 @@ export async function getLatestWeight(
     const data = querySnapshot.docs[0].data() as HealthMetrics;
     return {
         date: data.date.toDate(),
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- FIXME
         weight: data.weight!,
     };
 }
 
-/**
- * Gets the water intake progress for today
- * @param userId User ID
- * @param targetIntake Target water intake in ml (default: 2500ml)
- */
 export async function getTodayWaterProgress(
     userId: string,
     targetIntake = 2500,
@@ -135,20 +118,12 @@ export async function getTodayWaterProgress(
     };
 }
 
-/**
- * Logs body fat percentage
- * @param userId User ID
- * @param percentage Body fat percentage
- * @param method Measurement method (optional)
- * @param date Optional date (defaults to today)
- */
 export async function logBodyFat(
     userId: string,
     percentage: number,
     method?: string,
     date: Date = new Date(),
 ): Promise<void> {
-    // Format date as YYYY-MM-DD
     const dateString = date.toISOString().split("T")[0];
     const timestamp = Timestamp.fromDate(date);
 
@@ -163,18 +138,11 @@ export async function logBodyFat(
     await updateHealthMetrics(userId, dateString, bodyFatData);
 }
 
-/**
- * Logs daily steps
- * @param userId User ID
- * @param steps Step count
- * @param date Optional date (defaults to today)
- */
 export async function logSteps(
     userId: string,
     steps: number,
     date: Date = new Date(),
 ): Promise<void> {
-    // Format date as YYYY-MM-DD
     const dateString = date.toISOString().split("T")[0];
     const timestamp = Timestamp.fromDate(date);
 
@@ -184,18 +152,11 @@ export async function logSteps(
     });
 }
 
-/**
- * Logs water intake for a user on a specific day
- * @param userId User ID
- * @param amount Amount of water in ml
- * @param date Optional date (defaults to today)
- */
 export async function logWaterIntake(
     userId: string,
     amount: number,
     date: Date = new Date(),
 ): Promise<void> {
-    // Format date as YYYY-MM-DD
     const dateString = date.toISOString().split("T")[0];
     const timestamp = Timestamp.fromDate(date);
 
@@ -228,18 +189,11 @@ export async function logWaterIntake(
     }
 }
 
-/**
- * Logs weight for a user on a specific day
- * @param userId User ID
- * @param weight Weight in kg
- * @param date Optional date (defaults to today)
- */
 export async function logWeight(
     userId: string,
     weight: number,
     date: Date = new Date(),
 ): Promise<void> {
-    // Format date as YYYY-MM-DD
     const dateString = date.toISOString().split("T")[0];
     const timestamp = Timestamp.fromDate(date);
 
@@ -256,33 +210,23 @@ export async function removeWaterIntakeEntry(
     const today = new Date().toISOString().split("T")[0];
     const metricsRef = doc(firestore, "users", userId, "health_metrics", today);
 
-    // First get current document
     const docSnap = await getDoc(metricsRef);
     if (!docSnap.exists()) return;
 
     const data = docSnap.data() as HealthMetrics;
 
-    // Filter out the entry to remove
     const newLog = (data.waterIntakeLog || []).filter(
         (item) => item.timestamp.toMillis() !== entry.timestamp.toMillis(),
     );
 
-    // Calculate new total
     const newTotal = newLog.reduce((sum, item) => sum + item.amount, 0);
 
-    // Update document
     await updateDoc(metricsRef, {
         waterIntake: newTotal,
         waterIntakeLog: newLog,
     });
 }
 
-/**
- * Creates or updates the health metrics for a specific day
- * @param userId User ID
- * @param dateString Date string in YYYY-MM-DD format
- * @param data Partial health metrics data to update
- */
 export async function updateHealthMetrics(
     userId: string,
     dateString: string,
@@ -305,11 +249,6 @@ export async function updateHealthMetrics(
     }
 }
 
-/**
- * Gets health metrics for a specific day
- * @param userId User ID
- * @param dateString Date string in YYYY-MM-DD format
- */
 async function getDailyHealthMetrics(
     userId: string,
     dateString: string,

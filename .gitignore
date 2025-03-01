@@ -24,9 +24,10 @@ node_modules/
 hosting/.cache
 
 # Firebase Functions
-/functions/node_modules/
-/functions/.env
-/functions/package-lock.json
+packages/functions/node_modules/
+packages/functions/.env
+packages/functions/package-lock.json
+packages/functions/lib/
 
 # Firebase Emulators
 /firebase-*.zip

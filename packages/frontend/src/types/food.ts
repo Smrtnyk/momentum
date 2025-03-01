@@ -1,36 +1,20 @@
 export interface FoodItem {
     // Alternative serving sizes (from Nutritionix)
     altMeasures?: AlternativeMeasure[] | null;
-    // Optional barcode for packaged foods
     barcode: null | string;
-    // Brand name if applicable
     brand?: null | string;
-    // Nutrition information
-    // Calories per serving
     calories: number;
-    // Carbs in grams
     carbs: number;
-    // Fat in grams
     fat: number;
-    // Classification type
     foodType?: FoodType;
-    // Full nutrient data (when available)
     fullNutrients?: null | Nutrient[];
-    // Database ID or API ID
     id: string;
-    // Optional image URL
     imageUrl?: null | string;
-    // Food name
     name: string;
-    // Protein in grams
     protein: number;
-    // Provider name from combined API
     provider?: string;
-    // Amount per serving
     servingSize: number;
-    // Unit of measurement (g, ml, oz, etc.)
     servingUnit: string;
-    // Source API or database
     source?: string;
 }
 

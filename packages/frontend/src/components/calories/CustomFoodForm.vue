@@ -11,7 +11,7 @@
                             v-model="foodData.name"
                             label="Food Name"
                             variant="outlined"
-                            :rules="[(v) => !!v || 'Name is required']"
+                            :rules="[required]"
                             required
                         ></v-text-field>
                     </v-col>
@@ -26,6 +26,27 @@
                         ></v-text-field>
                     </v-col>
 
+                    <!-- Barcode (Optional) -->
+                    <v-col cols="12" sm="6">
+                        <v-text-field
+                            v-model="foodData.barcode"
+                            label="Barcode (Optional)"
+                            variant="outlined"
+                            placeholder="e.g. 123456789012"
+                            hint="Add the barcode for packaged foods"
+                            persistent-hint
+                        >
+                            <template #append-inner>
+                                <v-icon
+                                    icon="mdi-barcode-scan"
+                                    class="cursor-pointer"
+                                    @click="handleBarcodeScanning"
+                                    :disabled="isScanning"
+                                ></v-icon>
+                            </template>
+                        </v-text-field>
+                    </v-col>
+
                     <!-- Serving Size -->
                     <v-col cols="6" sm="3">
                         <v-text-field
@@ -33,7 +54,7 @@
                             type="number"
                             label="Serving"
                             variant="outlined"
-                            :rules="[(v) => !!v || 'Required', (v) => v > 0 || 'Must be positive']"
+                            :rules="[positiveRequired]"
                             required
                         ></v-text-field>
                     </v-col>
@@ -46,7 +67,7 @@
                             label="Unit"
                             variant="outlined"
                             required
-                            :rules="[(v) => !!v || 'Required']"
+                            :rules="[required]"
                         ></v-select>
                     </v-col>
 
@@ -58,14 +79,29 @@
                     <!-- Macros -->
                     <v-col cols="6" sm="3">
                         <v-text-field
-                            v-model.number="foodData.calories"
+                            v-model.number="displayCalories"
                             type="number"
-                            label="Calories"
+                            label="Calories (kcal)"
                             variant="outlined"
-                            :rules="[(v) => v >= 0 || 'Must be positive']"
-                            hint="Will auto-calculate from macros"
+                            readonly
+                            hint="Auto-calculated from macros"
                             persistent-hint
-                        ></v-text-field>
+                        >
+                            <template #append-inner>
+                                <v-tooltip
+                                    location="top"
+                                    text="Calories are calculated using the 4-4-9 formula"
+                                >
+                                    <template #activator="{ props }">
+                                        <v-icon
+                                            v-bind="props"
+                                            icon="mdi-information-outline"
+                                            size="small"
+                                        ></v-icon>
+                                    </template>
+                                </v-tooltip>
+                            </template>
+                        </v-text-field>
                     </v-col>
 
                     <v-col cols="6" sm="3">
@@ -74,7 +110,7 @@
                             type="number"
                             label="Protein (g)"
                             variant="outlined"
-                            :rules="[(v) => v >= 0 || 'Must be positive']"
+                            :rules="[positiveNumber]"
                             @update:model-value="updateCalories"
                         ></v-text-field>
                     </v-col>
@@ -85,7 +121,7 @@
                             type="number"
                             label="Carbs (g)"
                             variant="outlined"
-                            :rules="[(v) => v >= 0 || 'Must be positive']"
+                            :rules="[positiveNumber]"
                             @update:model-value="updateCalories"
                         ></v-text-field>
                     </v-col>
@@ -96,9 +132,60 @@
                             type="number"
                             label="Fat (g)"
                             variant="outlined"
-                            :rules="[(v) => v >= 0 || 'Must be positive']"
+                            :rules="[positiveNumber]"
                             @update:model-value="updateCalories"
                         ></v-text-field>
+                    </v-col>
+
+                    <!-- Macro Ratio Display -->
+                    <v-col cols="12">
+                        <v-card variant="flat" density="compact" border class="mb-2">
+                            <v-card-text>
+                                <div class="d-flex justify-space-between align-center mb-1">
+                                    <div class="text-caption">Macro Ratio</div>
+                                    <div class="d-flex align-center">
+                                        <span
+                                            class="text-caption font-weight-medium mr-2"
+                                            :style="`color: ${proteinColor}`"
+                                        >
+                                            P: {{ macroRatios.protein }}%
+                                        </span>
+                                        <span
+                                            class="text-caption font-weight-medium mr-2"
+                                            :style="`color: ${carbsColor}`"
+                                        >
+                                            C: {{ macroRatios.carbs }}%
+                                        </span>
+                                        <span
+                                            class="text-caption font-weight-medium"
+                                            :style="`color: ${fatColor}`"
+                                        >
+                                            F: {{ macroRatios.fat }}%
+                                        </span>
+                                    </div>
+                                </div>
+                                <v-progress-linear height="8" rounded>
+                                    <template #default>
+                                        <div class="d-flex" style="width: 100%">
+                                            <div
+                                                :style="`width: ${macroRatios.protein}%; background-color: ${proteinColor}`"
+                                                class="rounded-l-xl"
+                                                style="height: 8px"
+                                            ></div>
+                                            <div
+                                                :style="`width: ${macroRatios.carbs}%; background-color: ${carbsColor}`"
+                                                style="height: 8px"
+                                            ></div>
+                                            <div
+                                                :style="`width: ${macroRatios.fat}%; background-color: ${fatColor}`"
+                                                class="rounded-r-xl"
+                                                style="height: 8px"
+                                            ></div>
+                                        </div>
+                                    </template>
+                                </v-progress-linear>
+                            </v-card-text>
+                        </v-card>
                     </v-col>
                 </v-row>
             </v-form>
@@ -117,21 +204,35 @@ import { computed, ref, watch } from "vue";
 
 import type { FoodItem } from "../../types/food";
 
-const props = defineProps<{
+import { useBarcodeScanner } from "../../composables/useBarcodeScanner";
+import { positiveNumber, positiveRequired, required } from "../../helpers/form-validators";
+import { useGlobalStore } from "../../stores/global";
+
+interface Props {
     initialFood?: Partial<FoodItem>;
     title?: string;
-}>();
+}
 
-const emit = defineEmits<{
+const props = defineProps<Props>();
+
+interface Emits {
     close: [];
     save: [food: Omit<FoodItem, "id">];
-}>();
+}
+
+const emit = defineEmits<Emits>();
 
 const form = ref<any>(null);
 const servingUnits = ["g", "ml", "oz", "cup", "tbsp", "tsp", "piece", "serving"];
+const globalStore = useGlobalStore();
+const { isScanning, scanBarcodeOnly } = useBarcodeScanner();
+
+const proteinColor = "#4CAF50";
+const carbsColor = "#2196F3";
+const fatColor = "#FFC107";
 
 const foodData = ref<Omit<FoodItem, "id">>({
-    barcode: null,
+    barcode: props.initialFood?.barcode || null,
     brand: props.initialFood?.brand || "",
     calories: props.initialFood?.calories || 0,
     carbs: props.initialFood?.carbs || 0,
@@ -144,6 +245,40 @@ const foodData = ref<Omit<FoodItem, "id">>({
     source: "Custom Food",
 });
 
+const displayCalories = computed(function (): number {
+    return foodData.value.calories;
+});
+
+const macroRatios = computed(function (): { carbs: number; fat: number; protein: number } {
+    const protein = foodData.value.protein || 0;
+    const carbs = foodData.value.carbs || 0;
+    const fat = foodData.value.fat || 0;
+
+    const totalGrams = protein + carbs + fat;
+
+    if (totalGrams === 0) {
+        return { carbs: 0, fat: 0, protein: 0 };
+    }
+
+    return {
+        carbs: Math.round((carbs / totalGrams) * 100),
+        fat: Math.round((fat / totalGrams) * 100),
+        protein: Math.round((protein / totalGrams) * 100),
+    };
+});
+
+function handleBarcodeScanning(): void {
+    scanBarcodeOnly({
+        onBarcodeScanned(barcode: string): void {
+            foodData.value.barcode = barcode;
+            globalStore.notify(`Barcode scanned: ${barcode}`);
+        },
+        onError(message: string): void {
+            globalStore.notifyError(message);
+        },
+    });
+}
+
 function updateCalories(): void {
     // Calculate calories using the standard 4-4-9 formula
     const proteinCalories = (foodData.value.protein || 0) * 4;
@@ -153,21 +288,15 @@ function updateCalories(): void {
     foodData.value.calories = Math.round(proteinCalories + carbCalories + fatCalories);
 }
 
-watch(
-    () => [foodData.value.protein, foodData.value.carbs, foodData.value.fat],
-    () => updateCalories(),
-    { immediate: true },
-);
-
-const isValid = computed(() => {
+const isValid = computed(function (): boolean {
     return (
-        foodData.value.name &&
-        foodData.value.servingSize > 0 &&
-        foodData.value.servingUnit &&
-        foodData.value.calories >= 0 &&
-        foodData.value.protein >= 0 &&
-        foodData.value.carbs >= 0 &&
-        foodData.value.fat >= 0
+        required(foodData.value.name) === true &&
+        positiveRequired(foodData.value.servingSize) === true &&
+        required(foodData.value.servingUnit) === true &&
+        positiveNumber(foodData.value.calories) === true &&
+        positiveNumber(foodData.value.protein) === true &&
+        positiveNumber(foodData.value.carbs) === true &&
+        positiveNumber(foodData.value.fat) === true
     );
 });
 
@@ -177,4 +306,16 @@ function saveFood(): void {
     emit("save", { ...foodData.value });
     emit("close");
 }
+
+watch(
+    () => [foodData.value.protein, foodData.value.carbs, foodData.value.fat],
+    () => updateCalories(),
+    { immediate: true },
+);
 </script>
+
+<style scoped>
+.cursor-pointer {
+    cursor: pointer;
+}
+</style>

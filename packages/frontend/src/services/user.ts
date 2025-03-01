@@ -4,12 +4,12 @@ import { firestore } from "../firebase";
 
 export interface UserProfile {
     birthDate: string;
+    defaultCalorieGoal: number;
     gender: "Female" | "Male";
     height: number;
     id: string;
     name: string;
     profilePictureUrl?: string;
-    weight: number;
 }
 
 export async function getUserProfile(uid: string): Promise<UserProfile> {
@@ -19,6 +19,14 @@ export async function getUserProfile(uid: string): Promise<UserProfile> {
         return { id: snapshot.id, ...snapshot.data() } as UserProfile;
     }
     throw new Error("User not found");
+}
+
+export async function setDefaultCalorieGoal(
+    userId: string,
+    defaultCalorieGoal: number,
+): Promise<void> {
+    const docRef = doc(firestore, "users", userId);
+    await setDoc(docRef, { defaultCalorieGoal }, { merge: true });
 }
 
 export async function updateUserProfile(uid: string, profile: Partial<UserProfile>): Promise<void> {

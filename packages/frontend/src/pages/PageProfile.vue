@@ -1,5 +1,5 @@
 <template>
-    <v-container class="pa-4 pa-sm-8" style="max-width: 800px">
+    <v-container class="pa-2 mx-auto">
         <!-- Profile Header Card -->
         <v-card class="mb-6" elevation="2" rounded="lg">
             <v-card-text class="pa-6">
@@ -56,9 +56,9 @@
                                 <template #prepend>
                                     <v-icon icon="mdi-weight-kilogram" class="mr-4" />
                                 </template>
-                                <v-list-item-title>Weight</v-list-item-title>
+                                <v-list-item-title>Latest weight</v-list-item-title>
                                 <v-list-item-subtitle>
-                                    {{ profile?.weight || "-" }} kg
+                                    {{ latestWeight ? `${latestWeight.weight} kg` : "-" }}
                                 </v-list-item-subtitle>
                             </v-list-item>
 
@@ -83,9 +83,27 @@
                         Health Metrics
                     </v-card-title>
                     <v-card-text class="pa-4">
-                        <div class="d-flex align-center justify-center mb-4">
+                        <!-- Loading state for BMI -->
+                        <div v-if="isLoading" class="d-flex align-center justify-center mb-4">
+                            <v-skeleton-loader
+                                type="avatar"
+                                :width="120"
+                                :height="120"
+                                class="mr-4"
+                            ></v-skeleton-loader>
+                            <div>
+                                <v-skeleton-loader type="text" width="120"></v-skeleton-loader>
+                                <v-skeleton-loader
+                                    type="text"
+                                    width="80"
+                                    class="mt-2"
+                                ></v-skeleton-loader>
+                            </div>
+                        </div>
+
+                        <!-- Loaded BMI data -->
+                        <div v-else-if="bmi" class="d-flex align-center justify-center mb-4">
                             <v-progress-circular
-                                v-if="bmi"
                                 :model-value="bmi"
                                 :size="120"
                                 :width="12"
@@ -99,6 +117,23 @@
                                 <div class="text-caption text-medium-emphasis">
                                     {{ bmiStatus }}
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- No BMI data available -->
+                        <div v-else class="d-flex align-center justify-center mb-4">
+                            <v-progress-circular
+                                :size="120"
+                                :width="12"
+                                color="grey"
+                                indeterminate
+                                class="mr-4"
+                            >
+                                <span class="text-h6">-</span>
+                            </v-progress-circular>
+                            <div>
+                                <div class="text-h6 mb-1">Body Mass Index</div>
+                                <div class="text-caption text-medium-emphasis">Not available</div>
                             </div>
                         </div>
 
@@ -116,7 +151,7 @@
         </v-row>
 
         <!-- Action Buttons -->
-        <div class="d-flex gap-2 justify-end mt-6">
+        <div class="d-flex gap-2 mt-6">
             <v-btn
                 color="primary"
                 variant="tonal"
@@ -125,6 +160,8 @@
             >
                 {{ profile ? "Edit Profile" : "Create Profile" }}
             </v-btn>
+
+            <v-spacer />
 
             <v-btn color="error" variant="tonal" prepend-icon="mdi-logout" @click="handleLogout">
                 Logout
@@ -135,35 +172,40 @@
 
 <script setup lang="ts">
 import { useAsyncState } from "@vueuse/core";
-import { computed, watch } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 
-import type { UserProfile } from "../services/user";
-
 import EditProfileForm from "../components/profile/EditProfileForm.vue";
-import { useDialog } from "../composables/useDialog";
+import { globalDialog } from "../composables/useDialog";
+import { logger } from "../logger/app-logger";
 import { logoutUser } from "../services/auth";
-import { getUserProfile } from "../services/user";
+import { getLatestWeight } from "../services/health-metrics";
 import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
 const authStore = useAuthStore();
 const globalStore = useGlobalStore();
+const profile = computed(() => authStore.userProfile);
 const router = useRouter();
 const defaultAvatar = "https://placehold.co/150x150.png";
 
-const { error, state: profile } = useAsyncState<null | UserProfile>(async () => {
-    try {
-        return await getUserProfile(authStore.nonNullableUser.uid);
-    } catch (err) {
-        return null;
-    }
-}, null);
+const { isLoading, state: latestWeight } = useAsyncState(
+    () => getLatestWeight(authStore.nonNullableUser.uid),
+    null,
+    {
+        onError(error) {
+            globalStore.notifyError("Failed to load weight data");
+            logger.error("Error fetching weight:", "PageProfile", error);
+        },
+    },
+);
 
-watch(error, (err) => {
-    if (err) {
-        globalStore.notifyError(err);
+const bmi = computed(() => {
+    if (profile.value?.height && latestWeight.value?.weight) {
+        const heightInMeters = profile.value.height / 100;
+        return latestWeight.value.weight / (heightInMeters * heightInMeters);
     }
+    return null;
 });
 
 const bmiColor = computed(() => {
@@ -182,14 +224,6 @@ const bmiStatus = computed(() => {
     return "Obese";
 });
 
-const bmi = computed(() => {
-    if (profile.value?.height && profile.value.weight) {
-        const heightInMeters = profile.value.height / 100;
-        return profile.value.weight / (heightInMeters * heightInMeters);
-    }
-    return null;
-});
-
 const computedAge = computed(() => {
     if (profile.value?.birthDate) {
         const birth = new Date(profile.value.birthDate);
@@ -204,25 +238,20 @@ const computedAge = computed(() => {
     return "";
 });
 
-const { openDialog } = useDialog();
-
 async function handleLogout(): Promise<void> {
-    profile.value = null;
     await logoutUser();
     await router.push("/auth");
 }
 
-function handleProfileSaved(updatedProfile: UserProfile): void {
-    profile.value = { ...updatedProfile };
-}
-
 function openEditDialog(): void {
-    openDialog(EditProfileForm, {
-        componentProps: {
+    globalDialog.openDialog(
+        EditProfileForm,
+        {
             initialProfile: profile.value,
-            onProfileSaved: handleProfileSaved,
         },
-        title: profile.value ? "Edit Profile" : "Create Profile",
-    });
+        {
+            title: profile.value ? "Edit Profile" : "Create Profile",
+        },
+    );
 }
 </script>

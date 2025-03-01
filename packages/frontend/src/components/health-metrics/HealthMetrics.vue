@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { useAsyncState } from "@vueuse/core";
+import { ref } from "vue";
 import { useDate } from "vuetify";
 
-import type { WaterProgress } from "../../services/health-metrics";
 import type { WaterLogEntry } from "../../types/health-metrics";
 
-import { useDialog } from "../../composables/useDialog";
+import { globalDialog } from "../../composables/useDialog";
 import { logger } from "../../logger/app-logger";
 import {
     getLatestBodyFat,
@@ -28,22 +28,46 @@ import WeightEntryDialog from "./WeightEntryDialog.vue";
 
 const authStore = useAuthStore();
 const globalStore = useGlobalStore();
-const { openDialog } = useDialog();
 const dateAdapter = useDate();
 
 const waterLogMenuOpen = ref(false);
-const waterProgress = ref<WaterProgress>({ current: 0, percentage: 0, target: 2500 });
-const latestWeight = ref<null | { date: Date; weight: number }>(null);
-const latestBodyFat = ref<null | { date: Date; method?: null | string; percentage: number }>(null);
-const latestSteps = ref<null | { date: Date; steps: number }>(null);
 
-onMounted(async () => {
-    try {
-        await refreshHealthData();
-    } catch (error) {
-        globalStore.notifyError(error);
-    }
-});
+async function fetchAllHealthData() {
+    const userId = authStore.nonNullableUser.uid;
+    const [waterData, weightData, bodyFatData, stepsData] = await Promise.all([
+        getTodayWaterProgress(userId),
+        getLatestWeight(userId),
+        getLatestBodyFat(userId),
+        getLatestSteps(userId),
+    ]);
+
+    return {
+        latestBodyFat: bodyFatData,
+        latestSteps: stepsData,
+        latestWeight: weightData,
+        waterProgress: waterData,
+    };
+}
+
+const {
+    execute: refreshHealthData,
+    isLoading,
+    state: healthData,
+} = useAsyncState(
+    fetchAllHealthData,
+    {
+        latestBodyFat: null,
+        latestSteps: null,
+        latestWeight: null,
+        waterProgress: { current: 0, percentage: 0, target: 2500 },
+    },
+    {
+        onError: (error) => {
+            globalStore.notifyError("Failed to load health metrics");
+            logger.error(error);
+        },
+    },
+);
 
 function formatDate(date: Date): string {
     const dateObj = (date as any).toDate ? (date as any).toDate() : date;
@@ -114,61 +138,60 @@ async function logWater(amount: number): Promise<void> {
 }
 
 function openBodyFatDialog(): void {
-    openDialog(BodyFatDialog, {
-        componentProps: {
+    globalDialog.openDialog(
+        BodyFatDialog,
+        {
             initialMethod: "calipers",
             onSave: async (percentage: number, method: string) => {
                 await logBodyFatPercentage(percentage, method);
             },
         },
-        title: "Log Body Fat Percentage",
-    });
+        {
+            title: "Log Body Fat Percentage",
+        },
+    );
 }
 
 function openStepsDialog(): void {
-    openDialog(StepsEntryDialog, {
-        componentProps: {
+    globalDialog.openDialog(
+        StepsEntryDialog,
+        {
             onSave: async (steps: number) => {
                 await logDailySteps(steps);
             },
         },
-        title: "Log Daily Steps",
-    });
+        {
+            title: "Log Daily Steps",
+        },
+    );
 }
 
 function openWaterDialog(): void {
-    openDialog(WaterIntakeDialog, {
-        componentProps: {
+    globalDialog.openDialog(
+        WaterIntakeDialog,
+        {
             onSave: async (amount: number) => {
                 await logWater(amount);
             },
         },
-        title: "Log Water Intake",
-    });
+        {
+            title: "Log Water Intake",
+        },
+    );
 }
 
 function openWeightDialog(): void {
-    openDialog(WeightEntryDialog, {
-        componentProps: {
+    globalDialog.openDialog(
+        WeightEntryDialog,
+        {
             onSave: async (weight: number) => {
                 await logTodayWeight(weight);
             },
         },
-        title: "Log Today's Weight",
-    });
-}
-
-async function refreshHealthData(): Promise<void> {
-    try {
-        const userId = authStore.nonNullableUser.uid;
-        waterProgress.value = await getTodayWaterProgress(userId);
-        latestWeight.value = await getLatestWeight(userId);
-        latestBodyFat.value = await getLatestBodyFat(userId);
-        latestSteps.value = await getLatestSteps(userId);
-    } catch (error) {
-        globalStore.notifyError("Failed to load health metrics");
-        logger.error(error);
-    }
+        {
+            title: "Log Today's Weight",
+        },
+    );
 }
 </script>
 
@@ -180,7 +203,124 @@ async function refreshHealthData(): Promise<void> {
         </v-card-title>
 
         <v-card-text>
-            <v-row>
+            <!-- Loading State -->
+            <v-row v-if="isLoading">
+                <!-- Water Intake Skeleton -->
+                <v-col cols="12" sm="6" md="3">
+                    <div class="d-flex flex-column">
+                        <div class="d-flex justify-space-between align-center mb-2">
+                            <v-skeleton-loader type="text" width="100px"></v-skeleton-loader>
+                        </div>
+
+                        <div class="d-flex align-center justify-space-between">
+                            <div class="d-flex flex-column align-center">
+                                <v-skeleton-loader type="avatar" size="65"></v-skeleton-loader>
+                                <v-skeleton-loader
+                                    type="text"
+                                    width="80px"
+                                    class="mt-1"
+                                ></v-skeleton-loader>
+                            </div>
+
+                            <div class="d-flex flex-column">
+                                <div class="d-flex mb-1">
+                                    <v-skeleton-loader
+                                        type="button"
+                                        width="65px"
+                                        class="mr-1"
+                                    ></v-skeleton-loader>
+                                    <v-skeleton-loader
+                                        type="button"
+                                        width="65px"
+                                    ></v-skeleton-loader>
+                                </div>
+                                <v-skeleton-loader type="button" width="75px"></v-skeleton-loader>
+                            </div>
+                        </div>
+                    </div>
+                </v-col>
+
+                <!-- Weight Skeleton -->
+                <v-col cols="12" sm="6" md="3">
+                    <div class="d-flex flex-column">
+                        <v-skeleton-loader
+                            type="text"
+                            width="80px"
+                            class="mb-2"
+                        ></v-skeleton-loader>
+
+                        <div class="d-flex align-center justify-space-between">
+                            <div>
+                                <v-skeleton-loader
+                                    type="text"
+                                    width="60px"
+                                    class="mb-1"
+                                ></v-skeleton-loader>
+                                <v-skeleton-loader type="text" width="80px"></v-skeleton-loader>
+                            </div>
+
+                            <div>
+                                <v-skeleton-loader type="button" width="110px"></v-skeleton-loader>
+                            </div>
+                        </div>
+                    </div>
+                </v-col>
+
+                <!-- Body Fat Skeleton -->
+                <v-col cols="12" sm="6" md="3">
+                    <div class="d-flex flex-column">
+                        <v-skeleton-loader
+                            type="text"
+                            width="80px"
+                            class="mb-2"
+                        ></v-skeleton-loader>
+
+                        <div class="d-flex align-center justify-space-between">
+                            <div>
+                                <v-skeleton-loader
+                                    type="text"
+                                    width="60px"
+                                    class="mb-1"
+                                ></v-skeleton-loader>
+                                <v-skeleton-loader type="text" width="80px"></v-skeleton-loader>
+                            </div>
+
+                            <div>
+                                <v-skeleton-loader type="button" width="120px"></v-skeleton-loader>
+                            </div>
+                        </div>
+                    </div>
+                </v-col>
+
+                <!-- Steps Skeleton -->
+                <v-col cols="12" sm="6" md="3">
+                    <div class="d-flex flex-column">
+                        <v-skeleton-loader
+                            type="text"
+                            width="90px"
+                            class="mb-2"
+                        ></v-skeleton-loader>
+
+                        <div class="d-flex align-center justify-space-between">
+                            <div>
+                                <v-skeleton-loader
+                                    type="text"
+                                    width="70px"
+                                    class="mb-1"
+                                ></v-skeleton-loader>
+                                <v-skeleton-loader type="text" width="80px"></v-skeleton-loader>
+                            </div>
+
+                            <div>
+                                <v-skeleton-loader type="button" width="100px"></v-skeleton-loader>
+                            </div>
+                        </div>
+                    </div>
+                </v-col>
+            </v-row>
+
+            <!-- Loaded State -->
+            <v-row v-else>
                 <!-- Water Intake Tracker -->
                 <v-col cols="12" sm="6" md="3">
                     <div class="d-flex flex-column">
@@ -202,8 +342,8 @@ async function refreshHealthData(): Promise<void> {
                                         size="small"
                                         class="ml-auto"
                                         v-if="
-                                            waterProgress.waterIntakeLog &&
-                                            waterProgress.waterIntakeLog.length > 0
+                                            healthData.waterProgress.waterIntakeLog &&
+                                            healthData.waterProgress.waterIntakeLog.length > 0
                                         "
                                     >
                                         <v-icon small class="mr-1">mdi-history</v-icon>
@@ -218,7 +358,7 @@ async function refreshHealthData(): Promise<void> {
                                     </v-card-title>
 
                                     <WaterLogMenu
-                                        :entries="waterProgress.waterIntakeLog || []"
+                                        :entries="healthData.waterProgress.waterIntakeLog || []"
                                         @remove="handleWaterRemove"
                                     />
                                 </v-card>
@@ -228,16 +368,17 @@ async function refreshHealthData(): Promise<void> {
                         <div class="d-flex align-center justify-space-between">
                             <div class="d-flex flex-column align-center">
                                 <v-progress-circular
-                                    :model-value="waterProgress.percentage"
+                                    :model-value="healthData.waterProgress.percentage"
                                     :size="65"
                                     :width="7"
                                     color="blue"
                                 >
-                                    {{ waterProgress.percentage }}%
+                                    {{ healthData.waterProgress.percentage }}%
                                 </v-progress-circular>
 
                                 <div class="text-body-2 text-center mt-1">
-                                    {{ waterProgress.current }}ml / {{ waterProgress.target }}ml
+                                    {{ healthData.waterProgress.current }}ml /
+                                    {{ healthData.waterProgress.target }}ml
                                 </div>
                             </div>
 
@@ -281,12 +422,12 @@ async function refreshHealthData(): Promise<void> {
 
                         <div class="d-flex align-center justify-space-between">
                             <div>
-                                <div v-if="latestWeight" class="text-left">
+                                <div v-if="healthData.latestWeight" class="text-left">
                                     <div class="text-h5 font-weight-bold">
-                                        {{ latestWeight.weight }} kg
+                                        {{ healthData.latestWeight.weight }} kg
                                     </div>
                                     <div class="text-caption">
-                                        {{ formatDate(latestWeight.date) }}
+                                        {{ formatDate(healthData.latestWeight.date) }}
                                     </div>
                                 </div>
                                 <div v-else class="text-left">
@@ -316,12 +457,12 @@ async function refreshHealthData(): Promise<void> {
 
                         <div class="d-flex align-center justify-space-between">
                             <div>
-                                <div v-if="latestBodyFat" class="text-left">
+                                <div v-if="healthData.latestBodyFat" class="text-left">
                                     <div class="text-h5 font-weight-bold">
-                                        {{ latestBodyFat.percentage }}%
+                                        {{ healthData.latestBodyFat.percentage }}%
                                     </div>
                                     <div class="text-caption">
-                                        {{ formatDate(latestBodyFat.date) }}
+                                        {{ formatDate(healthData.latestBodyFat.date) }}
                                     </div>
                                 </div>
                                 <div v-else class="text-left">
@@ -351,12 +492,12 @@ async function refreshHealthData(): Promise<void> {
 
                         <div class="d-flex align-center justify-space-between">
                             <div>
-                                <div v-if="latestSteps" class="text-left">
+                                <div v-if="healthData.latestSteps" class="text-left">
                                     <div class="text-h5 font-weight-bold">
-                                        {{ formatNumber(latestSteps.steps) }}
+                                        {{ formatNumber(healthData.latestSteps.steps) }}
                                     </div>
                                     <div class="text-caption">
-                                        {{ formatDate(latestSteps.date) }}
+                                        {{ formatDate(healthData.latestSteps.date) }}
                                     </div>
                                 </div>
                                 <div v-else class="text-left">

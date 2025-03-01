@@ -6,10 +6,7 @@
             label="Body Fat (%)"
             variant="outlined"
             step="0.1"
-            :rules="[
-                (v) => !!v || 'Value is required',
-                (v) => (v >= 3 && v <= 40) || 'Value must be between 3-40%',
-            ]"
+            :rules="[required, betweenValues(3, 40)]"
         ></v-text-field>
 
         <v-select
@@ -34,6 +31,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+
+import { betweenValues, required } from "../../helpers/form-validators";
 
 const { initialMethod = "calipers", initialPercentage = null } = defineProps<{
     initialMethod?: string;

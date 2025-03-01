@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid class="pa-4 pa-sm-6 mx-auto">
+    <v-container class="pa-2 mx-auto">
         <!-- Workout Type Selection -->
         <WorkoutTypeSelector :model-value="workout.type" @update:model-value="handleTypeChange" />
 
@@ -128,12 +128,18 @@ import { computed, onBeforeMount, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useDate } from "vuetify";
 
-import type { CardioWorkout, StrengthWorkout, Workout } from "../types/workout";
+import type { CardioWorkout, CircuitWorkout, StrengthWorkout, Workout } from "../types/workout";
 
 import ExerciseCarousel from "../components/workout-logger/ExerciseCarousel.vue";
 import WorkoutTypeSelector from "../components/workout-logger/WorkoutTypeSelector.vue";
 import { positiveNumber, required } from "../helpers/form-validators";
-import { addWorkout, getWorkoutById, isStrengthWorkout, updateWorkout } from "../services/workout";
+import {
+    addWorkout,
+    getWorkoutById,
+    isCardioWorkout,
+    isStrengthWorkout,
+    updateWorkout,
+} from "../services/workout";
 import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
@@ -146,7 +152,7 @@ const workoutId = route.params.id as string | undefined;
 const isEditing = ref(Boolean(workoutId));
 const activeExerciseIndex = ref(0);
 
-const workout = ref<CardioWorkout | StrengthWorkout>({
+const workout = ref<CardioWorkout | CircuitWorkout | StrengthWorkout>({
     date: Timestamp.fromDate(new Date()),
     exerciseEntries: [
         {
@@ -197,7 +203,7 @@ function addExercise(): void {
             sets: [{ reps: 0, weight: 0 }],
             type: "strength",
         });
-    } else {
+    } else if (isCardioWorkout(workout.value)) {
         workout.value.exerciseEntries.push({
             calories: 0,
             durationMinutes: 30,
@@ -222,6 +228,11 @@ onBeforeMount(function () {
 });
 
 function handleTypeChange(type: Workout["type"]): void {
+    if (type === "circuit") {
+        globalStore.notify("Circuit workout logging coming soon!");
+        return;
+    }
+
     workout.value = {
         ...workout.value,
         exerciseEntries: [

@@ -23,40 +23,6 @@
                     </v-btn>
                 </div>
             </div>
-
-            <!-- Quick Stats Cards -->
-            <v-row class="px-2 pb-2">
-                <v-col cols="4" sm="4">
-                    <v-card class="rounded-lg" flat>
-                        <v-card-text class="text-center py-4">
-                            <div class="text-h5 font-weight-bold text-primary mb-1">
-                                {{ workoutsThisWeek }}
-                            </div>
-                            <div class="text-caption text-medium-emphasis">Workouts this week</div>
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-                <v-col cols="4" sm="4">
-                    <v-card class="rounded-lg" flat>
-                        <v-card-text class="text-center py-4">
-                            <div class="text-h5 font-weight-bold text-primary mb-1">
-                                {{ strengthPercentage }}%
-                            </div>
-                            <div class="text-caption text-medium-emphasis">Strength training</div>
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-                <v-col cols="4" sm="4">
-                    <v-card class="rounded-lg" flat>
-                        <v-card-text class="text-center py-4">
-                            <div class="text-h5 font-weight-bold text-primary mb-1">
-                                {{ totalMinutesThisWeek }}
-                            </div>
-                            <div class="text-caption text-medium-emphasis">Minutes active</div>
-                        </v-card-text>
-                    </v-card>
-                </v-col>
-            </v-row>
         </v-card>
 
         <!-- View Selector and Filters -->
@@ -67,7 +33,6 @@
                 mandatory
                 color="primary"
                 rounded="pill"
-                border
                 density="comfortable"
                 class="mb-2 mb-sm-0"
             >
@@ -100,6 +65,15 @@
                 <v-chip value="cardio" variant="outlined" size="small" label prepend-icon="mdi-run">
                     Cardio
                 </v-chip>
+                <v-chip
+                    value="circuit"
+                    variant="outlined"
+                    size="small"
+                    label
+                    prepend-icon="mdi-timer"
+                >
+                    Circuit
+                </v-chip>
             </v-chip-group>
 
             <v-spacer></v-spacer>
@@ -130,7 +104,7 @@
         </div>
 
         <!-- Main Content -->
-        <v-card class="rounded-lg" elevation="1">
+        <div class="rounded-lg">
             <!-- List View -->
             <v-fade-transition>
                 <div v-if="view === 'list'">
@@ -160,7 +134,7 @@
                     ></v-calendar>
                 </div>
             </v-fade-transition>
-        </v-card>
+        </div>
     </v-container>
 </template>
 
@@ -171,7 +145,7 @@ import { useRouter } from "vue-router";
 
 import type { WorkoutWithId } from "../../types/workout";
 
-import { isStrengthWorkout } from "../../services/workout";
+import { isCardioWorkout, isCircuitWorkout, isStrengthWorkout } from "../../services/workout";
 import WorkoutListItem from "./WorkoutListItem.vue";
 
 const { workouts } = defineProps<{ workouts: WorkoutWithId[] }>();
@@ -185,40 +159,6 @@ const sortOptions = [
     { label: "Oldest first", value: "dateAsc" },
     { label: "Alphabetical", value: "name" },
 ];
-
-const workoutsThisWeek = computed(() => {
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-    return workouts.filter((workout) => {
-        const workoutDate = workout.date.toDate();
-        return workoutDate >= oneWeekAgo;
-    }).length;
-});
-
-const strengthPercentage = computed(() => {
-    if (workouts.length === 0) return 0;
-    const strengthCount = workouts.filter((workout) => isStrengthWorkout(workout)).length;
-    return Math.round((strengthCount / workouts.length) * 100);
-});
-
-const totalMinutesThisWeek = computed(() => {
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-    return workouts
-        .filter((workout) => workout.date.toDate() >= oneWeekAgo)
-        .reduce((total, workout) => {
-            if (isStrengthWorkout(workout)) {
-                return total + workout.workoutDurationMinutes;
-            }
-            // For cardio workouts, sum up all exercise durations
-            return (
-                total +
-                workout.exerciseEntries.reduce((sum, entry) => sum + entry.durationMinutes, 0)
-            );
-        }, 0);
-});
 
 const lastWorkoutMessage = computed(() => {
     if (workouts.length === 0) {
@@ -253,14 +193,14 @@ const lastWorkoutMessage = computed(() => {
 const filteredWorkouts = computed(() => {
     let result = [...workouts];
 
-    // Apply filter
     if (selectedFilter.value === "strength") {
-        result = result.filter((workout) => isStrengthWorkout(workout));
+        result = result.filter(isStrengthWorkout);
     } else if (selectedFilter.value === "cardio") {
-        result = result.filter((workout) => !isStrengthWorkout(workout));
+        result = result.filter(isCardioWorkout);
+    } else if (selectedFilter.value === "circuit") {
+        result = result.filter(isCircuitWorkout);
     }
 
-    // Apply sort
     const sortOption = sortOptions[selectedSort.value].value;
     if (sortOption === "dateDesc") {
         result.sort((a, b) => b.date.toDate().getTime() - a.date.toDate().getTime());
@@ -273,9 +213,16 @@ const filteredWorkouts = computed(() => {
     return result;
 });
 
-function getEventColor(event: WorkoutWithId): string {
+function getEventColor(event: any): string {
     const workout = workouts.find(({ id }) => id === event.id);
-    return workout && isStrengthWorkout(workout) ? "indigo" : "teal";
+    if (!workout) return "grey";
+
+    if (isStrengthWorkout(workout)) {
+        return "indigo";
+    } else if (isCircuitWorkout(workout)) {
+        return "amber-darken-2";
+    }
+    return "teal";
 }
 
 function viewWorkout(workout: WorkoutWithId): void {
@@ -285,9 +232,23 @@ function viewWorkout(workout: WorkoutWithId): void {
 const calendarEvents = computed(() => {
     return workouts.map((workout) => {
         const date = workout.date.toDate();
+        let category = "other";
+        let color = "grey";
+
+        if (isStrengthWorkout(workout)) {
+            category = "strength";
+            color = "indigo";
+        } else if (isCircuitWorkout(workout)) {
+            category = "circuit";
+            color = "amber-darken-2";
+        } else if (isCardioWorkout(workout)) {
+            category = "cardio";
+            color = "teal";
+        }
+
         return {
-            category: isStrengthWorkout(workout) ? "strength" : "cardio",
-            color: isStrengthWorkout(workout) ? "indigo" : "teal",
+            category,
+            color,
             end: date,
             id: workout.id,
             name: workout.name,

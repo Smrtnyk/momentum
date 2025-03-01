@@ -1,18 +1,11 @@
-/**
- * Log levels in ascending order of severity
- */
 enum LogLevel {
     DEBUG = 0,
     ERROR = 3,
     INFO = 1,
-    // Used to disable logging completely
     NONE = 4,
     WARN = 2,
 }
 
-/**
- * Configuration options for the logger
- */
 interface LoggerConfig {
     allowedContexts?: string[];
     minLevel: LogLevel;

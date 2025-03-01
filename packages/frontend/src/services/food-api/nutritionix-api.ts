@@ -4,16 +4,12 @@ import { AbstractFoodApi } from "./abstract-food-api";
 
 export class NutritionixApi extends AbstractFoodApi {
     readonly name = "Nutritionix";
-    // Lower priority for barcode lookup
     readonly priority = 3;
     readonly supportsBarcode = false;
 
     private readonly API_KEY = import.meta.env.VITE_NUTRITIONIX_API_KEY;
     private readonly APP_ID = import.meta.env.VITE_NUTRITIONIX_APP_ID;
 
-    /**
-     * Get detailed ingredient info
-     */
     async getIngredientDetails(query: string): Promise<FoodItem | null> {
         try {
             if (!this.API_KEY || !this.APP_ID) {
@@ -47,9 +43,6 @@ export class NutritionixApi extends AbstractFoodApi {
         }
     }
 
-    /**
-     * Search for foods using the instant search endpoint
-     */
     async searchFoods(query: string, page = 1, pageSize = 10): Promise<FoodSearchResult> {
         try {
             if (!this.API_KEY || !this.APP_ID) {
@@ -96,7 +89,7 @@ export class NutritionixApi extends AbstractFoodApi {
                     barcode: null,
                     brand: item.brand_name ?? null,
                     calories: item.nf_calories || 0,
-                    // Not available in search results
+                    // Not available in search results -- FIXME recheck
                     carbs: 0,
                     // Not available in search results
                     fat: 0,
@@ -130,9 +123,6 @@ export class NutritionixApi extends AbstractFoodApi {
         }
     }
 
-    /**
-     * Search specifically for ingredients using the natural language endpoint
-     */
     async searchIngredients(query: string, page = 1, pageSize = 10): Promise<FoodSearchResult> {
         try {
             if (!this.API_KEY || !this.APP_ID) {
@@ -183,9 +173,6 @@ export class NutritionixApi extends AbstractFoodApi {
         }
     }
 
-    /**
-     * Maps a Nutritionix food to our FoodItem interface
-     */
     private mapNutritionixFoodToFoodItem(food: NutritionixFood): FoodItem {
         return {
             altMeasures: food.alt_measures ?? null,

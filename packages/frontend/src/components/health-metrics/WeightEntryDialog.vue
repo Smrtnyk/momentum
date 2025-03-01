@@ -6,7 +6,7 @@
             label="Weight (kg)"
             variant="outlined"
             step="0.1"
-            :rules="[(v) => !!v || 'Weight is required', (v) => v > 0 || 'Weight must be positive']"
+            :rules="[positiveRequired]"
         ></v-text-field>
     </v-card-text>
     <v-card-actions>
@@ -18,6 +18,8 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+
+import { positiveRequired } from "../../helpers/form-validators";
 
 const { initialWeight = null } = defineProps<{
     initialWeight?: number;

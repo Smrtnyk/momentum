@@ -1,5 +1,69 @@
 <template>
-    <div v-if="workout">
+    <!-- Loading State -->
+    <v-container v-if="isLoading" class="pa-2 mx-auto">
+        <!-- Main Workout Card Skeleton -->
+        <v-card variant="flat" class="mb-6" elevation="2">
+            <v-card-item class="pt-4 pb-0">
+                <div class="d-flex align-center w-100">
+                    <div class="flex-grow-1">
+                        <v-skeleton-loader type="text" width="70%"></v-skeleton-loader>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <v-skeleton-loader
+                            type="avatar"
+                            size="small"
+                            width="36"
+                        ></v-skeleton-loader>
+                        <v-skeleton-loader
+                            type="avatar"
+                            size="small"
+                            width="36"
+                        ></v-skeleton-loader>
+                    </div>
+                </div>
+            </v-card-item>
+
+            <v-card-text>
+                <div class="d-flex flex-column gap-y-4">
+                    <v-skeleton-loader type="text" width="40%"></v-skeleton-loader>
+
+                    <div class="d-flex flex-wrap align-center">
+                        <v-skeleton-loader
+                            type="text"
+                            width="60px"
+                            class="me-4"
+                        ></v-skeleton-loader>
+                        <v-skeleton-loader
+                            type="text"
+                            width="60px"
+                            class="me-4"
+                        ></v-skeleton-loader>
+                        <v-skeleton-loader type="text" width="60px"></v-skeleton-loader>
+                    </div>
+                </div>
+            </v-card-text>
+        </v-card>
+
+        <!-- Exercises Section Title Skeleton -->
+        <v-skeleton-loader type="text" class="mb-4" width="120px"></v-skeleton-loader>
+
+        <!-- Exercise Items Skeleton -->
+        <div class="mb-4">
+            <v-card variant="outlined" class="pa-4">
+                <div class="d-flex gap-x-4">
+                    <v-skeleton-loader type="text" width="20px"></v-skeleton-loader>
+                    <div class="flex-grow-1">
+                        <v-skeleton-loader type="text" width="70%"></v-skeleton-loader>
+                        <v-skeleton-loader type="text" width="90%" class="mt-4"></v-skeleton-loader>
+                        <v-skeleton-loader type="table" class="mt-4"></v-skeleton-loader>
+                    </div>
+                </div>
+            </v-card>
+        </div>
+    </v-container>
+
+    <!-- Loaded State -->
+    <div v-else-if="workout">
         <ShowStrengthWorkout
             v-if="isStrengthWorkout(workout)"
             :workout="workout"
@@ -8,7 +72,14 @@
         />
 
         <ShowCardioWorkout
-            v-if="workout && isCardioWorkout(workout)"
+            v-else-if="isCardioWorkout(workout)"
+            :workout="workout"
+            @delete="handleDeleteWorkout"
+            @edit="handleEditWorkout"
+        />
+
+        <ShowCircuitWorkout
+            v-else-if="isCircuitWorkout(workout)"
             :workout="workout"
             @delete="handleDeleteWorkout"
             @edit="handleEditWorkout"
@@ -26,18 +97,20 @@
 
 <script setup lang="ts">
 import { useAsyncState } from "@vueuse/core";
-import { ref, watch } from "vue";
+import { watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import type { WorkoutWithId } from "../types/workout";
 
 import ShowCardioWorkout from "../components/workout/ShowCardioWorkout.vue";
+import ShowCircuitWorkout from "../components/workout/ShowCircuitWorkout.vue";
 import ShowStrengthWorkout from "../components/workout/ShowStrengthWorkout.vue";
-import { useGlobalConfirm } from "../composables/useConfirmDialog";
+import { globalDialog } from "../composables/useDialog";
 import {
     deleteWorkout as deleteWorkoutService,
     getWorkoutById,
     isCardioWorkout,
+    isCircuitWorkout,
     isStrengthWorkout,
 } from "../services/workout";
 import { useAuthStore } from "../stores/auth";
@@ -49,9 +122,11 @@ const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 const workoutId = route.params.id as string;
 
-const confirmDelete = ref(false);
-
-const { error, state: workout } = useAsyncState<null | WorkoutWithId>(
+const {
+    error,
+    isLoading,
+    state: workout,
+} = useAsyncState<null | WorkoutWithId>(
     () => getWorkoutById(authStore.nonNullableUser.uid, workoutId),
     null,
 );
@@ -61,12 +136,11 @@ watch(error, function (err) {
         globalStore.notifyError(err);
     }
 });
-const { openConfirm } = useGlobalConfirm();
 
 async function handleDeleteWorkout(): Promise<void> {
     if (!workout.value) return;
 
-    const confirmed = await openConfirm({
+    const confirmed = await globalDialog.confirm({
         message: "Are you sure you want to delete this workout? This action cannot be undone.",
         title: "Confirm Delete",
     });
@@ -78,11 +152,9 @@ async function handleDeleteWorkout(): Promise<void> {
     try {
         await deleteWorkoutService(authStore.nonNullableUser.uid, workout.value.id);
         globalStore.notify("Workout deleted successfully!");
-        await router.replace({ name: "Home" });
+        await router.replace({ name: "WorkoutLogs" });
     } catch (e) {
         globalStore.notifyError(e);
-    } finally {
-        confirmDelete.value = false;
     }
 }
 

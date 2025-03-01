@@ -68,6 +68,12 @@ const workoutTypes: WorkoutTypeOption[] = [
         label: "Cardio",
         value: "cardio",
     },
+    {
+        color: "amber-darken-2",
+        icon: "mdi-timer",
+        label: "Circuit",
+        value: "circuit",
+    },
 ];
 
 function changeType(type: Workout["type"]): void {

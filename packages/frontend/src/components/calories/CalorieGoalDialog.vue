@@ -5,15 +5,19 @@
             label="Daily Calories"
             type="number"
             variant="outlined"
-            :rules="[
-                (v) => !!v || 'Calorie goal is required',
-                (v) => v >= 1200 || 'Goal should be at least 1200 calories',
-                (v) => v <= 5000 || 'Goal should not exceed 5000 calories',
-            ]"
+            :rules="[required, betweenValues(1200, 5000)]"
             min="1200"
             max="5000"
             step="50"
         ></v-text-field>
+
+        <v-checkbox
+            v-model="setAsDefault"
+            label="Set as my default calorie goal"
+            density="compact"
+            hide-details
+            class="mt-2"
+        ></v-checkbox>
 
         <v-alert type="info" variant="tonal" density="compact" class="mt-4">
             Setting an appropriate calorie goal helps track your nutrition more effectively. For
@@ -30,16 +34,19 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 
+import { betweenValues, required } from "../../helpers/form-validators";
+
 const props = defineProps<{
     currentGoal: number;
 }>();
 
 const emit = defineEmits<{
     close: [];
-    save: [goal: number];
+    save: [goal: number, setAsDefault: boolean];
 }>();
 
 const calorieGoal = ref(props.currentGoal);
+const setAsDefault = ref(false);
 
 const isValid = computed(() => {
     return calorieGoal.value && calorieGoal.value >= 1200 && calorieGoal.value <= 5000;
@@ -48,7 +55,7 @@ const isValid = computed(() => {
 function saveGoal(): void {
     if (!isValid.value) return;
 
-    emit("save", calorieGoal.value);
+    emit("save", calorieGoal.value, setAsDefault.value);
     emit("close");
 }
 </script>

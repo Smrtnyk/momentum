@@ -12,9 +12,6 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
 
     readonly supportsBarcode = true;
 
-    /**
-     * Get a food item by barcode
-     */
     async getFoodByBarcode(barcode: string): Promise<FoodItem | null> {
         try {
             const url = `${API_BASE_URL}/product/${barcode}`;
@@ -43,9 +40,6 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
         }
     }
 
-    /**
-     * Search for foods matching a query
-     */
     async searchFoods(query: string, page = 1, pageSize = 10): Promise<FoodSearchResult> {
         try {
             const url = new URL(SEARCH_URL);
@@ -91,9 +85,6 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
         }
     }
 
-    /**
-     * Maps an OpenFoodFacts product to our FoodItem interface
-     */
     // eslint-disable-next-line complexity -- FIXME
     private mapProductToFoodItem(product: OpenFoodFactsProduct): FoodItem {
         const isLiquid = this.isLiquidProduct(product.product_name);

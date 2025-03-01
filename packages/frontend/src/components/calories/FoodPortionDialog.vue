@@ -19,10 +19,7 @@
                     label="Quantity"
                     density="comfortable"
                     variant="outlined"
-                    :rules="[
-                        (v) => !!v || 'Quantity is required',
-                        (v) => v > 0 || 'Must be positive',
-                    ]"
+                    :rules="[positiveRequired]"
                     step="0.5"
                     min="0.5"
                 ></v-text-field>
@@ -97,6 +94,8 @@
 import { computed, onMounted, ref, watch } from "vue";
 
 import type { FoodItem } from "../../types/food";
+
+import { positiveRequired } from "../../helpers/form-validators";
 
 const { food, mealType } = defineProps<{
     food: FoodItem;

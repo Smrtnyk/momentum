@@ -182,7 +182,7 @@ describe("CombinedFoodApi", function () {
             // Should call search on both providers
             expect(mockApi1.mockSearchFoods).toHaveBeenCalledWith("test query", 1, 10);
             expect(mockApi2.mockSearchFoods).toHaveBeenCalledWith("test query", 1, 10);
-            // Should combine results
+
             expect(result.foods).toHaveLength(2);
             expect(result.foods[0]).toHaveProperty("provider", "MockApi1");
             expect(result.foods[1]).toHaveProperty("provider", "MockApi2");

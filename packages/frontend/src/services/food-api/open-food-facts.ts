@@ -1,5 +1,6 @@
 import type { FoodItem, FoodSearchResult, OpenFoodFactsProduct } from "../../types/food";
 
+import { logger } from "../../logger/app-logger";
 import { AbstractFoodApi } from "./abstract-food-api";
 
 const API_BASE_URL = "https://world.openfoodfacts.org/api/v2";
@@ -28,6 +29,12 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
             if (data.status !== 1 || !data.product) {
                 return null;
             }
+
+            logger.debug(
+                `Received nutrition data for barcode ${barcode}`,
+                "OpenFoodFactsAPI.debug",
+                { nutriments: data.product.nutriments },
+            );
 
             return this.mapProductToFoodItem(data.product);
         } catch (error) {
@@ -87,14 +94,13 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
     /**
      * Maps an OpenFoodFacts product to our FoodItem interface
      */
+    // eslint-disable-next-line complexity -- FIXME
     private mapProductToFoodItem(product: OpenFoodFactsProduct): FoodItem {
         const isLiquid = this.isLiquidProduct(product.product_name);
 
-        // Determine appropriate serving unit and size
         let servingSize = 100;
         let servingUnit = isLiquid ? "ml" : "g";
 
-        // Try to extract from serving_size field if available
         if (product.serving_size) {
             const match = /(\d+(\.\d+)?)\s*([A-Za-z]+)/.exec(product.serving_size);
             if (match) {
@@ -103,10 +109,43 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
             }
         }
 
-        const calories = product.nutriments["energy-kcal_100g"] ?? 0;
-        const protein = product.nutriments.proteins_100g ?? 0;
-        const carbs = product.nutriments.carbohydrates_100g ?? 0;
-        const fat = product.nutriments.fat_100g ?? 0;
+        let calories = 0;
+        if (product.nutriments) {
+            // Try all possible field names for calories
+            calories =
+                product.nutriments["energy-kcal_100g"] ??
+                product.nutriments["energy_kcal_100g"] ??
+                product.nutriments["energy-kcal"] ??
+                product.nutriments["energy_kcal"] ??
+                // If only energy in kJ is available, convert to kcal (divide by 4.184)
+                (product.nutriments["energy_100g"]
+                    ? Math.round(product.nutriments["energy_100g"] / 4.184)
+                    : 0) ??
+                (product.nutriments["energy"]
+                    ? Math.round(product.nutriments["energy"] / 4.184)
+                    : 0) ??
+                0;
+
+            calories = !Number.isNaN(calories) && calories >= 0 ? calories : 0;
+        }
+
+        const protein =
+            product.nutriments?.proteins_100g ??
+            product.nutriments?.protein_100g ??
+            product.nutriments?.proteins ??
+            0;
+
+        const carbs =
+            product.nutriments?.carbohydrates_100g ??
+            product.nutriments?.carbohydrate_100g ??
+            product.nutriments?.carbohydrates ??
+            0;
+
+        const fat =
+            product.nutriments?.fat_100g ??
+            product.nutriments?.fats_100g ??
+            product.nutriments?.fat ??
+            0;
 
         return {
             barcode: product.code,

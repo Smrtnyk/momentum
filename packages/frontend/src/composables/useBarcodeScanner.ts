@@ -1,3 +1,5 @@
+import { BrowserMultiFormatReader } from "@zxing/browser";
+import { matchesProperty } from "es-toolkit/compat";
 import { ref } from "vue";
 
 import type { FoodItem } from "../types/food";
@@ -14,26 +16,11 @@ interface BarcodeScannerOptions {
 
 export function useBarcodeScanner() {
     const isScanning = ref(false);
-    const isBarcodeSupported = ref(false);
     const isSearching = ref(false);
     const videoRef = ref<HTMLVideoElement | null>(null);
     const scannerOverlayRef = ref<HTMLDivElement | null>(null);
-
-    async function checkBarcodeSupport(): Promise<boolean> {
-        if ("BarcodeDetector" in globalThis) {
-            try {
-                const formats = await (globalThis as any).BarcodeDetector.getSupportedFormats();
-                isBarcodeSupported.value = formats.includes("ean_13") || formats.includes("upc_a");
-                return isBarcodeSupported.value;
-            } catch (error) {
-                logger.error(error, "BarcodeScanner");
-                isBarcodeSupported.value = false;
-                return false;
-            }
-        }
-        isBarcodeSupported.value = false;
-        return false;
-    }
+    const codeReader = new BrowserMultiFormatReader();
+    let scannerCleanup: (() => void) | null = null;
 
     function createScannerOverlay(): void {
         if (scannerOverlayRef.value?.parentNode) {
@@ -61,7 +48,6 @@ export function useBarcodeScanner() {
         video.style.borderRadius = "8px";
         video.style.objectFit = "cover";
         video.playsInline = true;
-        video.autoplay = true;
         videoRef.value = video;
 
         const scanTarget = document.createElement("div");
@@ -82,6 +68,13 @@ export function useBarcodeScanner() {
         message.style.fontSize = "16px";
         message.style.fontWeight = "bold";
 
+        const tipElement = document.createElement("div");
+        tipElement.textContent = "Try holding the device at different distances for best results";
+        tipElement.style.color = "white";
+        tipElement.style.marginTop = "8px";
+        tipElement.style.fontSize = "14px";
+        tipElement.style.opacity = "0.8";
+
         const closeBtn = document.createElement("button");
         closeBtn.textContent = "Cancel";
         closeBtn.style.padding = "10px 20px";
@@ -96,6 +89,7 @@ export function useBarcodeScanner() {
         overlay.appendChild(video);
         overlay.appendChild(scanTarget);
         overlay.appendChild(message);
+        overlay.appendChild(tipElement);
         overlay.appendChild(closeBtn);
 
         document.body.appendChild(overlay);
@@ -105,6 +99,7 @@ export function useBarcodeScanner() {
     async function searchByBarcode(barcode: string, options: BarcodeScannerOptions): Promise<void> {
         try {
             isSearching.value = true;
+            logger.info(`Searching for barcode: ${barcode}`, "BarcodeScanner");
 
             // First try OpenFoodRepo (better European product coverage)
             const openFoodRepoApi = new OpenFoodRepoApi();
@@ -118,7 +113,20 @@ export function useBarcodeScanner() {
             }
 
             if (food) {
-                options.onFoodFound(food);
+                logger.info(`Food found with ${food.calories} calories`, "BarcodeScanner", {
+                    barcode,
+                    calories: food.calories,
+                    foodName: food.name,
+                });
+
+                if (food.calories === 0) {
+                    options.onError(
+                        "Found product has incomplete nutrition data. Consider searching manually.",
+                    );
+                    options.onNotFound(barcode);
+                } else {
+                    options.onFoodFound(food);
+                }
             } else {
                 options.onNotFound(barcode);
             }
@@ -130,54 +138,53 @@ export function useBarcodeScanner() {
         }
     }
 
-    async function detectBarcode(options: BarcodeScannerOptions): Promise<void> {
-        if (!isScanning.value || !videoRef.value) return;
-
-        try {
-            const barcodeDetector = new BarcodeDetector({
-                formats: ["ean_13", "ean_8", "upc_a", "upc_e"],
-            });
-
-            const barcodes = await barcodeDetector.detect(videoRef.value);
-
-            if (barcodes.length > 0) {
-                const barcode = barcodes[0].rawValue;
-                stopBarcodeScanner();
-                await searchByBarcode(barcode, options);
-            } else {
-                requestAnimationFrame(() => detectBarcode(options));
-            }
-        } catch (error) {
-            logger.error(error, "BarcodeScanner");
-            requestAnimationFrame(() => detectBarcode(options));
-        }
-    }
-
     async function scanBarcode(options: BarcodeScannerOptions): Promise<void> {
-        if (!isBarcodeSupported.value) {
-            options.onError(
-                "Barcode scanning is not supported in your browser. Please search manually.",
-            );
-            return;
-        }
-
         try {
             isScanning.value = true;
             createScannerOverlay();
-            const constraints = await getBestCamera();
 
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
-                setupVideoStream(stream, options);
-            } catch (advancedError) {
-                logger.error(advancedError);
-                const fallbackStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" },
-                });
-                setupVideoStream(fallbackStream, options);
+            if (!videoRef.value) {
+                throw new Error("Video reference not available");
             }
+
+            const preferredDeviceId = await selectHighestResolutionCamera();
+
+            const constraints: MediaStreamConstraints = {
+                video: preferredDeviceId
+                    ? {
+                          deviceId: { exact: preferredDeviceId },
+                          height: { ideal: 1080, min: 720 },
+                          width: { ideal: 1920, min: 1280 },
+                      }
+                    : {
+                          facingMode: "environment",
+                          height: { ideal: 1080, min: 720 },
+                          width: { ideal: 1920, min: 1280 },
+                      },
+            };
+
+            const result = await codeReader.decodeFromConstraints(
+                constraints,
+                videoRef.value,
+                async (res, error) => {
+                    if (res) {
+                        const barcode = res.getText();
+                        logger.info(`Barcode detected: ${barcode}`, "BarcodeScanner");
+                        stopBarcodeScanner();
+                        await searchByBarcode(barcode, options);
+                    }
+
+                    if (error && error.name !== "NotFoundException") {
+                        logger.error(error, "BarcodeScanner.scan");
+                    }
+                },
+            );
+
+            scannerCleanup = () => {
+                result.stop();
+            };
         } catch (error) {
-            logger.error(error, "BarcodeScanner");
+            logger.error(error, "BarcodeScanner.scanBarcode");
             options.onError(
                 "Unable to access camera. Please check camera permissions and try again.",
             );
@@ -185,38 +192,12 @@ export function useBarcodeScanner() {
         }
     }
 
-    function setupVideoStream(stream: MediaStream, options: BarcodeScannerOptions): void {
-        if (!videoRef.value) {
-            return;
-        }
-        videoRef.value.srcObject = stream;
-        const videoTrack = stream.getVideoTracks()[0];
-        if (videoTrack) {
-            logger.info(
-                "Camera settings",
-                JSON.stringify({
-                    constraints: videoTrack.getConstraints(),
-                    settings: videoTrack.getSettings(),
-                }),
-            );
-        }
-
-        videoRef.value
-            .play()
-            .then(() => detectBarcode(options))
-            .catch((error) => {
-                logger.error(error, "BarcodeScanner");
-                options.onError("Error starting camera stream");
-                stopBarcodeScanner();
-            });
-    }
-
     function stopBarcodeScanner(): void {
         isScanning.value = false;
 
-        if (videoRef.value?.srcObject) {
-            const stream = videoRef.value.srcObject as MediaStream;
-            stream.getTracks().forEach((track) => track.stop());
+        if (scannerCleanup) {
+            scannerCleanup();
+            scannerCleanup = null;
         }
 
         if (scannerOverlayRef.value?.parentNode) {
@@ -226,63 +207,53 @@ export function useBarcodeScanner() {
     }
 
     return {
-        checkBarcodeSupport,
-        isBarcodeSupported,
         isScanning,
         isSearching,
         scanBarcode,
     };
 }
 
-async function getBestCamera(): Promise<MediaStreamConstraints> {
-    const defaultConstraints: MediaStreamConstraints = {
-        video: {
-            facingMode: "environment",
-            height: { ideal: 1080, min: 720 },
-            width: { ideal: 1920, min: 1280 },
-        },
-    };
+async function getVideoInputDevices(): Promise<MediaDeviceInfo[]> {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    return devices.filter(matchesProperty("kind", "videoinput"));
+}
 
-    try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter((device) => device.kind === "videoinput");
+async function selectHighestResolutionCamera(): Promise<string | undefined> {
+    const videoDevices = await getVideoInputDevices();
+    let selectedDeviceId: string | undefined;
+    let highestResolution = 0;
+    const backCameras = videoDevices.filter(function (device) {
+        return device.label.toLowerCase().includes("back");
+    });
 
-        if (videoDevices.length === 0) {
-            return defaultConstraints;
+    for (const device of backCameras) {
+        const tempConstraints = {
+            video: {
+                deviceId: device.deviceId,
+                // Request the highest possible height
+                height: { ideal: 9999 },
+                // Request the highest possible width
+                width: { ideal: 9999 },
+            },
+        };
+
+        try {
+            // eslint-disable-next-line no-await-in-loop -- fine here
+            const stream = await navigator.mediaDevices.getUserMedia(tempConstraints);
+            const track = stream.getVideoTracks()[0];
+            const settings = track.getSettings();
+            const resolution = (settings.width ?? 0) * (settings.height ?? 0);
+
+            if (resolution > highestResolution) {
+                highestResolution = resolution;
+                selectedDeviceId = device.deviceId;
+            }
+
+            track.stop();
+        } catch (error) {
+            logger.error("Error accessing camera:", "", error);
         }
-
-        // On Android often the higher-resolution camera has "back" in its label
-        const backCamera = videoDevices.find(
-            (device) =>
-                device.label.toLowerCase().includes("back") ||
-                device.label.toLowerCase().includes("rear"),
-        );
-
-        if (backCamera) {
-            return {
-                video: {
-                    deviceId: { exact: backCamera.deviceId },
-                    height: { ideal: 1080, min: 720 },
-                    width: { ideal: 1920, min: 1280 },
-                },
-            };
-        }
-
-        // If no camera with "back" in the label use the last device
-        // (often the back camera on Android devices)
-        if (videoDevices.length > 1) {
-            return {
-                video: {
-                    deviceId: { exact: videoDevices[videoDevices.length - 1].deviceId },
-                    height: { ideal: 1080, min: 720 },
-                    width: { ideal: 1920, min: 1280 },
-                },
-            };
-        }
-
-        return defaultConstraints;
-    } catch (error) {
-        logger.error(error);
-        return defaultConstraints;
     }
+
+    return selectedDeviceId;
 }

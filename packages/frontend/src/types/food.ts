@@ -66,9 +66,22 @@ export interface OpenFoodFactsProduct {
     id: string;
     image_url?: string;
     nutriments: {
+        carbohydrate_100g?: number;
+        carbohydrates?: number;
         carbohydrates_100g?: number;
+        energy?: number;
+
+        "energy-kcal"?: number;
         "energy-kcal_100g"?: number;
+        energy_100g?: number;
+        energy_kcal?: number;
+        energy_kcal_100g?: number;
+
+        fat?: number;
         fat_100g?: number;
+        fats_100g?: number;
+        protein_100g?: number;
+        proteins?: number;
         proteins_100g?: number;
     };
     popularity_key?: number;

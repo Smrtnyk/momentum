@@ -14,7 +14,7 @@
                     :loading="isLoading"
                     class="flex-grow-1"
                 >
-                    <template v-if="isBarcodeSupported" #append-inner>
+                    <template #append-inner>
                         <v-btn
                             icon
                             variant="text"
@@ -272,8 +272,7 @@ const emit = defineEmits<{
 const router = useRouter();
 const globalStore = useGlobalStore();
 const authStore = useAuthStore();
-const { checkBarcodeSupport, isBarcodeSupported, isScanning, isSearching, scanBarcode } =
-    useBarcodeScanner();
+const { isScanning, isSearching, scanBarcode } = useBarcodeScanner();
 
 const activeTab = ref("search");
 const searchQuery = ref("");
@@ -311,7 +310,6 @@ const filteredCustomFoods = computed(() => {
 onMounted(async () => {
     loadRecentFoods();
     await loadCustomFoods();
-    await checkBarcodeSupport();
 });
 
 function handleBarcodeScanner(): void {

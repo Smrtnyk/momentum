@@ -1,5 +1,4 @@
 <template>
-    <v-card-title>Log Today's Weight</v-card-title>
     <v-card-text>
         <v-text-field
             v-model.number="weight"

@@ -1,5 +1,4 @@
 <template>
-    <v-card-title>Log Body Fat Percentage</v-card-title>
     <v-card-text>
         <v-text-field
             v-model.number="percentage"

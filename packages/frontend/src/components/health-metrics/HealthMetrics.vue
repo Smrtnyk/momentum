@@ -121,6 +121,7 @@ function openBodyFatDialog(): void {
                 await logBodyFatPercentage(percentage, method);
             },
         },
+        title: "Log Body Fat Percentage",
     });
 }
 
@@ -131,6 +132,7 @@ function openStepsDialog(): void {
                 await logDailySteps(steps);
             },
         },
+        title: "Log Daily Steps",
     });
 }
 
@@ -141,6 +143,7 @@ function openWaterDialog(): void {
                 await logWater(amount);
             },
         },
+        title: "Log Water Intake",
     });
 }
 
@@ -151,6 +154,7 @@ function openWeightDialog(): void {
                 await logTodayWeight(weight);
             },
         },
+        title: "Log Today's Weight",
     });
 }
 

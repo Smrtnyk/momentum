@@ -304,8 +304,11 @@
                             ></v-divider>
 
                             <div class="text-caption text-grey-lighten-1 mb-1">Per Serving</div>
-                            <div class="text-h6 font-weight-bold mb-4">
-                                {{ recipe.calories }} Calories
+                            <div class="text-h6 font-weight-bold mb-1">
+                                {{ adjustedCalories }} kcal
+                            </div>
+                            <div class="text-caption text-grey-lighten-1 mb-4">
+                                Total: {{ totalCalories }} kcal for {{ desiredServings }} servings
                             </div>
 
                             <!-- Macros with progress bars -->
@@ -345,73 +348,6 @@
                                     rounded
                                     class="mb-3"
                                 ></v-progress-linear>
-                            </div>
-
-                            <!-- Calories breakdown pie chart -->
-                            <div class="d-flex justify-center mb-4">
-                                <v-sheet
-                                    class="d-flex justify-center align-center text-black"
-                                    width="150"
-                                    height="150"
-                                >
-                                    <div class="calories-chart position-relative">
-                                        <svg viewBox="0 0 36 36" width="100%" height="100%">
-                                            <!-- Protein slice -->
-                                            <path
-                                                :d="
-                                                    calculatePieSlice(
-                                                        0,
-                                                        getCaloriePercentage(
-                                                            recipe.macros.protein * 4,
-                                                        ),
-                                                    )
-                                                "
-                                                fill="#673AB7"
-                                            ></path>
-                                            <!-- Carbs slice -->
-                                            <path
-                                                :d="
-                                                    calculatePieSlice(
-                                                        getCaloriePercentage(
-                                                            recipe.macros.protein * 4,
-                                                        ),
-                                                        getCaloriePercentage(
-                                                            recipe.macros.protein * 4 +
-                                                                recipe.macros.carbs * 4,
-                                                        ),
-                                                    )
-                                                "
-                                                fill="#FFC107"
-                                            ></path>
-                                            <!-- Fat slice -->
-                                            <path
-                                                :d="
-                                                    calculatePieSlice(
-                                                        getCaloriePercentage(
-                                                            recipe.macros.protein * 4 +
-                                                                recipe.macros.carbs * 4,
-                                                        ),
-                                                        100,
-                                                    )
-                                                "
-                                                fill="#2196F3"
-                                            ></path>
-                                            <circle
-                                                class="donut-hole"
-                                                cx="18"
-                                                cy="18"
-                                                r="10"
-                                                fill="white"
-                                            ></circle>
-                                        </svg>
-                                        <div class="chart-center">
-                                            <span class="text-h6 font-weight-bold">{{
-                                                adjustedCalories
-                                            }}</span>
-                                            <span class="text-caption d-block">kcal</span>
-                                        </div>
-                                    </div>
-                                </v-sheet>
                             </div>
 
                             <!-- Macro percentages -->
@@ -693,6 +629,11 @@ import {
     getRelatedRecipes,
     getTagColor,
 } from "../data/recipes";
+import {
+    adjustIngredients,
+    calculateMacroPercentage as calcMacroPercentage,
+    getTotalCalories,
+} from "../helpers/recipe-utils";
 import { logger } from "../logger/app-logger";
 import { useGlobalStore } from "../stores/global";
 
@@ -706,9 +647,28 @@ const desiredServings = ref(0);
 const maxServings = 20;
 const checkedIngredients = ref<Set<number>>(new Set());
 
-const servingsRatio = computed(function (): number {
-    if (!recipe.value || recipe.value.servings === 0) return 1;
-    return desiredServings.value / recipe.value.servings;
+const adjustedIngredients = computed(function (): Ingredient[] {
+    if (!recipe.value) return [];
+    return adjustIngredients(
+        recipe.value.ingredients,
+        recipe.value.servings,
+        desiredServings.value,
+    );
+});
+
+const adjustedCalories = computed(function (): number {
+    if (!recipe.value) return 0;
+    return recipe.value.calories;
+});
+
+const totalCalories = computed(function (): number {
+    if (!recipe.value) return 0;
+    return getTotalCalories(recipe.value.calories, desiredServings.value);
+});
+
+const adjustedMacros = computed(function () {
+    if (!recipe.value) return { carbs: 0, fat: 0, protein: 0 };
+    return recipe.value.macros;
 });
 
 watch(() => desiredServings.value, saveIngredientState);
@@ -757,87 +717,14 @@ const relatedRecipes = computed(function (): Recipe[] {
     return getRelatedRecipes(recipe.value, 6);
 });
 
-const adjustedIngredients = computed(function (): Ingredient[] {
-    if (!recipe.value) return [];
-
-    return recipe.value.ingredients.map((ingredient) => {
-        const originalAmount = Number.parseFloat(ingredient.amount);
-
-        if (Number.isNaN(originalAmount)) {
-            return { ...ingredient };
-        }
-
-        const adjustedAmount = (originalAmount * servingsRatio.value).toFixed(
-            originalAmount % 1 === 0 ? 0 : 1,
-        );
-
-        return {
-            amount: adjustedAmount,
-            name: ingredient.name,
-            unit: ingredient.unit,
-        };
-    });
-});
-
-const adjustedCalories = computed(function (): number {
-    if (!recipe.value) return 0;
-    return Math.round(recipe.value.calories * servingsRatio.value);
-});
-
-const adjustedMacros = computed(function () {
-    if (!recipe.value) return { carbs: 0, fat: 0, protein: 0 };
-
-    return {
-        carbs: Math.round(recipe.value.macros.carbs * servingsRatio.value),
-        fat: Math.round(recipe.value.macros.fat * servingsRatio.value),
-        protein: Math.round(recipe.value.macros.protein * servingsRatio.value),
-    };
-});
-
 function calculateMacroPercentage(macroType: "carbs" | "fat" | "protein"): number {
     if (!recipe.value) return 0;
-
-    const { carbs, fat, protein } = adjustedMacros.value;
-    const totalCalories = protein * 4 + carbs * 4 + fat * 9;
-
-    let macroCalories = 0;
-    switch (macroType) {
-        case "carbs":
-            macroCalories = carbs * 4;
-            break;
-        case "fat":
-            macroCalories = fat * 9;
-            break;
-        case "protein":
-            macroCalories = protein * 4;
-            break;
-    }
-
-    return Math.round((macroCalories / totalCalories) * 100);
-}
-
-function calculatePieSlice(startPercent: number, endPercent: number): string {
-    const start = (startPercent / 100) * Math.PI * 2;
-    const end = (endPercent / 100) * Math.PI * 2;
-
-    const x1 = 18 + 16 * Math.sin(start);
-    const y1 = 18 - 16 * Math.cos(start);
-    const x2 = 18 + 16 * Math.sin(end);
-    const y2 = 18 - 16 * Math.cos(end);
-
-    const largeArcFlag = endPercent - startPercent > 50 ? 1 : 0;
-
-    return `M 18 18 L ${x1} ${y1} A 16 16 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
+    return calcMacroPercentage(adjustedMacros.value, macroType);
 }
 
 function clearCheckedIngredients(): void {
     checkedIngredients.value.clear();
     saveIngredientState();
-}
-
-function getCaloriePercentage(calorieValue: number): number {
-    if (!recipe.value) return 0;
-    return (calorieValue / adjustedCalories.value) * 100;
 }
 
 function getPercentage(macroValue: number): number {
@@ -892,7 +779,6 @@ function loadSavedIngredientState(): void {
 function logMeal(): void {
     if (!recipe.value) return;
 
-    // FIXME - implement to auto add to calories
     globalStore.notify(`Functionality coming soon :)`);
 }
 
@@ -917,7 +803,6 @@ function shareRecipe(): void {
     globalStore.notify("Sharing functionality coming soon!");
 }
 
-// Toggle ingredient checked state
 function toggleIngredient(index: number): void {
     if (checkedIngredients.value.has(index)) {
         checkedIngredients.value.delete(index);
@@ -930,19 +815,6 @@ function toggleIngredient(index: number): void {
 </script>
 
 <style scoped>
-.calories-chart {
-    width: 100%;
-    height: 100%;
-}
-
-.chart-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-}
-
 .related-recipe-card {
     transition:
         transform 0.2s ease,

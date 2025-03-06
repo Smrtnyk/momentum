@@ -120,24 +120,27 @@
                                                 <div
                                                     class="plan-image d-flex align-center justify-center"
                                                     :class="{
-                                                        'bg-grey-lighten-3':
-                                                            !hasBackgroundImage(plan),
+                                                        'bg-grey-lighten-3': !hasBackgroundImage(
+                                                            plan.type,
+                                                        ),
                                                     }"
                                                     :style="{
                                                         minHeight: '150px',
                                                         minWidth: '120px',
-                                                        backgroundImage: hasBackgroundImage(plan)
-                                                            ? `url('${getWorkoutImageUrl(plan.category)}')`
+                                                        backgroundImage: hasBackgroundImage(
+                                                            plan.type,
+                                                        )
+                                                            ? `url('${getWorkoutImageUrl(plan.type)}')`
                                                             : '',
                                                         backgroundSize: 'cover',
                                                         backgroundPosition: 'center',
                                                     }"
                                                 >
                                                     <v-icon
-                                                        v-if="!hasBackgroundImage(plan)"
+                                                        v-if="!hasBackgroundImage(plan.type)"
                                                         size="64"
                                                         color="grey-lighten-1"
-                                                        >{{ getPlanIcon(plan.category) }}</v-icon
+                                                        >{{ getPlanIcon(plan.type) }}</v-icon
                                                     >
                                                 </div>
 
@@ -152,9 +155,9 @@
                                                         </div>
                                                         <div
                                                             class="text-uppercase text-caption font-weight-bold px-2 py-1 rounded"
-                                                            :class="getCategoryClass(plan.category)"
+                                                            :class="getCategoryClass(plan.type)"
                                                         >
-                                                            {{ plan.category }}
+                                                            {{ plan.type }}
                                                         </div>
                                                         <v-spacer></v-spacer>
                                                         <div
@@ -225,32 +228,33 @@
 import { computed, ref } from "vue";
 
 import type { Exercise } from "../types/exercise";
-import type { DifficultyLevel, PlanCategory, TrainingPlan } from "../types/workout-plans";
+import type { DifficultyLevel, TrainingPlan } from "../types/workout-plans";
 
 import AddExerciseDialog from "../components/workout-plans/AddExerciseDialog.vue";
 import PlanDetailsDialog from "../components/workout-plans/PlanDetailsDialog.vue";
 import { globalDialog } from "../composables/useDialog";
 import { cardioExercises } from "../data/cardio-exercises";
-import { getMuscleGroups, strengthExercises } from "../data/strength-exercises";
+import { strengthExercises } from "../data/strength-exercises";
 import { allTrainingPlans, cardioPlans, hybridPlans, strengthPlans } from "../data/training-plans";
+import { getMuscleGroups } from "../helpers/exercise-utils";
 import { logger } from "../logger/app-logger";
 
 type WorkoutImageMap = {
-    [key in PlanCategory]: string;
+    [key in TrainingPlan["type"]]: string;
 };
 
 const workoutImages: WorkoutImageMap = {
     cardio: "/workout-images/cardio-workout.jpg",
-    hybrid: "/workout-images/circuit-workout.jpg",
+    circuit: "/workout-images/circuit-workout.jpg",
     strength: "/workout-images/strength-workout.jpg",
 };
 
-function getWorkoutImageUrl(category: PlanCategory): string {
+function getWorkoutImageUrl(category: TrainingPlan["type"]): string {
     return workoutImages[category] ?? "";
 }
 
-function hasBackgroundImage(plan: TrainingPlan): boolean {
-    return Boolean(getWorkoutImageUrl(plan.category));
+function hasBackgroundImage(type: TrainingPlan["type"]): boolean {
+    return Boolean(getWorkoutImageUrl(type));
 }
 
 const activeTab = ref<string>("all");
@@ -341,8 +345,8 @@ const filteredPlans = computed<TrainingPlan[]>(function () {
         const query = searchQuery.value.toLowerCase();
         plans = plans.filter(
             (plan) =>
-                plan.name.toLowerCase().includes(query) ||
-                plan.description.toLowerCase().includes(query) ||
+                plan.name.toLowerCase().includes(query) ??
+                plan.description.toLowerCase().includes(query) ??
                 plan.goals.some((goal) => goal.toLowerCase().includes(query)),
         );
     }
@@ -351,24 +355,24 @@ const filteredPlans = computed<TrainingPlan[]>(function () {
 });
 
 function addNewExercise(exerciseData: Omit<Exercise, "id">): void {
-    const id = exerciseData.name
+    const exerciseId = exerciseData.name
         .toLowerCase()
         .replaceAll(/\s+/g, "-")
         .replaceAll(/[^\da-z-]/g, "");
 
     allExercises.value.push({
         ...exerciseData,
-        id,
+        exerciseId,
     });
 
     logger.info(`Added ${exerciseData.name} to the exercise library!`);
 }
 
-function getCategoryClass(category: PlanCategory): string {
+function getCategoryClass(category: TrainingPlan["type"]): string {
     switch (category) {
         case "cardio":
             return "bg-teal-lighten-5 text-teal-darken-3";
-        case "hybrid":
+        case "circuit":
             return "bg-amber-lighten-5 text-amber-darken-3";
         case "strength":
             return "bg-red-lighten-5 text-red-darken-3";
@@ -390,11 +394,11 @@ function getLevelClass(level: DifficultyLevel): string {
     }
 }
 
-function getPlanIcon(category: PlanCategory): string {
+function getPlanIcon(category: TrainingPlan["type"]): string {
     switch (category) {
         case "cardio":
             return "mdi-run";
-        case "hybrid":
+        case "circuit":
             return "mdi-timer-outline";
         case "strength":
             return "mdi-weight-lifter";

@@ -2,21 +2,23 @@ import type { ComponentPublicInstance } from "vue";
 
 import { createPinia } from "pinia";
 import { createApp, h } from "vue";
+import VueApexCharts from "vue3-apexcharts";
 import { createVuetify } from "vuetify";
 import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
 import "@mdi/font/css/materialdesignicons.css";
 import "vuetify/styles";
+import * as directives from "vuetify/directives";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import { VCalendar } from "vuetify/labs/VCalendar";
 import { VDateInput } from "vuetify/labs/VDateInput";
 import { VNumberInput } from "vuetify/labs/VNumberInput";
-import { VTimePicker } from "vuetify/labs/VTimePicker";
 import "virtual:pwa-register";
+import { VTimePicker } from "vuetify/labs/VTimePicker";
 
 import App from "./App.vue";
 import ErrorBoundary from "./components/ErrorBoundary.vue";
 import { auth } from "./firebase";
+import { currentLocale } from "./helpers/date-utils";
 import { logger } from "./logger/app-logger";
 import router from "./router";
 
@@ -42,8 +44,6 @@ globalThis.addEventListener("error", function (event) {
 });
 
 const pinia = createPinia();
-
-const currentLocale = new Intl.DateTimeFormat().resolvedOptions().locale;
 
 function createVuetifyInstance(): ReturnType<typeof createVuetify> {
     return createVuetify({
@@ -101,9 +101,12 @@ auth.onAuthStateChanged(function () {
 
     const vuetify = createVuetifyInstance();
     const vueApp = createApp({
-        render: () => h(ErrorBoundary, void 0, [h(App)]),
+        render: () =>
+            h(ErrorBoundary, null, {
+                default: () => h(App),
+            }),
     });
     vueApp.component("ErrorBoundary", ErrorBoundary);
-    vueApp.use(router).use(pinia).use(vuetify);
+    vueApp.use(router).use(pinia).use(vuetify).use(VueApexCharts);
     app = vueApp.mount("#app");
 });

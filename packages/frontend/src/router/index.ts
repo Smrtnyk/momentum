@@ -34,22 +34,10 @@ const routes = [
         path: "/workout-plans",
     },
     {
-        component: () => import("../pages/PageWorkoutLogger.vue"),
-        meta: { requiresAuth: true },
-        name: "WorkoutLogger",
-        path: "/workout/new",
-    },
-    {
         component: () => import("../pages/PageWorkoutLogs.vue"),
         meta: { requiresAuth: true },
         name: "WorkoutLogs",
         path: "/workouts",
-    },
-    {
-        component: () => import("../pages/PageWorkoutLogger.vue"),
-        meta: { requiresAuth: true },
-        name: "WorkoutEdit",
-        path: "/workout/:id/edit",
     },
     {
         component: () => import("../pages/PageProfile.vue"),
@@ -94,6 +82,20 @@ const routes = [
         meta: { requiresAuth: true },
         name: "RecipeDetail",
         path: "/recipes/:id",
+    },
+    {
+        component: () => import("../pages/PageAnalytics.vue"),
+        meta: { requiresAuth: true },
+        name: "Analytics",
+        path: "/analytics",
+    },
+    {
+        component: () => import("../pages/PageCustomWorkout.vue"),
+        meta: {
+            requiresAuth: true,
+        },
+        name: "CustomWorkout",
+        path: "/custom-workout/:id?",
     },
     {
         path: "/:catchAll(.*)",

@@ -50,7 +50,7 @@
         <v-divider class="my-3"></v-divider>
 
         <!-- Nutritional Preview -->
-        <div class="text-h6 mb-2">Nutritional Information</div>
+        <div class="text-h6 mb-2 text-center">Nutritional Information</div>
 
         <div class="d-flex justify-space-between mb-1">
             <div class="text-body-1">Calories:</div>

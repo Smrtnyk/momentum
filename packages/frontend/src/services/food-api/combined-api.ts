@@ -1,5 +1,6 @@
 import type { FoodItem, FoodSearchResult } from "../../types/food";
 
+import { ONE_DAY } from "../../helpers/date-utils";
 import { logger } from "../../logger/app-logger";
 import { AbstractFoodApi } from "./abstract-food-api";
 import { apiRegistry } from "./api-registry";
@@ -17,15 +18,15 @@ export class CombinedFoodApi extends AbstractFoodApi {
             timestamp: number;
         }
     >();
-    // 24 hours
-    private readonly CACHE_TTL = 24 * 60 * 60 * 1000;
+    private readonly CACHE_TTL = ONE_DAY;
 
     async getFoodByBarcode(barcode: string): Promise<FoodItem | null> {
         const barcodeProviders = apiRegistry.getBarcodeProviders();
 
         for (const provider of barcodeProviders) {
             try {
-                // eslint-disable-next-line no-await-in-loop -- we want to do 1 by 1 until we have it FIXME
+                /* eslint-disable-next-line no-await-in-loop -- we want to do 1 by 1 until we have it
+                 so we have to do it sequentially here */
                 const food = await provider.getFoodByBarcode(barcode);
                 if (food && food.calories > 0) {
                     return {
@@ -150,7 +151,7 @@ export class CombinedFoodApi extends AbstractFoodApi {
         const seen = new Set<string>();
         return foods.filter(function (food) {
             const nameKey = food.name.trim().toLowerCase();
-            const brandKey = (food.brand || "").trim().toLowerCase();
+            const brandKey = (food.brand ?? "").trim().toLowerCase();
             const key = `${nameKey}|${brandKey}`;
             if (seen.has(key)) {
                 return false;

@@ -25,7 +25,7 @@
             flat
         >
             <v-icon icon="mdi-food-apple-outline" size="64" class="mb-4" color="primary"></v-icon>
-            <div class="text-h6 mb-2">No Custom Foods Yet</div>
+            <div class="text-h6 mb-2 text-center">No Custom Foods Yet</div>
             <div class="text-body-2 text-medium-emphasis mb-6">
                 Create your own custom foods to quickly add them to your meals
             </div>
@@ -113,7 +113,7 @@ const filteredFoods = computed(function () {
 
     const query = searchQuery.value.toLowerCase();
     return customFoods.value.filter(function (food) {
-        return food.name.toLowerCase().includes(query) || food.brand?.toLowerCase().includes(query);
+        return food.name.toLowerCase().includes(query) ?? food.brand?.toLowerCase().includes(query);
     });
 });
 

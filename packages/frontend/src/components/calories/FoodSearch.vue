@@ -302,7 +302,7 @@ const filteredCustomFoods = computed(() => {
     const normalizedQuery = searchQuery.value.toLowerCase();
     return customFoods.value.filter(
         (food) =>
-            food.name.toLowerCase().includes(normalizedQuery) ||
+            food.name.toLowerCase().includes(normalizedQuery) ??
             food.brand?.toLowerCase().includes(normalizedQuery),
     );
 });

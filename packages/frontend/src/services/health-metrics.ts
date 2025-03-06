@@ -17,6 +17,7 @@ import {
 import type { HealthMetrics } from "../types/health-metrics";
 
 import { firestore } from "../firebase";
+import { formatISODate, getStartOfToday } from "../helpers/date-utils";
 
 interface WaterProgress {
     current: number;
@@ -63,12 +64,11 @@ export async function getLatestSteps(
     const metricsRef = doc(firestore, "users", userId, "health_metrics", today);
 
     const docSnap = await getDoc(metricsRef);
-    if (docSnap.exists() && docSnap.data().steps) {
-        const data = docSnap.data() as HealthMetrics;
+    const data = docSnap.data() as HealthMetrics;
+    if (docSnap.exists() && data.steps) {
         return {
-            date: data.stepsTimestamp?.toDate() || data.date.toDate(),
-            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- checked that it exists -- FIXME
-            steps: data.steps!,
+            date: data.stepsTimestamp?.toDate() ?? data.date.toDate(),
+            steps: data.steps,
         };
     }
 
@@ -93,10 +93,13 @@ export async function getLatestWeight(
     }
 
     const data = querySnapshot.docs[0].data() as HealthMetrics;
+    if (!data.weight) {
+        return null;
+    }
+
     return {
         date: data.date.toDate(),
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- FIXME
-        weight: data.weight!,
+        weight: data.weight,
     };
 }
 
@@ -104,10 +107,10 @@ export async function getTodayWaterProgress(
     userId: string,
     targetIntake = 2500,
 ): Promise<WaterProgress> {
-    const today = new Date().toISOString().split("T")[0];
+    const today = formatISODate(getStartOfToday());
     const metrics = await getDailyHealthMetrics(userId, today);
 
-    const currentIntake = metrics?.waterIntake || 0;
+    const currentIntake = metrics?.waterIntake ?? 0;
     const percentage = Math.min(100, Math.round((currentIntake / targetIntake) * 100));
 
     return {
@@ -124,7 +127,7 @@ export async function logBodyFat(
     method?: string,
     date: Date = new Date(),
 ): Promise<void> {
-    const dateString = date.toISOString().split("T")[0];
+    const dateString = formatISODate(date);
     const timestamp = Timestamp.fromDate(date);
 
     const bodyFatData = {
@@ -143,7 +146,7 @@ export async function logSteps(
     steps: number,
     date: Date = new Date(),
 ): Promise<void> {
-    const dateString = date.toISOString().split("T")[0];
+    const dateString = formatISODate(date);
     const timestamp = Timestamp.fromDate(date);
 
     await updateHealthMetrics(userId, dateString, {
@@ -157,7 +160,7 @@ export async function logWaterIntake(
     amount: number,
     date: Date = new Date(),
 ): Promise<void> {
-    const dateString = date.toISOString().split("T")[0];
+    const dateString = formatISODate(date);
     const timestamp = Timestamp.fromDate(date);
 
     const metricsRef = doc(firestore, "users", userId, "health_metrics", dateString);
@@ -194,7 +197,7 @@ export async function logWeight(
     weight: number,
     date: Date = new Date(),
 ): Promise<void> {
-    const dateString = date.toISOString().split("T")[0];
+    const dateString = formatISODate(date);
     const timestamp = Timestamp.fromDate(date);
 
     await updateHealthMetrics(userId, dateString, {
@@ -207,7 +210,7 @@ export async function removeWaterIntakeEntry(
     userId: string,
     entry: { amount: number; timestamp: Timestamp },
 ): Promise<void> {
-    const today = new Date().toISOString().split("T")[0];
+    const today = formatISODate(getStartOfToday());
     const metricsRef = doc(firestore, "users", userId, "health_metrics", today);
 
     const docSnap = await getDoc(metricsRef);
@@ -215,7 +218,7 @@ export async function removeWaterIntakeEntry(
 
     const data = docSnap.data() as HealthMetrics;
 
-    const newLog = (data.waterIntakeLog || []).filter(
+    const newLog = (data.waterIntakeLog ?? []).filter(
         (item) => item.timestamp.toMillis() !== entry.timestamp.toMillis(),
     );
 

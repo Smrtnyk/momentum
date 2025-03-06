@@ -17,7 +17,7 @@
             flat
         >
             <v-icon icon="mdi-history" size="64" class="mb-4" color="primary"></v-icon>
-            <div class="text-h6 mb-2">No Recent Foods</div>
+            <div class="text-h6 mb-2 text-center">No Recent Foods</div>
             <div class="text-body-2 text-medium-emphasis mb-6">
                 Foods you add to your meals will appear here for quick access
             </div>
@@ -120,10 +120,10 @@ const filteredFoods = computed(function () {
     const query = searchQuery.value.toLowerCase();
     return recentFoods.value.filter(function (food) {
         return (
-            food.name.toLowerCase().includes(query) ||
-            food.brand?.toLowerCase().includes(query) ||
-            food.source?.toLowerCase().includes(query) ||
-            food.provider?.toLowerCase().includes(query) ||
+            food.name.toLowerCase().includes(query) ??
+            food.brand?.toLowerCase().includes(query) ??
+            food.source?.toLowerCase().includes(query) ??
+            food.provider?.toLowerCase().includes(query) ??
             food.barcode?.includes(query)
         );
     });

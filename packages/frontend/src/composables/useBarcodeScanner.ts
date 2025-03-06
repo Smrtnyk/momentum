@@ -242,7 +242,9 @@ async function selectHighestResolutionCamera(): Promise<string | undefined> {
         };
 
         try {
-            // eslint-disable-next-line no-await-in-loop -- fine here
+            /* eslint-disable-next-line no-await-in-loop --
+              Sequential camera testing is required - we need to test one camera at a time,
+              check its resolution, and properly release resources before moving to the next */
             const stream = await navigator.mediaDevices.getUserMedia(tempConstraints);
             const track = stream.getVideoTracks()[0];
             const settings = track.getSettings();

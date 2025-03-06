@@ -13,18 +13,26 @@ import {
     where,
 } from "firebase/firestore";
 
+import type { Exercise } from "../types/exercise";
 import type {
-    CardioWorkout,
-    CircuitWorkout,
-    StrengthWorkout,
+    ActiveExercise,
+    ActiveWorkout,
+    CardioExerciseEntry,
+    ExerciseEntry,
+    StrengthExerciseEntry,
     Workout,
+    WorkoutBase,
     WorkoutWithId,
 } from "../types/workout";
 
+import { cardioExercises } from "../data/cardio-exercises";
+import { strengthExercises } from "../data/strength-exercises";
 import { firestore } from "../firebase";
 
-export async function addWorkout(workout: Omit<Workout, "id">): Promise<string> {
-    const userId = workout.userId;
+export async function addWorkout(
+    workout: Omit<WorkoutBase, "id">,
+    userId: string,
+): Promise<string> {
     if (!userId) {
         throw new Error("Cannot add workout: User ID is required");
     }
@@ -62,7 +70,6 @@ export async function getWorkouts(
     options: {
         limit?: number;
         orderByDate?: "asc" | "desc";
-        workoutType?: string;
     } = {},
 ): Promise<WorkoutWithId[]> {
     if (!userId) {
@@ -71,10 +78,6 @@ export async function getWorkouts(
 
     const workoutsRef = collection(firestore, "users", userId, "workouts");
     let queryRef = query(workoutsRef);
-
-    if (options.workoutType) {
-        queryRef = query(queryRef, where("type", "==", options.workoutType));
-    }
 
     if (options.orderByDate) {
         queryRef = query(queryRef, orderBy("date", options.orderByDate === "asc" ? "asc" : "desc"));
@@ -97,7 +100,6 @@ export async function getWorkoutsInDateRange(
     endDate: Date,
     options: {
         orderByDate?: "asc" | "desc";
-        workoutType?: string;
     } = {},
 ): Promise<WorkoutWithId[]> {
     if (!userId) {
@@ -115,10 +117,6 @@ export async function getWorkoutsInDateRange(
         where("date", "<=", endTimestamp),
     );
 
-    if (options.workoutType) {
-        queryRef = query(queryRef, where("type", "==", options.workoutType));
-    }
-
     if (options.orderByDate) {
         queryRef = query(queryRef, orderBy("date", options.orderByDate === "asc" ? "asc" : "desc"));
     }
@@ -130,16 +128,30 @@ export async function getWorkoutsInDateRange(
     });
 }
 
-export function isCardioWorkout(workout: Workout): workout is CardioWorkout {
-    return workout.type === "cardio";
+export function isActiveExercise(
+    exercise: ActiveExercise | ExerciseEntry,
+): exercise is ActiveExercise {
+    return "completed" in exercise;
 }
 
-export function isCircuitWorkout(workout: Workout): workout is CircuitWorkout {
-    return workout.type === "circuit";
+export function isActiveWorkout(workout: ActiveWorkout | Workout): workout is ActiveWorkout {
+    return "planId" in workout;
 }
 
-export function isStrengthWorkout(workout: Workout): workout is StrengthWorkout {
-    return workout.type === "strength";
+export function isCardioExercise(
+    exercise: ActiveExercise | Exercise | ExerciseEntry,
+): exercise is CardioExerciseEntry {
+    return cardioExercises.some((cardionExercise) => {
+        return cardionExercise.exerciseId === exercise.exerciseId;
+    });
+}
+
+export function isStrengthExercise(
+    exercise: ActiveExercise | Exercise | ExerciseEntry,
+): exercise is StrengthExerciseEntry {
+    return strengthExercises.some((strengthExercise) => {
+        return strengthExercise.exerciseId === exercise.exerciseId;
+    });
 }
 
 export async function updateWorkout(

@@ -93,13 +93,13 @@ export async function getDailyCalorieSummary(
         if (docSnap.exists() && docSnap.data().calories) {
             const calories = docSnap.data().calories;
             return {
-                byMeal: calories.byMeal || { breakfast: 0, dinner: 0, lunch: 0, snacks: 0 },
-                carbs: calories.carbs || 0,
-                fat: calories.fat || 0,
-                goal: calories.goal || defaultCalorieGoal,
-                protein: calories.protein || 0,
-                remaining: (calories.goal || defaultCalorieGoal) - (calories.total || 0),
-                total: calories.total || 0,
+                byMeal: calories.byMeal ?? { breakfast: 0, dinner: 0, lunch: 0, snack: 0 },
+                carbs: calories.carbs ?? 0,
+                fat: calories.fat ?? 0,
+                goal: calories.goal ?? defaultCalorieGoal,
+                protein: calories.protein ?? 0,
+                remaining: (calories.goal ?? defaultCalorieGoal) - (calories.total ?? 0),
+                total: calories.total ?? 0,
             };
         }
 

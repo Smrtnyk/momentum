@@ -71,11 +71,11 @@ export class NutritionixApi extends AbstractFoodApi {
             const searchData = await searchResponse.json();
 
             const allItems = [
-                ...(searchData.branded || []).map((item: any) => ({
+                ...(searchData.branded ?? []).map((item: any) => ({
                     ...item,
                     foodType: "product",
                 })),
-                ...(searchData.common || []).map((item: any) => ({
+                ...(searchData.common ?? []).map((item: any) => ({
                     ...item,
                     foodType: "ingredient",
                 })),
@@ -88,18 +88,18 @@ export class NutritionixApi extends AbstractFoodApi {
                 return {
                     barcode: null,
                     brand: item.brand_name ?? null,
-                    calories: item.nf_calories || 0,
+                    calories: item.nf_calories ?? 0,
                     // Not available in search results -- FIXME recheck
                     carbs: 0,
                     // Not available in search results
                     fat: 0,
                     foodType: item.foodType,
-                    id: `nx-${item.nix_item_id || item.food_name}`,
-                    imageUrl: item.photo?.thumb || null,
+                    id: `nx-${item.nix_item_id ?? item.food_name}`,
+                    imageUrl: item.photo?.thumb ?? null,
                     name: item.food_name,
                     // Not available in search results
                     protein: 0,
-                    servingSize: item.serving_qty || 100,
+                    servingSize: item.serving_qty ?? 100,
                     // Default to grams
                     servingUnit: "g",
                     source: "Nutritionix",
@@ -149,7 +149,7 @@ export class NutritionixApi extends AbstractFoodApi {
             }
 
             const data = await response.json();
-            const foods: FoodItem[] = (data.foods || []).map((food: NutritionixFood) =>
+            const foods: FoodItem[] = (data.foods ?? []).map((food: NutritionixFood) =>
                 this.mapNutritionixFoodToFoodItem(food),
             );
 
@@ -178,16 +178,16 @@ export class NutritionixApi extends AbstractFoodApi {
             altMeasures: food.alt_measures ?? null,
             barcode: null,
             brand: food.brand_name ?? null,
-            calories: food.nf_calories || 0,
-            carbs: food.nf_total_carbohydrate || 0,
-            fat: food.nf_total_fat || 0,
+            calories: food.nf_calories ?? 0,
+            carbs: food.nf_total_carbohydrate ?? 0,
+            fat: food.nf_total_fat ?? 0,
             foodType: "ingredient",
             fullNutrients: food.full_nutrients ?? null,
-            id: `nx-${food.ndb_no || food.food_name}`,
-            imageUrl: food.photo?.thumb || null,
+            id: `nx-${food.ndb_no ?? food.food_name}`,
+            imageUrl: food.photo?.thumb ?? null,
             name: food.food_name,
-            protein: food.nf_protein || 0,
-            servingSize: food.serving_weight_grams || 100,
+            protein: food.nf_protein ?? 0,
+            servingSize: food.serving_weight_grams ?? 100,
             // Standardized to grams
             servingUnit: "g",
             source: "Nutritionix",

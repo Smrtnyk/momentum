@@ -9,6 +9,8 @@ import { computed } from "vue";
 
 import type { WorkoutWithId } from "../../types/workout";
 
+import { ONE_DAY } from "../../helpers/date-utils";
+
 const { workout } = defineProps<{ workout: WorkoutWithId }>();
 
 const formattedDate = computed(() => {
@@ -25,7 +27,7 @@ const formattedDate = computed(() => {
         return `Yesterday at ${formatTime(workoutDate)}`;
     }
 
-    const daysDiff = Math.floor((today.getTime() - workoutDate.getTime()) / (1000 * 60 * 60 * 24));
+    const daysDiff = Math.floor((today.getTime() - workoutDate.getTime()) / ONE_DAY);
     if (daysDiff < 7) {
         return `${workoutDate.toLocaleDateString(undefined, { weekday: "long" })} at ${formatTime(workoutDate)}`;
     }

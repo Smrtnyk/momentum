@@ -64,6 +64,18 @@ export default defineConfig({
                         },
                         urlPattern: /^https:\/\/fonts\.gstatic\.com\/.*/i,
                     },
+
+                    {
+                        handler: "NetworkFirst",
+                        options: {
+                            cacheName: "js-module-cache",
+                            expiration: {
+                                maxAgeSeconds: 60 * 60 * 24,
+                                maxEntries: 100,
+                            },
+                        },
+                        urlPattern: /\.js$/i,
+                    },
                 ],
                 // Skip waiting by default - automatically activate the new SW
                 skipWaiting: true,

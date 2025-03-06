@@ -200,7 +200,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, ref, useTemplateRef, watch } from "vue";
 
 import type { FoodItem } from "../../types/food";
 
@@ -222,7 +222,7 @@ interface Emits {
 
 const emit = defineEmits<Emits>();
 
-const form = ref<any>(null);
+const form = useTemplateRef("form");
 const servingUnits = ["g", "ml", "oz", "cup", "tbsp", "tsp", "piece", "serving"];
 const globalStore = useGlobalStore();
 const { isScanning, scanBarcodeOnly } = useBarcodeScanner();
@@ -232,16 +232,16 @@ const carbsColor = "#2196F3";
 const fatColor = "#FFC107";
 
 const foodData = ref<Omit<FoodItem, "id">>({
-    barcode: props.initialFood?.barcode || null,
-    brand: props.initialFood?.brand || "",
-    calories: props.initialFood?.calories || 0,
-    carbs: props.initialFood?.carbs || 0,
-    fat: props.initialFood?.fat || 0,
+    barcode: props.initialFood?.barcode ?? null,
+    brand: props.initialFood?.brand ?? "",
+    calories: props.initialFood?.calories ?? 0,
+    carbs: props.initialFood?.carbs ?? 0,
+    fat: props.initialFood?.fat ?? 0,
     imageUrl: props.initialFood?.imageUrl ?? null,
-    name: props.initialFood?.name || "",
-    protein: props.initialFood?.protein || 0,
-    servingSize: props.initialFood?.servingSize || 100,
-    servingUnit: props.initialFood?.servingUnit || "g",
+    name: props.initialFood?.name ?? "",
+    protein: props.initialFood?.protein ?? 0,
+    servingSize: props.initialFood?.servingSize ?? 100,
+    servingUnit: props.initialFood?.servingUnit ?? "g",
     source: "Custom Food",
 });
 
@@ -250,9 +250,9 @@ const displayCalories = computed(function (): number {
 });
 
 const macroRatios = computed(function (): { carbs: number; fat: number; protein: number } {
-    const protein = foodData.value.protein || 0;
-    const carbs = foodData.value.carbs || 0;
-    const fat = foodData.value.fat || 0;
+    const protein = foodData.value.protein ?? 0;
+    const carbs = foodData.value.carbs ?? 0;
+    const fat = foodData.value.fat ?? 0;
 
     const totalGrams = protein + carbs + fat;
 
@@ -281,9 +281,9 @@ function handleBarcodeScanning(): void {
 
 function updateCalories(): void {
     // Calculate calories using the standard 4-4-9 formula
-    const proteinCalories = (foodData.value.protein || 0) * 4;
-    const carbCalories = (foodData.value.carbs || 0) * 4;
-    const fatCalories = (foodData.value.fat || 0) * 9;
+    const proteinCalories = (foodData.value.protein ?? 0) * 4;
+    const carbCalories = (foodData.value.carbs ?? 0) * 4;
+    const fatCalories = (foodData.value.fat ?? 0) * 9;
 
     foodData.value.calories = Math.round(proteinCalories + carbCalories + fatCalories);
 }

@@ -88,7 +88,7 @@ const editedProfile = ref<UserProfile>({
 if (props.initialProfile) {
     editedProfile.value = {
         ...props.initialProfile,
-        defaultCalorieGoal: props.initialProfile.defaultCalorieGoal || 2000,
+        defaultCalorieGoal: props.initialProfile.defaultCalorieGoal ?? 2000,
     };
 }
 

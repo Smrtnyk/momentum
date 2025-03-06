@@ -59,7 +59,6 @@ export class AppLogger {
         } else if (typeof err === "string") {
             message = err;
         } else {
-            // Unknown error type
             try {
                 message =
                     typeof err === "object" && err !== null ? JSON.stringify(err) : String(err);

@@ -28,7 +28,7 @@ watch(error, function (err) {
 });
 
 function goToWorkoutLogger(): void {
-    router.push({ name: "WorkoutLogger" });
+    router.push({ name: "WorkoutLogs" });
 }
 </script>
 

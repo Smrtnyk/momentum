@@ -1,9 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import oatMilkData from "../../../testing-data/products/oat-milk.json";
 import { OpenFoodFactsApi } from "./open-food-facts";
 
 vi.mock("../../src/logger/app-logger", () => ({
     logger: {
+        debug: vi.fn(),
         error: vi.fn(),
         warn: vi.fn(),
     },
@@ -17,6 +19,7 @@ describe("OpenFoodFactsApi", () => {
 
     beforeEach(() => {
         api = new OpenFoodFactsApi();
+        mockFetch.mockClear();
     });
 
     describe("getFoodByBarcode", () => {
@@ -102,11 +105,35 @@ describe("OpenFoodFactsApi", () => {
                 ok: true,
             });
 
-            const api3 = new OpenFoodFactsApi();
-            const result = await api3.getFoodByBarcode("4023600014181");
+            const result = await api.getFoodByBarcode("4023600014181");
             // Should convert kJ to kcal properly (339 kJ ≈ 81 kcal)
             expect(result).not.toBeNull();
             expect(result?.calories).toBe(81);
+        });
+
+        it("should correctly handle oat milk product with serving size of 250ml", async () => {
+            mockFetch.mockResolvedValueOnce({
+                json: () => oatMilkData,
+                ok: true,
+            });
+
+            const result = await api.getFoodByBarcode("4099200240268");
+
+            expect(result).not.toBeNull();
+            expect(result?.name).toBe("Hafer-Drink Natur");
+            expect(result?.brand).toBe("Zurück zum Ursprung");
+
+            expect(result?.servingSize).toBe(250);
+            expect(result?.servingUnit).toBe("ml");
+
+            // For 250ml (original serving size from product data)
+            // The nutrition values should be properly scaled from 100ml values
+            // Per 100ml: 41.6 kcal, 0.8g protein, 7.6g carbs, 0.8g fat
+            // Expected for 250ml: 104 kcal, 2g protein, 19g carbs, 2g fat
+            expect(result?.calories).toBe(104);
+            expect(result?.protein).toBe(2);
+            expect(result?.carbs).toBe(19);
+            expect(result?.fat).toBe(2);
         });
     });
 });

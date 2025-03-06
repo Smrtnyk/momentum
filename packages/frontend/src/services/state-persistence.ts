@@ -1,5 +1,6 @@
 import type { LocationQueryValue } from "vue-router";
 
+import { ONE_HOUR } from "../helpers/date-utils";
 import { logger } from "../logger/app-logger";
 
 type PersistableState = {
@@ -38,10 +39,9 @@ export function loadAppState(): null | PersistableState {
             return null;
         }
 
-        // Check if the state is too old (more than 1 hour)
         const timestamp = new Date(state.timestamp);
         const now = new Date();
-        if (now.getTime() - timestamp.getTime() > 60 * 60 * 1000) {
+        if (now.getTime() - timestamp.getTime() > ONE_HOUR) {
             logger.warn("Stored state is too old, discarding");
             localStorage.removeItem(STATE_STORAGE_KEY);
             return null;

@@ -112,6 +112,7 @@ export class CombinedFoodApi extends AbstractFoodApi {
     private enhanceAndSortResults(foods: FoodItem[], query: string): FoodItem[] {
         const uniqueFoods = this.removeDuplicates(foods);
         const lowerQuery = query.toLowerCase();
+        const queryWordCount = lowerQuery.split(/\s+/).length;
 
         return uniqueFoods
             .map(function (food) {
@@ -130,6 +131,12 @@ export class CombinedFoodApi extends AbstractFoodApi {
                 if (brandMatch) relevance += 5;
                 if (hasCompleteNutrition) relevance += 3;
                 if (hasImage) relevance += 2;
+                // Penalize for extra words in the name.
+                const nameWordCount = lowerName.split(/\s+/).length;
+                const wordCountDiff = nameWordCount - queryWordCount;
+                if (wordCountDiff > 0) {
+                    relevance -= wordCountDiff * 5;
+                }
 
                 return {
                     ...food,

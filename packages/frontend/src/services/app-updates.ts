@@ -2,6 +2,7 @@ import { useRegisterSW } from "virtual:pwa-register/vue";
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
+import { ONE_HOUR } from "../helpers/date-utils";
 import { logger } from "../logger/app-logger";
 import { saveAppState } from "./state-persistence";
 
@@ -15,12 +16,9 @@ export function useAppUpdates() {
 
             // a periodic check for updates
             if (registration) {
-                setInterval(
-                    () => {
-                        registration.update().catch(logger.error.bind(logger));
-                    },
-                    60 * 60 * 1000,
-                );
+                setInterval(() => {
+                    registration.update().catch(logger.error.bind(logger));
+                }, ONE_HOUR);
             }
         },
         onRegisterError(error) {
@@ -65,10 +63,8 @@ async function checkForUpdates(): Promise<void> {
 
     try {
         const registrations = await navigator.serviceWorker.getRegistrations();
-        for (const registration of registrations) {
-            // eslint-disable-next-line no-await-in-loop -- FIXME
-            await registration.update();
-        }
+        const updatePromises = registrations.map((registration) => registration.update());
+        await Promise.all(updatePromises);
     } catch (err) {
         logger.error("Failed to check for updates:", "AppUpdates", err);
     }

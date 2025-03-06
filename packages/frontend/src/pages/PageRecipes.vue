@@ -291,8 +291,8 @@ const filteredRecipes = computed(function (): Recipe[] {
         const query = searchQuery.value.toLowerCase();
         result = result.filter(
             (recipe) =>
-                recipe.name.toLowerCase().includes(query) ||
-                recipe.description.toLowerCase().includes(query) ||
+                recipe.name.toLowerCase().includes(query) ??
+                recipe.description.toLowerCase().includes(query) ??
                 recipe.ingredients.some((ingredient) =>
                     ingredient.name.toLowerCase().includes(query),
                 ),

@@ -11,9 +11,9 @@
                 </div>
                 <div
                     class="text-uppercase text-caption font-weight-bold px-2 py-1 rounded"
-                    :class="getCategoryClass(plan.category)"
+                    :class="getCategoryClass(plan.type)"
                 >
-                    {{ plan.category }}
+                    {{ plan.type }}
                 </div>
             </div>
 
@@ -85,8 +85,6 @@
         <!-- Workout Days -->
         <h3 class="text-h6 font-weight-bold mb-3">Workout Schedule</h3>
 
-        <ActiveWorkoutPanel v-if="isWorkoutActive" />
-
         <v-expansion-panels class="mb-6">
             <v-expansion-panel
                 v-for="day in plan.workoutDays"
@@ -100,14 +98,14 @@
                         </div>
                         <v-spacer></v-spacer>
                         <div class="text-caption text-grey-lighten-1">
-                            {{ day.exercises.length }} exercises
+                            {{ day.exerciseEntries.length }} exercises
                         </div>
                     </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
                     <v-list class="pa-0">
                         <v-list-item
-                            v-for="(exercise, index) in day.exercises"
+                            v-for="(exercise, index) in day.exerciseEntries"
                             :key="index"
                             class="pl-0 rounded-lg"
                         >
@@ -125,13 +123,15 @@
                                         {{ getExerciseName(exercise.exerciseId) }}
                                     </div>
                                     <div class="text-caption text-grey-lighten-1">
-                                        <span v-if="exercise.sets">{{ exercise.sets }} sets</span>
+                                        <span v-if="exercise.setsCount"
+                                            >{{ exercise.setsCount }} sets</span
+                                        >
                                         <span v-if="exercise.reps">
                                             • {{ exercise.reps }} reps</span
                                         >
-                                        <span v-if="exercise.duration">
+                                        <span v-if="exercise.durationSeconds">
                                             •
-                                            {{ formatDuration(exercise.duration) }}</span
+                                            {{ formatDuration(exercise.durationSeconds) }}</span
                                         >
                                         <span v-if="exercise.restTime">
                                             •
@@ -140,21 +140,21 @@
                                         >
                                     </div>
                                     <div
-                                        v-if="exercise.notes"
+                                        v-if="exercise.exerciseNotes"
                                         class="text-caption text-grey-lighten-2 mt-1 font-italic"
                                     >
-                                        {{ exercise.notes }}
+                                        {{ exercise.exerciseNotes }}
                                     </div>
                                 </div>
                             </div>
                         </v-list-item>
                     </v-list>
                     <div
-                        v-if="day.notes"
+                        v-if="day.overallNotes"
                         class="mt-2 text-caption text-grey-lighten-2 font-italic pa-2 rounded"
                     >
                         <v-icon size="16" class="mr-1">mdi-information-outline</v-icon>
-                        {{ day.notes }}
+                        {{ day.overallNotes }}
                     </div>
 
                     <div class="d-flex justify-center mt-4">
@@ -192,13 +192,9 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import type { DifficultyLevel, TrainingPlan } from "../../types/workout-plans";
 
-import type { DifficultyLevel, PlanCategory, TrainingPlan } from "../../types/workout-plans";
-
-import { getExerciseById } from "../../data/strength-exercises";
-import { useActiveWorkoutStore } from "../../stores/active-workout";
-import ActiveWorkoutPanel from "../ActiveWorkoutPanel.vue";
+import { getExerciseById } from "../../helpers/exercise-utils";
 import StartWorkoutButton from "./StartWorkoutButton.vue";
 
 const props = defineProps<{
@@ -210,9 +206,6 @@ const props = defineProps<{
 
 const emit = defineEmits<(e: "close") => void>();
 
-const activeWorkoutStore = useActiveWorkoutStore();
-const isWorkoutActive = computed(() => activeWorkoutStore.isWorkoutActive);
-
 function formatDuration(seconds: number): string {
     if (seconds < 60) {
         return `${seconds}s`;
@@ -222,11 +215,11 @@ function formatDuration(seconds: number): string {
     return remainingSeconds > 0 ? `${minutes}m ${remainingSeconds}s` : `${minutes}m`;
 }
 
-function getCategoryClass(category: PlanCategory): string {
+function getCategoryClass(category: TrainingPlan["type"]): string {
     switch (category) {
         case "cardio":
             return "bg-teal-lighten-5 text-teal-darken-3";
-        case "hybrid":
+        case "circuit":
             return "bg-amber-lighten-5 text-amber-darken-3";
         case "strength":
             return "bg-red-lighten-5 text-red-darken-3";
@@ -274,7 +267,7 @@ function getLevelClass(level: DifficultyLevel): string {
 
 function getTotalExercises(plan: TrainingPlan): number {
     return plan.workoutDays.reduce(function (total, day) {
-        return total + day.exercises.length;
+        return total + day.exerciseEntries.length;
     }, 0);
 }
 

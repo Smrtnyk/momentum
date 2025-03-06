@@ -29,6 +29,18 @@
             >
                 Recent Food
             </v-btn>
+
+            <v-btn
+                to="/recipes"
+                prepend-icon="mdi-silverware-fork-knife"
+                variant="text"
+                color="primary"
+                size="small"
+                class="text-none"
+                density="comfortable"
+            >
+                Recipes
+            </v-btn>
         </div>
 
         <!-- Date Selector -->
@@ -133,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { useAsyncState, useDateFormat, useStorage, whenever } from "@vueuse/core";
+import { useAsyncState, useDateFormat, whenever } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useDate } from "vuetify";
 
@@ -146,6 +158,7 @@ import FoodSearch from "../components/calories/FoodSearch.vue";
 import ManualMacrosDialog from "../components/calories/ManualMacrosDialog.vue";
 import MealCard from "../components/calories/MealCard.vue";
 import { globalDialog } from "../composables/useDialog";
+import { formatISODate } from "../helpers/date-utils";
 import { logger } from "../logger/app-logger";
 import {
     addMeal,
@@ -163,7 +176,7 @@ const globalStore = useGlobalStore();
 const dateAdapter = useDate();
 
 const today = new Date();
-const selectedDate = useStorage("calories-selected-date", today.toISOString().split("T")[0]);
+const selectedDate = ref(today.toISOString().split("T")[0]);
 const showDatePicker = ref(false);
 
 const mealTypes = ["breakfast", "lunch", "dinner", "snack"] as const;
@@ -261,12 +274,11 @@ function changeDate(dayOffset: number): void {
     const date = new Date(selectedDate.value);
     date.setDate(date.getDate() + dayOffset);
 
-    // Don't allow future dates
     if (date > today) {
         return;
     }
 
-    selectedDate.value = date.toISOString().split("T")[0];
+    selectedDate.value = formatISODate(date);
 }
 
 async function confirmDeleteMeal(mealId: string): Promise<void> {

@@ -64,26 +64,7 @@
 
     <!-- Loaded State -->
     <div v-else-if="workout">
-        <ShowStrengthWorkout
-            v-if="isStrengthWorkout(workout)"
-            :workout="workout"
-            @delete="handleDeleteWorkout"
-            @edit="handleEditWorkout"
-        />
-
-        <ShowCardioWorkout
-            v-else-if="isCardioWorkout(workout)"
-            :workout="workout"
-            @delete="handleDeleteWorkout"
-            @edit="handleEditWorkout"
-        />
-
-        <ShowCircuitWorkout
-            v-else-if="isCircuitWorkout(workout)"
-            :workout="workout"
-            @delete="handleDeleteWorkout"
-            @edit="handleEditWorkout"
-        />
+        <ShowWorkout :workout="workout" @delete="handleDeleteWorkout" @edit="handleEditWorkout" />
     </div>
 
     <!-- Not Found State -->
@@ -102,17 +83,9 @@ import { useRoute, useRouter } from "vue-router";
 
 import type { WorkoutWithId } from "../types/workout";
 
-import ShowCardioWorkout from "../components/workout/ShowCardioWorkout.vue";
-import ShowCircuitWorkout from "../components/workout/ShowCircuitWorkout.vue";
-import ShowStrengthWorkout from "../components/workout/ShowStrengthWorkout.vue";
+import ShowWorkout from "../components/workout/ShowWorkout.vue";
 import { globalDialog } from "../composables/useDialog";
-import {
-    deleteWorkout as deleteWorkoutService,
-    getWorkoutById,
-    isCardioWorkout,
-    isCircuitWorkout,
-    isStrengthWorkout,
-} from "../services/workout";
+import { deleteWorkout as deleteWorkoutService, getWorkoutById } from "../services/workout";
 import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
 
@@ -162,6 +135,6 @@ function handleEditWorkout(): void {
     if (!workout.value) {
         return;
     }
-    router.push({ name: "WorkoutEdit", params: { id: workout.value.id } });
+    router.push({ name: "CustomWorkout", params: { id: workout.value.id } });
 }
 </script>

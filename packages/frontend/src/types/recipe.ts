@@ -1,7 +1,13 @@
 export interface Ingredient {
     amount: string;
     name: string;
-    unit?: string | undefined;
+    unit: string;
+}
+
+export interface Macros {
+    carbs: number;
+    fat: number;
+    protein: number;
 }
 
 export interface Recipe {
@@ -20,12 +26,6 @@ export interface Recipe {
     prepTime: number;
     servings: number;
     tags: RecipeTag[];
-}
-
-interface Macros {
-    carbs: number;
-    fat: number;
-    protein: number;
 }
 
 type RecipeCategory = "bulking" | "cutting" | "maintenance";

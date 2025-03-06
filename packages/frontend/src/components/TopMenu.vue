@@ -18,9 +18,10 @@
         <v-btn to="/calories" icon>
             <v-icon>mdi-nutrition</v-icon>
         </v-btn>
-        <v-btn to="/recipes" icon>
-            <v-icon>mdi-silverware-fork-knife</v-icon>
+        <v-btn to="/analytics" icon>
+            <v-icon>mdi-chart-bar</v-icon>
         </v-btn>
+
         <v-btn to="/profile" icon>
             <v-icon>mdi-account</v-icon>
         </v-btn>

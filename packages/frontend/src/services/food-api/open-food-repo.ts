@@ -105,8 +105,8 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
 
     private mapProductToFoodItem(product: OpenFoodRepoProduct, barcode?: string): FoodItem {
         const name =
-            product.display_name_translations?.en ||
-            product.display_name_translations?.de ||
+            product.display_name_translations?.en ??
+            product.display_name_translations?.de ??
             product.name;
 
         const isLiquid = this.isLiquidProduct(
@@ -116,18 +116,18 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
         );
 
         function getNutrientValue(nameVal: string): number {
-            return product.nutrients?.find((n) => n.name === nameVal)?.per_hundred_grams || 0;
+            return product.nutrients?.find((n) => n.name === nameVal)?.per_hundred_grams ?? 0;
         }
 
         return {
             barcode: barcode ?? null,
-            brand: product.brands?.[0]?.name || "",
+            brand: product.brands?.[0]?.name ?? "",
             calories: getNutrientValue("energy"),
             carbs: getNutrientValue("carbohydrates"),
             fat: getNutrientValue("fat"),
             foodType: "product",
             id: `ofr-${product.id}`,
-            imageUrl: product.images?.[0]?.medium || null,
+            imageUrl: product.images?.[0]?.medium ?? null,
             name,
             protein: getNutrientValue("proteins"),
             servingSize: 100,

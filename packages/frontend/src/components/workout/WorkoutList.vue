@@ -11,15 +11,28 @@
                         </p>
                     </div>
                     <v-btn
+                        v-if="!isWorkoutActive"
                         color="white"
                         variant="elevated"
                         prepend-icon="mdi-plus"
                         class="mt-4 mt-md-0 px-6"
                         rounded="pill"
                         size="large"
-                        @click="goToWorkoutLogger"
+                        @click="showWorkoutStarter"
                     >
                         New Workout
+                    </v-btn>
+                    <v-btn
+                        color="white"
+                        variant="elevated"
+                        prepend-icon="mdi-plus"
+                        class="mt-4 mt-md-0 px-6"
+                        rounded="pill"
+                        size="large"
+                        @click="goToCustomWorkout"
+                        v-else
+                    >
+                        Continue workout
                     </v-btn>
                 </div>
             </div>
@@ -45,36 +58,6 @@
                     Calendar
                 </v-btn>
             </v-btn-toggle>
-
-            <!-- Workout Type Filter -->
-            <v-chip-group
-                v-model="selectedFilter"
-                class="ml-0 ml-sm-4"
-                selected-class="bg-primary text-white"
-            >
-                <v-chip value="all" variant="outlined" size="small" label> All </v-chip>
-                <v-chip
-                    value="strength"
-                    variant="outlined"
-                    size="small"
-                    label
-                    prepend-icon="mdi-weight-lifter"
-                >
-                    Strength
-                </v-chip>
-                <v-chip value="cardio" variant="outlined" size="small" label prepend-icon="mdi-run">
-                    Cardio
-                </v-chip>
-                <v-chip
-                    value="circuit"
-                    variant="outlined"
-                    size="small"
-                    label
-                    prepend-icon="mdi-timer"
-                >
-                    Circuit
-                </v-chip>
-            </v-chip-group>
 
             <v-spacer></v-spacer>
 
@@ -123,7 +106,6 @@
                 <div v-if="view === 'calendar'" class="calendar-wrapper">
                     <v-calendar
                         :events="calendarEvents"
-                        @click:event="onEventClick"
                         view-mode="month"
                         :event-ripple="false"
                         :event-more="true"
@@ -145,20 +127,24 @@ import { useRouter } from "vue-router";
 
 import type { WorkoutWithId } from "../../types/workout";
 
-import { isCardioWorkout, isCircuitWorkout, isStrengthWorkout } from "../../services/workout";
+import { globalDialog } from "../../composables/useDialog";
+import { useActiveWorkoutStore } from "../../stores/active-workout";
+import CustomWorkoutStarter from "./CustomWorkoutStarter.vue";
 import WorkoutListItem from "./WorkoutListItem.vue";
 
 const { workouts } = defineProps<{ workouts: WorkoutWithId[] }>();
 const router = useRouter();
+const activeWorkoutStore = useActiveWorkoutStore();
 const view = useStorage("workout-view-preference", "list");
 
-const selectedFilter = ref("all");
 const selectedSort = ref(0);
 const sortOptions = [
     { label: "Newest first", value: "dateDesc" },
     { label: "Oldest first", value: "dateAsc" },
     { label: "Alphabetical", value: "name" },
 ];
+
+const isWorkoutActive = computed(() => activeWorkoutStore.isWorkoutActive);
 
 const lastWorkoutMessage = computed(() => {
     if (workouts.length === 0) {
@@ -191,15 +177,7 @@ const lastWorkoutMessage = computed(() => {
 });
 
 const filteredWorkouts = computed(() => {
-    let result = [...workouts];
-
-    if (selectedFilter.value === "strength") {
-        result = result.filter(isStrengthWorkout);
-    } else if (selectedFilter.value === "cardio") {
-        result = result.filter(isCardioWorkout);
-    } else if (selectedFilter.value === "circuit") {
-        result = result.filter(isCircuitWorkout);
-    }
+    const result = [...workouts];
 
     const sortOption = sortOptions[selectedSort.value].value;
     if (sortOption === "dateDesc") {
@@ -213,16 +191,11 @@ const filteredWorkouts = computed(() => {
     return result;
 });
 
-function getEventColor(event: any): string {
+function getEventColor(event: WorkoutWithId): string {
     const workout = workouts.find(({ id }) => id === event.id);
     if (!workout) return "grey";
 
-    if (isStrengthWorkout(workout)) {
-        return "indigo";
-    } else if (isCircuitWorkout(workout)) {
-        return "amber-darken-2";
-    }
-    return "teal";
+    return "amber-darken-2";
 }
 
 function viewWorkout(workout: WorkoutWithId): void {
@@ -232,19 +205,8 @@ function viewWorkout(workout: WorkoutWithId): void {
 const calendarEvents = computed(() => {
     return workouts.map((workout) => {
         const date = workout.date.toDate();
-        let category = "other";
-        let color = "grey";
-
-        if (isStrengthWorkout(workout)) {
-            category = "strength";
-            color = "indigo";
-        } else if (isCircuitWorkout(workout)) {
-            category = "circuit";
-            color = "amber-darken-2";
-        } else if (isCardioWorkout(workout)) {
-            category = "cardio";
-            color = "teal";
-        }
+        const category = "circuit";
+        const color = "amber-darken-2";
 
         return {
             category,
@@ -259,15 +221,16 @@ const calendarEvents = computed(() => {
     });
 });
 
-function goToWorkoutLogger(): void {
-    router.push({ name: "WorkoutLogger" });
+function goToCustomWorkout(): void {
+    router.push({ name: "CustomWorkout" });
 }
 
-function onEventClick({ event }: { event: any }): void {
-    const workout = workouts.find(({ id }) => id === event.id);
-    if (workout) {
-        viewWorkout(workout);
-    }
+function showWorkoutStarter(): void {
+    globalDialog.openDialog(
+        CustomWorkoutStarter,
+        {},
+        { fullscreen: false, title: "Start a Custom Workout" },
+    );
 }
 </script>
 

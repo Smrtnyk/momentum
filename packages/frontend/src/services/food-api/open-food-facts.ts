@@ -85,73 +85,99 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
         }
     }
 
-    // eslint-disable-next-line complexity -- FIXME
-    private mapProductToFoodItem(product: OpenFoodFactsProduct): FoodItem {
-        const isLiquid = this.isLiquidProduct(product.product_name);
+    private extractCalories(nutriments: any): number {
+        if (!nutriments) return 0;
 
-        let servingSize = 100;
-        let servingUnit = isLiquid ? "ml" : "g";
+        // Try all possible field names for calories
+        const caloriesValue =
+            nutriments["energy-kcal_100g"] ??
+            nutriments["energy_kcal_100g"] ??
+            nutriments["energy-kcal"] ??
+            nutriments["energy_kcal"] ??
+            // If only energy in kJ is available, convert to kcal (divide by 4.184)
+            (nutriments["energy_100g"] ? Math.round(nutriments["energy_100g"] / 4.184) : 0) ??
+            (nutriments["energy"] ? Math.round(nutriments["energy"] / 4.184) : 0) ??
+            0;
 
-        if (product.serving_size) {
-            const match = /(\d+(\.\d+)?)\s*([A-Za-z]+)/.exec(product.serving_size);
-            if (match) {
-                servingSize = Number.parseFloat(match[1]);
-                servingUnit = match[3];
+        return !Number.isNaN(caloriesValue) && caloriesValue >= 0 ? caloriesValue : 0;
+    }
+
+    private extractNutrient(nutriments: any, primaryKey: string, alternateKeys: string[]): number {
+        if (!nutriments) return 0;
+
+        if (nutriments[primaryKey] !== undefined) {
+            return nutriments[primaryKey];
+        }
+
+        for (const key of alternateKeys) {
+            if (nutriments[key] !== undefined) {
+                return nutriments[key];
             }
         }
 
-        let calories = 0;
-        if (product.nutriments) {
-            // Try all possible field names for calories
-            calories =
-                product.nutriments["energy-kcal_100g"] ??
-                product.nutriments["energy_kcal_100g"] ??
-                product.nutriments["energy-kcal"] ??
-                product.nutriments["energy_kcal"] ??
-                // If only energy in kJ is available, convert to kcal (divide by 4.184)
-                (product.nutriments["energy_100g"]
-                    ? Math.round(product.nutriments["energy_100g"] / 4.184)
-                    : 0) ??
-                (product.nutriments["energy"]
-                    ? Math.round(product.nutriments["energy"] / 4.184)
-                    : 0) ??
-                0;
+        return 0;
+    }
 
-            calories = !Number.isNaN(calories) && calories >= 0 ? calories : 0;
-        }
+    private mapProductToFoodItem(product: OpenFoodFactsProduct): FoodItem {
+        const isLiquid = this.isLiquidProduct(product.product_name);
+        const { servingSize, servingUnit } = this.parseServingSize(product.serving_size, isLiquid);
 
-        const protein =
-            product.nutriments?.proteins_100g ??
-            product.nutriments?.protein_100g ??
-            product.nutriments?.proteins ??
-            0;
+        const caloriesPer100 = this.extractCalories(product.nutriments);
+        const proteinPer100 = this.extractNutrient(product.nutriments, "proteins_100g", [
+            "protein_100g",
+            "proteins",
+        ]);
+        const carbsPer100 = this.extractNutrient(product.nutriments, "carbohydrates_100g", [
+            "carbohydrate_100g",
+            "carbohydrates",
+        ]);
+        const fatPer100 = this.extractNutrient(product.nutriments, "fat_100g", [
+            "fats_100g",
+            "fat",
+        ]);
 
-        const carbs =
-            product.nutriments?.carbohydrates_100g ??
-            product.nutriments?.carbohydrate_100g ??
-            product.nutriments?.carbohydrates ??
-            0;
-
-        const fat =
-            product.nutriments?.fat_100g ??
-            product.nutriments?.fats_100g ??
-            product.nutriments?.fat ??
-            0;
+        // Scale to match serving size
+        const scaleFactor = servingSize / 100;
 
         return {
             barcode: product.code,
             brand: product.brands ?? null,
-            calories,
-            carbs,
-            fat,
+            calories: Math.round(caloriesPer100 * scaleFactor),
+            carbs: carbsPer100 * scaleFactor,
+            fat: fatPer100 * scaleFactor,
             foodType: "product",
             id: product.code,
             imageUrl: product.image_url ?? null,
-            name: product.product_name || "Unknown Product",
-            protein,
+            name: product.product_name ?? "Unknown Product",
+            protein: proteinPer100 * scaleFactor,
             servingSize,
             servingUnit,
             source: "OpenFoodFacts",
         };
+    }
+
+    private parseServingSize(
+        servingSizeStr: string | undefined,
+        isLiquid: boolean,
+    ): {
+        servingSize: number;
+        servingUnit: string;
+    } {
+        const defaultSize = 100;
+        const defaultUnit = isLiquid ? "ml" : "g";
+
+        if (!servingSizeStr) {
+            return { servingSize: defaultSize, servingUnit: defaultUnit };
+        }
+
+        const match = /(\d+(\.\d+)?)\s*([A-Za-z]+)/.exec(servingSizeStr);
+        if (match) {
+            return {
+                servingSize: Number.parseFloat(match[1]),
+                servingUnit: match[3],
+            };
+        }
+
+        return { servingSize: defaultSize, servingUnit: defaultUnit };
     }
 }

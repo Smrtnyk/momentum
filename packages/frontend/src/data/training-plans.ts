@@ -3,7 +3,6 @@ import type { TrainingPlan } from "../types/workout-plans";
 const homeWorkoutPlans: readonly TrainingPlan[] = [
     {
         author: "FitApp Science Team",
-        category: "strength",
         description:
             "A full-body strength program designed for home training with minimal equipment requirements.",
         durationWeeks: 8,
@@ -21,114 +20,115 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
         name: "Home Strength Essentials",
         scienceReference:
             "Based on bodyweight and resistance training principles for strength development",
+        type: "strength",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "push-ups",
-                        notes: "Modify on knees if needed",
+                        exerciseNotes: "Modify on knees if needed",
                         reps: 10,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "bodyweight-squats",
                         reps: 15,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "resistance-band-rows",
-                        notes: "Anchor band to door or sturdy object",
+                        exerciseNotes: "Anchor band to door or sturdy object",
                         reps: 12,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "glute-bridges",
                         reps: 15,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "plank",
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "home-full-body-a",
                 name: "Home Full Body A",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "lunges",
-                        notes: "Alternating legs",
+                        exerciseNotes: "Alternating legs",
                         reps: 10,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "resistance-band-chest-press",
                         reps: 12,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "superman",
                         reps: 12,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "resistance-band-bicep-curls",
                         reps: 15,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "resistance-band-tricep-extensions",
                         reps: 15,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "home-full-body-b",
                 name: "Home Full Body B",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "chair-dips",
                         reps: 10,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "bodyweight-bulgarian-split-squats",
-                        notes: "Each leg",
+                        exerciseNotes: "Each leg",
                         reps: 8,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "resistance-band-lateral-raises",
                         reps: 12,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "mountain-climbers",
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "russian-twist",
                         reps: 20,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "home-full-body-c",
@@ -138,7 +138,6 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
     },
     {
         author: "FitApp Science Team",
-        category: "hybrid",
         description:
             "An effective high-intensity home workout program combining strength and cardio elements for maximum calorie burn and fitness improvement.",
         durationWeeks: 6,
@@ -157,152 +156,158 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
         name: "Home HIIT Fusion",
         scienceReference:
             "Based on metabolic conditioning research and time-efficient exercise protocols",
+        type: "circuit",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "jump-squats",
                         reps: 15,
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                     {
                         exerciseId: "push-ups",
                         reps: 12,
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "mountain-climbers",
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                     {
                         exerciseId: "burpees",
                         reps: 10,
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                     {
                         exerciseId: "plank-shoulder-taps",
                         reps: 20,
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                 ],
                 id: "hiit-circuit-a",
                 name: "HIIT Circuit A",
-                notes: "Complete as a circuit with minimal rest between exercises, then rest 2 minutes between rounds",
+                overallNotes:
+                    "Complete as a circuit with minimal rest between exerciseEntries, then rest 2 minutes between rounds",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "high-knees",
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                     {
                         exerciseId: "resistance-band-rows",
                         reps: 15,
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                     {
                         exerciseId: "lateral-lunges",
-                        notes: "Alternating sides",
+                        exerciseNotes: "Alternating sides",
                         reps: 16,
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                     {
                         exerciseId: "resistance-band-chest-press",
                         reps: 15,
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                     {
                         exerciseId: "bicycle-crunches",
                         reps: 20,
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                 ],
                 id: "hiit-circuit-b",
                 name: "HIIT Circuit B",
-                notes: "Complete as a circuit with minimal rest between exercises, then rest 2 minutes between rounds",
+                overallNotes:
+                    "Complete as a circuit with minimal rest between exerciseEntries, then rest 2 minutes between rounds",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "jumping-jacks",
                         restTime: 15,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "chair-step-ups",
-                        notes: "Alternating legs",
+                        exerciseNotes: "Alternating legs",
                         reps: 20,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "jumping-jacks",
                         restTime: 15,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "bodyweight-squats",
                         reps: 25,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "jumping-jacks",
                         restTime: 15,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "push-ups",
                         reps: 15,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "cardio-strength-intervals",
                 name: "Cardio-Strength Intervals",
-                notes: "Alternate between cardio (jumping jacks) and strength exercises",
+                overallNotes:
+                    "Alternate between cardio (jumping jacks) and strength exerciseEntries",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "resistance-band-full-body-circuit",
-                        notes: "Complete 5 exercises with band: curls, overhead press, squats, rows, tricep extensions",
+                        exerciseNotes:
+                            "Complete 5 exerciseEntries with band: curls, overhead press, squats, rows, tricep extensions",
                         reps: 12,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 120,
+                        durationSeconds: 120,
                         exerciseId: "bodyweight-cardio-circuit",
-                        notes: "Complete 4 exercises: jumping jacks, mountain climbers, high knees, butt kicks",
+                        exerciseNotes:
+                            "Complete 4 exerciseEntries: jumping jacks, mountain climbers, high knees, butt kicks",
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "super-circuit",
                 name: "Super Circuit Day",
-                notes: "Alternate between resistance band circuit and bodyweight cardio circuit",
+                overallNotes:
+                    "Alternate between resistance band circuit and bodyweight cardio circuit",
             },
         ],
     },
     {
         author: "FitApp Science Team",
-        category: "cardio",
         description:
             "A home-based cardio program that requires minimal space and no equipment, perfect for improving cardiovascular fitness anywhere.",
         durationWeeks: 8,
@@ -321,114 +326,114 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
         name: "Home Cardio Challenge",
         scienceReference:
             "Based on interval training research and bodyweight cardio exercise effectiveness",
+        type: "cardio",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "jumping-jacks",
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "high-knees",
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "butt-kicks",
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "jumping-jacks",
                         restTime: 30,
-                        sets: 4,
+                        setsCount: 4,
                     },
                 ],
                 id: "basic-cardio",
                 name: "Basic Cardio Circuit",
-                notes: "Focus on maintaining good form throughout the exercises",
+                overallNotes: "Focus on maintaining good form throughout the exerciseEntries",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "jump-squats",
                         reps: 15,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 45,
+                        durationSeconds: 45,
                         exerciseId: "mountain-climbers",
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "burpees",
-                        notes: "Modify by stepping back instead of jumping if needed",
+                        exerciseNotes: "Modify by stepping back instead of jumping if needed",
                         reps: 10,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "plank-jacks",
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "skater-jumps",
                         reps: 20,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "hiit-cardio",
                 name: "HIIT Cardio Blast",
-                notes: "Complete as a circuit with minimal rest between exercises",
+                overallNotes: "Complete as a circuit with minimal rest between exerciseEntries",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 120,
+                        durationSeconds: 120,
                         exerciseId: "shadow-boxing",
-                        notes: "Alternate between punches, uppercuts and hooks",
+                        exerciseNotes: "Alternate between punches, uppercuts and hooks",
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 120,
+                        durationSeconds: 120,
                         exerciseId: "jumping-rope",
-                        notes: "Simulate if you don't have a rope",
+                        exerciseNotes: "Simulate if you don't have a rope",
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "lateral-shuffles",
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "standing-mountain-climbers",
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "cardio-variety",
                 name: "Cardio Variety Session",
-                notes: "Focus on keeping your heart rate elevated throughout the workout",
+                overallNotes: "Focus on keeping your heart rate elevated throughout the workout",
             },
         ],
     },
     {
         author: "FitApp Science Team",
-        category: "strength",
         description:
             "A comprehensive core and mobility program designed for home practice to improve functional movement, posture, and core strength.",
         durationWeeks: 6,
@@ -447,124 +452,125 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
         name: "Home Core & Mobility",
         scienceReference:
             "Based on spine stabilization research and functional movement principles",
+        type: "strength",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "cat-cow",
                         reps: 15,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "bird-dog",
-                        notes: "Alternating sides with controlled movement",
+                        exerciseNotes: "Alternating sides with controlled movement",
                         reps: 12,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "glute-bridges",
                         reps: 15,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "dead-bug",
                         reps: 10,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 45,
+                        durationSeconds: 45,
                         exerciseId: "plank",
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "core-foundation",
                 name: "Core Foundation",
-                notes: "Focus on breathing and maintaining proper form",
+                overallNotes: "Focus on breathing and maintaining proper form",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "world's-greatest-stretch",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         reps: 6,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "thoracic-spine-rotations",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         reps: 10,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "hip-circles",
-                        notes: "Each direction",
+                        exerciseNotes: "Each direction",
                         reps: 10,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "standing-side-bends",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         reps: 12,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "wall-slides",
                         reps: 12,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "mobility-flow",
                 name: "Mobility Flow",
-                notes: "Move slowly and with control, focusing on full range of motion",
+                overallNotes: "Move slowly and with control, focusing on full range of motion",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "bicycle-crunches",
                         reps: 20,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "superman",
                         reps: 12,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "side-plank",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "russian-twist",
                         reps: 20,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "prone-y-t-w-raises",
-                        notes: "Hold each position briefly",
+                        exerciseNotes: "Hold each position briefly",
                         reps: 15,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "core-challenge",
                 name: "Core Challenge",
-                notes: "Maintain engagement through all exercises",
+                overallNotes: "Maintain engagement through all exerciseEntries",
             },
         ],
     },
@@ -573,7 +579,6 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
 export const strengthPlans: readonly TrainingPlan[] = [
     {
         author: "FitApp Science Team",
-        category: "strength",
         description:
             "A science-based full-body program designed for beginners to build a strong foundation in resistance training with focus on proper form and progressive overload.",
         durationWeeks: 8,
@@ -589,48 +594,49 @@ export const strengthPlans: readonly TrainingPlan[] = [
         location: "gym",
         name: "Foundation Strength",
         scienceReference: "Based on ACSM and NSCA guidelines for novice resistance training",
+        type: "strength",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "squat",
-                        notes: "Focus on form and depth",
+                        exerciseNotes: "Focus on form and depth",
                         reps: 10,
                         restTime: 90,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "bench-press", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "seated-row", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, sets: 3 },
-                    { duration: 30, exerciseId: "plank", restTime: 60, sets: 3 },
+                    { exerciseId: "bench-press", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "seated-row", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, setsCount: 3 },
+                    { durationSeconds: 30, exerciseId: "plank", restTime: 60, setsCount: 3 },
                 ],
                 id: "fb-a",
                 name: "Full Body A",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "deadlift",
-                        notes: "Focus on hip hinge movement",
+                        exerciseNotes: "Focus on hip hinge movement",
                         reps: 8,
                         restTime: 120,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "push-ups", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "lat-pulldown", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "lateral-raises", reps: 12, restTime: 60, sets: 3 },
-                    { exerciseId: "bicycle-crunches", reps: 15, restTime: 60, sets: 3 },
+                    { exerciseId: "push-ups", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "lat-pulldown", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "lateral-raises", reps: 12, restTime: 60, setsCount: 3 },
+                    { exerciseId: "bicycle-crunches", reps: 15, restTime: 60, setsCount: 3 },
                 ],
                 id: "fb-b",
                 name: "Full Body B",
             },
             {
-                exercises: [
-                    { exerciseId: "leg-press", reps: 12, restTime: 90, sets: 3 },
-                    { exerciseId: "dumbbell-press", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "bent-over-row", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "bicep-curls", reps: 12, restTime: 60, sets: 3 },
-                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, sets: 3 },
+                exerciseEntries: [
+                    { exerciseId: "leg-press", reps: 12, restTime: 90, setsCount: 3 },
+                    { exerciseId: "dumbbell-press", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "bent-over-row", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "bicep-curls", reps: 12, restTime: 60, setsCount: 3 },
+                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, setsCount: 3 },
                 ],
                 id: "fb-c",
                 name: "Full Body C",
@@ -639,7 +645,6 @@ export const strengthPlans: readonly TrainingPlan[] = [
     },
     {
         author: "FitApp Science Team",
-        category: "strength",
         description:
             "An intermediate program using a 4-day upper/lower split for continued strength gains and muscle development through periodization.",
         durationWeeks: 12,
@@ -656,51 +661,52 @@ export const strengthPlans: readonly TrainingPlan[] = [
         name: "Split Progression System",
         scienceReference:
             "Based on Schoenfeld's hypertrophy research and ACSM progression guidelines",
+        type: "strength",
         workoutDays: [
             {
-                exercises: [
-                    { exerciseId: "bench-press", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "bent-over-row", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "lat-pulldown", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, sets: 3 },
-                    { exerciseId: "bicep-curls", reps: 12, restTime: 60, sets: 3 },
+                exerciseEntries: [
+                    { exerciseId: "bench-press", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "bent-over-row", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "lat-pulldown", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, setsCount: 3 },
+                    { exerciseId: "bicep-curls", reps: 12, restTime: 60, setsCount: 3 },
                 ],
                 id: "upper-a",
                 name: "Upper Body A",
             },
             {
-                exercises: [
-                    { exerciseId: "squat", reps: 8, restTime: 150, sets: 4 },
-                    { exerciseId: "romanian-deadlift", reps: 8, restTime: 150, sets: 4 },
-                    { exerciseId: "leg-extension", reps: 12, restTime: 90, sets: 3 },
-                    { exerciseId: "leg-curl", reps: 12, restTime: 90, sets: 3 },
-                    { exerciseId: "calf-raises", reps: 15, restTime: 60, sets: 3 },
-                    { duration: 45, exerciseId: "plank", restTime: 60, sets: 3 },
+                exerciseEntries: [
+                    { exerciseId: "squat", reps: 8, restTime: 150, setsCount: 4 },
+                    { exerciseId: "romanian-deadlift", reps: 8, restTime: 150, setsCount: 4 },
+                    { exerciseId: "leg-extension", reps: 12, restTime: 90, setsCount: 3 },
+                    { exerciseId: "leg-curl", reps: 12, restTime: 90, setsCount: 3 },
+                    { exerciseId: "calf-raises", reps: 15, restTime: 60, setsCount: 3 },
+                    { durationSeconds: 45, exerciseId: "plank", restTime: 60, setsCount: 3 },
                 ],
                 id: "lower-a",
                 name: "Lower Body A",
             },
             {
-                exercises: [
-                    { exerciseId: "incline-bench-press", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "pull-ups", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "lateral-raises", reps: 12, restTime: 90, sets: 3 },
-                    { exerciseId: "seated-row", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "skull-crushers", reps: 12, restTime: 60, sets: 3 },
-                    { exerciseId: "hammer-curls", reps: 12, restTime: 60, sets: 3 },
+                exerciseEntries: [
+                    { exerciseId: "incline-bench-press", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "pull-ups", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "lateral-raises", reps: 12, restTime: 90, setsCount: 3 },
+                    { exerciseId: "seated-row", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "skull-crushers", reps: 12, restTime: 60, setsCount: 3 },
+                    { exerciseId: "hammer-curls", reps: 12, restTime: 60, setsCount: 3 },
                 ],
                 id: "upper-b",
                 name: "Upper Body B",
             },
             {
-                exercises: [
-                    { exerciseId: "deadlift", reps: 6, restTime: 180, sets: 4 },
-                    { exerciseId: "leg-press", reps: 10, restTime: 120, sets: 4 },
-                    { exerciseId: "lunges", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "hip-thrusts", reps: 12, restTime: 90, sets: 3 },
-                    { exerciseId: "calf-raises", reps: 15, restTime: 60, sets: 3 },
-                    { exerciseId: "russian-twist", reps: 20, restTime: 60, sets: 3 },
+                exerciseEntries: [
+                    { exerciseId: "deadlift", reps: 6, restTime: 180, setsCount: 4 },
+                    { exerciseId: "leg-press", reps: 10, restTime: 120, setsCount: 4 },
+                    { exerciseId: "lunges", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "hip-thrusts", reps: 12, restTime: 90, setsCount: 3 },
+                    { exerciseId: "calf-raises", reps: 15, restTime: 60, setsCount: 3 },
+                    { exerciseId: "russian-twist", reps: 20, restTime: 60, setsCount: 3 },
                 ],
                 id: "lower-b",
                 name: "Lower Body B",
@@ -709,7 +715,6 @@ export const strengthPlans: readonly TrainingPlan[] = [
     },
     {
         author: "FitApp Science Team",
-        category: "strength",
         description:
             "Advanced 6-day split using the Push-Pull-Legs methodology for maximum muscle hypertrophy and strength development with scientific loading patterns.",
         durationWeeks: 12,
@@ -725,98 +730,111 @@ export const strengthPlans: readonly TrainingPlan[] = [
         location: "gym",
         name: "Progressive Push-Pull-Legs",
         scienceReference: "Based on Helms, Israetel and Schoenfeld volume landmarks research",
+        type: "strength",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "bench-press",
-                        notes: "RPE 8-9",
+                        exerciseNotes: "RPE 8-9",
                         reps: 5,
                         restTime: 180,
-                        sets: 5,
+                        setsCount: 5,
                     },
-                    { exerciseId: "dumbbell-shoulder-press", reps: 8, restTime: 120, sets: 4 },
+                    { exerciseId: "dumbbell-shoulder-press", reps: 8, restTime: 120, setsCount: 4 },
                     {
                         exerciseId: "incline-dumbbell-bench-press",
                         reps: 10,
                         restTime: 120,
-                        sets: 4,
+                        setsCount: 4,
                     },
-                    { exerciseId: "lateral-raises", reps: 12, restTime: 90, sets: 4 },
-                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, sets: 4 },
-                    { exerciseId: "skull-crushers", reps: 12, restTime: 60, sets: 3 },
+                    { exerciseId: "lateral-raises", reps: 12, restTime: 90, setsCount: 4 },
+                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, setsCount: 4 },
+                    { exerciseId: "skull-crushers", reps: 12, restTime: 60, setsCount: 3 },
                 ],
                 id: "push-a",
                 name: "Push Day A",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "bent-over-row",
-                        notes: "RPE 8-9",
+                        exerciseNotes: "RPE 8-9",
                         reps: 5,
                         restTime: 180,
-                        sets: 5,
+                        setsCount: 5,
                     },
-                    { exerciseId: "pull-ups", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "seated-row", reps: 10, restTime: 120, sets: 4 },
-                    { exerciseId: "cable-face-pulls", reps: 15, restTime: 90, sets: 3 },
-                    { exerciseId: "bicep-curls", reps: 12, restTime: 60, sets: 4 },
-                    { exerciseId: "hammer-curls", reps: 12, restTime: 60, sets: 3 },
+                    { exerciseId: "pull-ups", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "seated-row", reps: 10, restTime: 120, setsCount: 4 },
+                    { exerciseId: "cable-face-pulls", reps: 15, restTime: 90, setsCount: 3 },
+                    { exerciseId: "bicep-curls", reps: 12, restTime: 60, setsCount: 4 },
+                    { exerciseId: "hammer-curls", reps: 12, restTime: 60, setsCount: 3 },
                 ],
                 id: "pull-a",
                 name: "Pull Day A",
             },
             {
-                exercises: [
-                    { exerciseId: "squat", notes: "RPE 8-9", reps: 5, restTime: 180, sets: 5 },
-                    { exerciseId: "romanian-deadlift", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "leg-press", reps: 10, restTime: 120, sets: 4 },
-                    { exerciseId: "leg-extension", reps: 15, restTime: 90, sets: 3 },
-                    { exerciseId: "calf-raises", reps: 15, restTime: 60, sets: 4 },
-                    { exerciseId: "abdominal-crunches", reps: 15, restTime: 60, sets: 3 },
+                exerciseEntries: [
+                    {
+                        exerciseId: "squat",
+                        exerciseNotes: "RPE 8-9",
+                        reps: 5,
+                        restTime: 180,
+                        setsCount: 5,
+                    },
+                    { exerciseId: "romanian-deadlift", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "leg-press", reps: 10, restTime: 120, setsCount: 4 },
+                    { exerciseId: "leg-extension", reps: 15, restTime: 90, setsCount: 3 },
+                    { exerciseId: "calf-raises", reps: 15, restTime: 60, setsCount: 4 },
+                    { exerciseId: "abdominal-crunches", reps: 15, restTime: 60, setsCount: 3 },
                 ],
                 id: "legs-a",
                 name: "Legs Day A",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "barbell-overhead-press",
-                        notes: "RPE 8-9",
+                        exerciseNotes: "RPE 8-9",
                         reps: 5,
                         restTime: 180,
-                        sets: 5,
+                        setsCount: 5,
                     },
-                    { exerciseId: "incline-bench-press", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "dumbbell-press", reps: 10, restTime: 120, sets: 4 },
-                    { exerciseId: "front-raises", reps: 12, restTime: 90, sets: 3 },
-                    { exerciseId: "tricep-dips", reps: 10, restTime: 60, sets: 4 },
-                    { exerciseId: "tricep-kickbacks", reps: 12, restTime: 60, sets: 3 },
+                    { exerciseId: "incline-bench-press", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "dumbbell-press", reps: 10, restTime: 120, setsCount: 4 },
+                    { exerciseId: "front-raises", reps: 12, restTime: 90, setsCount: 3 },
+                    { exerciseId: "tricep-dips", reps: 10, restTime: 60, setsCount: 4 },
+                    { exerciseId: "tricep-kickbacks", reps: 12, restTime: 60, setsCount: 3 },
                 ],
                 id: "push-b",
                 name: "Push Day B",
             },
             {
-                exercises: [
-                    { exerciseId: "deadlift", notes: "RPE 8-9", reps: 5, restTime: 180, sets: 5 },
-                    { exerciseId: "lat-pulldown", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "one-arm-dumbbell-row", reps: 10, restTime: 120, sets: 4 },
-                    { exerciseId: "reverse-flyes", reps: 15, restTime: 90, sets: 3 },
-                    { exerciseId: "preacher-curls", reps: 12, restTime: 60, sets: 4 },
-                    { exerciseId: "cable-curls", reps: 12, restTime: 60, sets: 3 },
+                exerciseEntries: [
+                    {
+                        exerciseId: "deadlift",
+                        exerciseNotes: "RPE 8-9",
+                        reps: 5,
+                        restTime: 180,
+                        setsCount: 5,
+                    },
+                    { exerciseId: "lat-pulldown", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "one-arm-dumbbell-row", reps: 10, restTime: 120, setsCount: 4 },
+                    { exerciseId: "reverse-flyes", reps: 15, restTime: 90, setsCount: 3 },
+                    { exerciseId: "preacher-curls", reps: 12, restTime: 60, setsCount: 4 },
+                    { exerciseId: "cable-curls", reps: 12, restTime: 60, setsCount: 3 },
                 ],
                 id: "pull-b",
                 name: "Pull Day B",
             },
             {
-                exercises: [
-                    { exerciseId: "bulgarian-split-squats", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "leg-press", reps: 12, restTime: 120, sets: 4 },
-                    { exerciseId: "hip-thrusts", reps: 12, restTime: 120, sets: 4 },
-                    { exerciseId: "leg-curl", reps: 15, restTime: 90, sets: 3 },
-                    { exerciseId: "calf-raises", reps: 20, restTime: 60, sets: 4 },
-                    { duration: 60, exerciseId: "plank", restTime: 60, sets: 3 },
+                exerciseEntries: [
+                    { exerciseId: "bulgarian-split-squats", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "leg-press", reps: 12, restTime: 120, setsCount: 4 },
+                    { exerciseId: "hip-thrusts", reps: 12, restTime: 120, setsCount: 4 },
+                    { exerciseId: "leg-curl", reps: 15, restTime: 90, setsCount: 3 },
+                    { exerciseId: "calf-raises", reps: 20, restTime: 60, setsCount: 4 },
+                    { durationSeconds: 60, exerciseId: "plank", restTime: 60, setsCount: 3 },
                 ],
                 id: "legs-b",
                 name: "Legs Day B",
@@ -826,9 +844,8 @@ export const strengthPlans: readonly TrainingPlan[] = [
 
     {
         author: "FitApp Science Team",
-        category: "strength",
         description:
-            "A science-based progressive program focused on optimal glute development through varied stimulation patterns and evidence-based exercises.",
+            "A science-based progressive program focused on optimal glute development through varied stimulation patterns and evidence-based exerciseEntries.",
         durationWeeks: 8,
         frequency: 3,
         goals: [
@@ -844,66 +861,67 @@ export const strengthPlans: readonly TrainingPlan[] = [
         name: "Glute Builder Program",
         scienceReference:
             "Based on Contreras' glute activation research and progressive overload principles",
+        type: "strength",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "hip-thrusts",
-                        notes: "Heavy load, focus on full contraction",
+                        exerciseNotes: "Heavy load, focus on full contraction",
                         reps: 8,
                         restTime: 120,
-                        sets: 4,
+                        setsCount: 4,
                     },
-                    { exerciseId: "romanian-deadlift", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "bulgarian-split-squats", reps: 12, restTime: 90, sets: 3 },
+                    { exerciseId: "romanian-deadlift", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "bulgarian-split-squats", reps: 12, restTime: 90, setsCount: 3 },
                     {
                         exerciseId: "cable-kickbacks",
-                        notes: "Slow eccentric",
+                        exerciseNotes: "Slow eccentric",
                         reps: 15,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "lateral-band-walks", reps: 15, restTime: 60, sets: 3 },
+                    { exerciseId: "lateral-band-walks", reps: 15, restTime: 60, setsCount: 3 },
                 ],
                 id: "glute-focus-a",
                 name: "Glute Focus A",
             },
             {
-                exercises: [
-                    { exerciseId: "squat", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "deadlift", reps: 8, restTime: 120, sets: 3 },
-                    { exerciseId: "walking-lunges", reps: 12, restTime: 90, sets: 3 },
+                exerciseEntries: [
+                    { exerciseId: "squat", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "deadlift", reps: 8, restTime: 120, setsCount: 3 },
+                    { exerciseId: "walking-lunges", reps: 12, restTime: 90, setsCount: 3 },
                     {
                         exerciseId: "leg-press",
-                        notes: "High foot placement",
+                        exerciseNotes: "High foot placement",
                         reps: 12,
                         restTime: 90,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "calf-raises", reps: 15, restTime: 60, sets: 3 },
+                    { exerciseId: "calf-raises", reps: 15, restTime: 60, setsCount: 3 },
                 ],
                 id: "compound-lower",
                 name: "Compound Lower Body",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "glute-bridges",
-                        notes: "With resistance band",
+                        exerciseNotes: "With resistance band",
                         reps: 15,
                         restTime: 90,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "sumo-deadlift", reps: 8, restTime: 120, sets: 4 },
+                    { exerciseId: "sumo-deadlift", reps: 8, restTime: 120, setsCount: 4 },
                     {
                         exerciseId: "goblet-squats",
-                        notes: "Deep squat for glute activation",
+                        exerciseNotes: "Deep squat for glute activation",
                         reps: 12,
                         restTime: 90,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "step-ups", reps: 12, restTime: 90, sets: 3 },
-                    { exerciseId: "frog-pumps", reps: 20, restTime: 60, sets: 3 },
+                    { exerciseId: "step-ups", reps: 12, restTime: 90, setsCount: 3 },
+                    { exerciseId: "frog-pumps", reps: 20, restTime: 60, setsCount: 3 },
                 ],
                 id: "glute-focus-b",
                 name: "Glute Focus B",
@@ -913,7 +931,6 @@ export const strengthPlans: readonly TrainingPlan[] = [
 
     {
         author: "FitApp Science Team",
-        category: "strength",
         description:
             "A comprehensive program targeting all aspects of core function: stabilization, anti-rotation, flexion, and extension for improved posture and performance.",
         durationWeeks: 6,
@@ -931,84 +948,85 @@ export const strengthPlans: readonly TrainingPlan[] = [
         name: "Core Strength & Stability",
         scienceReference:
             "Based on McGill's spine stability research and modern core training principles",
+        type: "strength",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 45,
+                        durationSeconds: 45,
                         exerciseId: "plank",
-                        notes: "Focus on proper alignment",
+                        exerciseNotes: "Focus on proper alignment",
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "side-plank",
-                        notes: "Both sides",
+                        exerciseNotes: "Both sides",
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "pallof-press", reps: 12, restTime: 60, sets: 3 },
+                    { exerciseId: "pallof-press", reps: 12, restTime: 60, setsCount: 3 },
                     {
                         exerciseId: "bird-dog",
-                        notes: "Slow and controlled",
+                        exerciseNotes: "Slow and controlled",
                         reps: 10,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "dead-bug", reps: 10, restTime: 60, sets: 3 },
+                    { exerciseId: "dead-bug", reps: 10, restTime: 60, setsCount: 3 },
                 ],
                 id: "anti-rotation",
                 name: "Anti-Rotation & Stability",
             },
             {
-                exercises: [
-                    { exerciseId: "hanging-leg-raises", reps: 12, restTime: 90, sets: 3 },
+                exerciseEntries: [
+                    { exerciseId: "hanging-leg-raises", reps: 12, restTime: 90, setsCount: 3 },
                     {
                         exerciseId: "russian-twist",
-                        notes: "With weight",
+                        exerciseNotes: "With weight",
                         reps: 20,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 45,
+                        durationSeconds: 45,
                         exerciseId: "mountain-climbers",
-                        notes: "Fast pace",
+                        exerciseNotes: "Fast pace",
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "bicycle-crunches", reps: 20, restTime: 60, sets: 3 },
-                    { exerciseId: "v-ups", reps: 15, restTime: 60, sets: 3 },
+                    { exerciseId: "bicycle-crunches", reps: 20, restTime: 60, setsCount: 3 },
+                    { exerciseId: "v-ups", reps: 15, restTime: 60, setsCount: 3 },
                 ],
                 id: "dynamic-core",
                 name: "Dynamic Core Training",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "turkish-get-up",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         reps: 5,
                         restTime: 90,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "woodchoppers",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         reps: 12,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "kettlebell-windmill",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         reps: 8,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "plank-shoulder-taps", reps: 20, restTime: 60, sets: 3 },
-                    { exerciseId: "ab-rollouts", reps: 10, restTime: 90, sets: 3 },
+                    { exerciseId: "plank-shoulder-taps", reps: 20, restTime: 60, setsCount: 3 },
+                    { exerciseId: "ab-rollouts", reps: 10, restTime: 90, setsCount: 3 },
                 ],
                 id: "functional-core",
                 name: "Functional Core Integration",
@@ -1020,7 +1038,6 @@ export const strengthPlans: readonly TrainingPlan[] = [
 export const cardioPlans: readonly TrainingPlan[] = [
     {
         author: "FitApp Science Team",
-        category: "cardio",
         description:
             "A beginner-friendly cardio program that gradually builds endurance through a mix of steady-state and light interval training.",
         durationWeeks: 8,
@@ -1036,48 +1053,50 @@ export const cardioPlans: readonly TrainingPlan[] = [
         location: "gym",
         name: "Cardio Kickstart",
         scienceReference: "Based on ACSM cardiorespiratory fitness guidelines for beginners",
+        type: "cardio",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 1200,
+                        durationSeconds: 1200,
                         exerciseId: "incline-walk",
-                        notes: "Moderate pace, 3-4 RPE",
+                        exerciseNotes: "Moderate pace, 3-4 RPE",
                         restTime: 0,
-                        sets: 1,
+                        setsCount: 1,
                     },
                 ],
                 id: "steady-state",
                 name: "Steady State Cardio",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 120,
+                        durationSeconds: 120,
                         exerciseId: "cycling",
-                        notes: "Alternate between moderate (4-5 RPE) and light (2-3 RPE) intensities",
+                        exerciseNotes:
+                            "Alternate between moderate (4-5 RPE) and light (2-3 RPE) intensities",
                         restTime: 90,
-                        sets: 5,
+                        setsCount: 5,
                     },
                 ],
                 id: "light-intervals",
                 name: "Light Interval Training",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 600,
+                        durationSeconds: 600,
                         exerciseId: "rowing-machine",
-                        notes: "Steady pace (3-4 RPE)",
+                        exerciseNotes: "Steady pace (3-4 RPE)",
                         restTime: 0,
-                        sets: 1,
+                        setsCount: 1,
                     },
                     {
-                        duration: 600,
+                        durationSeconds: 600,
                         exerciseId: "incline-walk",
-                        notes: "Moderate pace (3-4 RPE)",
+                        exerciseNotes: "Moderate pace (3-4 RPE)",
                         restTime: 0,
-                        sets: 1,
+                        setsCount: 1,
                     },
                 ],
                 id: "mixed-cardio",
@@ -1087,7 +1106,6 @@ export const cardioPlans: readonly TrainingPlan[] = [
     },
     {
         author: "FitApp Science Team",
-        category: "cardio",
         description:
             "An intermediate cardio program focused on improving cardiovascular conditioning through structured interval training and endurance work.",
         durationWeeks: 10,
@@ -1103,61 +1121,63 @@ export const cardioPlans: readonly TrainingPlan[] = [
         location: "gym",
         name: "Cardio Conditioning Protocol",
         scienceReference: "Based on VO2max improvement research and interval training studies",
+        type: "cardio",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "running",
-                        notes: "High intensity (7-8 RPE) sprints with full recovery",
+                        exerciseNotes: "High intensity (7-8 RPE) sprints with full recovery",
                         restTime: 120,
-                        sets: 8,
+                        setsCount: 8,
                     },
                 ],
                 id: "hiit-session",
                 name: "HIIT Session",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 1800,
+                        durationSeconds: 1800,
                         exerciseId: "running",
-                        notes: "Sustained effort at 6-7 RPE",
+                        exerciseNotes: "Sustained effort at 6-7 RPE",
                         restTime: 0,
-                        sets: 1,
+                        setsCount: 1,
                     },
                 ],
                 id: "tempo-run",
                 name: "Tempo Run",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 180,
+                        durationSeconds: 180,
                         exerciseId: "cycling",
-                        notes: "1 min, 2 min, 3 min, 2 min, 1 min at high intensity (7-8 RPE)",
+                        exerciseNotes:
+                            "1 min, 2 min, 3 min, 2 min, 1 min at high intensity (7-8 RPE)",
                         restTime: 120,
-                        sets: 5,
+                        setsCount: 5,
                     },
                 ],
                 id: "pyramid-intervals",
                 name: "Pyramid Intervals",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 900,
+                        durationSeconds: 900,
                         exerciseId: "rowing-machine",
-                        notes: "Moderate pace (5-6 RPE)",
+                        exerciseNotes: "Moderate pace (5-6 RPE)",
                         restTime: 0,
-                        sets: 1,
+                        setsCount: 1,
                     },
                     {
-                        duration: 900,
+                        durationSeconds: 900,
                         exerciseId: "stair-climber",
-                        notes: "Moderate pace (5-6 RPE)",
+                        exerciseNotes: "Moderate pace (5-6 RPE)",
                         restTime: 0,
-                        sets: 1,
+                        setsCount: 1,
                     },
                 ],
                 id: "cross-training",
@@ -1167,7 +1187,6 @@ export const cardioPlans: readonly TrainingPlan[] = [
     },
     {
         author: "FitApp Science Team",
-        category: "cardio",
         description:
             "An advanced cardio program designed to maximize cardiovascular performance and efficiency using science-based protocols.",
         durationWeeks: 12,
@@ -1185,74 +1204,75 @@ export const cardioPlans: readonly TrainingPlan[] = [
         name: "Cardio Performance System",
         scienceReference:
             "Based on elite endurance training principles and metabolic conditioning research",
+        type: "cardio",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "running",
-                        notes: "Near max effort (8-9 RPE) with incomplete recovery",
+                        exerciseNotes: "Near max effort (8-9 RPE) with incomplete recovery",
                         restTime: 60,
-                        sets: 12,
+                        setsCount: 12,
                     },
                 ],
                 id: "intensive-intervals",
                 name: "Intensive Intervals",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 600,
+                        durationSeconds: 600,
                         exerciseId: "cycling",
-                        notes: "Sustained effort at threshold (7 RPE)",
+                        exerciseNotes: "Sustained effort at threshold (7 RPE)",
                         restTime: 180,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "threshold-session",
                 name: "Threshold Session",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 20,
+                        durationSeconds: 20,
                         exerciseId: "rowing-machine",
-                        notes: "Maximum effort (9-10 RPE) with minimal rest",
+                        exerciseNotes: "Maximum effort (9-10 RPE) with minimal rest",
                         restTime: 10,
-                        sets: 8,
+                        setsCount: 8,
                     },
                 ],
                 id: "tabata-protocol",
                 name: "Tabata Protocol",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 3600,
+                        durationSeconds: 3600,
                         exerciseId: "running",
-                        notes: "Moderate sustainable pace (5-6 RPE)",
+                        exerciseNotes: "Moderate sustainable pace (5-6 RPE)",
                         restTime: 0,
-                        sets: 1,
+                        setsCount: 1,
                     },
                 ],
                 id: "endurance-builder",
                 name: "Endurance Builder",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 180,
+                        durationSeconds: 180,
                         exerciseId: "stair-climber",
-                        notes: "High intensity (8 RPE)",
+                        exerciseNotes: "High intensity (8 RPE)",
                         restTime: 60,
-                        sets: 5,
+                        setsCount: 5,
                     },
                     {
-                        duration: 180,
+                        durationSeconds: 180,
                         exerciseId: "rowing-machine",
-                        notes: "High intensity (8 RPE)",
+                        exerciseNotes: "High intensity (8 RPE)",
                         restTime: 60,
-                        sets: 5,
+                        setsCount: 5,
                     },
                 ],
                 id: "metabolic-conditioning",
@@ -1265,7 +1285,6 @@ export const cardioPlans: readonly TrainingPlan[] = [
 export const hybridPlans: readonly TrainingPlan[] = [
     {
         author: "FitApp Science Team",
-        category: "hybrid",
         description:
             "A beginner-friendly program combining strength and cardio training to build overall fitness and establish healthy exercise habits.",
         durationWeeks: 8,
@@ -1281,48 +1300,49 @@ export const hybridPlans: readonly TrainingPlan[] = [
         location: "gym",
         name: "Balanced Fitness Foundation",
         scienceReference: "Based on ACSM guidelines for concurrent training for general fitness",
+        type: "circuit",
         workoutDays: [
             {
-                exercises: [
-                    { exerciseId: "squat", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "bench-press", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "seated-row", reps: 10, restTime: 90, sets: 3 },
-                    { duration: 30, exerciseId: "plank", restTime: 60, sets: 2 },
+                exerciseEntries: [
+                    { exerciseId: "squat", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "bench-press", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "seated-row", reps: 10, restTime: 90, setsCount: 3 },
+                    { durationSeconds: 30, exerciseId: "plank", restTime: 60, setsCount: 2 },
                 ],
                 id: "strength-a",
                 name: "Full Body Strength A",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 1500,
+                        durationSeconds: 1500,
                         exerciseId: "incline-walk",
-                        notes: "Moderate pace (3-4 RPE)",
+                        exerciseNotes: "Moderate pace (3-4 RPE)",
                         restTime: 0,
-                        sets: 1,
+                        setsCount: 1,
                     },
                 ],
                 id: "cardio-a",
                 name: "Steady State Cardio",
             },
             {
-                exercises: [
-                    { exerciseId: "deadlift", reps: 8, restTime: 90, sets: 3 },
-                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "lat-pulldown", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "russian-twist", reps: 15, restTime: 60, sets: 2 },
+                exerciseEntries: [
+                    { exerciseId: "deadlift", reps: 8, restTime: 90, setsCount: 3 },
+                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "lat-pulldown", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "russian-twist", reps: 15, restTime: 60, setsCount: 2 },
                 ],
                 id: "strength-b",
                 name: "Full Body Strength B",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "cycling",
-                        notes: "Alternating between moderate (4-5 RPE) and light (2-3 RPE)",
+                        exerciseNotes: "Alternating between moderate (4-5 RPE) and light (2-3 RPE)",
                         restTime: 120,
-                        sets: 6,
+                        setsCount: 6,
                     },
                 ],
                 id: "cardio-b",
@@ -1332,7 +1352,6 @@ export const hybridPlans: readonly TrainingPlan[] = [
     },
     {
         author: "FitApp Science Team",
-        category: "hybrid",
         description:
             "An intermediate program combining strength training with cardio conditioning to develop athletic performance and functional fitness.",
         durationWeeks: 12,
@@ -1348,72 +1367,82 @@ export const hybridPlans: readonly TrainingPlan[] = [
         location: "gym",
         name: "Functional Athlete Program",
         scienceReference: "Based on studies of concurrent training for athletic performance",
+        type: "circuit",
         workoutDays: [
             {
-                exercises: [
-                    { exerciseId: "bench-press", reps: 8, restTime: 90, sets: 4 },
-                    { exerciseId: "pull-ups", reps: 8, restTime: 90, sets: 4 },
-                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "seated-row", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, sets: 3 },
+                exerciseEntries: [
+                    { exerciseId: "bench-press", reps: 8, restTime: 90, setsCount: 4 },
+                    { exerciseId: "pull-ups", reps: 8, restTime: 90, setsCount: 4 },
+                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "seated-row", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, setsCount: 3 },
                 ],
                 id: "upper-strength",
                 name: "Upper Body Strength",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "rowing-machine",
-                        notes: "High intensity (7-8 RPE) with active recovery",
+                        exerciseNotes: "High intensity (7-8 RPE) with active recovery",
                         restTime: 90,
-                        sets: 8,
+                        setsCount: 8,
                     },
                 ],
                 id: "interval-training",
                 name: "High Intensity Intervals",
             },
             {
-                exercises: [
-                    { exerciseId: "squat", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "romanian-deadlift", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "lunges", reps: 10, restTime: 90, sets: 3 },
-                    { exerciseId: "leg-extension", reps: 12, restTime: 60, sets: 3 },
-                    { exerciseId: "calf-raises", reps: 15, restTime: 60, sets: 3 },
+                exerciseEntries: [
+                    { exerciseId: "squat", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "romanian-deadlift", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "lunges", reps: 10, restTime: 90, setsCount: 3 },
+                    { exerciseId: "leg-extension", reps: 12, restTime: 60, setsCount: 3 },
+                    { exerciseId: "calf-raises", reps: 15, restTime: 60, setsCount: 3 },
                 ],
                 id: "lower-strength",
                 name: "Lower Body Strength",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 2400,
+                        durationSeconds: 2400,
                         exerciseId: "running",
-                        notes: "Moderate pace (5-6 RPE)",
+                        exerciseNotes: "Moderate pace (5-6 RPE)",
                         restTime: 0,
-                        sets: 1,
+                        setsCount: 1,
                     },
                 ],
                 id: "endurance-day",
                 name: "Endurance Session",
             },
             {
-                exercises: [
-                    { exerciseId: "kettlebell-swings", reps: 15, restTime: 60, sets: 3 },
-                    { exerciseId: "push-ups", reps: 15, restTime: 60, sets: 3 },
-                    { duration: 30, exerciseId: "mountain-climbers", restTime: 60, sets: 3 },
-                    { duration: 60, exerciseId: "rowing-machine", restTime: 60, sets: 3 },
+                exerciseEntries: [
+                    { exerciseId: "kettlebell-swings", reps: 15, restTime: 60, setsCount: 3 },
+                    { exerciseId: "push-ups", reps: 15, restTime: 60, setsCount: 3 },
+                    {
+                        durationSeconds: 30,
+                        exerciseId: "mountain-climbers",
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        durationSeconds: 60,
+                        exerciseId: "rowing-machine",
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "functional-circuit",
                 name: "Functional Circuit",
-                notes: "Complete as a circuit with minimal rest between exercises",
+                overallNotes: "Complete as a circuit with minimal rest between exerciseEntries",
             },
         ],
     },
 
     {
         author: "FitApp Science Team",
-        category: "hybrid",
         description:
             "A science-based high-intensity interval training program designed to maximize calorie burn, improve cardiovascular fitness, and boost metabolic rate.",
         durationWeeks: 6,
@@ -1431,70 +1460,77 @@ export const hybridPlans: readonly TrainingPlan[] = [
         name: "HIIT Metabolic Conditioning",
         scienceReference:
             "Based on EPOC (Excess Post-exercise Oxygen Consumption) research and HIIT effectiveness studies",
+        type: "circuit",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "burpees",
-                        notes: "As fast as possible with good form",
+                        exerciseNotes: "As fast as possible with good form",
                         reps: 15,
                         restTime: 45,
-                        sets: 4,
+                        setsCount: 4,
                     },
-                    { exerciseId: "kettlebell-swings", reps: 20, restTime: 45, sets: 4 },
-                    { duration: 40, exerciseId: "mountain-climbers", restTime: 45, sets: 4 },
-                    { exerciseId: "jump-squats", reps: 15, restTime: 45, sets: 4 },
-                    { duration: 30, exerciseId: "battle-ropes", restTime: 45, sets: 4 },
+                    { exerciseId: "kettlebell-swings", reps: 20, restTime: 45, setsCount: 4 },
+                    {
+                        durationSeconds: 40,
+                        exerciseId: "mountain-climbers",
+                        restTime: 45,
+                        setsCount: 4,
+                    },
+                    { exerciseId: "jump-squats", reps: 15, restTime: 45, setsCount: 4 },
+                    { durationSeconds: 30, exerciseId: "battle-ropes", restTime: 45, setsCount: 4 },
                 ],
                 id: "total-body-hiit",
                 name: "Total Body HIIT",
-                notes: "Complete as circuit with minimal rest between exercises, then rest 2 minutes between rounds",
+                overallNotes:
+                    "Complete as circuit with minimal rest between exerciseEntries, then rest 2 minutes between rounds",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "sprint-intervals",
-                        notes: "All-out effort",
+                        exerciseNotes: "All-out effort",
                         restTime: 90,
-                        sets: 8,
+                        setsCount: 8,
                     },
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "rowing-machine",
-                        notes: "High intensity",
+                        exerciseNotes: "High intensity",
                         restTime: 60,
-                        sets: 5,
+                        setsCount: 5,
                     },
                     {
-                        duration: 40,
+                        durationSeconds: 40,
                         exerciseId: "cycling",
-                        notes: "Tabata protocol",
+                        exerciseNotes: "Tabata protocol",
                         restTime: 40,
-                        sets: 6,
+                        setsCount: 6,
                     },
                 ],
                 id: "cardio-hiit",
                 name: "Cardio HIIT",
             },
             {
-                exercises: [
-                    { exerciseId: "deadlift", reps: 5, restTime: 60, sets: 5 },
-                    { exerciseId: "push-ups", reps: 15, restTime: 60, sets: 5 },
-                    { exerciseId: "dumbbell-row", reps: 15, restTime: 60, sets: 5 },
-                    { exerciseId: "goblet-squats", reps: 15, restTime: 60, sets: 5 },
-                    { duration: 45, exerciseId: "plank", restTime: 60, sets: 5 },
+                exerciseEntries: [
+                    { exerciseId: "deadlift", reps: 5, restTime: 60, setsCount: 5 },
+                    { exerciseId: "push-ups", reps: 15, restTime: 60, setsCount: 5 },
+                    { exerciseId: "dumbbell-row", reps: 15, restTime: 60, setsCount: 5 },
+                    { exerciseId: "goblet-squats", reps: 15, restTime: 60, setsCount: 5 },
+                    { durationSeconds: 45, exerciseId: "plank", restTime: 60, setsCount: 5 },
                 ],
                 id: "strength-hiit",
                 name: "Strength HIIT",
-                notes: "Complete as circuit with minimal rest, then rest 2 minutes between rounds",
+                overallNotes:
+                    "Complete as circuit with minimal rest, then rest 2 minutes between rounds",
             },
         ],
     },
     // Mobility & Flexibility Program
     {
         author: "FitApp Science Team",
-        category: "hybrid",
         description:
             "A science-backed program to improve range of motion, joint health, and movement quality for better performance and reduced injury risk.",
         durationWeeks: 6,
@@ -1512,95 +1548,96 @@ export const hybridPlans: readonly TrainingPlan[] = [
         name: "Functional Mobility & Flexibility",
         scienceReference:
             "Based on FMS (Functional Movement Screen) principles and dynamic mobility research",
+        type: "circuit",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "shoulder-circles",
-                        notes: "Each direction",
+                        exerciseNotes: "Each direction",
                         reps: 15,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "wall-slides", reps: 12, restTime: 30, sets: 3 },
+                    { exerciseId: "wall-slides", reps: 12, restTime: 30, setsCount: 3 },
                     {
                         exerciseId: "thoracic-spine-rotations",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         reps: 10,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "cat-cow", reps: 12, restTime: 30, sets: 3 },
+                    { exerciseId: "cat-cow", reps: 12, restTime: 30, setsCount: 3 },
                     {
                         exerciseId: "open-book",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         reps: 10,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "upper-mobility",
                 name: "Upper Body Mobility",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "hip-circles",
-                        notes: "Each direction",
+                        exerciseNotes: "Each direction",
                         reps: 12,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "cossack-squats",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         reps: 10,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
-                        duration: 45,
+                        durationSeconds: 45,
                         exerciseId: "lizard-pose",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { duration: 60, exerciseId: "squat-hold", restTime: 45, sets: 3 },
+                    { durationSeconds: 60, exerciseId: "squat-hold", restTime: 45, setsCount: 3 },
                     {
                         exerciseId: "ankle-mobility",
-                        notes: "Each ankle",
+                        exerciseNotes: "Each ankle",
                         reps: 15,
                         restTime: 30,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "lower-mobility",
                 name: "Lower Body Mobility",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "sun-salutation",
-                        notes: "Full sequence",
+                        exerciseNotes: "Full sequence",
                         reps: 5,
                         restTime: 60,
-                        sets: 3,
+                        setsCount: 3,
                     },
                     {
                         exerciseId: "world's-greatest-stretch",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         reps: 6,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
-                    { exerciseId: "downward-upward-dog", reps: 10, restTime: 45, sets: 3 },
-                    { exerciseId: "inchworm", reps: 8, restTime: 45, sets: 3 },
+                    { exerciseId: "downward-upward-dog", reps: 10, restTime: 45, setsCount: 3 },
+                    { exerciseId: "inchworm", reps: 8, restTime: 45, setsCount: 3 },
                     {
                         exerciseId: "bird-dog",
-                        notes: "Alternating",
+                        exerciseNotes: "Alternating",
                         reps: 12,
                         restTime: 45,
-                        sets: 3,
+                        setsCount: 3,
                     },
                 ],
                 id: "full-mobility",
@@ -1611,7 +1648,6 @@ export const hybridPlans: readonly TrainingPlan[] = [
     // Athletic Performance Program
     {
         author: "FitApp Science Team",
-        category: "hybrid",
         description:
             "An advanced multi-faceted training program designed to optimize athletic performance through power, strength, speed, and conditioning work.",
         durationWeeks: 12,
@@ -1629,120 +1665,132 @@ export const hybridPlans: readonly TrainingPlan[] = [
         name: "Athletic Performance Elite",
         scienceReference:
             "Based on NSCA sport performance principles and periodized training models",
+        type: "circuit",
         workoutDays: [
             {
-                exercises: [
+                exerciseEntries: [
                     {
                         exerciseId: "hang-clean",
-                        notes: "Focus on technique and explosiveness",
+                        exerciseNotes: "Focus on technique and explosiveness",
                         reps: 5,
                         restTime: 180,
-                        sets: 5,
+                        setsCount: 5,
                     },
-                    { exerciseId: "box-jumps", reps: 8, restTime: 120, sets: 4 },
-                    { exerciseId: "medicine-ball-throws", reps: 10, restTime: 120, sets: 4 },
-                    { exerciseId: "jump-squats", reps: 10, restTime: 120, sets: 4 },
-                    { exerciseId: "plyo-push-ups", reps: 8, restTime: 120, sets: 3 },
+                    { exerciseId: "box-jumps", reps: 8, restTime: 120, setsCount: 4 },
+                    { exerciseId: "medicine-ball-throws", reps: 10, restTime: 120, setsCount: 4 },
+                    { exerciseId: "jump-squats", reps: 10, restTime: 120, setsCount: 4 },
+                    { exerciseId: "plyo-push-ups", reps: 8, restTime: 120, setsCount: 3 },
                 ],
                 id: "power-development",
                 name: "Power Development",
             },
             {
-                exercises: [
-                    { exerciseId: "squat", notes: "80-85% 1RM", reps: 5, restTime: 180, sets: 5 },
+                exerciseEntries: [
                     {
-                        exerciseId: "bench-press",
-                        notes: "80-85% 1RM",
+                        exerciseId: "squat",
+                        exerciseNotes: "80-85% 1RM",
                         reps: 5,
                         restTime: 180,
-                        sets: 5,
+                        setsCount: 5,
+                    },
+                    {
+                        exerciseId: "bench-press",
+                        exerciseNotes: "80-85% 1RM",
+                        reps: 5,
+                        restTime: 180,
+                        setsCount: 5,
                     },
                     {
                         exerciseId: "deadlift",
-                        notes: "80-85% 1RM",
+                        exerciseNotes: "80-85% 1RM",
                         reps: 5,
                         restTime: 180,
-                        sets: 5,
+                        setsCount: 5,
                     },
                     {
                         exerciseId: "pull-ups",
-                        notes: "Weighted if possible",
+                        exerciseNotes: "Weighted if possible",
                         reps: 6,
                         restTime: 120,
-                        sets: 4,
+                        setsCount: 4,
                     },
-                    { exerciseId: "barbell-overhead-press", reps: 6, restTime: 120, sets: 4 },
+                    { exerciseId: "barbell-overhead-press", reps: 6, restTime: 120, setsCount: 4 },
                 ],
                 id: "strength-day",
                 name: "Maximal Strength",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "ladder-drills",
-                        notes: "Various patterns",
+                        exerciseNotes: "Various patterns",
                         restTime: 120,
-                        sets: 4,
+                        setsCount: 4,
                     },
-                    { duration: 60, exerciseId: "cone-drills", restTime: 120, sets: 4 },
-                    { duration: 30, exerciseId: "shuttle-runs", restTime: 120, sets: 6 },
-                    { exerciseId: "broad-jumps", reps: 5, restTime: 120, sets: 5 },
+                    { durationSeconds: 60, exerciseId: "cone-drills", restTime: 120, setsCount: 4 },
+                    {
+                        durationSeconds: 30,
+                        exerciseId: "shuttle-runs",
+                        restTime: 120,
+                        setsCount: 6,
+                    },
+                    { exerciseId: "broad-jumps", reps: 5, restTime: 120, setsCount: 5 },
                     {
                         exerciseId: "lateral-bounds",
-                        notes: "Each side",
+                        exerciseNotes: "Each side",
                         reps: 8,
                         restTime: 120,
-                        sets: 4,
+                        setsCount: 4,
                     },
                 ],
                 id: "speed-agility",
                 name: "Speed & Agility",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 30,
+                        durationSeconds: 30,
                         exerciseId: "running",
-                        notes: "Sprint intervals",
+                        exerciseNotes: "Sprint intervals",
                         restTime: 60,
-                        sets: 10,
+                        setsCount: 10,
                     },
                     {
-                        duration: 60,
+                        durationSeconds: 60,
                         exerciseId: "rowing-machine",
-                        notes: "High intensity",
+                        exerciseNotes: "High intensity",
                         restTime: 60,
-                        sets: 5,
+                        setsCount: 5,
                     },
-                    { duration: 30, exerciseId: "battle-ropes", restTime: 60, sets: 4 },
-                    { exerciseId: "kettlebell-swings", reps: 20, restTime: 60, sets: 4 },
+                    { durationSeconds: 30, exerciseId: "battle-ropes", restTime: 60, setsCount: 4 },
+                    { exerciseId: "kettlebell-swings", reps: 20, restTime: 60, setsCount: 4 },
                 ],
                 id: "conditioning",
                 name: "Sport Conditioning",
             },
             {
-                exercises: [
+                exerciseEntries: [
                     {
-                        duration: 600,
+                        durationSeconds: 600,
                         exerciseId: "foam-rolling",
-                        notes: "Full body foam rolling session",
+                        exerciseNotes: "Full body foam rolling session",
                         restTime: 0,
-                        sets: 1,
+                        setsCount: 1,
                     },
                     {
-                        duration: 300,
+                        durationSeconds: 300,
                         exerciseId: "dynamic-stretching",
-                        notes: "Full body mobility flows",
+                        exerciseNotes: "Full body mobility flows",
                         restTime: 60,
-                        sets: 2,
+                        setsCount: 2,
                     },
                     {
-                        duration: 900,
+                        durationSeconds: 900,
                         exerciseId: "yoga-flow",
-                        notes: "Restorative practice",
+                        exerciseNotes: "Restorative practice",
                         restTime: 0,
-                        sets: 1,
+                        setsCount: 1,
                     },
                 ],
                 id: "recovery-mobility",

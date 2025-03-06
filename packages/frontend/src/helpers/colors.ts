@@ -10,8 +10,7 @@ export function getColorFromId(id: string): string {
     ];
 
     const hash = id.split("").reduce(function (acc, char) {
-        // eslint-disable-next-line no-bitwise -- FIXME
-        return char.charCodeAt(0) + ((acc << 5) - acc);
+        return char.charCodeAt(0) + acc * 31;
     }, 0);
 
     const index = Math.abs(hash) % colors.length;

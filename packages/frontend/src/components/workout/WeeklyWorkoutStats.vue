@@ -171,9 +171,14 @@ import { useDate } from "vuetify";
 
 import type { WorkoutWithId } from "../../types/workout";
 
-import { getExerciseById, getMuscleById } from "../../data/strength-exercises";
+import { ONE_DAY } from "../../helpers/date-utils";
+import { getExerciseById, getMuscleById } from "../../helpers/exercise-utils";
 import { logger } from "../../logger/app-logger";
-import { getWorkoutsInDateRange, isCardioWorkout, isStrengthWorkout } from "../../services/workout";
+import {
+    getWorkoutsInDateRange,
+    isCardioExercise,
+    isStrengthExercise,
+} from "../../services/workout";
 import { useAuthStore } from "../../stores/auth";
 import { useGlobalStore } from "../../stores/global";
 
@@ -206,7 +211,7 @@ function getCurrentWeekNumber(): number {
         now.getTime() -
         start.getTime() +
         (start.getTimezoneOffset() - now.getTimezoneOffset()) * 60 * 1000;
-    const oneWeek = 1000 * 60 * 60 * 24 * 7;
+    const oneWeek = ONE_DAY * 7;
     return Math.floor(diff / oneWeek) + 1;
 }
 
@@ -222,23 +227,23 @@ const {
     },
 });
 
-const strengthWorkouts = computed(() => {
-    return workoutsThisWeek.value.filter(function (workout) {
-        return isStrengthWorkout(workout);
-    });
+const strengthExercises = computed(() => {
+    return workoutsThisWeek.value
+        .flatMap((workout) => workout.exerciseEntries)
+        .filter(isStrengthExercise);
 });
 
-const cardioWorkouts = computed(() => {
-    return workoutsThisWeek.value.filter(function (workout) {
-        return isCardioWorkout(workout);
-    });
+const cardioExercises = computed(() => {
+    return workoutsThisWeek.value
+        .flatMap((workout) => workout.exerciseEntries)
+        .filter(isCardioExercise);
 });
 
 const totalVolume = computed(() => {
     let volume = 0;
 
-    for (const workout of strengthWorkouts.value) {
-        for (const entry of workout.exerciseEntries) {
+    for (const entry of strengthExercises.value) {
+        if (entry.sets) {
             for (const set of entry.sets) {
                 volume += set.weight * set.reps;
             }
@@ -251,10 +256,8 @@ const totalVolume = computed(() => {
 const totalSets = computed(() => {
     let sets = 0;
 
-    for (const workout of strengthWorkouts.value) {
-        for (const entry of workout.exerciseEntries) {
-            sets += entry.sets.length;
-        }
+    for (const entry of strengthExercises.value) {
+        sets += entry.sets?.length ?? 0;
     }
 
     return sets;
@@ -263,19 +266,19 @@ const totalSets = computed(() => {
 const totalCaloriesBurned = computed(() => {
     let calories = 0;
 
-    // Sum calories from cardio workouts
-    for (const workout of cardioWorkouts.value) {
-        for (const entry of workout.exerciseEntries) {
-            if (entry.calories) {
-                calories += entry.calories;
-            }
+    for (const entry of cardioExercises.value) {
+        if (entry.calories) {
+            calories += entry.calories;
         }
     }
 
-    // Estimate calories from strength workouts
-    for (const workout of strengthWorkouts.value) {
-        // Rough estimate: 5 calories per minute of strength training
-        calories += workout.workoutDurationMinutes * 5;
+    for (const entry of strengthExercises.value) {
+        if (entry.calories) {
+            calories += entry.calories;
+        } else if (entry.durationSeconds) {
+            // Rough estimate: 5 calories per minute of strength training
+            calories += (entry.durationSeconds / 60) * 5;
+        }
     }
 
     return Math.round(calories);
@@ -296,56 +299,55 @@ const totalExercises = computed(() => {
 const totalDuration = computed(() => {
     let duration = 0;
 
-    for (const workout of cardioWorkouts.value) {
+    for (const workout of workoutsThisWeek.value) {
+        if (workout.workoutDurationMinutes) {
+            duration += workout.workoutDurationMinutes;
+            continue;
+        }
+
+        // Otherwise add up durations from individual exercises
         for (const entry of workout.exerciseEntries) {
-            duration += entry.durationMinutes;
+            if (entry.durationSeconds) {
+                duration += entry.durationSeconds / 60;
+            }
         }
     }
 
-    for (const workout of strengthWorkouts.value) {
-        duration += workout.workoutDurationMinutes;
-    }
-
-    return duration;
+    return Math.round(duration);
 });
 
 const topMuscles = computed(() => {
     const muscleCounts: Record<string, number> = {};
 
-    for (const workout of workoutsThisWeek.value) {
-        if (!isStrengthWorkout(workout)) {
-            continue;
-        }
+    for (const entry of strengthExercises.value) {
+        const exercise = getExerciseById(entry.exerciseId);
 
-        for (const entry of workout.exerciseEntries) {
-            const exercise = getExerciseById(entry.exerciseId);
+        const exerciseWeight = entry.sets?.length ?? 1;
 
-            const exerciseWeight = entry.sets.length;
-
-            for (const muscleId of exercise.muscleIds) {
-                muscleCounts[muscleId] = (muscleCounts[muscleId] ?? 0) + exerciseWeight;
-            }
+        for (const muscleId of exercise.muscleIds) {
+            muscleCounts[muscleId] = (muscleCounts[muscleId] ?? 0) + exerciseWeight;
         }
     }
 
     return Object.entries(muscleCounts)
-        .map(([id, count]) => ({
-            count,
-            id,
-            name: getMuscleById(id).name,
-        }))
+        .map(([id, count]) => {
+            const muscle = getMuscleById(id);
+            return {
+                count,
+                id,
+                name: muscle ? muscle.name : "Unknown",
+            };
+        })
         .sort((a, b) => b.count - a.count)
         .slice(0, 3);
 });
 
 function calculateAverageIntensity(): number {
-    if (cardioWorkouts.value.length === 0) return 0;
-
     let intensitySum = 0;
     let intensityCount = 0;
 
-    for (const workout of cardioWorkouts.value) {
-        for (const entry of workout.exerciseEntries) {
+    for (const entry of cardioExercises.value) {
+        if (entry.intensity) {
             switch (entry.intensity) {
                 case "high":
                     intensitySum += 100;
@@ -412,6 +414,6 @@ const workoutStats = computed(() => {
 });
 
 function goToWorkoutLogger(): void {
-    router.push({ name: "WorkoutLogger" });
+    router.push({ name: "WorkoutLogs" });
 }
 </script>

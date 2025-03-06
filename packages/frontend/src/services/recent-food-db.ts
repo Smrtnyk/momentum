@@ -4,6 +4,7 @@ import { Dexie } from "dexie";
 
 import type { FoodItem } from "../types/food";
 
+import { ONE_DAY } from "../helpers/date-utils";
 import { logger } from "../logger/app-logger";
 
 type RecentFood = FoodItem & {
@@ -38,7 +39,7 @@ export async function addRecentFood(userId: string, food: FoodItem): Promise<voi
             await db.recentFoods.update(food.id, {
                 ...structuredClone(food),
                 lastUsed: Date.now(),
-                useCount: (existingFood.useCount || 0) + 1,
+                useCount: (existingFood.useCount ?? 0) + 1,
                 userId,
             });
         } else {
@@ -101,14 +102,13 @@ async function cleanupRecentFoods(userId: string): Promise<void> {
         const allFoods = await db.recentFoods.where("userId").equals(userId).toArray();
 
         // Sort by use count first (keep most used), then by last used (keep most recent)
-        allFoods.sort((a, b) => {
+        allFoods.sort(function (a, b) {
             if (b.useCount !== a.useCount) {
                 return b.useCount - a.useCount;
             }
             return b.lastUsed - a.lastUsed;
         });
 
-        // items beyond the max limit
         const foodsToRemove = allFoods.slice(MAX_RECENT_FOODS);
         const idsToRemove = foodsToRemove.map((food) => food.id);
 
@@ -127,8 +127,7 @@ async function cleanupRecentFoods(userId: string): Promise<void> {
 async function removeExpiredFoods(userId: string): Promise<void> {
     try {
         const now = Date.now();
-        // days to milliseconds
-        const maxAge = MAX_AGE_DAYS * 24 * 60 * 60 * 1000;
+        const maxAge = MAX_AGE_DAYS * ONE_DAY;
         const cutoffTime = now - maxAge;
 
         await db.recentFoods

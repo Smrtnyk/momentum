@@ -82,9 +82,11 @@ describe("CombinedFoodApi", function () {
 
             const result = await combinedApi.getFoodByBarcode("12345");
 
-            // FIXME: maybe use to be called before matcher? Should have called both providers in order
             expect(mockApi1.mockGetFoodByBarcode).toHaveBeenCalledWith("12345");
             expect(mockApi2.mockGetFoodByBarcode).toHaveBeenCalledWith("12345");
+            expect(mockApi1.mockGetFoodByBarcode).toHaveBeenCalledBefore(
+                vi.mocked(mockApi2.mockGetFoodByBarcode),
+            );
 
             expect(result).toEqual({
                 ...mockFood,

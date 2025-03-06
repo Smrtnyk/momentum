@@ -109,7 +109,7 @@ export const recipes: Recipe[] = [
             { amount: "2", name: "olive oil", unit: "tbsp" },
             { amount: "2", name: "lemon juice", unit: "tbsp" },
             { amount: "1/4", name: "fresh herbs (mint, parsley)", unit: "cup" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Rinse quinoa under cold water.",
@@ -153,7 +153,7 @@ export const recipes: Recipe[] = [
             { amount: "1/2", name: "low-fat Greek yogurt", unit: "cup" },
             { amount: "1", name: "lemon juice", unit: "tbsp" },
             { amount: "1", name: "dried herbs (oregano, basil)", unit: "tsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Cook pasta according to package instructions. Add frozen peas in the last 2 minutes.",
@@ -199,7 +199,7 @@ export const recipes: Recipe[] = [
             { amount: "1", name: "sesame oil", unit: "tsp" },
             { amount: "1", name: "cornstarch", unit: "tsp" },
             { amount: "1/4", name: "water", unit: "cup" },
-            { amount: "to taste", name: "chili flakes" },
+            { amount: "to taste", name: "chili flakes", unit: "" },
         ],
         instructions: [
             "Press tofu to remove excess water, then cut into cubes.",
@@ -282,7 +282,7 @@ export const recipes: Recipe[] = [
             { amount: "1", name: "chia seeds", unit: "tbsp" },
             { amount: "1", name: "honey", unit: "tsp" },
             { amount: "1", name: "almond butter", unit: "tbsp" },
-            { amount: "pinch", name: "cinnamon" },
+            { amount: "pinch", name: "cinnamon", unit: "" },
         ],
         instructions: [
             "In a glass or bowl, layer half of the Greek yogurt at the bottom.",
@@ -324,7 +324,7 @@ export const recipes: Recipe[] = [
             { amount: "2", name: "lemon juice", unit: "tbsp" },
             { amount: "1", name: "Dijon mustard", unit: "tsp" },
             { amount: "1", name: "herbs (dill, parsley)", unit: "tbsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Season chicken breasts with salt and pepper.",
@@ -407,7 +407,7 @@ export const recipes: Recipe[] = [
             { amount: "1", name: "spinach", unit: "cup" },
             { amount: "1", name: "flaxseed", unit: "tbsp" },
             { amount: "1", name: "honey", unit: "tsp" },
-            { amount: "4-5", name: "ice cubes" },
+            { amount: "4-5", name: "ice cubes", unit: "" },
         ],
         instructions: [
             "Add all ingredients to a blender, starting with the liquid.",
@@ -447,7 +447,7 @@ export const recipes: Recipe[] = [
             { amount: "2", name: "olive oil", unit: "tbsp" },
             { amount: "1", name: "dried oregano", unit: "tsp" },
             { amount: "2", name: "fresh dill", unit: "tbsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Preheat oven to 375°F (190°C).",
@@ -493,7 +493,7 @@ export const recipes: Recipe[] = [
             { amount: "1/2", name: "garlic powder", unit: "tsp" },
             { amount: "1", name: "cumin", unit: "tsp" },
             { amount: "1", name: "paprika", unit: "tsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Preheat oven to 400°F (200°C).",
@@ -544,7 +544,7 @@ export const recipes: Recipe[] = [
             { amount: "1", name: "bay leaf", unit: "leaf" },
             { amount: "1/4", name: "parmesan cheese", unit: "cup" },
             { amount: "2", name: "olive oil", unit: "tbsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Finely dice onion, carrots, and celery (this is called 'soffritto').",
@@ -686,7 +686,7 @@ export const recipes: Recipe[] = [
             { amount: "2", name: "rosemary", unit: "sprigs" },
             { amount: "3", name: "flour", unit: "tbsp" },
             { amount: "3", name: "olive oil", unit: "tbsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Cut beef into 1.5-inch cubes. Pat dry and season generously with salt and pepper.",
@@ -776,7 +776,7 @@ export const recipes: Recipe[] = [
             { amount: "1", name: "sesame oil", unit: "tsp" },
             { amount: "1", name: "olive oil", unit: "tbsp" },
             { amount: "1/2", name: "frozen peas", unit: "cup" },
-            { amount: "to taste", name: "sriracha sauce" },
+            { amount: "to taste", name: "sriracha sauce", unit: "" },
         ],
         instructions: [
             "Break cauliflower into florets and pulse in a food processor until it reaches a rice-like consistency.",
@@ -825,7 +825,7 @@ export const recipes: Recipe[] = [
             { amount: "1", name: "part-skim mozzarella", unit: "cup" },
             { amount: "1/4", name: "parmesan cheese", unit: "cup" },
             { amount: "1/4", name: "fresh parsley", unit: "cup" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Preheat oven to 375°F (190°C).",
@@ -877,7 +877,7 @@ export const recipes: Recipe[] = [
             { amount: "1", name: "cumin", unit: "tsp" },
             { amount: "1", name: "paprika", unit: "tsp" },
             { amount: "1", name: "garlic powder", unit: "tsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Cook brown rice according to package instructions.",
@@ -925,7 +925,7 @@ export const recipes: Recipe[] = [
             { amount: "1/2", name: "avocado", unit: "medium" },
             { amount: "1/4", name: "fresh cilantro", unit: "cup" },
             { amount: "1/4", name: "salsa", unit: "cup" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Pat shrimp dry and season with salt, pepper, cumin, chili powder, paprika, and garlic powder.",
@@ -970,7 +970,7 @@ export const recipes: Recipe[] = [
             { amount: "3", name: "garlic", unit: "cloves" },
             { amount: "1", name: "dried oregano", unit: "tsp" },
             { amount: "1/2", name: "dried thyme", unit: "tsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Preheat oven to 400°F (200°C) and line a baking sheet with parchment paper.",
@@ -1013,7 +1013,7 @@ export const recipes: Recipe[] = [
             { amount: "1", name: "maple syrup", unit: "tbsp" },
             { amount: "3", name: "olive oil", unit: "tbsp" },
             { amount: "1", name: "balsamic vinegar", unit: "tbsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Preheat oven to 425°F (220°C).",
@@ -1062,7 +1062,7 @@ export const recipes: Recipe[] = [
             { amount: "1", name: "bay leaf", unit: "leaf" },
             { amount: "2", name: "lemon juice", unit: "tbsp" },
             { amount: "1", name: "olive oil", unit: "tbsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Dice onion, carrots, and celery. Mince garlic.",
@@ -1108,7 +1108,7 @@ export const recipes: Recipe[] = [
             { amount: "1/4", name: "fresh cilantro", unit: "cup" },
             { amount: "2", name: "green onions", unit: "stalks" },
             { amount: "1", name: "olive oil", unit: "tsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Preheat oven to 400°F (200°C). Pierce sweet potatoes several times with a fork.",
@@ -1155,7 +1155,7 @@ export const recipes: Recipe[] = [
             { amount: "1", name: "fresh dill", unit: "tbsp" },
             { amount: "1", name: "capers", unit: "tsp" },
             { amount: "1/4", name: "paprika", unit: "tsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Drain tuna well and flake with a fork in a medium bowl.",
@@ -1205,7 +1205,7 @@ export const recipes: Recipe[] = [
             { amount: "2", name: "dill", unit: "tbsp" },
             { amount: "1", name: "lemon juice", unit: "tbsp" },
             { amount: "2", name: "olive oil", unit: "tbsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Preheat oven to 375°F (190°C). Line a baking sheet with parchment paper.",
@@ -1307,7 +1307,7 @@ export const recipes: Recipe[] = [
             { amount: "1", name: "lime", unit: "whole" },
             { amount: "1/4", name: "fresh cilantro", unit: "cup" },
             { amount: "2", name: "olive oil", unit: "tbsp" },
-            { amount: "to taste", name: "salt and pepper" },
+            { amount: "to taste", name: "salt and pepper", unit: "" },
         ],
         instructions: [
             "Rinse quinoa and cook according to package instructions.",

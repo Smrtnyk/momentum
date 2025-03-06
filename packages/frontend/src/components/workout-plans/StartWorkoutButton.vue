@@ -14,7 +14,7 @@
 
         <div v-if="isWorkoutActive && activeWorkoutInfo" class="mt-2 text-caption">
             <v-alert type="info" variant="tonal" density="compact" class="text-caption mb-0 pa-2">
-                <span class="font-weight-medium">{{ activeWorkoutInfo.dayName }}</span> workout in
+                <span class="font-weight-medium">{{ activeWorkoutInfo.name }}</span> workout in
                 progress. Complete or cancel it before starting a new one.
             </v-alert>
         </div>
@@ -41,10 +41,10 @@ const loading = ref(false);
 const isWorkoutActive = computed(() => activeWorkoutStore.isWorkoutActive);
 const activeWorkoutInfo = computed(() => activeWorkoutStore.activeWorkout);
 
-async function startWorkout(): Promise<void> {
+function startWorkout(): void {
     try {
         loading.value = true;
-        await activeWorkoutStore.startWorkout(props.plan, props.day);
+        activeWorkoutStore.startWorkout(props.plan, props.day);
         globalStore.notify(`Started workout: ${props.day.name}`);
     } catch (error) {
         globalStore.notifyError("Failed to start workout");

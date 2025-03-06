@@ -2,7 +2,7 @@
     <div class="dialog-container">
         <template v-for="dialog in dialogs" :key="dialog.id">
             <v-dialog
-                v-model="dialogVisibility[dialog.id]"
+                :model-value="getDialogVisibility(dialog.id)"
                 :persistent="dialog.persistent ?? false"
                 :fullscreen="dialog.fullscreen ?? $vuetify.display.mobile"
                 :max-width="dialog.maxWidth"
@@ -36,26 +36,32 @@ import { globalDialog } from "../../composables/useDialog";
 
 const dialogs = computed(() => globalDialog.dialogs.value);
 
-const dialogVisibility = ref<Record<string, boolean>>({});
+const dialogVisibilityMap = ref(new Map<string, boolean>());
+
+function getDialogVisibility(dialogId: string): boolean {
+    return dialogVisibilityMap.value.get(dialogId) ?? false;
+}
+
+function setDialogVisibility(dialogId: string, value: boolean): void {
+    dialogVisibilityMap.value.set(dialogId, value);
+}
 
 watch(
     dialogs,
     function (newDialogs) {
         newDialogs.forEach((dialog) => {
-            if (dialogVisibility.value[dialog.id] === undefined) {
-                dialogVisibility.value[dialog.id] = true;
+            if (!dialogVisibilityMap.value.has(dialog.id)) {
+                dialogVisibilityMap.value.set(dialog.id, true);
             }
         });
 
-        // Clean up old dialogs after transition
         const currentIds = new Set(newDialogs.map(({ id }) => id));
-        Object.keys(dialogVisibility.value).forEach((id) => {
-            if (!currentIds.has(id) && dialogVisibility.value[id] === false) {
+        dialogVisibilityMap.value.forEach((isVisible, id) => {
+            if (!currentIds.has(id) && !isVisible) {
                 setTimeout(() => {
-                    const updatedVisibility = { ...dialogVisibility.value };
-                    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete -- FIXME
-                    delete updatedVisibility[id];
-                    dialogVisibility.value = updatedVisibility;
+                    const updatedMap = new Map(dialogVisibilityMap.value);
+                    updatedMap.delete(id);
+                    dialogVisibilityMap.value = updatedMap;
                 }, 300);
             }
         });
@@ -65,7 +71,7 @@ watch(
 
 function closeDialog(dialogId: string): void {
     // Set to false first to trigger transition
-    dialogVisibility.value[dialogId] = false;
+    setDialogVisibility(dialogId, false);
     // Give the dialog time to animate out before removing it
     setTimeout(() => {
         globalDialog.closeDialog(dialogId);
@@ -79,7 +85,7 @@ function handleDialogVisibility(dialogId: string, isVisible: boolean): void {
             closeDialog(dialogId);
         } else {
             // Reset visibility if dialog is persistent
-            dialogVisibility.value[dialogId] = true;
+            setDialogVisibility(dialogId, true);
         }
     }
 }

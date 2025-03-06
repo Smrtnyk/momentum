@@ -1,64 +1,60 @@
 import type { Timestamp } from "firebase/firestore";
 
-export type CardioWorkout = WorkoutBase & {
-    exerciseEntries: CardioExerciseEntry[];
-    type: "cardio";
-};
-
-export interface CircuitExerciseEntry extends BaseExerciseEntry {
-    calories: number | undefined;
-    distanceKm: number | undefined;
-    durationSeconds: number | undefined;
-    intensity: "high" | "low" | "medium" | undefined;
-    sets: ExerciseSet[];
-    type: "circuit";
+export interface ActiveExercise extends ExerciseEntry {
+    completed: boolean;
+    reps?: number;
+    sets?: ActiveSet[];
+    setsCount?: number;
 }
 
-export type CircuitWorkout = WorkoutBase & {
-    exerciseEntries: CircuitExerciseEntry[];
-    type: "circuit";
-    workoutDurationMinutes: number;
+export interface ActiveSet extends ExerciseSet {
+    completed: boolean;
+}
+
+export interface ActiveWorkout {
+    customWorkout?: boolean;
+    date: Date | string;
+    exerciseEntries: ActiveExercise[];
+    id: string;
+    name: string;
+    overallNotes: string;
+    planId: string;
+    planName?: string;
+}
+
+export type CardioExerciseEntry = ExerciseEntry & {
+    calories: NonNullable<ExerciseEntry["calories"]>;
+    durationSeconds: NonNullable<ExerciseEntry["durationSeconds"]>;
+    intensity: NonNullable<ExerciseEntry["intensity"]>;
 };
 
-export type StrengthWorkout = WorkoutBase & {
-    exerciseEntries: StrengthExerciseEntry[];
-    type: "strength";
-    workoutDurationMinutes: number;
-};
+export interface ExerciseEntry {
+    calories?: number | undefined;
+    distanceKm?: number | undefined;
+    durationSeconds: number | undefined;
+    exerciseId: string;
+    exerciseNotes?: string;
+    intensity?: "high" | "low" | "medium" | undefined;
+    sets?: ExerciseSet[];
+}
 
-export type Workout = CardioWorkout | CircuitWorkout | StrengthWorkout;
+export interface ExerciseSet {
+    reps: number;
+    weight: number;
+}
+export type StrengthExerciseEntry = ExerciseEntry & { sets: NonNullable<ExerciseEntry["sets"]> };
+
+export type Workout = WorkoutBase;
+
+export interface WorkoutBase {
+    date: Timestamp;
+    exerciseEntries: ExerciseEntry[];
+    id: string;
+    name: string;
+    overallNotes: string;
+    workoutDurationMinutes?: number;
+}
 
 export type WorkoutWithId = Workout & {
     id: string;
 };
-
-interface BaseExerciseEntry {
-    exerciseId: string;
-    exerciseNotes?: string;
-}
-
-interface CardioExerciseEntry extends BaseExerciseEntry {
-    calories?: number;
-    distanceKm?: number;
-    durationMinutes: number;
-    intensity: "high" | "low" | "medium";
-    type: "cardio";
-}
-
-interface ExerciseSet {
-    reps: number;
-    weight: number;
-}
-
-interface StrengthExerciseEntry extends BaseExerciseEntry {
-    sets: ExerciseSet[];
-    type: "strength";
-}
-
-interface WorkoutBase {
-    date: Timestamp;
-    id: string;
-    name: string;
-    overallNotes: string;
-    userId: string;
-}

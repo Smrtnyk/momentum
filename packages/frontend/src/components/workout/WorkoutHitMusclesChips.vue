@@ -2,7 +2,7 @@
     <div class="d-flex align-center flex-wrap gap-1 workout-chips">
         <v-chip
             v-for="muscle in hitMuscles"
-            :key="muscle.id"
+            :key="muscle.exerciseId"
             size="x-small"
             density="comfortable"
             variant="tonal"
@@ -16,19 +16,18 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
-import type { Exercise } from "../../types/exercise";
 import type { WorkoutWithId } from "../../types/workout";
 
-import { getExerciseById, getMuscleById } from "../../data/strength-exercises";
+import { getExerciseById, getMuscleById } from "../../helpers/exercise-utils";
 
 const { workout } = defineProps<{ workout: WorkoutWithId }>();
 
 const hitMuscles = computed(() => {
     const exerciseIds = workout.exerciseEntries.map((entry) => entry.exerciseId);
-    const exercises = exerciseIds.map((id) => getExerciseById(id)) as Exercise[];
+    const exercises = exerciseIds.map(getExerciseById);
     const muscleIds = exercises.flatMap((exercise) => exercise.muscleIds);
     const uniqueMuscleIds = [...new Set(muscleIds)];
-    return uniqueMuscleIds.map((id) => getMuscleById(id));
+    return uniqueMuscleIds.map(getMuscleById);
 });
 </script>
 

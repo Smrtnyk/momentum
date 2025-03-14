@@ -43,18 +43,17 @@ jobs:
 
     sonarcloud:
         name: SonarCloud
+        needs: prepare
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ matrix.node_version }}
-
-            - name: SonarCloud Scan
-              uses: sonarqube-scan-action@master
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+            -   uses: actions/checkout@v4
+                with:
+                    fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+            -   uses: actions/setup-node@v4
+                with:
+                    node-version: '22'
+            -   name: SonarCloud Scan
+                uses: sonarqube-scan-action@master
+                env:
+                    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

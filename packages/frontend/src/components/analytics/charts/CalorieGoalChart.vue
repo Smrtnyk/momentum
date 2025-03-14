@@ -60,7 +60,7 @@ import { computed } from "vue";
 
 import type { HealthMetrics } from "../../../types/health-metrics";
 
-import { formatChartDate, formatDateWithDay } from "../../../helpers/date-utils";
+import { formatDateWithDay, formatMediumDate } from "../../../helpers/date-utils";
 
 const props = defineProps<{
     nutritionData: HealthMetrics[];
@@ -301,7 +301,7 @@ const chartOptions = computed(() => {
             theme: "dark",
             x: {
                 formatter(val: number) {
-                    return formatChartDate(new Date(val));
+                    return formatMediumDate(new Date(val));
                 },
             },
             y: {

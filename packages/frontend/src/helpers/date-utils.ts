@@ -12,16 +12,6 @@ export const ONE_DAY = 24 * 60 * 60 * 1000;
 export const ONE_HOUR = 60 * 60 * 1000;
 
 /**
- * Format a date specifically for chart tooltips
- */
-export function formatChartDate(date: Date): string {
-    return date.toLocaleDateString(currentLocale, {
-        day: "numeric",
-        month: "short",
-    });
-}
-
-/**
  * Format a date with weekday, month, and day (Mon, Jan 15)
  */
 export function formatDateWithDay(date: Date): string {
@@ -48,6 +38,16 @@ export function formatFullDate(date: Date): string {
  */
 export function formatISODate(date: Date): string {
     return date.toISOString().split("T")[0];
+}
+
+/**
+ * Format a date with month and day (Jan 15)
+ */
+export function formatMediumDate(date: Date): string {
+    return date.toLocaleDateString(currentLocale, {
+        day: "numeric",
+        month: "short",
+    });
 }
 
 /**
@@ -199,16 +199,6 @@ export function isToday(date: Date | Timestamp): boolean {
  */
 export function timestampToDate(timestamp: Timestamp): Date {
     return timestamp.toDate();
-}
-
-/**
- * Format a date with month and day (Jan 15)
- */
-function formatMediumDate(date: Date): string {
-    return date.toLocaleDateString(currentLocale, {
-        day: "numeric",
-        month: "short",
-    });
 }
 
 /**

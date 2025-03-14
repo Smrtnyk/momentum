@@ -30,37 +30,40 @@ const props = defineProps<{
     nutritionData: HealthMetrics[];
 }>();
 
+function calculateAverage(total: number, count: number): number {
+    return count > 0 ? Math.round(total / count) : 0;
+}
+
 const macroData = computed(() => {
-    let totalProtein = 0;
-    let totalCarbs = 0;
-    let totalFat = 0;
-    let daysWithProtein = 0;
-    let daysWithCarbs = 0;
-    let daysWithFat = 0;
+    const totals = {
+        carbs: { days: 0, sum: 0 },
+        fat: { days: 0, sum: 0 },
+        protein: { days: 0, sum: 0 },
+    };
 
     for (const day of props.nutritionData) {
-        if (day.calories) {
-            if (day.calories.protein !== undefined && day.calories.protein > 0) {
-                totalProtein += day.calories.protein;
-                daysWithProtein++;
-            }
+        if (!day.calories) continue;
 
-            if (day.calories.carbs !== undefined && day.calories.carbs > 0) {
-                totalCarbs += day.calories.carbs;
-                daysWithCarbs++;
-            }
+        if (day.calories.protein !== undefined && day.calories.protein > 0) {
+            totals.protein.sum += day.calories.protein;
+            totals.protein.days++;
+        }
 
-            if (day.calories.fat !== undefined && day.calories.fat > 0) {
-                totalFat += day.calories.fat;
-                daysWithFat++;
-            }
+        if (day.calories.carbs !== undefined && day.calories.carbs > 0) {
+            totals.carbs.sum += day.calories.carbs;
+            totals.carbs.days++;
+        }
+
+        if (day.calories.fat !== undefined && day.calories.fat > 0) {
+            totals.fat.sum += day.calories.fat;
+            totals.fat.days++;
         }
     }
 
     return {
-        carbs: daysWithCarbs > 0 ? Math.round(totalCarbs / daysWithCarbs) : 0,
-        fat: daysWithFat > 0 ? Math.round(totalFat / daysWithFat) : 0,
-        protein: daysWithProtein > 0 ? Math.round(totalProtein / daysWithProtein) : 0,
+        carbs: calculateAverage(totals.carbs.sum, totals.carbs.days),
+        fat: calculateAverage(totals.fat.sum, totals.fat.days),
+        protein: calculateAverage(totals.protein.sum, totals.protein.days),
     };
 });
 

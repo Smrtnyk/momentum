@@ -164,6 +164,7 @@ const goalSuccessRate = computed(() => {
 import { useAuthStore } from "../../../stores/auth";
 import { CHART_COLORS } from "../colors";
 import { calculateMovingAverage, getMaxValue } from "../metric-utils";
+import { getLineChartStyleOptions } from "./chart-options";
 
 const authStore = useAuthStore();
 
@@ -229,20 +230,7 @@ const chartOptions = ref<ApexOptions>({
     annotations: {
         yaxis: [],
     },
-    chart: {
-        background: "transparent",
-        fontFamily: "inherit",
-        foreColor: "#E0E0E0",
-        id: "steps-chart",
-        stacked: false,
-        toolbar: {
-            show: false,
-        },
-        type: "line",
-        zoom: {
-            enabled: false,
-        },
-    },
+    chart: getLineChartStyleOptions("steps-chart"),
     colors: ["#2196F3", "#9C27B0"],
     dataLabels: {
         enabled: false,

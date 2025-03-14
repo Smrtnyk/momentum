@@ -151,6 +151,7 @@ import type { WorkoutWithId } from "../../../types/workout";
 import { formatRelativeDate } from "../../../helpers/date-utils";
 import { getExerciseById } from "../../../helpers/exercise-utils";
 import { isStrengthExercise } from "../../../services/workout";
+import { getLineChartStyleOptions } from "./chart-options";
 
 const props = defineProps<{
     exerciseId: string;
@@ -283,20 +284,7 @@ const chartOptions = ref<ApexOptions>({
     annotations: {
         points: [],
     },
-    chart: {
-        background: "transparent",
-        fontFamily: "inherit",
-        foreColor: "#E0E0E0",
-        id: "exercise-progression",
-        stacked: false,
-        toolbar: {
-            show: false,
-        },
-        type: "line",
-        zoom: {
-            enabled: false,
-        },
-    },
+    chart: getLineChartStyleOptions("exercise-progression"),
     colors: ["#00BCD4", "#FF4081"],
     dataLabels: {
         enabled: false,

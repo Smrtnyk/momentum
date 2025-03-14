@@ -219,14 +219,19 @@
                                             <v-table density="compact" class="rounded-lg">
                                                 <thead>
                                                     <tr>
-                                                        <th width="15%">Set</th>
-                                                        <th width="25%">Reps</th>
-                                                        <th width="25%">Weight</th>
+                                                        <th scope="col" width="15%">Set</th>
+                                                        <th scope="col" width="25%">Reps</th>
+                                                        <th scope="col" width="25%">Weight</th>
                                                         <th
+                                                            scope="col"
                                                             width="15%"
                                                             v-if="isActiveWorkout(workout)"
                                                         ></th>
-                                                        <th width="5%" class="text-center"></th>
+                                                        <th
+                                                            scope="col"
+                                                            width="5%"
+                                                            class="text-center"
+                                                        ></th>
                                                     </tr>
                                                 </thead>
 

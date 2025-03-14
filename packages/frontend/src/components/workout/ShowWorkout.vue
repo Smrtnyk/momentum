@@ -159,10 +159,10 @@
                                 <v-table density="compact">
                                     <thead>
                                         <tr>
-                                            <th class="text-left">Set</th>
-                                            <th class="text-left">Reps</th>
-                                            <th class="text-left">Weight</th>
-                                            <th class="text-left">Volume</th>
+                                            <th scope="col" class="text-left">Set</th>
+                                            <th scope="col" class="text-left">Reps</th>
+                                            <th scope="col" class="text-left">Weight</th>
+                                            <th scope="col" class="text-left">Volume</th>
                                         </tr>
                                     </thead>
                                     <tbody>

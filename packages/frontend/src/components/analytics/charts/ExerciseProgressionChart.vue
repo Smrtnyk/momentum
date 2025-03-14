@@ -88,11 +88,11 @@
                     <v-table density="compact" class="mt-2">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Set</th>
-                                <th>Weight</th>
-                                <th>Reps</th>
-                                <th>Volume</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Set</th>
+                                <th scope="col">Weight</th>
+                                <th scope="col">Reps</th>
+                                <th scope="col">Volume</th>
                             </tr>
                         </thead>
                         <tbody>

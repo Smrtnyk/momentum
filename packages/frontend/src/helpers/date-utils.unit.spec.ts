@@ -2,7 +2,6 @@ import { Timestamp } from "firebase/firestore";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
-    formatChartDate,
     formatDateWithDay,
     formatFullDate,
     formatISODate,
@@ -44,14 +43,6 @@ describe("date-utils", () => {
 
     afterEach(() => {
         vi.useRealTimers();
-    });
-
-    describe("formatChartDate", () => {
-        it("formats date correctly for charts", () => {
-            // March 10, 2023
-            const testDate = new Date(2023, 2, 10);
-            expect(formatChartDate(testDate)).toMatch(/mar 10/i);
-        });
     });
 
     describe("formatDateWithDay", () => {

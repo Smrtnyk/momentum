@@ -88,56 +88,15 @@
             <!-- Meals Section -->
             <v-row>
                 <v-col v-for="mealType in mealTypes" :key="mealType" cols="12" sm="6" lg="3">
-                    <template v-if="getMealByType(mealType)">
-                        <MealCard
-                            :meal="getMealByType(mealType)!"
-                            @delete="confirmDeleteMeal(getMealByType(mealType)!.id)"
-                            @add-food="openFoodSearch(mealType)"
-                            @add-macros="openManualMacrosDialog(mealType)"
-                            @remove-food="(index) => removeFoodFromMeal(mealType, index)"
-                        />
-                    </template>
-
-                    <!-- If no meal exists for this type yet, show the add meal card -->
-                    <template v-else>
-                        <v-card class="meal-empty-card" height="100%" elevation="1">
-                            <v-card-text
-                                class="d-flex flex-column align-center justify-center text-center py-8"
-                            >
-                                <v-avatar
-                                    :icon="getMealIcon(mealType)"
-                                    :color="getMealColor(mealType)"
-                                    size="56"
-                                    class="mb-4"
-                                ></v-avatar>
-                                <div class="text-h6 text-capitalize mb-1">{{ mealType }}</div>
-                                <div class="text-body-2 text-medium-emphasis mb-4">
-                                    No foods logged yet
-                                </div>
-                                <div class="d-flex">
-                                    <v-btn
-                                        color="primary"
-                                        variant="outlined"
-                                        rounded
-                                        prepend-icon="mdi-food"
-                                        @click="openFoodSearch(mealType)"
-                                        class="mr-2"
-                                    >
-                                        Add Food
-                                    </v-btn>
-                                    <v-btn
-                                        color="secondary"
-                                        variant="outlined"
-                                        rounded
-                                        prepend-icon="mdi-calculator"
-                                        @click="openManualMacrosDialog(mealType)"
-                                    >
-                                        Log Macros
-                                    </v-btn>
-                                </div>
-                            </v-card-text>
-                        </v-card>
-                    </template>
+                    <MealCard
+                        :meal="getMealByType(mealType)"
+                        :meal-type="mealType"
+                        @delete="confirmDeleteMeal(getMealByType(mealType)!.id)"
+                        @search-food="openFoodSearch(mealType)"
+                        @add-macros="openManualMacrosDialog(mealType)"
+                        @scan-label="openNutritionScanner(mealType)"
+                        @remove-food="(index) => removeFoodFromMeal(mealType, index)"
+                    />
                 </v-col>
             </v-row>
         </template>
@@ -157,6 +116,7 @@ import FoodPortionDialog from "../components/calories/FoodPortionDialog.vue";
 import FoodSearch from "../components/calories/FoodSearch.vue";
 import ManualMacrosDialog from "../components/calories/ManualMacrosDialog.vue";
 import MealCard from "../components/calories/MealCard.vue";
+import NutritionScanner from "../components/calories/NutritionScanner.vue";
 import { globalDialog } from "../composables/useDialog";
 import { formatISODate } from "../helpers/date-utils";
 import { logger } from "../logger/app-logger";
@@ -298,36 +258,6 @@ function getMealByType(type: "breakfast" | "dinner" | "lunch" | "snack"): Meal |
     return meals.value.find((meal) => meal.mealType === type);
 }
 
-function getMealColor(mealType: string): string {
-    switch (mealType) {
-        case "breakfast":
-            return "amber-lighten-1";
-        case "dinner":
-            return "deep-purple-lighten-1";
-        case "lunch":
-            return "light-green-lighten-1";
-        case "snack":
-            return "light-blue-lighten-1";
-        default:
-            return "grey-lighten-1";
-    }
-}
-
-function getMealIcon(mealType: string): string {
-    switch (mealType) {
-        case "breakfast":
-            return "mdi-coffee";
-        case "dinner":
-            return "mdi-food-turkey";
-        case "lunch":
-            return "mdi-food";
-        case "snack":
-            return "mdi-food-apple";
-        default:
-            return "mdi-food";
-    }
-}
-
 function openFoodPortionDialog(
     food: FoodItem,
     mealType: "breakfast" | "dinner" | "lunch" | "snack",
@@ -347,7 +277,7 @@ function openFoodPortionDialog(
     );
 }
 
-function openFoodSearch(mealType: "breakfast" | "dinner" | "lunch" | "snack"): void {
+function openFoodSearch(mealType: Meal["mealType"]): void {
     globalDialog.openDialog(
         FoodSearch,
         {
@@ -362,13 +292,29 @@ function openFoodSearch(mealType: "breakfast" | "dinner" | "lunch" | "snack"): v
     );
 }
 
-function openManualMacrosDialog(mealType: "breakfast" | "dinner" | "lunch" | "snack"): void {
+function openManualMacrosDialog(mealType: Meal["mealType"]): void {
     globalDialog.openDialog(ManualMacrosDialog, {
         mealType,
         onSave(food: FoodItem) {
             return addFoodToMeal(food, mealType);
         },
     });
+}
+
+function openNutritionScanner(mealType: Meal["mealType"]): void {
+    const dialogId = globalDialog.openDialog(
+        NutritionScanner,
+        {
+            mealType,
+            onFoodAdded(food: FoodItem) {
+                globalDialog.closeDialog(dialogId);
+                openFoodPortionDialog(food, mealType);
+            },
+        },
+        {
+            title: "Scan Nutrition Label",
+        },
+    );
 }
 
 async function removeFoodFromMeal(
@@ -451,15 +397,3 @@ whenever(
     { immediate: true },
 );
 </script>
-
-<style scoped>
-.meal-empty-card {
-    border-radius: 8px;
-    min-height: 200px;
-    transition: all 0.2s ease;
-}
-
-.meal-empty-card:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
-}
-</style>

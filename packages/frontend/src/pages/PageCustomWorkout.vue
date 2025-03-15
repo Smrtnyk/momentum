@@ -514,13 +514,14 @@ function addSet(exerciseIndex: number): void {
 
     const sets = exercise.sets;
 
-    // Clone the last set's values or use defaults
-    const lastSet = sets.length > 0 ? sets[sets.length - 1] : { reps: 10, weight: 0 };
-    const newSet = {
-        completed: isActive.value ? false : undefined,
-        reps: lastSet.reps,
-        weight: lastSet.weight,
-    };
+    const setDefault = { reps: 10, weight: 0 };
+
+    const newSet = isActive.value
+        ? {
+              completed: false,
+              ...setDefault,
+          }
+        : setDefault;
 
     sets.push(newSet);
 

@@ -164,6 +164,11 @@ export const strengthExercises: readonly Exercise[] = [
         muscleIds: ["shoulders", "arms"],
         name: "Plate-Loaded Seated Shoulder Press",
     },
+    {
+        exerciseId: "bent-over-rear-delt-raises",
+        muscleIds: ["shoulders", "back"],
+        name: "Bent-Over Rear Delt Raises",
+    },
 
     // Arm exercises
     { exerciseId: "bicep-curls", muscleIds: ["arms"], name: "Bicep Curls" },
@@ -188,6 +193,11 @@ export const strengthExercises: readonly Exercise[] = [
         name: "Preacher Curls",
     },
     { exerciseId: "biceps-hammer-curls", muscleIds: ["arms"], name: "Hammer Curls for Biceps" },
+    {
+        exerciseId: "kneeling-rope-tricep-extension",
+        muscleIds: ["arms"],
+        name: "Kneeling Rope Tricep Extension",
+    },
 
     // Core exercises
     { exerciseId: "abdominal-crunches", muscleIds: ["core"], name: "Abdominal Crunches" },

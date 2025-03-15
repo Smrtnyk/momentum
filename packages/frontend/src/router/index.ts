@@ -103,8 +103,6 @@ const routes = [
     },
 ];
 
-const scrollPositions = new Map<string, { left: number; top: number }>();
-
 const router = createRouter({
     history: createWebHistory(),
     routes,
@@ -135,13 +133,6 @@ router.beforeEach(async (to, from, next) => {
     const globalStore = useGlobalStore();
     const authStore = useAuthStore();
     globalStore.setLoading(true);
-
-    if (from.name) {
-        scrollPositions.set(from.path, {
-            left: window.scrollX,
-            top: window.scrollY,
-        });
-    }
 
     if (!authStore.isReady) {
         await authStore.waitForAuthReady();

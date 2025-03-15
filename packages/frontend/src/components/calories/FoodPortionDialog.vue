@@ -165,17 +165,11 @@ const calculatedNutrition = computed(() => {
         } else {
             baseAmount = quantity.value;
         }
-    } else {
+    } else if (unit.value === "oz") {
         // For solids, convert to g
-        if (unit.value === "g") {
-            baseAmount = quantity.value;
-        }
-        if (unit.value === "oz") {
-            // 1 oz = 28.35g
-            baseAmount = quantity.value * 28.35;
-        } else {
-            baseAmount = quantity.value;
-        }
+        baseAmount = quantity.value;
+    } else {
+        baseAmount = quantity.value * 28.35;
     }
 
     // Calculate ratio to original serving

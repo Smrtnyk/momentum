@@ -200,10 +200,7 @@ const isToday = computed(() => {
     return dateAdapter.isSameDay(new Date(selectedDate.value), today);
 });
 
-async function addFoodToMeal(
-    food: FoodItem,
-    mealType: "breakfast" | "dinner" | "lunch" | "snack",
-): Promise<void> {
+async function addFoodToMeal(food: FoodItem, mealType: Meal["mealType"]): Promise<void> {
     try {
         globalStore.setLoading(true);
         const userId = authStore.nonNullableUser.uid;

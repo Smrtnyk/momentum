@@ -219,18 +219,21 @@
                                             <v-table density="compact" class="rounded-lg">
                                                 <thead>
                                                     <tr>
-                                                        <th scope="col" width="15%">Set</th>
-                                                        <th scope="col" width="25%">Reps</th>
-                                                        <th scope="col" width="25%">Weight</th>
+                                                        <th scope="col" class="set-column">Set</th>
+                                                        <th scope="col" class="reps-column">
+                                                            Reps
+                                                        </th>
+                                                        <th scope="col" class="weight-column">
+                                                            Weight
+                                                        </th>
                                                         <th
                                                             scope="col"
-                                                            width="15%"
+                                                            class="complete-column"
                                                             v-if="isActiveWorkout(workout)"
                                                         ></th>
                                                         <th
                                                             scope="col"
-                                                            width="5%"
-                                                            class="text-center"
+                                                            class="action-column text-center"
                                                         ></th>
                                                     </tr>
                                                 </thead>
@@ -834,8 +837,26 @@ function updateSet(exerciseIndex: number, setIndex: number, reps: number, weight
     text-decoration-style: dotted;
 }
 
-.v-expansion-panel-text /deep/ .v-expansion-panel-text__wrapper {
+:deep(.v-expansion-panel-text__wrapper) {
     padding-left: 10px !important;
     padding-right: 10px !important;
+}
+
+/* Column width classes */
+.set-column {
+    width: 15%;
+}
+
+.reps-column,
+.weight-column {
+    width: 25%;
+}
+
+.complete-column {
+    width: 15%;
+}
+
+.action-column {
+    width: 5%;
 }
 </style>

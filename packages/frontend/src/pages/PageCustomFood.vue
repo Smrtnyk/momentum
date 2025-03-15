@@ -117,8 +117,8 @@ const filteredFoods = computed(function () {
     });
 });
 
-onMounted(function () {
-    void loadCustomFoods();
+onMounted(async function () {
+    await loadCustomFoods();
 });
 
 async function confirmDeleteFood(food: CustomFood): Promise<void> {

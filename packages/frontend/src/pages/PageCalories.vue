@@ -251,7 +251,7 @@ async function confirmDeleteMeal(mealId: string): Promise<void> {
     await removeMeal(mealId);
 }
 
-function getMealByType(type: "breakfast" | "dinner" | "lunch" | "snack"): Meal | undefined {
+function getMealByType(type: Meal["mealType"]): Meal | undefined {
     return meals.value.find((meal) => meal.mealType === type);
 }
 

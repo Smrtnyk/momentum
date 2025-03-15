@@ -21,7 +21,7 @@ import { addRecentFood } from "./recent-food-db";
 
 export async function addMeal(
     userId: string,
-    mealType: "breakfast" | "dinner" | "lunch" | "snack",
+    mealType: Meal["mealType"],
     foods: FoodItem[],
     defaultCalorieGoal: number,
     dateString: string,

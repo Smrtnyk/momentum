@@ -94,12 +94,13 @@
 import { computed, onMounted, ref, watch } from "vue";
 
 import type { FoodItem } from "../../types/food";
+import type { Meal } from "../../types/health-metrics";
 
 import { positiveRequired } from "../../helpers/form-validators";
 
 const { food, mealType } = defineProps<{
     food: FoodItem;
-    mealType: "breakfast" | "dinner" | "lunch" | "snack";
+    mealType: Meal["mealType"];
 }>();
 
 const emit = defineEmits<{

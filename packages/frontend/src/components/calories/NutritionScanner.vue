@@ -113,9 +113,7 @@
             </v-btn>
 
             <template v-if="scannedFood">
-                <v-btn color="primary" block @click="confirmFood">
-                    Add to {{ props.mealType }}
-                </v-btn>
+                <v-btn color="primary" block @click="confirmFood"> Add to {{ mealType }} </v-btn>
                 <v-btn color="secondary" variant="text" block @click="resetScanner">
                     Scan Again
                 </v-btn>
@@ -128,6 +126,7 @@
 import { onUnmounted, ref } from "vue";
 
 import type { FoodItem } from "../../types/food";
+import type { Meal } from "../../types/health-metrics";
 
 import { selectHighestResolutionCamera } from "../../helpers/camera-utils";
 import { logger } from "../../logger/app-logger";
@@ -136,8 +135,8 @@ import { useGlobalStore } from "../../stores/global";
 
 const globalStore = useGlobalStore();
 
-const props = defineProps<{
-    mealType: "breakfast" | "dinner" | "lunch" | "snack";
+const { mealType } = defineProps<{
+    mealType: Meal["mealType"];
 }>();
 
 const emit = defineEmits<{

@@ -255,10 +255,7 @@ function getMealByType(type: Meal["mealType"]): Meal | undefined {
     return meals.value.find((meal) => meal.mealType === type);
 }
 
-function openFoodPortionDialog(
-    food: FoodItem,
-    mealType: "breakfast" | "dinner" | "lunch" | "snack",
-): void {
+function openFoodPortionDialog(food: FoodItem, mealType: Meal["mealType"]): void {
     globalDialog.openDialog(
         FoodPortionDialog,
         {
@@ -314,10 +311,7 @@ function openNutritionScanner(mealType: Meal["mealType"]): void {
     );
 }
 
-async function removeFoodFromMeal(
-    mealType: "breakfast" | "dinner" | "lunch" | "snack",
-    index: number,
-): Promise<void> {
+async function removeFoodFromMeal(mealType: Meal["mealType"], index: number): Promise<void> {
     const confirmed = await globalDialog.confirm({
         message: "Are you sure you want to delete this meal?",
         title: "Delete Meal",

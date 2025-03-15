@@ -249,6 +249,7 @@ import { useRouter } from "vue-router";
 
 import type { CustomFood } from "../../services/custom-foods";
 import type { FoodItem } from "../../types/food";
+import type { Meal } from "../../types/health-metrics";
 
 import { useBarcodeScanner } from "../../composables/useBarcodeScanner";
 import { logger } from "../../logger/app-logger";
@@ -261,7 +262,6 @@ import { useGlobalStore } from "../../stores/global";
 
 const { limitRecent = 30 } = defineProps<{
     limitRecent?: number;
-    mealType: "breakfast" | "dinner" | "lunch" | "snack";
 }>();
 
 const emit = defineEmits<{

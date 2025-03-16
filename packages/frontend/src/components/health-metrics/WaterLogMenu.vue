@@ -92,7 +92,7 @@ function formatTime(timestamp: Timestamp): string {
 <style scoped>
 .water-log-menu {
     min-width: 300px;
-    max-width: 350px;
+    max-width: 500px;
     padding: 16px;
 }
 

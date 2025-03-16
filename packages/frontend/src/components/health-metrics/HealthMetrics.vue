@@ -1,8 +1,262 @@
+<template>
+    <v-card class="rounded-lg mb-4" elevation="2">
+        <v-card-title class="d-flex align-center">
+            <v-icon color="primary" class="mr-2">mdi-chart-line</v-icon>
+            Health Metrics
+        </v-card-title>
+
+        <v-card-text>
+            <!-- Loading State -->
+            <v-row v-if="isLoading">
+                <v-col v-for="i in 4" :key="i" cols="12" sm="6" md="3">
+                    <div class="metric-card">
+                        <div class="d-flex justify-space-between align-center mb-2">
+                            <v-skeleton-loader type="text" width="100px"></v-skeleton-loader>
+                            <v-skeleton-loader type="button" width="24px"></v-skeleton-loader>
+                        </div>
+                        <div
+                            class="d-flex flex-column align-center justify-center"
+                            style="min-height: 120px"
+                        >
+                            <v-skeleton-loader
+                                v-if="i === 1"
+                                type="avatar"
+                                size="80"
+                                class="mb-2"
+                            ></v-skeleton-loader>
+                            <v-skeleton-loader
+                                v-else
+                                type="text"
+                                width="120px"
+                                class="mb-2"
+                            ></v-skeleton-loader>
+                            <v-skeleton-loader type="text" width="80px"></v-skeleton-loader>
+                        </div>
+                    </div>
+                </v-col>
+            </v-row>
+
+            <!-- Loaded State -->
+            <v-row v-else>
+                <!-- Water Intake Metric Card -->
+                <v-col cols="12" sm="6" md="3">
+                    <metric-card
+                        title="Water Intake"
+                        icon="mdi-water"
+                        color="blue"
+                        action-icon="mdi-plus"
+                        @action="openWaterMenu"
+                    >
+                        <div class="d-flex flex-column align-center">
+                            <div class="position-relative">
+                                <v-progress-circular
+                                    :model-value="healthData.waterProgress.percentage"
+                                    :size="80"
+                                    :width="7"
+                                    color="blue"
+                                >
+                                    {{ healthData.waterProgress.percentage }}%
+                                </v-progress-circular>
+
+                                <!-- Floating action button positioned over the circle -->
+                                <v-btn
+                                    icon
+                                    variant="flat"
+                                    color="blue"
+                                    size="small"
+                                    class="water-add-btn"
+                                    @click.stop="openWaterMenu"
+                                >
+                                    <v-icon>mdi-plus</v-icon>
+                                </v-btn>
+                            </div>
+
+                            <div class="text-body-2 text-center mt-2">
+                                {{ healthData.waterProgress.current }}ml /
+                                {{ healthData.waterProgress.target }}ml
+                            </div>
+                        </div>
+                    </metric-card>
+                </v-col>
+
+                <!-- Weight Metric Card -->
+                <v-col cols="12" sm="6" md="3">
+                    <metric-card
+                        title="Weight"
+                        icon="mdi-scale-bathroom"
+                        color="deep-purple"
+                        @action="openWeightDialog"
+                    >
+                        <div v-if="healthData.latestWeight" class="text-center">
+                            <div class="text-h4 font-weight-bold">
+                                {{ healthData.latestWeight.weight }} kg
+                            </div>
+                            <div class="text-caption">
+                                {{ formatDate(healthData.latestWeight.date) }}
+                            </div>
+                        </div>
+                        <div v-else class="text-center py-4">
+                            <v-icon size="x-large" color="grey-lighten-1"
+                                >mdi-scale-bathroom</v-icon
+                            >
+                            <p class="text-grey mt-2">No data recorded</p>
+                        </div>
+                    </metric-card>
+                </v-col>
+
+                <!-- Body Fat Metric Card -->
+                <v-col cols="12" sm="6" md="3">
+                    <metric-card
+                        title="Body Fat"
+                        icon="mdi-percent"
+                        color="amber-darken-2"
+                        @action="openBodyFatDialog"
+                    >
+                        <div v-if="healthData.latestBodyFat" class="text-center">
+                            <div class="text-h4 font-weight-bold">
+                                {{ healthData.latestBodyFat.percentage }}%
+                            </div>
+                            <div class="text-caption">
+                                {{ formatDate(healthData.latestBodyFat.date) }}
+                            </div>
+                        </div>
+                        <div v-else class="text-center py-4">
+                            <v-icon size="x-large" color="grey-lighten-1">mdi-percent</v-icon>
+                            <p class="text-grey mt-2">No data recorded</p>
+                        </div>
+                    </metric-card>
+                </v-col>
+
+                <!-- Steps Metric Card -->
+                <v-col cols="12" sm="6" md="3">
+                    <metric-card
+                        title="Daily Steps"
+                        icon="mdi-shoe-print"
+                        color="green"
+                        @action="openStepsDialog"
+                    >
+                        <div v-if="healthData.latestSteps" class="text-center">
+                            <div class="text-h4 font-weight-bold">
+                                {{ formatNumber(healthData.latestSteps.steps) }}
+                            </div>
+                            <div class="text-caption">
+                                {{ formatDate(healthData.latestSteps.date) }}
+                            </div>
+                        </div>
+                        <div v-else class="text-center py-4">
+                            <v-icon size="x-large" color="grey-lighten-1">mdi-shoe-print</v-icon>
+                            <p class="text-grey mt-2">No steps logged</p>
+                        </div>
+                    </metric-card>
+                </v-col>
+            </v-row>
+        </v-card-text>
+
+        <!-- Water Bottom Sheet Menu -->
+        <v-bottom-sheet v-model="waterMenuOpen" max-width="500" class="mx-auto">
+            <v-card>
+                <v-card-title class="d-flex align-center">
+                    <v-icon color="blue" class="mr-2">mdi-water</v-icon>
+                    Water Management
+                </v-card-title>
+
+                <v-tabs v-model="waterTab" color="blue">
+                    <v-tab value="add">Add Water</v-tab>
+                    <v-tab value="log">View Log</v-tab>
+                </v-tabs>
+
+                <v-window v-model="waterTab">
+                    <!-- Add Water Tab -->
+                    <v-window-item value="add">
+                        <v-card-text>
+                            <v-row>
+                                <v-col cols="6">
+                                    <v-btn
+                                        block
+                                        variant="tonal"
+                                        color="blue"
+                                        @click="logWater(250)"
+                                        class="mb-2"
+                                    >
+                                        <v-icon class="mr-1">mdi-cup-water</v-icon>
+                                        250ml
+                                    </v-btn>
+                                </v-col>
+                                <v-col cols="6">
+                                    <v-btn
+                                        block
+                                        variant="tonal"
+                                        color="blue"
+                                        @click="logWater(500)"
+                                        class="mb-2"
+                                    >
+                                        <v-icon class="mr-1">mdi-bottle-water</v-icon>
+                                        500ml
+                                    </v-btn>
+                                </v-col>
+                                <v-col cols="6">
+                                    <v-btn
+                                        block
+                                        variant="tonal"
+                                        color="blue"
+                                        @click="logWater(750)"
+                                        class="mb-2"
+                                    >
+                                        <v-icon class="mr-1">mdi-bottle-water</v-icon>
+                                        750ml
+                                    </v-btn>
+                                </v-col>
+                                <v-col cols="6">
+                                    <v-btn
+                                        block
+                                        variant="tonal"
+                                        color="blue"
+                                        @click="logWater(1000)"
+                                        class="mb-2"
+                                    >
+                                        <v-icon class="mr-1">mdi-bottle-water-large</v-icon>
+                                        1000ml
+                                    </v-btn>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-btn
+                                        block
+                                        variant="elevated"
+                                        color="blue"
+                                        @click="openWaterCustomDialog"
+                                    >
+                                        <v-icon class="mr-1">mdi-pencil</v-icon>
+                                        Custom Amount
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+                        </v-card-text>
+                    </v-window-item>
+
+                    <!-- Water Log Tab -->
+                    <v-window-item value="log">
+                        <WaterLogMenu
+                            :entries="healthData.waterProgress.waterIntakeLog || []"
+                            @remove="handleWaterRemove"
+                        />
+                    </v-window-item>
+                </v-window>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="waterMenuOpen = false">Close</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-bottom-sheet>
+    </v-card>
+</template>
+
 <script setup lang="ts">
 import { useAsyncState } from "@vueuse/core";
 import { ref } from "vue";
 import { useDate } from "vuetify";
 
+import type { BodyFatProgress, WaterProgress } from "../../services/health-metrics";
 import type { WaterLogEntry } from "../../types/health-metrics";
 
 import { globalDialog } from "../../composables/useDialog";
@@ -21,6 +275,7 @@ import {
 import { useAuthStore } from "../../stores/auth";
 import { useGlobalStore } from "../../stores/global";
 import BodyFatDialog from "./BodyFatDialog.vue";
+import MetricCard from "./MetricCard.vue";
 import StepsEntryDialog from "./StepsEntryDialog.vue";
 import WaterIntakeDialog from "./WaterIntakeDialog.vue";
 import WaterLogMenu from "./WaterLogMenu.vue";
@@ -30,9 +285,23 @@ const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 const dateAdapter = useDate();
 
-const waterLogMenuOpen = ref(false);
+const waterMenuOpen = ref(false);
+const waterTab = ref("add");
 
-async function fetchAllHealthData() {
+interface HealthData {
+    latestBodyFat: BodyFatProgress | null;
+    latestSteps: null | {
+        date: Date;
+        steps: number;
+    };
+    latestWeight: null | {
+        date: Date;
+        weight: number;
+    };
+    waterProgress: WaterProgress;
+}
+
+async function fetchAllHealthData(): Promise<HealthData> {
     const userId = authStore.nonNullableUser.uid;
     const [waterData, weightData, bodyFatData, stepsData] = await Promise.all([
         getTodayWaterProgress(userId),
@@ -53,13 +322,13 @@ const {
     execute: refreshHealthData,
     isLoading,
     state: healthData,
-} = useAsyncState(
+} = useAsyncState<HealthData>(
     fetchAllHealthData,
     {
         latestBodyFat: null,
         latestSteps: null,
         latestWeight: null,
-        waterProgress: { current: 0, percentage: 0, target: 2500 },
+        waterProgress: { current: 0, percentage: 0, target: 2500, waterIntakeLog: [] },
     },
     {
         onError: (error) => {
@@ -80,7 +349,6 @@ function formatNumber(num: number): string {
 
 async function handleWaterRemove(entry: WaterLogEntry): Promise<void> {
     try {
-        waterLogMenuOpen.value = false;
         const userId = authStore.nonNullableUser.uid;
         await removeWaterIntakeEntry(userId, entry);
         globalStore.notify(`Removed ${entry.amount}ml of water`);
@@ -123,6 +391,7 @@ async function logTodayWeight(weight: number): Promise<void> {
         await refreshHealthData();
     } catch (error) {
         globalStore.notifyError("Failed to log weight");
+        logger.error(error);
     }
 }
 
@@ -132,8 +401,10 @@ async function logWater(amount: number): Promise<void> {
         await logWaterIntake(userId, amount);
         globalStore.notify(`Added ${amount}ml of water`);
         await refreshHealthData();
+        waterMenuOpen.value = false;
     } catch (error) {
         globalStore.notifyError("Failed to log water intake");
+        logger.error(error);
     }
 }
 
@@ -166,7 +437,8 @@ function openStepsDialog(): void {
     );
 }
 
-function openWaterDialog(): void {
+function openWaterCustomDialog(): void {
+    waterMenuOpen.value = false;
     globalDialog.openDialog(
         WaterIntakeDialog,
         {
@@ -175,9 +447,14 @@ function openWaterDialog(): void {
             },
         },
         {
-            title: "Log Water Intake",
+            title: "Custom Water Intake",
         },
     );
+}
+
+function openWaterMenu(): void {
+    waterMenuOpen.value = true;
+    waterTab.value = "add";
 }
 
 function openWeightDialog(): void {
@@ -195,331 +472,20 @@ function openWeightDialog(): void {
 }
 </script>
 
-<template>
-    <v-card class="rounded-lg mb-4" elevation="2">
-        <v-card-title class="d-flex align-center">
-            <v-icon color="primary" class="mr-2">mdi-chart-line</v-icon>
-            Health Metrics
-        </v-card-title>
+<style scoped>
+.water-add-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(25%, 25%);
+    z-index: 1;
+}
 
-        <v-card-text>
-            <!-- Loading State -->
-            <v-row v-if="isLoading">
-                <!-- Water Intake Skeleton -->
-                <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column">
-                        <div class="d-flex justify-space-between align-center mb-2">
-                            <v-skeleton-loader type="text" width="100px"></v-skeleton-loader>
-                        </div>
-
-                        <div class="d-flex align-center justify-space-between">
-                            <div class="d-flex flex-column align-center">
-                                <v-skeleton-loader type="avatar" size="65"></v-skeleton-loader>
-                                <v-skeleton-loader
-                                    type="text"
-                                    width="80px"
-                                    class="mt-1"
-                                ></v-skeleton-loader>
-                            </div>
-
-                            <div class="d-flex flex-column">
-                                <div class="d-flex mb-1">
-                                    <v-skeleton-loader
-                                        type="button"
-                                        width="65px"
-                                        class="mr-1"
-                                    ></v-skeleton-loader>
-                                    <v-skeleton-loader
-                                        type="button"
-                                        width="65px"
-                                    ></v-skeleton-loader>
-                                </div>
-                                <v-skeleton-loader type="button" width="75px"></v-skeleton-loader>
-                            </div>
-                        </div>
-                    </div>
-                </v-col>
-
-                <!-- Weight Skeleton -->
-                <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column">
-                        <v-skeleton-loader
-                            type="text"
-                            width="80px"
-                            class="mb-2"
-                        ></v-skeleton-loader>
-
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <v-skeleton-loader
-                                    type="text"
-                                    width="60px"
-                                    class="mb-1"
-                                ></v-skeleton-loader>
-                                <v-skeleton-loader type="text" width="80px"></v-skeleton-loader>
-                            </div>
-
-                            <div>
-                                <v-skeleton-loader type="button" width="110px"></v-skeleton-loader>
-                            </div>
-                        </div>
-                    </div>
-                </v-col>
-
-                <!-- Body Fat Skeleton -->
-                <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column">
-                        <v-skeleton-loader
-                            type="text"
-                            width="80px"
-                            class="mb-2"
-                        ></v-skeleton-loader>
-
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <v-skeleton-loader
-                                    type="text"
-                                    width="60px"
-                                    class="mb-1"
-                                ></v-skeleton-loader>
-                                <v-skeleton-loader type="text" width="80px"></v-skeleton-loader>
-                            </div>
-
-                            <div>
-                                <v-skeleton-loader type="button" width="120px"></v-skeleton-loader>
-                            </div>
-                        </div>
-                    </div>
-                </v-col>
-
-                <!-- Steps Skeleton -->
-                <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column">
-                        <v-skeleton-loader
-                            type="text"
-                            width="90px"
-                            class="mb-2"
-                        ></v-skeleton-loader>
-
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <v-skeleton-loader
-                                    type="text"
-                                    width="70px"
-                                    class="mb-1"
-                                ></v-skeleton-loader>
-                                <v-skeleton-loader type="text" width="80px"></v-skeleton-loader>
-                            </div>
-
-                            <div>
-                                <v-skeleton-loader type="button" width="100px"></v-skeleton-loader>
-                            </div>
-                        </div>
-                    </div>
-                </v-col>
-            </v-row>
-
-            <!-- Loaded State -->
-            <v-row v-else>
-                <!-- Water Intake Tracker -->
-                <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column">
-                        <div class="d-flex justify-space-between align-center mb-2">
-                            <div class="text-subtitle-1">Water Intake</div>
-                            <!-- Water Log Menu -->
-                            <v-menu
-                                v-model="waterLogMenuOpen"
-                                :close-on-content-click="false"
-                                location="bottom"
-                                min-width="300"
-                            >
-                                <template #activator="{ props }">
-                                    <v-btn
-                                        v-bind="props"
-                                        variant="text"
-                                        density="comfortable"
-                                        color="blue"
-                                        size="small"
-                                        class="ml-auto"
-                                        v-if="
-                                            healthData.waterProgress.waterIntakeLog &&
-                                            healthData.waterProgress.waterIntakeLog.length > 0
-                                        "
-                                    >
-                                        <v-icon small class="mr-1">mdi-history</v-icon>
-                                        View Log
-                                    </v-btn>
-                                </template>
-
-                                <v-card>
-                                    <v-card-title class="d-flex align-center">
-                                        <v-icon color="blue" class="mr-2">mdi-water</v-icon>
-                                        Water Intake Log
-                                    </v-card-title>
-
-                                    <WaterLogMenu
-                                        :entries="healthData.waterProgress.waterIntakeLog || []"
-                                        @remove="handleWaterRemove"
-                                    />
-                                </v-card>
-                            </v-menu>
-                        </div>
-
-                        <div class="d-flex align-center justify-space-between">
-                            <div class="d-flex flex-column align-center">
-                                <v-progress-circular
-                                    :model-value="healthData.waterProgress.percentage"
-                                    :size="65"
-                                    :width="7"
-                                    color="blue"
-                                >
-                                    {{ healthData.waterProgress.percentage }}%
-                                </v-progress-circular>
-
-                                <div class="text-body-2 text-center mt-1">
-                                    {{ healthData.waterProgress.current }}ml /
-                                    {{ healthData.waterProgress.target }}ml
-                                </div>
-                            </div>
-
-                            <div class="d-flex flex-column">
-                                <div class="d-flex mb-1">
-                                    <v-btn
-                                        variant="outlined"
-                                        color="blue"
-                                        density="compact"
-                                        class="mr-1"
-                                        @click="logWater(250)"
-                                    >
-                                        +250ml
-                                    </v-btn>
-                                    <v-btn
-                                        variant="outlined"
-                                        color="blue"
-                                        density="compact"
-                                        @click="logWater(500)"
-                                    >
-                                        +500ml
-                                    </v-btn>
-                                </div>
-                                <v-btn
-                                    variant="outlined"
-                                    color="blue"
-                                    size="small"
-                                    @click="openWaterDialog()"
-                                >
-                                    Custom
-                                </v-btn>
-                            </div>
-                        </div>
-                    </div>
-                </v-col>
-
-                <!-- Weight Tracker -->
-                <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column">
-                        <div class="text-subtitle-1 mb-2">Weight</div>
-
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <div v-if="healthData.latestWeight" class="text-left">
-                                    <div class="text-h5 font-weight-bold">
-                                        {{ healthData.latestWeight.weight }} kg
-                                    </div>
-                                    <div class="text-caption">
-                                        {{ formatDate(healthData.latestWeight.date) }}
-                                    </div>
-                                </div>
-                                <div v-else class="text-left">
-                                    <div class="text-body-2">No data</div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <v-btn
-                                    variant="outlined"
-                                    color="deep-purple"
-                                    size="small"
-                                    @click="openWeightDialog()"
-                                >
-                                    <v-icon small class="mr-1">mdi-scale-bathroom</v-icon>
-                                    Log Weight
-                                </v-btn>
-                            </div>
-                        </div>
-                    </div>
-                </v-col>
-
-                <!-- Body Fat Tracker  -->
-                <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column">
-                        <div class="text-subtitle-1 mb-2">Body Fat</div>
-
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <div v-if="healthData.latestBodyFat" class="text-left">
-                                    <div class="text-h5 font-weight-bold">
-                                        {{ healthData.latestBodyFat.percentage }}%
-                                    </div>
-                                    <div class="text-caption">
-                                        {{ formatDate(healthData.latestBodyFat.date) }}
-                                    </div>
-                                </div>
-                                <div v-else class="text-left">
-                                    <div class="text-body-2">No data</div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <v-btn
-                                    variant="outlined"
-                                    color="amber-darken-2"
-                                    size="small"
-                                    @click="openBodyFatDialog()"
-                                >
-                                    <v-icon small class="mr-1">mdi-percent</v-icon>
-                                    Log Body Fat
-                                </v-btn>
-                            </div>
-                        </div>
-                    </div>
-                </v-col>
-
-                <!-- Steps Tracker -->
-                <v-col cols="12" sm="6" md="3">
-                    <div class="d-flex flex-column">
-                        <div class="text-subtitle-1 mb-2">Daily Steps</div>
-
-                        <div class="d-flex align-center justify-space-between">
-                            <div>
-                                <div v-if="healthData.latestSteps" class="text-left">
-                                    <div class="text-h5 font-weight-bold">
-                                        {{ formatNumber(healthData.latestSteps.steps) }}
-                                    </div>
-                                    <div class="text-caption">
-                                        {{ formatDate(healthData.latestSteps.date) }}
-                                    </div>
-                                </div>
-                                <div v-else class="text-left">
-                                    <div class="text-body-2">No steps logged</div>
-                                </div>
-                            </div>
-
-                            <div>
-                                <v-btn
-                                    variant="outlined"
-                                    color="green"
-                                    size="small"
-                                    @click="openStepsDialog()"
-                                >
-                                    <v-icon small class="mr-1">mdi-shoe-print</v-icon>
-                                    Log Steps
-                                </v-btn>
-                            </div>
-                        </div>
-                    </div>
-                </v-col>
-            </v-row>
-        </v-card-text>
-    </v-card>
-</template>
+.metric-card {
+    height: 100%;
+    padding: 12px;
+    border-radius: 16px;
+    background-color: rgb(var(--v-theme-surface));
+    border: 1px solid rgba(var(--v-theme-on-surface), 0.08);
+}
+</style>

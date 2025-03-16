@@ -19,7 +19,13 @@ import type { HealthMetrics } from "../types/health-metrics";
 import { firestore } from "../firebase";
 import { formatISODate, getStartOfToday } from "../helpers/date-utils";
 
-interface WaterProgress {
+export interface BodyFatProgress {
+    date: Date;
+    method?: null | string;
+    percentage: number;
+}
+
+export interface WaterProgress {
     current: number;
     percentage: number;
     target: number;
@@ -31,9 +37,7 @@ interface WaterProgress {
           }[];
 }
 
-export async function getLatestBodyFat(
-    userId: string,
-): Promise<null | { date: Date; method?: null | string; percentage: number }> {
+export async function getLatestBodyFat(userId: string): Promise<BodyFatProgress | null> {
     const metricsRef = collection(firestore, "users", userId, "health_metrics");
     const queryVal = query(
         metricsRef,

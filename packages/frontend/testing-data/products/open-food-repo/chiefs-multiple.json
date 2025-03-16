@@ -1,0 +1,1886 @@
+{
+    "took": 8,
+    "timed_out": false,
+    "_shards": {
+        "total": 2,
+        "successful": 2,
+        "skipped": 0,
+        "failed": 0
+    },
+    "hits": {
+        "total": 21,
+        "max_score": 1.0,
+        "hits": [
+            {
+                "_score": 1.0,
+                "_source": {
+                    "id": 379305,
+                    "country": "CH",
+                    "barcode": "7640151713027",
+                    "name_translations": {
+                        "en": "Chiefs - Protein Müesli (Classic)"
+                    },
+                    "display_name_translations": {
+                        "de": "Chiefs - Protein Müesli (Classic)",
+                        "fr": "Chiefs - Protein Müesli (Classic)",
+                        "it": "Chiefs - Protein Müesli (Classic)",
+                        "en": "Chiefs - Protein Müesli (Classic)"
+                    },
+                    "ingredients_translations": {},
+                    "status": "rescan",
+                    "quantity": 180.0,
+                    "unit": "g",
+                    "hundred_unit": "g",
+                    "portion_quantity": 180.0,
+                    "portion_unit": "g",
+                    "alcohol_by_volume": 0.0,
+                    "images": [
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/223270/thumb_image.jpg?v=1650135730",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/223270/medium_image.jpg?v=1650135730",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/223270/large_image.jpg?v=1650135730",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/223270/xlarge_image.jpg?v=1650135730"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/223269/thumb_image.jpg?v=1650135730",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/223269/medium_image.jpg?v=1650135730",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/223269/large_image.jpg?v=1650135730",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/223269/xlarge_image.jpg?v=1650135730"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225252/thumb_image.jpg?v=1656575278",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225252/medium_image.jpg?v=1656575278",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225252/large_image.jpg?v=1656575278",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225252/xlarge_image.jpg?v=1656575278"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225253/thumb_image.jpg?v=1656575276",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225253/medium_image.jpg?v=1656575276",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225253/large_image.jpg?v=1656575276",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225253/xlarge_image.jpg?v=1656575276"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225254/thumb_image.jpg?v=1656575276",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225254/medium_image.jpg?v=1656575276",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225254/large_image.jpg?v=1656575276",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225254/xlarge_image.jpg?v=1656575276"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225255/thumb_image.jpg?v=1656575278",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225255/medium_image.jpg?v=1656575278",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225255/large_image.jpg?v=1656575278",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225255/xlarge_image.jpg?v=1656575278"
+                        }
+                    ],
+                    "nutrients": {
+                        "energy_calories_kcal": {
+                            "name_translations": {
+                                "de": "Energie (kCal)",
+                                "en": "Energy (Calories / kCal)",
+                                "fr": "Énergie (kCal)",
+                                "it": "Energia (kCal)"
+                            },
+                            "unit": "kCal",
+                            "per_hundred": 73.0,
+                            "per_portion": 132.0
+                        },
+                        "energy": {
+                            "name_translations": {
+                                "de": "Energie",
+                                "en": "Energy",
+                                "fr": "Énergie",
+                                "it": "Energia"
+                            },
+                            "unit": "kJ",
+                            "per_hundred": 307.0,
+                            "per_portion": 553.0
+                        },
+                        "fat": {
+                            "name_translations": {
+                                "de": "Fett",
+                                "en": "Fat",
+                                "fr": "Matières grasses",
+                                "it": "Grassi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 1.3,
+                            "per_portion": 2.4
+                        },
+                        "saturated_fat": {
+                            "name_translations": {
+                                "de": "Gesättigte Fettsäuren",
+                                "en": "Saturated fat",
+                                "fr": "Acides gras saturés",
+                                "it": "Acidi grassi saturi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.4,
+                            "per_portion": 0.8
+                        },
+                        "carbohydrates": {
+                            "name_translations": {
+                                "de": "Kohlenhydrate",
+                                "en": "Carbohydrates",
+                                "fr": "Glucides",
+                                "it": "Carboidrati"
+                            },
+                            "unit": "g",
+                            "per_hundred": 7.6,
+                            "per_portion": 14.0
+                        },
+                        "sugars": {
+                            "name_translations": {
+                                "de": "Zucker",
+                                "en": "Sugars",
+                                "fr": "Sucres",
+                                "it": "Zuccheri"
+                            },
+                            "unit": "g",
+                            "per_hundred": 5.1,
+                            "per_portion": 9.1
+                        },
+                        "fiber": {
+                            "name_translations": {
+                                "de": "Ballaststoffe",
+                                "en": "Fiber",
+                                "fr": "Fibres alimentaires",
+                                "it": "Fibre"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.8,
+                            "per_portion": 1.4
+                        },
+                        "protein": {
+                            "name_translations": {
+                                "de": "Eiweiss",
+                                "en": "Protein",
+                                "fr": "Protéines",
+                                "it": "Proteine"
+                            },
+                            "unit": "g",
+                            "per_hundred": 8.1,
+                            "per_portion": 15.0
+                        },
+                        "salt": {
+                            "name_translations": {
+                                "de": "Salz",
+                                "en": "Salt",
+                                "fr": "Sel",
+                                "it": "Sale"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.07,
+                            "per_portion": 0.13
+                        }
+                    },
+                    "created_at": "2022-04-15T14:37:59.205Z",
+                    "updated_at": "2022-06-30T07:47:58.856Z"
+                }
+            },
+            {
+                "_score": 1.0,
+                "_source": {
+                    "id": 379903,
+                    "country": "CH",
+                    "barcode": "7640151710095",
+                    "name_translations": {
+                        "en": "Chiefs - Protein bar, white mocha (no added sugar, 20G protein)"
+                    },
+                    "display_name_translations": {
+                        "de": "Chiefs - Protein bar, white mocha (no added sugar, 20G protein)",
+                        "fr": "Chiefs - Protein bar, white mocha (no added sugar, 20G protein)",
+                        "it": "Chiefs - Protein bar, white mocha (no added sugar, 20G protein)",
+                        "en": "Chiefs - Protein bar, white mocha (no added sugar, 20G protein)"
+                    },
+                    "ingredients_translations": {
+                        "de": "30% Weisse Schokolade mit Süssungsmittel (Süssungsmittel: Maltit; Kakaobutter, Vollmilchpulver, Emulgator: Lecithine), Proteinmischung (Milchprotein, Sojaprotein), Feuchthaltemittel: Glycerin; Kollagen-Hydrolysat; Süssungsmittel: Maltit, Sucralose; Kakaobutter, Tapiokastärke, Sojaproteincrispies (Sojaprotein, Reisgriess, Sojamehl, Speisesalz), Farbstoff: Zuckerkulör; fettarmes Kakaopulver, Emulgator: Lecithine; Sonnenblumenöl, Aroma, Speisesalz.\r\nKann Spuren von Gluten, Ei, Erdnüssen und Schalenfrüchten enthalten.",
+                        "en": "30% White chocolate with sweetener (sweetener: maltitol; cocoa butter, whole milk powder, emulsifier: lecithins), protein blend (milk protein, soy protein), humectant: glycerol; collagen hydrolysate; sweeteners: Maltitol, sucralose; cocoa butter, tapioca starch, soy protein crispies (soy protein, rice semolina, soy flour, salt), colour: plain caramel; fat-reduced cocoa powder, emulsifier: lecithins; sunflower oil, flavouring, salt.\r\nMay contain traces of gluten, egg, peanuts and nuts.",
+                        "fr": "30% chocolat blanc avec édulcorant (édulcorant : maltitol ; beurre de cacao, lait entier en poudre, émulsifiant : lécithine), mélange de protéines (protéines lactiques, protéines de soja), humectant : glycérol ; hydrolysat de collagène ; édulcorants : Maltitol, sucralose ; beurre de cacao, amidon de tapioca, protéines croustillantes de soja (protéines de soja, semoule de riz, farine de soja, sel comestible), colorant : caramel ordinaire ; cacao maigre en poudre, émulsifiant : lécithine ; huile de tournesol, arôme, sel comestible.\r\nPeut contenir des traces de gluten, d'œufs, d'arachides et de noix"
+                    },
+                    "status": "rescan",
+                    "quantity": 0.0,
+                    "unit": "?",
+                    "hundred_unit": "g",
+                    "portion_quantity": 55.0,
+                    "portion_unit": "g",
+                    "alcohol_by_volume": 0.0,
+                    "images": [
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225379/thumb_image.jpg?v=1657103018",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225379/medium_image.jpg?v=1657103018",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225379/large_image.jpg?v=1657103018",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225379/xlarge_image.jpg?v=1657103018"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225380/thumb_image.jpg?v=1657103018",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225380/medium_image.jpg?v=1657103018",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225380/large_image.jpg?v=1657103018",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225380/xlarge_image.jpg?v=1657103018"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225381/thumb_image.jpg?v=1657103018",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225381/medium_image.jpg?v=1657103018",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225381/large_image.jpg?v=1657103018",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225381/xlarge_image.jpg?v=1657103018"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225382/thumb_image.jpg?v=1657103018",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225382/medium_image.jpg?v=1657103018",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225382/large_image.jpg?v=1657103018",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/225382/xlarge_image.jpg?v=1657103018"
+                        }
+                    ],
+                    "nutrients": {
+                        "energy_calories_kcal": {
+                            "name_translations": {
+                                "de": "Energie (kCal)",
+                                "en": "Energy (Calories / kCal)",
+                                "fr": "Énergie (kCal)",
+                                "it": "Energia (kCal)"
+                            },
+                            "unit": "kCal",
+                            "per_hundred": 378.0,
+                            "per_portion": 208.0
+                        },
+                        "energy": {
+                            "name_translations": {
+                                "de": "Energie",
+                                "en": "Energy",
+                                "fr": "Énergie",
+                                "it": "Energia"
+                            },
+                            "unit": "kJ",
+                            "per_hundred": 1582.0,
+                            "per_portion": 870.0
+                        },
+                        "fat": {
+                            "name_translations": {
+                                "de": "Fett",
+                                "en": "Fat",
+                                "fr": "Matières grasses",
+                                "it": "Grassi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 14.0,
+                            "per_portion": 7.7
+                        },
+                        "saturated_fat": {
+                            "name_translations": {
+                                "de": "Gesättigte Fettsäuren",
+                                "en": "Saturated fat",
+                                "fr": "Acides gras saturés",
+                                "it": "Acidi grassi saturi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 8.4,
+                            "per_portion": 4.6
+                        },
+                        "carbohydrates": {
+                            "name_translations": {
+                                "de": "Kohlenhydrate",
+                                "en": "Carbohydrates",
+                                "fr": "Glucides",
+                                "it": "Carboidrati"
+                            },
+                            "unit": "g",
+                            "per_hundred": 39.0,
+                            "per_portion": 22.0
+                        },
+                        "sugars": {
+                            "name_translations": {
+                                "de": "Zucker",
+                                "en": "Sugars",
+                                "fr": "Sucres",
+                                "it": "Zuccheri"
+                            },
+                            "unit": "g",
+                            "per_hundred": 4.1,
+                            "per_portion": 2.3
+                        },
+                        "fiber": {
+                            "name_translations": {
+                                "de": "Ballaststoffe",
+                                "en": "Fiber",
+                                "fr": "Fibres alimentaires",
+                                "it": "Fibre"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.4,
+                            "per_portion": 0.2
+                        },
+                        "protein": {
+                            "name_translations": {
+                                "de": "Eiweiss",
+                                "en": "Protein",
+                                "fr": "Protéines",
+                                "it": "Proteine"
+                            },
+                            "unit": "g",
+                            "per_hundred": 37.0,
+                            "per_portion": 20.0
+                        },
+                        "salt": {
+                            "name_translations": {
+                                "de": "Salz",
+                                "en": "Salt",
+                                "fr": "Sel",
+                                "it": "Sale"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.86,
+                            "per_portion": 0.47
+                        }
+                    },
+                    "created_at": "2022-07-04T18:58:48.623Z",
+                    "updated_at": "2022-07-06T10:23:38.346Z"
+                }
+            },
+            {
+                "_score": 1.0,
+                "_source": {
+                    "id": 6604,
+                    "country": "CH",
+                    "barcode": "7640151710293",
+                    "name_translations": {
+                        "de": "Chiefs Coco Island Milk Protein Ananas - Kokosnuss",
+                        "fr": "Chiefs Coco Island Milk Protein Ananas - Noix de coco",
+                        "it": "Chiefs Coco Island Milk Protein Ananas - Noce di cocco"
+                    },
+                    "display_name_translations": {
+                        "de": "Chiefs Coco Island Milk Protein Ananas - Kokosnuss",
+                        "fr": "Chiefs Coco Island Milk Protein Ananas - Noix de coco",
+                        "it": "Chiefs Coco Island Milk Protein Ananas - Noce di cocco",
+                        "en": "Chiefs Coco Island Milk Protein Ananas - Kokosnuss"
+                    },
+                    "ingredients_translations": {
+                        "de": "Wasser, Molkenproteinkonzentrat, Ananassaft1, Apfelsaft1, Kokosnusswasser1, Stabilisatoren: Pektin, Guarkernmehl; färbende Lebensmittel: Saflor1, Zitrone1; Säuerungsmittel: Milchsäure, Zitronensäure, Ascorbinsäure; Aroma, Süssungsmittel: Acesulfam-K, Sucralose. Enthält Milchbestandteile.",
+                        "fr": "eau, concentré de protéines de lactosérum, jus d’ananas1, jus de pommes1, eau de coco, stabilisants: pectine, gomme guar; aliments colorants: carthame des teinturiers1, citron1; acidifiants: acide lactique, acide citrique, acide ascorbique; arôme, édulcorants: acésulfame K, sucralose. Contient des composants du lait. 1à base de concentré",
+                        "it": "acqua, concentrato di proteine del siero di latte, succo di ananas1, succo di mela1, acqua di cocco, stabilizzanti: pectina, gomma di guar; alimenti coloranti: cartamo1, limone1; acidificanti: acido lattico, acido citrico, acido ascorbico; aroma, edulcoranti: acesulfame K, sucralosio. Contiene componenti del latte. 1a base di concentrato."
+                    },
+                    "status": "complete",
+                    "quantity": 330.0,
+                    "unit": "ml",
+                    "hundred_unit": "ml",
+                    "portion_quantity": 0.0,
+                    "portion_unit": "g",
+                    "alcohol_by_volume": 0.0,
+                    "images": [
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30009/thumb_7640151710293.jpg?v=1629650833",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30009/medium_7640151710293.jpg?v=1629650833",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30009/large_7640151710293.jpg?v=1629650833",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30009/xlarge_7640151710293.jpg?v=1629650833"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30019/thumb_7640151710293.jpg?v=1629650833",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30019/medium_7640151710293.jpg?v=1629650833",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30019/large_7640151710293.jpg?v=1629650833",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30019/xlarge_7640151710293.jpg?v=1629650833"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30016/thumb_7640151710293.jpg?v=1629650833",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30016/medium_7640151710293.jpg?v=1629650833",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30016/large_7640151710293.jpg?v=1629650833",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30016/xlarge_7640151710293.jpg?v=1629650833"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30022/thumb_7640151710293.jpg?v=1629650833",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30022/medium_7640151710293.jpg?v=1629650833",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30022/large_7640151710293.jpg?v=1629650833",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30022/xlarge_7640151710293.jpg?v=1629650833"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30013/thumb_7640151710293.jpg?v=1629650833",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30013/medium_7640151710293.jpg?v=1629650833",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30013/large_7640151710293.jpg?v=1629650833",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30013/xlarge_7640151710293.jpg?v=1629650833"
+                        }
+                    ],
+                    "nutrients": {
+                        "energy": {
+                            "name_translations": {
+                                "de": "Energie",
+                                "en": "Energy",
+                                "fr": "Énergie",
+                                "it": "Energia"
+                            },
+                            "unit": "kJ",
+                            "per_hundred": 217.0,
+                            "per_portion": null
+                        },
+                        "energy_calories_kcal": {
+                            "name_translations": {
+                                "de": "Energie (kCal)",
+                                "en": "Energy (Calories / kCal)",
+                                "fr": "Énergie (kCal)",
+                                "it": "Energia (kCal)"
+                            },
+                            "unit": "kCal",
+                            "per_hundred": 51.0,
+                            "per_portion": null
+                        },
+                        "fat": {
+                            "name_translations": {
+                                "de": "Fett",
+                                "en": "Fat",
+                                "fr": "Matières grasses",
+                                "it": "Grassi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.7,
+                            "per_portion": null
+                        },
+                        "saturated_fat": {
+                            "name_translations": {
+                                "de": "Gesättigte Fettsäuren",
+                                "en": "Saturated fat",
+                                "fr": "Acides gras saturés",
+                                "it": "Acidi grassi saturi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.5,
+                            "per_portion": null
+                        },
+                        "carbohydrates": {
+                            "name_translations": {
+                                "de": "Kohlenhydrate",
+                                "en": "Carbohydrates",
+                                "fr": "Glucides",
+                                "it": "Carboidrati"
+                            },
+                            "unit": "g",
+                            "per_hundred": 3.3,
+                            "per_portion": null
+                        },
+                        "sugars": {
+                            "name_translations": {
+                                "de": "Zucker",
+                                "en": "Sugars",
+                                "fr": "Sucres",
+                                "it": "Zuccheri"
+                            },
+                            "unit": "g",
+                            "per_hundred": 3.0,
+                            "per_portion": null
+                        },
+                        "fiber": {
+                            "name_translations": {
+                                "de": "Ballaststoffe",
+                                "en": "Fiber",
+                                "fr": "Fibres alimentaires",
+                                "it": "Fibre"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.0,
+                            "per_portion": null
+                        },
+                        "protein": {
+                            "name_translations": {
+                                "de": "Eiweiss",
+                                "en": "Protein",
+                                "fr": "Protéines",
+                                "it": "Proteine"
+                            },
+                            "unit": "g",
+                            "per_hundred": 8.0,
+                            "per_portion": null
+                        },
+                        "salt": {
+                            "name_translations": {
+                                "de": "Salz",
+                                "en": "Salt",
+                                "fr": "Sel",
+                                "it": "Sale"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.1,
+                            "per_portion": null
+                        },
+                        "lactose": {
+                            "name_translations": {
+                                "de": "Laktose",
+                                "en": "Lactose",
+                                "fr": "Lactose",
+                                "it": "Lattosio"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.1,
+                            "per_portion": null
+                        }
+                    },
+                    "created_at": "2016-07-19T16:14:27.692Z",
+                    "updated_at": "2021-08-22T16:47:14.217Z"
+                }
+            },
+            {
+                "_score": 1.0,
+                "_source": {
+                    "id": 6605,
+                    "country": "CH",
+                    "barcode": "7640151710040",
+                    "name_translations": {
+                        "en": "Chiefs Choco Mountain Milk Protein"
+                    },
+                    "display_name_translations": {
+                        "de": "Chiefs Choco Mountain Milk Protein",
+                        "fr": "Chiefs Choco Mountain Milk Protein",
+                        "it": "Chiefs Choco Mountain Milk Protein",
+                        "en": "Chiefs Choco Mountain Milk Protein"
+                    },
+                    "ingredients_translations": {
+                        "de": "43% teilentrahmte Milch, Wasser, 7% Milchproteinkonzentrat, 1,7% Kakaopulver, Füllstoff: Polydextrose; Stabilisator: Mikrokristalline Cellulose; modifizierte Stärke, Aroma, Farbstoff: Zuckerkulör; Süßungsmittel: Sucralose, Acesulfam-K; Säuerungsmittel: Milchsäure; Speisesalz.",
+                        "fr": "43% lait partiellement écrémé, eau, 7% concentré de protéines lactiques, 1,7% cacao en poudre, agent de charge: polydextrose; stabilisant: cellulose microcristalline; amidon modifié, arôme, colorant: caramel ordinaire; édulcorants: sucralose, acésulfame K; acidifiant: acide lactique; sel comestible.",
+                        "it": "43% latte parzialmente scremato, acqua, 7% concentrato di proteine del latte, 1,7% cacao in polvere, agente di carica: polidestrosio; stabilizzante: cellulosa microcristallina; amido modificato, aroma, colorante: caramello semplice; edulcoranti: sucralosio, acesulfame K; acidificanti: acido lattico; sale commestibile."
+                    },
+                    "status": "complete",
+                    "quantity": 330.0,
+                    "unit": "ml",
+                    "hundred_unit": "ml",
+                    "portion_quantity": 0.0,
+                    "portion_unit": "g",
+                    "alcohol_by_volume": 0.0,
+                    "images": [
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30036/thumb_7640151710040.jpg?v=1487836363",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30036/medium_7640151710040.jpg?v=1487836363",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30036/large_7640151710040.jpg?v=1487836363",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30036/xlarge_7640151710040.jpg?v=1487836363"
+                        },
+                        {
+                            "categories": [
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30024/thumb_7640151710040.jpg?v=1487836363",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30024/medium_7640151710040.jpg?v=1487836363",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30024/large_7640151710040.jpg?v=1487836363",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30024/xlarge_7640151710040.jpg?v=1487836363"
+                        },
+                        {
+                            "categories": [
+                                "Ingredients list"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30033/thumb_7640151710040.jpg?v=1487836363",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30033/medium_7640151710040.jpg?v=1487836363",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30033/large_7640151710040.jpg?v=1487836363",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30033/xlarge_7640151710040.jpg?v=1487836363"
+                        },
+                        {
+                            "categories": [
+                                "Ingredients list"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30031/thumb_7640151710040.jpg?v=1487836363",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30031/medium_7640151710040.jpg?v=1487836363",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30031/large_7640151710040.jpg?v=1487836363",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30031/xlarge_7640151710040.jpg?v=1487836363"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30029/thumb_7640151710040.jpg?v=1487836363",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30029/medium_7640151710040.jpg?v=1487836363",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30029/large_7640151710040.jpg?v=1487836363",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30029/xlarge_7640151710040.jpg?v=1487836363"
+                        },
+                        {
+                            "categories": [
+                                "Ingredients list"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30028/thumb_7640151710040.jpg?v=1487836363",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30028/medium_7640151710040.jpg?v=1487836363",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30028/large_7640151710040.jpg?v=1487836363",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/30028/xlarge_7640151710040.jpg?v=1487836363"
+                        }
+                    ],
+                    "nutrients": {
+                        "energy": {
+                            "name_translations": {
+                                "de": "Energie",
+                                "en": "Energy",
+                                "fr": "Énergie",
+                                "it": "Energia"
+                            },
+                            "unit": "kJ",
+                            "per_hundred": 230.0,
+                            "per_portion": null
+                        },
+                        "energy_calories_kcal": {
+                            "name_translations": {
+                                "de": "Energie (kCal)",
+                                "en": "Energy (Calories / kCal)",
+                                "fr": "Énergie (kCal)",
+                                "it": "Energia (kCal)"
+                            },
+                            "unit": "kCal",
+                            "per_hundred": 55.0,
+                            "per_portion": null
+                        },
+                        "fat": {
+                            "name_translations": {
+                                "de": "Fett",
+                                "en": "Fat",
+                                "fr": "Matières grasses",
+                                "it": "Grassi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 1.3,
+                            "per_portion": null
+                        },
+                        "saturated_fat": {
+                            "name_translations": {
+                                "de": "Gesättigte Fettsäuren",
+                                "en": "Saturated fat",
+                                "fr": "Acides gras saturés",
+                                "it": "Acidi grassi saturi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.8,
+                            "per_portion": null
+                        },
+                        "carbohydrates": {
+                            "name_translations": {
+                                "de": "Kohlenhydrate",
+                                "en": "Carbohydrates",
+                                "fr": "Glucides",
+                                "it": "Carboidrati"
+                            },
+                            "unit": "g",
+                            "per_hundred": 2.8,
+                            "per_portion": null
+                        },
+                        "sugars": {
+                            "name_translations": {
+                                "de": "Zucker",
+                                "en": "Sugars",
+                                "fr": "Sucres",
+                                "it": "Zuccheri"
+                            },
+                            "unit": "g",
+                            "per_hundred": 2.4,
+                            "per_portion": null
+                        },
+                        "fiber": {
+                            "name_translations": {
+                                "de": "Ballaststoffe",
+                                "en": "Fiber",
+                                "fr": "Fibres alimentaires",
+                                "it": "Fibre"
+                            },
+                            "unit": "g",
+                            "per_hundred": 4.6,
+                            "per_portion": null
+                        },
+                        "protein": {
+                            "name_translations": {
+                                "de": "Eiweiss",
+                                "en": "Protein",
+                                "fr": "Protéines",
+                                "it": "Proteine"
+                            },
+                            "unit": "g",
+                            "per_hundred": 7.9,
+                            "per_portion": null
+                        },
+                        "salt": {
+                            "name_translations": {
+                                "de": "Salz",
+                                "en": "Salt",
+                                "fr": "Sel",
+                                "it": "Sale"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.13,
+                            "per_portion": null
+                        },
+                        "lactose": {
+                            "name_translations": {
+                                "de": "Laktose",
+                                "en": "Lactose",
+                                "fr": "Lactose",
+                                "it": "Lattosio"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.1,
+                            "per_portion": null
+                        }
+                    },
+                    "created_at": "2016-07-19T16:14:29.509Z",
+                    "updated_at": "2018-11-15T09:12:56.649Z"
+                }
+            },
+            {
+                "_score": 1.0,
+                "_source": {
+                    "id": 22950,
+                    "country": "CH",
+                    "barcode": "7640151710743",
+                    "name_translations": {
+                        "en": "Chiefs - Protein Pudding (Choco Mountain)"
+                    },
+                    "display_name_translations": {
+                        "de": "Chiefs - Protein Pudding (Choco Mountain)",
+                        "fr": "Chiefs - Protein Pudding (Choco Mountain)",
+                        "it": "Chiefs - Protein Pudding (Choco Mountain)",
+                        "en": "Chiefs - Protein Pudding (Choco Mountain)"
+                    },
+                    "ingredients_translations": {
+                        "de": "Milch (1.4% Fett, pasteurisiert), 8.1% Milchproteinkonzentrat, 1.8% Kakao, Stabilisator: Carrageen, Natrium-Carboxymethylcellulose; Süssungsmittel: Acesulfam K, Sucralose; Aroma, Laktase.",
+                        "fr": "lait (1.4% de graisses, pasteurisé), 8.1% concentré de protéine lactique, 1.8% cacao, stabilisants: carraghénanes, carboxyméthyl cellulose sodique; édulcorants; acésulfame-K, sucralose; arome, lactase."
+                    },
+                    "status": "complete",
+                    "quantity": 200.0,
+                    "unit": "g",
+                    "hundred_unit": "g",
+                    "portion_quantity": 200.0,
+                    "portion_unit": "g",
+                    "alcohol_by_volume": 0.0,
+                    "images": [
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104939/thumb_7640151710743.jpg?v=1597759912",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104939/medium_7640151710743.jpg?v=1597759912",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104939/large_7640151710743.jpg?v=1597759912",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104939/xlarge_7640151710743.jpg?v=1597759912"
+                        },
+                        {
+                            "categories": [
+                                "Ingredients list",
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104937/thumb_7640151710743.jpg?v=1597759910",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104937/medium_7640151710743.jpg?v=1597759910",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104937/large_7640151710743.jpg?v=1597759910",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104937/xlarge_7640151710743.jpg?v=1597759910"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182962/thumb_1597684724485-0.jpg?v=1597760009",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182962/medium_1597684724485-0.jpg?v=1597760009",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182962/large_1597684724485-0.jpg?v=1597760009",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182962/xlarge_1597684724485-0.jpg?v=1597760009"
+                        },
+                        {
+                            "categories": [
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182961/thumb_1597684724488-1.jpg?v=1597760009",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182961/medium_1597684724488-1.jpg?v=1597760009",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182961/large_1597684724488-1.jpg?v=1597760009",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182961/xlarge_1597684724488-1.jpg?v=1597760009"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Ingredients list"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182960/thumb_1597684724493-2.jpg?v=1597760009",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182960/medium_1597684724493-2.jpg?v=1597760009",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182960/large_1597684724493-2.jpg?v=1597760009",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182960/xlarge_1597684724493-2.jpg?v=1597760009"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104935/thumb_7640151710743.jpg?v=1597759909",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104935/medium_7640151710743.jpg?v=1597759909",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104935/large_7640151710743.jpg?v=1597759909",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104935/xlarge_7640151710743.jpg?v=1597759909"
+                        },
+                        {
+                            "categories": [
+                                "Nutrients table",
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104938/thumb_7640151710743.jpg?v=1597759911",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104938/medium_7640151710743.jpg?v=1597759911",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104938/large_7640151710743.jpg?v=1597759911",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/104938/xlarge_7640151710743.jpg?v=1597759911"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186899/thumb_1612447042604-6.jpg?v=1612515110",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186899/medium_1612447042604-6.jpg?v=1612515110",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186899/large_1612447042604-6.jpg?v=1612515110",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186899/xlarge_1612447042604-6.jpg?v=1612515110"
+                        },
+                        {
+                            "categories": [
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186900/thumb_1612447042596-5.jpg?v=1612515110",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186900/medium_1612447042596-5.jpg?v=1612515110",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186900/large_1612447042596-5.jpg?v=1612515110",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186900/xlarge_1612447042596-5.jpg?v=1612515110"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186905/thumb_1612447042519-0.jpg?v=1612515110",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186905/medium_1612447042519-0.jpg?v=1612515110",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186905/large_1612447042519-0.jpg?v=1612515110",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186905/xlarge_1612447042519-0.jpg?v=1612515110"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186904/thumb_1612447042548-1.jpg?v=1612515110",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186904/medium_1612447042548-1.jpg?v=1612515110",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186904/large_1612447042548-1.jpg?v=1612515110",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186904/xlarge_1612447042548-1.jpg?v=1612515110"
+                        },
+                        {
+                            "categories": [
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186903/thumb_1612447042564-2.jpg?v=1612515110",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186903/medium_1612447042564-2.jpg?v=1612515110",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186903/large_1612447042564-2.jpg?v=1612515110",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186903/xlarge_1612447042564-2.jpg?v=1612515110"
+                        },
+                        {
+                            "categories": [
+                                "Ingredients list",
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186902/thumb_1612447042576-3.jpg?v=1612515110",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186902/medium_1612447042576-3.jpg?v=1612515110",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186902/large_1612447042576-3.jpg?v=1612515110",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186902/xlarge_1612447042576-3.jpg?v=1612515110"
+                        },
+                        {
+                            "categories": [
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186901/thumb_1612447042586-4.jpg?v=1612515110",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186901/medium_1612447042586-4.jpg?v=1612515110",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186901/large_1612447042586-4.jpg?v=1612515110",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/186901/xlarge_1612447042586-4.jpg?v=1612515110"
+                        }
+                    ],
+                    "nutrients": {
+                        "energy": {
+                            "name_translations": {
+                                "de": "Energie",
+                                "en": "Energy",
+                                "fr": "Énergie",
+                                "it": "Energia"
+                            },
+                            "unit": "kJ",
+                            "per_hundred": 304.0,
+                            "per_portion": 608.0
+                        },
+                        "energy_calories_kcal": {
+                            "name_translations": {
+                                "de": "Energie (kCal)",
+                                "en": "Energy (Calories / kCal)",
+                                "fr": "Énergie (kCal)",
+                                "it": "Energia (kCal)"
+                            },
+                            "unit": "kCal",
+                            "per_hundred": 72.0,
+                            "per_portion": 144.0
+                        },
+                        "fat": {
+                            "name_translations": {
+                                "de": "Fett",
+                                "en": "Fat",
+                                "fr": "Matières grasses",
+                                "it": "Grassi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 1.5,
+                            "per_portion": 3.0
+                        },
+                        "saturated_fat": {
+                            "name_translations": {
+                                "de": "Gesättigte Fettsäuren",
+                                "en": "Saturated fat",
+                                "fr": "Acides gras saturés",
+                                "it": "Acidi grassi saturi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 1.1,
+                            "per_portion": 2.2
+                        },
+                        "carbohydrates": {
+                            "name_translations": {
+                                "de": "Kohlenhydrate",
+                                "en": "Carbohydrates",
+                                "fr": "Glucides",
+                                "it": "Carboidrati"
+                            },
+                            "unit": "g",
+                            "per_hundred": 4.6,
+                            "per_portion": 9.2
+                        },
+                        "sugars": {
+                            "name_translations": {
+                                "de": "Zucker",
+                                "en": "Sugars",
+                                "fr": "Sucres",
+                                "it": "Zuccheri"
+                            },
+                            "unit": "g",
+                            "per_hundred": 4.6,
+                            "per_portion": 9.2
+                        },
+                        "protein": {
+                            "name_translations": {
+                                "de": "Eiweiss",
+                                "en": "Protein",
+                                "fr": "Protéines",
+                                "it": "Proteine"
+                            },
+                            "unit": "g",
+                            "per_hundred": 10.0,
+                            "per_portion": 20.0
+                        },
+                        "salt": {
+                            "name_translations": {
+                                "de": "Salz",
+                                "en": "Salt",
+                                "fr": "Sel",
+                                "it": "Sale"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.22,
+                            "per_portion": 0.44
+                        }
+                    },
+                    "created_at": "2018-02-01T08:45:48.261Z",
+                    "updated_at": "2021-02-05T08:51:51.656Z"
+                }
+            },
+            {
+                "_score": 1.0,
+                "_source": {
+                    "id": 27625,
+                    "country": "CH",
+                    "barcode": "7640151710682",
+                    "name_translations": {
+                        "en": "Chiefs - Coffee Town, Café latte (milk protein, lactose free, no added sugar)"
+                    },
+                    "display_name_translations": {
+                        "de": "Chiefs - Coffee Town, Café latte (milk protein, lactose free, no added sugar)",
+                        "fr": "Chiefs - Coffee Town, Café latte (milk protein, lactose free, no added sugar)",
+                        "it": "Chiefs - Coffee Town, Café latte (milk protein, lactose free, no added sugar)",
+                        "en": "Chiefs - Coffee Town, Café latte (milk protein, lactose free, no added sugar)"
+                    },
+                    "ingredients_translations": {
+                        "de": "51% Kaffeezubereitung (Wasser, Arabica-Kaffeeextrakt, natürliche Aromen), 41% teilentrahme Milch, 7.2% Milchproteinkonzentrat, Stabilisator: Cellulose Gel, Cellulosegummi; Säuerungsregulator: Natriumcitrat; Süssungsmittel: Acesulfam-K, Sucralose; Speisesalz, Laktase.",
+                        "fr": "51% préparation de café (eau, extrait de café arabica, arômes naturels), 41% lait partiellement écrémé, 7.2% concentré de protéines lactique, stabilisant: gel de cellulose, gomme de cellulose ; correcteur d'acidité : citrate de sodium ; édulcorants: acésulfame K, sucralose ; sel comestible, lactase.",
+                        "it": "51% Preparazione a base di caffè (acqua, estratto di caffè Arabica, aromi naturali), latte parzialmente scremato 41%, concentrato di proteine del latte 7.2%, stabilizzante: gel di cellulosa, gomma di cellulosa; regulatore di acidità: citrato di sodio; edulcoranti: acesulfame K, sucralosio; sale comestible, lattasi."
+                    },
+                    "status": "complete",
+                    "quantity": 330.0,
+                    "unit": "ml",
+                    "hundred_unit": "ml",
+                    "portion_quantity": 330.0,
+                    "portion_unit": "ml",
+                    "alcohol_by_volume": 0.0,
+                    "images": [
+                        {
+                            "categories": [
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118991/thumb_1531287823953.jpg?v=1572267178",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118991/medium_1531287823953.jpg?v=1572267178",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118991/large_1531287823953.jpg?v=1572267178",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118991/xlarge_1531287823953.jpg?v=1572267178"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118990/thumb_1531287823954.jpg?v=1572267178",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118990/medium_1531287823954.jpg?v=1572267178",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118990/large_1531287823954.jpg?v=1572267178",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118990/xlarge_1531287823954.jpg?v=1572267178"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118989/thumb_1531287823955.jpg?v=1572267178",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118989/medium_1531287823955.jpg?v=1572267178",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118989/large_1531287823955.jpg?v=1572267178",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/118989/xlarge_1531287823955.jpg?v=1572267178"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182033/thumb_1594289843132-0.jpg?v=1594318337",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182033/medium_1594289843132-0.jpg?v=1594318337",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182033/large_1594289843132-0.jpg?v=1594318337",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182033/xlarge_1594289843132-0.jpg?v=1594318337"
+                        },
+                        {
+                            "categories": [
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182032/thumb_1594289843158-1.jpg?v=1594318337",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182032/medium_1594289843158-1.jpg?v=1594318337",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182032/large_1594289843158-1.jpg?v=1594318337",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182032/xlarge_1594289843158-1.jpg?v=1594318337"
+                        },
+                        {
+                            "categories": [
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182031/thumb_1594289843174-2.jpg?v=1594318337",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182031/medium_1594289843174-2.jpg?v=1594318337",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182031/large_1594289843174-2.jpg?v=1594318337",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182031/xlarge_1594289843174-2.jpg?v=1594318337"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182030/thumb_1594289843185-3.jpg?v=1594318337",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182030/medium_1594289843185-3.jpg?v=1594318337",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182030/large_1594289843185-3.jpg?v=1594318337",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182030/xlarge_1594289843185-3.jpg?v=1594318337"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182361/thumb_1596019789680-0.jpg?v=1596298999",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182361/medium_1596019789680-0.jpg?v=1596298999",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182361/large_1596019789680-0.jpg?v=1596298999",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182361/xlarge_1596019789680-0.jpg?v=1596298999"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182360/thumb_1596019789689-1.jpg?v=1596298999",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182360/medium_1596019789689-1.jpg?v=1596298999",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182360/large_1596019789689-1.jpg?v=1596298999",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182360/xlarge_1596019789689-1.jpg?v=1596298999"
+                        },
+                        {
+                            "categories": [
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182359/thumb_1596019789697-2.jpg?v=1596298999",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182359/medium_1596019789697-2.jpg?v=1596298999",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182359/large_1596019789697-2.jpg?v=1596298999",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182359/xlarge_1596019789697-2.jpg?v=1596298999"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182684/thumb_1596981143125-0.jpg?v=1597154486",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182684/medium_1596981143125-0.jpg?v=1597154486",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182684/large_1596981143125-0.jpg?v=1597154486",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182684/xlarge_1596981143125-0.jpg?v=1597154486"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182683/thumb_1596981143136-1.jpg?v=1597154486",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182683/medium_1596981143136-1.jpg?v=1597154486",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182683/large_1596981143136-1.jpg?v=1597154486",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182683/xlarge_1596981143136-1.jpg?v=1597154486"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183248/thumb_1599036832314-2.jpg?v=1599489600",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183248/medium_1599036832314-2.jpg?v=1599489600",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183248/large_1599036832314-2.jpg?v=1599489600",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183248/xlarge_1599036832314-2.jpg?v=1599489600"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183247/thumb_1599036832325-3.jpg?v=1599489601",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183247/medium_1599036832325-3.jpg?v=1599489601",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183247/large_1599036832325-3.jpg?v=1599489601",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183247/xlarge_1599036832325-3.jpg?v=1599489601"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183246/thumb_1599036832336-4.jpg?v=1599489601",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183246/medium_1599036832336-4.jpg?v=1599489601",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183246/large_1599036832336-4.jpg?v=1599489601",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183246/xlarge_1599036832336-4.jpg?v=1599489601"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183245/thumb_1599036832345-5.jpg?v=1599489601",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183245/medium_1599036832345-5.jpg?v=1599489601",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183245/large_1599036832345-5.jpg?v=1599489601",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183245/xlarge_1599036832345-5.jpg?v=1599489601"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183244/thumb_1599036832354-6.jpg?v=1599489601",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183244/medium_1599036832354-6.jpg?v=1599489601",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183244/large_1599036832354-6.jpg?v=1599489601",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183244/xlarge_1599036832354-6.jpg?v=1599489601"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183243/thumb_1599036832369-7.jpg?v=1599489601",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183243/medium_1599036832369-7.jpg?v=1599489601",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183243/large_1599036832369-7.jpg?v=1599489601",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183243/xlarge_1599036832369-7.jpg?v=1599489601"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183250/thumb_1599036832290-0.jpg?v=1599489601",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183250/medium_1599036832290-0.jpg?v=1599489601",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183250/large_1599036832290-0.jpg?v=1599489601",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183250/xlarge_1599036832290-0.jpg?v=1599489601"
+                        },
+                        {
+                            "categories": [],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183249/thumb_1599036832304-1.jpg?v=1599489601",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183249/medium_1599036832304-1.jpg?v=1599489601",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183249/large_1599036832304-1.jpg?v=1599489601",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/183249/xlarge_1599036832304-1.jpg?v=1599489601"
+                        }
+                    ],
+                    "nutrients": {
+                        "energy": {
+                            "name_translations": {
+                                "de": "Energie",
+                                "en": "Energy",
+                                "fr": "Énergie",
+                                "it": "Energia"
+                            },
+                            "unit": "kJ",
+                            "per_hundred": 211.0,
+                            "per_portion": 696.0
+                        },
+                        "energy_calories_kcal": {
+                            "name_translations": {
+                                "de": "Energie (kCal)",
+                                "en": "Energy (Calories / kCal)",
+                                "fr": "Énergie (kCal)",
+                                "it": "Energia (kCal)"
+                            },
+                            "unit": "kCal",
+                            "per_hundred": 50.0,
+                            "per_portion": 165.0
+                        },
+                        "fat": {
+                            "name_translations": {
+                                "de": "Fett",
+                                "en": "Fat",
+                                "fr": "Matières grasses",
+                                "it": "Grassi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 1.1,
+                            "per_portion": 3.6
+                        },
+                        "saturated_fat": {
+                            "name_translations": {
+                                "de": "Gesättigte Fettsäuren",
+                                "en": "Saturated fat",
+                                "fr": "Acides gras saturés",
+                                "it": "Acidi grassi saturi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.7,
+                            "per_portion": 2.3
+                        },
+                        "carbohydrates": {
+                            "name_translations": {
+                                "de": "Kohlenhydrate",
+                                "en": "Carbohydrates",
+                                "fr": "Glucides",
+                                "it": "Carboidrati"
+                            },
+                            "unit": "g",
+                            "per_hundred": 2.3,
+                            "per_portion": 7.6
+                        },
+                        "sugars": {
+                            "name_translations": {
+                                "de": "Zucker",
+                                "en": "Sugars",
+                                "fr": "Sucres",
+                                "it": "Zuccheri"
+                            },
+                            "unit": "g",
+                            "per_hundred": 2.3,
+                            "per_portion": 7.6
+                        },
+                        "protein": {
+                            "name_translations": {
+                                "de": "Eiweiss",
+                                "en": "Protein",
+                                "fr": "Protéines",
+                                "it": "Proteine"
+                            },
+                            "unit": "g",
+                            "per_hundred": 7.7,
+                            "per_portion": 25.0
+                        },
+                        "salt": {
+                            "name_translations": {
+                                "de": "Salz",
+                                "en": "Salt",
+                                "fr": "Sel",
+                                "it": "Sale"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.16,
+                            "per_portion": 0.53
+                        }
+                    },
+                    "created_at": "2018-07-11T13:50:01.703Z",
+                    "updated_at": "2020-09-07T14:40:01.673Z"
+                }
+            },
+            {
+                "_score": 1.0,
+                "_source": {
+                    "id": 44982,
+                    "country": "CH",
+                    "barcode": "7640151711610",
+                    "name_translations": {
+                        "de": "Chiefs - Ice cream Caramelgeschmack",
+                        "en": "Chiefs - Ice cream salted caramel",
+                        "fr": "Chiefs - Ice cream au goût de caramel"
+                    },
+                    "display_name_translations": {
+                        "de": "Chiefs - Ice cream Caramelgeschmack",
+                        "fr": "Chiefs - Ice cream au goût de caramel",
+                        "it": "Chiefs - Ice cream salted caramel",
+                        "en": "Chiefs - Ice cream salted caramel"
+                    },
+                    "ingredients_translations": {},
+                    "status": "rescan",
+                    "quantity": 500.0,
+                    "unit": "ml",
+                    "hundred_unit": "g",
+                    "portion_quantity": 0.0,
+                    "portion_unit": "g",
+                    "alcohol_by_volume": 0.0,
+                    "images": [
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182766/thumb_1596893967615-0.jpg?v=1597238552",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182766/medium_1596893967615-0.jpg?v=1597238552",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182766/large_1596893967615-0.jpg?v=1597238552",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182766/xlarge_1596893967615-0.jpg?v=1597238552"
+                        },
+                        {
+                            "categories": [
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182765/thumb_1596893967628-1.jpg?v=1597238552",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182765/medium_1596893967628-1.jpg?v=1597238552",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182765/large_1596893967628-1.jpg?v=1597238552",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182765/xlarge_1596893967628-1.jpg?v=1597238552"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Ingredients list"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182764/thumb_1596893967638-2.jpg?v=1597238552",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182764/medium_1596893967638-2.jpg?v=1597238552",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182764/large_1596893967638-2.jpg?v=1597238552",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182764/xlarge_1596893967638-2.jpg?v=1597238552"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182763/thumb_1596893967652-3.jpg?v=1597238552",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182763/medium_1596893967652-3.jpg?v=1597238552",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182763/large_1596893967652-3.jpg?v=1597238552",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/182763/xlarge_1596893967652-3.jpg?v=1597238552"
+                        }
+                    ],
+                    "nutrients": {
+                        "energy": {
+                            "name_translations": {
+                                "de": "Energie",
+                                "en": "Energy",
+                                "fr": "Énergie",
+                                "it": "Energia"
+                            },
+                            "unit": "kJ",
+                            "per_hundred": 587.0,
+                            "per_portion": null
+                        },
+                        "energy_calories_kcal": {
+                            "name_translations": {
+                                "de": "Energie (kCal)",
+                                "en": "Energy (Calories / kCal)",
+                                "fr": "Énergie (kCal)",
+                                "it": "Energia (kCal)"
+                            },
+                            "unit": "kCal",
+                            "per_hundred": 140.0,
+                            "per_portion": null
+                        },
+                        "fat": {
+                            "name_translations": {
+                                "de": "Fett",
+                                "en": "Fat",
+                                "fr": "Matières grasses",
+                                "it": "Grassi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 3.3,
+                            "per_portion": null
+                        },
+                        "saturated_fat": {
+                            "name_translations": {
+                                "de": "Gesättigte Fettsäuren",
+                                "en": "Saturated fat",
+                                "fr": "Acides gras saturés",
+                                "it": "Acidi grassi saturi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 2.7,
+                            "per_portion": null
+                        },
+                        "carbohydrates": {
+                            "name_translations": {
+                                "de": "Kohlenhydrate",
+                                "en": "Carbohydrates",
+                                "fr": "Glucides",
+                                "it": "Carboidrati"
+                            },
+                            "unit": "g",
+                            "per_hundred": 16.7,
+                            "per_portion": null
+                        },
+                        "sugars": {
+                            "name_translations": {
+                                "de": "Zucker",
+                                "en": "Sugars",
+                                "fr": "Sucres",
+                                "it": "Zuccheri"
+                            },
+                            "unit": "g",
+                            "per_hundred": 3.3,
+                            "per_portion": null
+                        },
+                        "fiber": {
+                            "name_translations": {
+                                "de": "Ballaststoffe",
+                                "en": "Fiber",
+                                "fr": "Fibres alimentaires",
+                                "it": "Fibre"
+                            },
+                            "unit": "g",
+                            "per_hundred": 10.0,
+                            "per_portion": null
+                        },
+                        "protein": {
+                            "name_translations": {
+                                "de": "Eiweiss",
+                                "en": "Protein",
+                                "fr": "Protéines",
+                                "it": "Proteine"
+                            },
+                            "unit": "g",
+                            "per_hundred": 10.9,
+                            "per_portion": null
+                        },
+                        "salt": {
+                            "name_translations": {
+                                "de": "Salz",
+                                "en": "Salt",
+                                "fr": "Sel",
+                                "it": "Sale"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.47,
+                            "per_portion": null
+                        }
+                    },
+                    "created_at": "2020-08-12T13:20:47.915Z",
+                    "updated_at": "2022-09-10T16:59:16.216Z"
+                }
+            },
+            {
+                "_score": 1.0,
+                "_source": {
+                    "id": 45737,
+                    "country": "CH",
+                    "barcode": "7640151711887",
+                    "name_translations": {
+                        "en": "Chiefs - Protein Pudding (Coco-Almond)"
+                    },
+                    "display_name_translations": {
+                        "de": "Chiefs - Protein Pudding (Coco-Almond)",
+                        "fr": "Chiefs - Protein Pudding (Coco-Almond)",
+                        "it": "Chiefs - Protein Pudding (Coco-Almond)",
+                        "en": "Chiefs - Protein Pudding (Coco-Almond)"
+                    },
+                    "ingredients_translations": {},
+                    "status": "rescan",
+                    "quantity": 0.0,
+                    "unit": "g",
+                    "hundred_unit": "g",
+                    "portion_quantity": 0.0,
+                    "portion_unit": "g",
+                    "alcohol_by_volume": 0.0,
+                    "images": [
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/185956/thumb_1607198295309-0.jpg?v=1607259100",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/185956/medium_1607198295309-0.jpg?v=1607259100",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/185956/large_1607198295309-0.jpg?v=1607259100",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/185956/xlarge_1607198295309-0.jpg?v=1607259100"
+                        }
+                    ],
+                    "nutrients": {},
+                    "created_at": "2020-12-06T12:50:35.716Z",
+                    "updated_at": "2022-07-29T10:52:28.996Z"
+                }
+            },
+            {
+                "_score": 1.0,
+                "_source": {
+                    "id": 377079,
+                    "country": "CH",
+                    "barcode": "7640151712891",
+                    "name_translations": {
+                        "en": "Chiefs - Protein Pudding (Hazel Heaven)"
+                    },
+                    "display_name_translations": {
+                        "de": "Chiefs - Protein Pudding (Hazel Heaven)",
+                        "fr": "Chiefs - Protein Pudding (Hazel Heaven)",
+                        "it": "Chiefs - Protein Pudding (Hazel Heaven)",
+                        "en": "Chiefs - Protein Pudding (Hazel Heaven)"
+                    },
+                    "ingredients_translations": {
+                        "fr": " Lait demi-\r\nécrémé (1,65 % de graisses), 8,3% concentré de protéine lactique, cacao en poudre maigre, épaississant: gomme cellulase; édulcorant: acésulfame-K, sucralose, arome naturel, lactase."
+                    },
+                    "status": "rescan",
+                    "quantity": 200.0,
+                    "unit": "g",
+                    "hundred_unit": "g",
+                    "portion_quantity": 200.0,
+                    "portion_unit": "g",
+                    "alcohol_by_volume": 0.0,
+                    "images": [
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213080/thumb_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213080/medium_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213080/large_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213080/xlarge_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213081/thumb_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213081/medium_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213081/large_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213081/xlarge_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213082/thumb_local_dish_pic_2021-10-13-19-00-41-060?v=1666960020",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213082/medium_local_dish_pic_2021-10-13-19-00-41-060?v=1666960020",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213082/large_local_dish_pic_2021-10-13-19-00-41-060?v=1666960020",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213082/xlarge_local_dish_pic_2021-10-13-19-00-41-060?v=1666960020"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213083/thumb_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213083/medium_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213083/large_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213083/xlarge_local_dish_pic_2021-10-13-19-00-12-730?v=1666960020"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213084/thumb_local_dish_pic_2021-10-13-19-00-41-060?v=1666960020",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213084/medium_local_dish_pic_2021-10-13-19-00-41-060?v=1666960020",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213084/large_local_dish_pic_2021-10-13-19-00-41-060?v=1666960020",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213084/xlarge_local_dish_pic_2021-10-13-19-00-41-060?v=1666960020"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Ingredients list"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213085/thumb_local_dish_pic_2021-10-13-19-00-56-419?v=1666960020",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213085/medium_local_dish_pic_2021-10-13-19-00-56-419?v=1666960020",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213085/large_local_dish_pic_2021-10-13-19-00-56-419?v=1666960020",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213085/xlarge_local_dish_pic_2021-10-13-19-00-56-419?v=1666960020"
+                        }
+                    ],
+                    "nutrients": {
+                        "energy_calories_kcal": {
+                            "name_translations": {
+                                "de": "Energie (kCal)",
+                                "en": "Energy (Calories / kCal)",
+                                "fr": "Énergie (kCal)",
+                                "it": "Energia (kCal)"
+                            },
+                            "unit": "kCal",
+                            "per_hundred": 72.0,
+                            "per_portion": 144.0
+                        },
+                        "energy": {
+                            "name_translations": {
+                                "de": "Energie",
+                                "en": "Energy",
+                                "fr": "Énergie",
+                                "it": "Energia"
+                            },
+                            "unit": "kJ",
+                            "per_hundred": 304.0,
+                            "per_portion": 604.0
+                        },
+                        "fat": {
+                            "name_translations": {
+                                "de": "Fett",
+                                "en": "Fat",
+                                "fr": "Matières grasses",
+                                "it": "Grassi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 1.5,
+                            "per_portion": 3.0
+                        },
+                        "saturated_fat": {
+                            "name_translations": {
+                                "de": "Gesättigte Fettsäuren",
+                                "en": "Saturated fat",
+                                "fr": "Acides gras saturés",
+                                "it": "Acidi grassi saturi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 1.1,
+                            "per_portion": 2.2
+                        },
+                        "carbohydrates": {
+                            "name_translations": {
+                                "de": "Kohlenhydrate",
+                                "en": "Carbohydrates",
+                                "fr": "Glucides",
+                                "it": "Carboidrati"
+                            },
+                            "unit": "g",
+                            "per_hundred": 4.6,
+                            "per_portion": 9.2
+                        },
+                        "sugars": {
+                            "name_translations": {
+                                "de": "Zucker",
+                                "en": "Sugars",
+                                "fr": "Sucres",
+                                "it": "Zuccheri"
+                            },
+                            "unit": "g",
+                            "per_hundred": 4.6,
+                            "per_portion": 9.2
+                        },
+                        "protein": {
+                            "name_translations": {
+                                "de": "Eiweiss",
+                                "en": "Protein",
+                                "fr": "Protéines",
+                                "it": "Proteine"
+                            },
+                            "unit": "g",
+                            "per_hundred": 10.0,
+                            "per_portion": 20.0
+                        },
+                        "salt": {
+                            "name_translations": {
+                                "de": "Salz",
+                                "en": "Salt",
+                                "fr": "Sel",
+                                "it": "Sale"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.22,
+                            "per_portion": 0.44
+                        }
+                    },
+                    "created_at": "2021-10-13T17:01:37.906Z",
+                    "updated_at": "2022-10-28T12:27:00.938Z"
+                }
+            },
+            {
+                "_score": 1.0,
+                "_source": {
+                    "id": 377289,
+                    "country": "CH",
+                    "barcode": "7640151711948",
+                    "name_translations": {
+                        "en": "Chiefs - Protein pudding (Cappuccino)"
+                    },
+                    "display_name_translations": {
+                        "de": "Chiefs - Protein pudding (Cappuccino)",
+                        "fr": "Chiefs - Protein pudding (Cappuccino)",
+                        "it": "Chiefs - Protein pudding (Cappuccino)",
+                        "en": "Chiefs - Protein pudding (Cappuccino)"
+                    },
+                    "ingredients_translations": {
+                        "de": "Teilentrahmte Milch (1,65% Fett), 8,3 %, Milchproteinkonzentrat, Kaffee-Extakr, Verdickungsmittel: Carrageen, Cellulosegummi; Süßungsmittel: Acesulfam-K, Sucralose, Farbstoff: einfaches Zuckerkulör;natürliches Aroma, Laktase.",
+                        "fr": "Lait demi-écrémé (1,65 % de graisses), 8,3% concentré de\r\nprotéine lactique, extrait de café, épaississant carraghénane, gomme de cellulose; édulcorant: acésulfame-K, sucralose; colorant: caremel ordinaire, arôme naturel, lactase."
+                    },
+                    "status": "complete",
+                    "quantity": 200.0,
+                    "unit": "g",
+                    "hundred_unit": "g",
+                    "portion_quantity": 200.0,
+                    "portion_unit": "g",
+                    "alcohol_by_volume": 0.0,
+                    "images": [
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213807/thumb_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213807/medium_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213807/large_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213807/xlarge_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213808/thumb_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213808/medium_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213808/large_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213808/xlarge_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213809/thumb_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213809/medium_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213809/large_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213809/xlarge_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213810/thumb_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213810/medium_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213810/large_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213810/xlarge_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213811/thumb_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213811/medium_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213811/large_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213811/xlarge_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Ingredients list"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213812/thumb_local_dish_pic_2021-10-23-08-25-46-953?v=1635405220",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213812/medium_local_dish_pic_2021-10-23-08-25-46-953?v=1635405220",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213812/large_local_dish_pic_2021-10-23-08-25-46-953?v=1635405220",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213812/xlarge_local_dish_pic_2021-10-23-08-25-46-953?v=1635405220"
+                        },
+                        {
+                            "categories": [
+                                "Back",
+                                "Nutrients table"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213813/thumb_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213813/medium_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213813/large_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213813/xlarge_local_dish_pic_2021-10-23-08-25-28-483?v=1635405220"
+                        },
+                        {
+                            "categories": [
+                                "Front"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213814/thumb_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213814/medium_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213814/large_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213814/xlarge_local_dish_pic_2021-10-23-08-25-35-675?v=1635405220"
+                        },
+                        {
+                            "categories": [
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213816/thumb_local_dish_pic_2021-10-23-08-25-55-731?v=1635405220",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213816/medium_local_dish_pic_2021-10-23-08-25-55-731?v=1635405220",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213816/large_local_dish_pic_2021-10-23-08-25-55-731?v=1635405220",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213816/xlarge_local_dish_pic_2021-10-23-08-25-55-731?v=1635405220"
+                        },
+                        {
+                            "categories": [
+                                "Back"
+                            ],
+                            "thumb": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213815/thumb_local_dish_pic_2021-10-23-08-25-46-953?v=1666959643",
+                            "medium": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213815/medium_local_dish_pic_2021-10-23-08-25-46-953?v=1666959643",
+                            "large": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213815/large_local_dish_pic_2021-10-23-08-25-46-953?v=1666959643",
+                            "xlarge": "https://d2v5oodgkvnw88.cloudfront.net/uploads_production/image/data/213815/xlarge_local_dish_pic_2021-10-23-08-25-46-953?v=1666959643"
+                        }
+                    ],
+                    "nutrients": {
+                        "energy_calories_kcal": {
+                            "name_translations": {
+                                "de": "Energie (kCal)",
+                                "en": "Energy (Calories / kCal)",
+                                "fr": "Énergie (kCal)",
+                                "it": "Energia (kCal)"
+                            },
+                            "unit": "kCal",
+                            "per_hundred": 72.0,
+                            "per_portion": 144.0
+                        },
+                        "energy": {
+                            "name_translations": {
+                                "de": "Energie",
+                                "en": "Energy",
+                                "fr": "Énergie",
+                                "it": "Energia"
+                            },
+                            "unit": "kJ",
+                            "per_hundred": 304.0,
+                            "per_portion": 608.0
+                        },
+                        "fat": {
+                            "name_translations": {
+                                "de": "Fett",
+                                "en": "Fat",
+                                "fr": "Matières grasses",
+                                "it": "Grassi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 1.5,
+                            "per_portion": 3.0
+                        },
+                        "saturated_fat": {
+                            "name_translations": {
+                                "de": "Gesättigte Fettsäuren",
+                                "en": "Saturated fat",
+                                "fr": "Acides gras saturés",
+                                "it": "Acidi grassi saturi"
+                            },
+                            "unit": "g",
+                            "per_hundred": 1.1,
+                            "per_portion": 2.2
+                        },
+                        "carbohydrates": {
+                            "name_translations": {
+                                "de": "Kohlenhydrate",
+                                "en": "Carbohydrates",
+                                "fr": "Glucides",
+                                "it": "Carboidrati"
+                            },
+                            "unit": "g",
+                            "per_hundred": 4.6,
+                            "per_portion": 9.2
+                        },
+                        "sugars": {
+                            "name_translations": {
+                                "de": "Zucker",
+                                "en": "Sugars",
+                                "fr": "Sucres",
+                                "it": "Zuccheri"
+                            },
+                            "unit": "g",
+                            "per_hundred": 4.6,
+                            "per_portion": 9.2
+                        },
+                        "protein": {
+                            "name_translations": {
+                                "de": "Eiweiss",
+                                "en": "Protein",
+                                "fr": "Protéines",
+                                "it": "Proteine"
+                            },
+                            "unit": "g",
+                            "per_hundred": 10.0,
+                            "per_portion": 20.0
+                        },
+                        "salt": {
+                            "name_translations": {
+                                "de": "Salz",
+                                "en": "Salt",
+                                "fr": "Sel",
+                                "it": "Sale"
+                            },
+                            "unit": "g",
+                            "per_hundred": 0.22,
+                            "per_portion": 0.44
+                        }
+                    },
+                    "created_at": "2021-10-23T06:26:05.395Z",
+                    "updated_at": "2022-10-28T12:20:43.846Z"
+                }
+            }
+        ]
+    },
+    "meta": {
+        "api_version": "3.04",
+        "generated_in": 22
+    }
+}

@@ -7,7 +7,6 @@ import { AbstractFoodApi } from "./abstract-food-api";
 
 export class OpenFoodRepoApi extends AbstractFoodApi {
     readonly name = "OpenFoodRepo";
-    readonly priority = 1;
     readonly supportsBarcode = true;
     readonly supportsSearch = true;
 

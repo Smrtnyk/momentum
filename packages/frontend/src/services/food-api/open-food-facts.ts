@@ -8,7 +8,6 @@ const SEARCH_URL = `${API_BASE_URL}/search`;
 
 export class OpenFoodFactsApi extends AbstractFoodApi {
     readonly name = "OpenFoodFacts";
-    readonly priority = 2;
 
     readonly supportsBarcode = true;
     readonly supportsSearch = true;
@@ -89,7 +88,7 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
     private extractCalories(nutriments: any): number {
         if (!nutriments) return 0;
 
-        // Try all possible field names for calories
+        // all possible field names for calories
         const caloriesValue =
             nutriments["energy-kcal_100g"] ??
             nutriments["energy_kcal_100g"] ??
@@ -137,7 +136,6 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
             "fat",
         ]);
 
-        // Scale to match serving size
         const scaleFactor = servingSize / 100;
 
         return {

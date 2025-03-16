@@ -13,7 +13,6 @@ class MockApi extends AbstractFoodApi {
 
     constructor(
         public readonly name: string,
-        public readonly priority: number,
         private readonly supportBarcode = false,
     ) {
         super();
@@ -34,7 +33,7 @@ class MockApi extends AbstractFoodApi {
                 servingUnit: "g",
             } as unknown as FoodItem);
         }
-        return super.getFoodByBarcode(barcode);
+        return Promise.resolve(null);
     }
 
     searchFoods(): Promise<FoodSearchResult> {
@@ -83,28 +82,10 @@ describe("ApiRegistry", () => {
             testRegistry = new TestApiRegistry();
         });
 
-        it("should return barcode providers in priority order", function () {
-            const highPriorityApi = new MockApi("HighPriority", 1, true);
-            const mediumPriorityApi = new MockApi("MediumPriority", 2, true);
-            const lowPriorityApi = new MockApi("LowPriority", 3, true);
-
-            testRegistry.registerProvider(mediumPriorityApi);
-            testRegistry.registerProvider(lowPriorityApi);
-            testRegistry.registerProvider(highPriorityApi);
-
-            const barcodeProviders = testRegistry.getBarcodeProviders();
-
-            // sorted by priority (lowest number = highest priority)
-            expect(barcodeProviders.length).toBe(3);
-            expect(barcodeProviders[0]).toBe(highPriorityApi);
-            expect(barcodeProviders[1]).toBe(mediumPriorityApi);
-            expect(barcodeProviders[2]).toBe(lowPriorityApi);
-        });
-
         it("should filter out providers that do not support barcode lookup", function () {
-            const barcodeProvider1 = new MockApi("BarcodeApi1", 1, true);
-            const barcodeProvider2 = new MockApi("BarcodeApi2", 2, true);
-            const nonBarcodeProvider = new MockApi("NonBarcodeApi", 3, false);
+            const barcodeProvider1 = new MockApi("BarcodeApi1", true);
+            const barcodeProvider2 = new MockApi("BarcodeApi2", true);
+            const nonBarcodeProvider = new MockApi("NonBarcodeApi", false);
 
             testRegistry.registerProvider(barcodeProvider1);
             testRegistry.registerProvider(nonBarcodeProvider);
@@ -127,8 +108,8 @@ describe("ApiRegistry", () => {
         });
 
         it("should register and retrieve providers correctly", function () {
-            const api1 = new MockApi("TestApi1", 1);
-            const api2 = new MockApi("TestApi2", 2);
+            const api1 = new MockApi("TestApi1");
+            const api2 = new MockApi("TestApi2");
 
             testRegistry.registerProvider(api1);
             testRegistry.registerProvider(api2);
@@ -139,8 +120,8 @@ describe("ApiRegistry", () => {
         });
 
         it("should replace provider with same name", function () {
-            const api1 = new MockApi("SameNameApi", 1);
-            const api2 = new MockApi("SameNameApi", 2);
+            const api1 = new MockApi("SameNameApi");
+            const api2 = new MockApi("SameNameApi");
 
             testRegistry.registerProvider(api1);
             testRegistry.registerProvider(api2);

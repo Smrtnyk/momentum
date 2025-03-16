@@ -19,26 +19,36 @@ export class CombinedFoodApi {
     async getFoodByBarcode(barcode: string): Promise<FoodItem | null> {
         const barcodeProviders = apiRegistry.getBarcodeProviders();
 
-        for (const provider of barcodeProviders) {
-            try {
-                /* eslint-disable-next-line no-await-in-loop -- we want to do 1 by 1 until we have it
-                 so we have to do it sequentially here */
-                const food = await provider.getFoodByBarcode(barcode);
-                if (food && food.calories > 0) {
-                    return {
-                        ...food,
-                        provider: provider.name,
-                    };
-                }
-            } catch (error) {
-                logger.error(error, "CombinedFoodAPI.barcode", {
-                    barcode,
-                    provider: provider.name,
-                });
-            }
-        }
+        try {
+            const results = await Promise.allSettled(
+                barcodeProviders.map((provider) => provider.getFoodByBarcode(barcode)),
+            );
 
-        return null;
+            const validFoods: Array<FoodItem & { provider: string; qualityScore?: number }> = [];
+
+            results.forEach((result, index) => {
+                if (result.status === "fulfilled" && result.value && result.value.calories > 0) {
+                    validFoods.push({
+                        ...result.value,
+                        provider: barcodeProviders[index].name,
+                    });
+                } else if (result.status === "rejected") {
+                    logger.error(result.reason, "CombinedFoodAPI.barcode", {
+                        barcode,
+                        provider: barcodeProviders[index].name,
+                    });
+                }
+            });
+
+            if (validFoods.length === 0) {
+                return null;
+            }
+
+            return this.getBestFoodItem(validFoods);
+        } catch (error) {
+            logger.error(error, "CombinedFoodAPI.barcode", { barcode });
+            return null;
+        }
     }
 
     async searchFoods(query: string, page = 1, pageSize = 10): Promise<FoodSearchResult> {
@@ -106,6 +116,18 @@ export class CombinedFoodApi {
         }
     }
 
+    private calculateFoodItemQualityScore(food: FoodItem & { provider: string }): number {
+        let score = 0;
+        if (food.protein > 0) score += 2;
+        if (food.carbs > 0) score += 2;
+        if (food.fat > 0) score += 2;
+        if (food.imageUrl) score += 3;
+        if (food.brand) score += 2;
+        if (food.barcode) score += 1;
+
+        return score;
+    }
+
     private enhanceAndSortResults(foods: FoodItem[], query: string): FoodItem[] {
         const uniqueFoods = this.removeDuplicates(foods);
         const lowerQuery = query.toLowerCase();
@@ -118,17 +140,17 @@ export class CombinedFoodApi {
                 const brandMatch = food.brand?.toLowerCase().includes(lowerQuery);
                 const hasCompleteNutrition = food.calories > 0 && food.protein > 0;
                 const hasImage = Boolean(food.imageUrl);
-                // Start with a base relevance if the name contains the query
+                // base relevance if the name contains the query
                 let relevance = nameMatch ? 10 : 0;
-                // If the name exactly equals the query, add a strong bonus.
+                // strong bonus If the name exactly equals the query
                 if (lowerName === lowerQuery) {
                     relevance += 20;
                 }
-                // Add additional bonuses for brand, nutrition, and image.
+                // additional bonuses for brand, nutrition, and image
                 if (brandMatch) relevance += 5;
                 if (hasCompleteNutrition) relevance += 3;
                 if (hasImage) relevance += 2;
-                // Penalize for extra words in the name.
+                // Penalize extra words in the name
                 const nameWordCount = lowerName.split(/\s+/).length;
                 const wordCountDiff = nameWordCount - queryWordCount;
                 if (wordCountDiff > 0) {
@@ -141,6 +163,20 @@ export class CombinedFoodApi {
                 };
             })
             .sort((a, b) => b.relevance - a.relevance);
+    }
+
+    private getBestFoodItem(
+        foods: Array<FoodItem & { provider: string; qualityScore?: number }>,
+    ): FoodItem & { provider: string } {
+        foods.forEach((food) => {
+            food.qualityScore = this.calculateFoodItemQualityScore(food);
+        });
+
+        const sortedFoods = [...foods].sort(
+            (a, b) => (b.qualityScore ?? 0) - (a.qualityScore ?? 0),
+        );
+
+        return sortedFoods[0];
     }
 
     private removeDuplicates(foods: FoodItem[]): FoodItem[] {

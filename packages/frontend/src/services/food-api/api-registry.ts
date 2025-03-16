@@ -12,9 +12,7 @@ class ApiRegistry {
     }
 
     getBarcodeProviders(): AbstractFoodApi[] {
-        return Array.from(this.providers.values())
-            .filter((provider) => provider.supportsBarcode)
-            .sort((a, b) => a.priority - b.priority);
+        return Array.from(this.providers.values()).filter((provider) => provider.supportsBarcode);
     }
 
     getProvider(name: string): AbstractFoodApi | undefined {
@@ -22,9 +20,7 @@ class ApiRegistry {
     }
 
     getSearchProviders(): AbstractFoodApi[] {
-        return Array.from(this.providers.values())
-            .filter((provider) => provider.supportsSearch)
-            .sort((a, b) => a.priority - b.priority);
+        return Array.from(this.providers.values()).filter((provider) => provider.supportsSearch);
     }
 
     registerProvider(provider: AbstractFoodApi): void {

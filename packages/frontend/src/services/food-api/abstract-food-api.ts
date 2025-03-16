@@ -5,15 +5,10 @@ import { logger } from "../../logger/app-logger";
 export abstract class AbstractFoodApi {
     abstract readonly name: string;
 
-    abstract readonly priority: number;
-
     abstract readonly supportsBarcode: boolean;
     abstract readonly supportsSearch: boolean;
 
-    getFoodByBarcode(args0: string): Promise<FoodItem | null> {
-        return Promise.resolve(null);
-    }
-
+    abstract getFoodByBarcode(args0: string): Promise<FoodItem | null>;
     abstract searchFoods(query: string, page: number, pageSize: number): Promise<FoodSearchResult>;
 
     protected isLiquidProduct(productName: string): boolean {

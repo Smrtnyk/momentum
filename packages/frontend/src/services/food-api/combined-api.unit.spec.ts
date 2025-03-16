@@ -26,7 +26,6 @@ class MockApi extends AbstractFoodApi {
 
     constructor(
         public readonly name: string,
-        public readonly priority: number,
         public mockGetFoodByBarcode = (args0: string) => Promise.resolve(null),
         public mockSearchFoods = (args0, args1, args2) =>
             Promise.resolve({
@@ -52,64 +51,174 @@ describe("CombinedFoodApi", function () {
     let combinedApi: CombinedFoodApi;
     let mockApi1: MockApi;
     let mockApi2: MockApi;
+    let mockApi3: MockApi;
 
     beforeEach(function () {
         combinedApi = new CombinedFoodApi();
-        mockApi1 = new MockApi("MockApi1", 1);
-        mockApi2 = new MockApi("MockApi2", 2);
-        // Exclude the combined API itself to avoid recursion
-        vi.mocked(apiRegistry.getSearchProviders).mockReturnValue([mockApi1, mockApi2]);
-        vi.mocked(apiRegistry.getBarcodeProviders).mockReturnValue([mockApi1, mockApi2]);
+        mockApi1 = new MockApi("MockApi1");
+        mockApi2 = new MockApi("MockApi2");
+        mockApi3 = new MockApi("MockApi3");
+        // Exclude the combined API to avoid recursion
+        vi.mocked(apiRegistry.getSearchProviders).mockReturnValue([mockApi1, mockApi2, mockApi3]);
+        vi.mocked(apiRegistry.getBarcodeProviders).mockReturnValue([mockApi1, mockApi2, mockApi3]);
     });
 
     describe("getFoodByBarcode", function () {
-        it("should try providers in priority order and return the first result", async function () {
-            const mockFood: FoodItem = {
-                barcode: null,
+        it("should make parallel requests to all providers", async function () {
+            const mockFood1: FoodItem = {
+                barcode: "12345",
                 calories: 100,
                 carbs: 10,
                 fat: 5,
                 foodType: "product",
-                id: "test",
-                name: "Test Food",
+                id: "test1",
+                name: "Test Food 1",
                 protein: 10,
                 servingSize: 100,
                 servingUnit: "g",
             };
 
-            // First provider returns null, second provider returns a result
-            mockApi1.mockGetFoodByBarcode = vi.fn().mockResolvedValue(null);
-            mockApi2.mockGetFoodByBarcode = vi.fn().mockResolvedValue(mockFood);
+            const mockFood2: FoodItem = {
+                barcode: "12345",
+                calories: 150,
+                carbs: 15,
+                fat: 7,
+                foodType: "product",
+                id: "test2",
+                name: "Test Food 2",
+                protein: 12,
+                servingSize: 100,
+                servingUnit: "g",
+            };
+
+            mockApi1.mockGetFoodByBarcode = vi.fn().mockResolvedValue(mockFood1);
+            mockApi2.mockGetFoodByBarcode = vi.fn().mockResolvedValue(mockFood2);
+            mockApi3.mockGetFoodByBarcode = vi.fn().mockResolvedValue(null);
 
             const result = await combinedApi.getFoodByBarcode("12345");
-
             expect(mockApi1.mockGetFoodByBarcode).toHaveBeenCalledWith("12345");
             expect(mockApi2.mockGetFoodByBarcode).toHaveBeenCalledWith("12345");
-            expect(mockApi1.mockGetFoodByBarcode).toHaveBeenCalledBefore(
-                vi.mocked(mockApi2.mockGetFoodByBarcode),
-            );
-
-            expect(result).toEqual({
-                ...mockFood,
-                provider: "MockApi2",
-            });
+            expect(mockApi3.mockGetFoodByBarcode).toHaveBeenCalledWith("12345");
+            expect(result).not.toBeNull();
         });
 
-        it("should return null if no provider returns a result", async function () {
-            mockApi1.mockGetFoodByBarcode = vi.fn().mockResolvedValue(null);
-            mockApi2.mockGetFoodByBarcode = vi.fn().mockResolvedValue(null);
+        it("should filter out food items with zero calories", async function () {
+            const zeroCalorieFood: FoodItem = {
+                barcode: "12345",
+                calories: 0,
+                carbs: 10,
+                fat: 5,
+                foodType: "product",
+                id: "test1",
+                name: "Zero Calorie Food",
+                protein: 10,
+                servingSize: 100,
+                servingUnit: "g",
+            };
+
+            const validFood: FoodItem = {
+                barcode: "12345",
+                calories: 150,
+                carbs: 15,
+                fat: 7,
+                foodType: "product",
+                id: "test2",
+                name: "Valid Food",
+                protein: 12,
+                servingSize: 100,
+                servingUnit: "g",
+            };
+
+            mockApi1.mockGetFoodByBarcode = vi.fn().mockResolvedValue(zeroCalorieFood);
+            mockApi2.mockGetFoodByBarcode = vi.fn().mockResolvedValue(validFood);
+            mockApi3.mockGetFoodByBarcode = vi.fn().mockResolvedValue(null);
 
             const result = await combinedApi.getFoodByBarcode("12345");
 
+            expect(result).not.toBeNull();
+            expect(result?.name).toBe("Valid Food");
+            expect(result?.calories).toBe(150);
+        });
+
+        it("should select the best food item based on quality criteria", async function () {
+            const basicFood: FoodItem = {
+                barcode: null,
+                calories: 100,
+                carbs: 0,
+                fat: 0,
+                foodType: "product",
+                id: "basic",
+                name: "Basic Food",
+                protein: 0,
+                servingSize: 100,
+                servingUnit: "g",
+            };
+
+            const mediumFood: FoodItem = {
+                barcode: "12345",
+                brand: "Test Brand",
+                calories: 150,
+                carbs: 15,
+                fat: 0,
+                foodType: "product",
+                id: "medium",
+                name: "Medium Food",
+                protein: 0,
+                servingSize: 100,
+                servingUnit: "g",
+            };
+
+            const completeFood: FoodItem = {
+                barcode: "12345",
+                brand: "Premium Brand",
+                calories: 120,
+                carbs: 12,
+                fat: 5,
+                foodType: "product",
+                id: "complete",
+                imageUrl: "https://example.com/image.jpg",
+                name: "Complete Food",
+                protein: 8,
+                servingSize: 100,
+                servingUnit: "g",
+            };
+
+            mockApi1.mockGetFoodByBarcode = vi.fn().mockResolvedValue(basicFood);
+            mockApi2.mockGetFoodByBarcode = vi.fn().mockResolvedValue(mediumFood);
+            mockApi3.mockGetFoodByBarcode = vi.fn().mockResolvedValue(completeFood);
+
+            const result = await combinedApi.getFoodByBarcode("12345");
+
+            expect(result).not.toBeNull();
+            expect(result?.id).toBe("complete");
+            expect(result?.provider).toBe("MockApi3");
+        });
+
+        it("should handle the case when all providers return null or zero calories", async function () {
+            mockApi1.mockGetFoodByBarcode = vi.fn().mockResolvedValue(null);
+            mockApi2.mockGetFoodByBarcode = vi.fn().mockResolvedValue({
+                barcode: "12345",
+                calories: 0,
+                carbs: 0,
+                fat: 0,
+                foodType: "product",
+                id: "test",
+                name: "Zero Calorie Food",
+                protein: 0,
+                servingSize: 100,
+                servingUnit: "g",
+            });
+            mockApi3.mockGetFoodByBarcode = vi.fn().mockResolvedValue(null);
+
+            const result = await combinedApi.getFoodByBarcode("12345");
+
+            // Should return null as no valid food items were found
             expect(result).toBeNull();
         });
 
-        it("should continue to next provider if one throws an error", async function () {
-            // First provider throws, second provider returns a result
-            mockApi1.mockGetFoodByBarcode = vi.fn().mockRejectedValue(new Error("API error"));
-
+        it("should handle provider errors gracefully", async function () {
             const mockFood: FoodItem = {
-                barcode: null,
+                barcode: "12345",
                 calories: 100,
                 carbs: 10,
                 fat: 5,
@@ -121,17 +230,17 @@ describe("CombinedFoodApi", function () {
                 servingUnit: "g",
             };
 
+            mockApi1.mockGetFoodByBarcode = vi.fn().mockRejectedValue(new Error("API error"));
             mockApi2.mockGetFoodByBarcode = vi.fn().mockResolvedValue(mockFood);
+            mockApi3.mockGetFoodByBarcode = vi.fn().mockResolvedValue(null);
 
             const result = await combinedApi.getFoodByBarcode("12345");
 
-            // Should log error from first provider
             expect(logger.error).toHaveBeenCalled();
-            // Should return result from second provider
-            expect(result).toEqual({
-                ...mockFood,
-                provider: "MockApi2",
-            });
+
+            expect(result).not.toBeNull();
+            expect(result?.id).toBe("test");
+            expect(result?.provider).toBe("MockApi2");
         });
     });
 

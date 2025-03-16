@@ -11,8 +11,12 @@ vi.mock("../../logger/app-logger", () => ({
 
 class TestFoodApi extends AbstractFoodApi {
     readonly name = "TestApi";
-    readonly priority = 1;
     supportsBarcode = false;
+    supportsSearch = true;
+
+    getFoodByBarcode(): Promise<null> {
+        return Promise.resolve(null);
+    }
 
     // eslint-disable-next-line require-await -- api compatibility
     async searchFoods(query: string, page: number): Promise<any> {
@@ -89,15 +93,6 @@ describe("AbstractFoodApi", () => {
                 "TestApiAPI.testOperation",
                 metadata,
             );
-        });
-    });
-
-    describe("getFoodByBarcode", () => {
-        it("should return null by default", async () => {
-            const api = new TestFoodApi();
-            const result = await api.getFoodByBarcode("12345");
-
-            expect(result).toBeNull();
         });
     });
 

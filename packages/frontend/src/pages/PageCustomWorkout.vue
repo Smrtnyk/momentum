@@ -148,9 +148,6 @@
                                         {{ getExerciseName(exercise.exerciseId) }}
                                     </div>
                                     <div class="text-caption text-grey-lighten-1">
-                                        <template v-if="isStrengthExercise(exercise)">
-                                            {{ exercise.sets.length }} sets
-                                        </template>
                                         <template v-if="isCardioExercise(exercise)">
                                             {{ exercise.durationSeconds / 60 }}
                                             min
@@ -194,13 +191,16 @@
                                                     >mdi-clipboard-list</v-icon
                                                 >
                                                 Sets
-                                                <template v-if="isActiveExercise(exercise)">
-                                                    <v-chip size="x-small" class="ml-2">
+                                                <v-chip size="x-small" class="ml-2">
+                                                    <template v-if="isActiveExercise(exercise)">
                                                         {{ getCompletedSetsCount(exercise) }}/{{
                                                             exercise.sets.length
                                                         }}
-                                                    </v-chip>
-                                                </template>
+                                                    </template>
+                                                    <template v-else>{{
+                                                        exercise.sets.length
+                                                    }}</template>
+                                                </v-chip>
                                             </div>
                                         </v-expansion-panel-title>
                                         <v-expansion-panel-text>

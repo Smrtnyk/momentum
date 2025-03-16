@@ -57,18 +57,6 @@
                                 >
                                     {{ healthData.waterProgress.percentage }}%
                                 </v-progress-circular>
-
-                                <!-- Floating action button positioned over the circle -->
-                                <v-btn
-                                    icon
-                                    variant="flat"
-                                    color="blue"
-                                    size="small"
-                                    class="water-add-btn"
-                                    @click.stop="openWaterMenu"
-                                >
-                                    <v-icon>mdi-plus</v-icon>
-                                </v-btn>
                             </div>
 
                             <div class="text-body-2 text-center mt-2">

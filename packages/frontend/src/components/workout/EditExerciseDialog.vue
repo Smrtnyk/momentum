@@ -79,7 +79,7 @@ const calories = ref<number>(0);
 const editingExerciseIntensity = ref<"high" | "low" | "medium">("medium");
 
 if (isCardioExercise(exercise)) {
-    editingExerciseDuration.value = exercise.durationSeconds ?? 0;
+    editingExerciseDuration.value = exercise.durationSeconds / 60;
     editingExerciseDistance.value = exercise.distanceKm ?? 0;
     calories.value = exercise.calories ?? 0;
     editingExerciseIntensity.value = exercise.intensity ?? "medium";
@@ -91,7 +91,7 @@ function onSave(): void {
     updatedExercise.exerciseNotes = editingExerciseNotes.value;
 
     if (isCardioExercise(exercise)) {
-        updatedExercise.durationSeconds = editingExerciseDuration.value;
+        updatedExercise.durationSeconds = editingExerciseDuration.value * 60;
         updatedExercise.distanceKm = editingExerciseDistance.value;
         updatedExercise.calories = calories.value;
         updatedExercise.intensity = editingExerciseIntensity.value;

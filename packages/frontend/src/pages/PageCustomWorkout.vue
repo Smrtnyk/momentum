@@ -35,21 +35,20 @@
                                     @keyup.enter="saveWorkoutName"
                                 ></v-text-field>
                             </h2>
-
-                            <!-- Show elapsed time for active workouts -->
-                            <v-chip
-                                v-if="isActiveWorkout(workout)"
-                                color="primary-lighten-2"
-                                size="small"
-                                class="ml-2"
-                            >
-                                {{ getElapsedTimeText() }}
-                            </v-chip>
                         </div>
                         <div class="text-caption text-grey-lighten-1 mt-1">
                             <!-- Different text based on mode -->
                             <template v-if="isActiveWorkout(workout)">
                                 Started at {{ formatStartTime() }}
+                                <!-- Show elapsed time for active workouts -->
+                                <v-chip
+                                    v-if="isActiveWorkout(workout)"
+                                    color="primary-lighten-2"
+                                    size="small"
+                                    class="ml-2"
+                                >
+                                    {{ getElapsedTimeText() }}
+                                </v-chip>
                             </template>
                             <template v-else> Editing saved workout </template>
                         </div>

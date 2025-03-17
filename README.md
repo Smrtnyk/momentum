@@ -12,24 +12,30 @@ The app is live at: [https://momentum-fit-app.web.app/](https://momentum-fit-app
 
 ## Current Features
 
-- **Workout Logging**: Track strength, cardio, and circuit workouts with detailed exercise tracking
+- **Workout Logging**: Track workouts with detailed exercise tracking
 - **Nutrition Tracking**: Monitor daily calorie intake and macronutrient breakdown
+    - Food label scanning with Vertex AI analysis
+    - Barcode scanning for quick food logging
+    - Raw ingredient search using natural language and Nutritionix API
+    - Manual macro logging for custom entries
 - **Custom Foods**: Create and save your frequently used food items
 - **Recipe Collection**: Browse fitness-focused recipes with nutritional information
 - **Health Metrics**: Track weight, body fat, water intake, and steps
-- **Training Programs**: Access workout plans for various fitness goals
+- **Training Programs**: Access predefined workout plans for various fitness goals
+- **Analytics Dashboard**: Visualize your progress with comprehensive fitness and nutrition analytics
 
 ## Tech Stack
 
 - Vue.js with TypeScript
 - Vuetify for UI components
 - Firebase for authentication and database
+- Vertex AI for nutrition label analysis
+- Nutritionix API, OpenFoodRepo and OpenFoodFacts for food database access
 
 ## Future Development
 
 - **AI Personal Trainer**: Integrate an AI agent to provide personalized workout recommendations and form guidance
 - **Workout Plan Generator**: Create custom workout plans based on user goals and available equipment
-- **Progress Analytics**: Deeper insights into training and nutrition patterns
 - **Social Features**: Share workouts and achievements with friends
 
 ## Installation for Development

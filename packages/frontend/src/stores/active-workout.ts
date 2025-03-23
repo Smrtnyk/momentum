@@ -236,9 +236,9 @@ export const useActiveWorkoutStore = defineStore("activeWorkout", () => {
 });
 
 function filterCompletedExercises(exercises: ActiveExercise[]): ActiveExercise[] {
-    return exercises.filter(
-        (exercise) => exercise.completed ?? exercise.sets?.some((set) => set.completed),
-    );
+    return exercises.filter(function (exercise) {
+        return exercise.completed;
+    });
 }
 
 function loadFromStorage(): ActiveWorkout | null {

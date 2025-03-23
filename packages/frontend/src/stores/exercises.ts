@@ -2,6 +2,7 @@ import { useLocalStorage } from "@vueuse/core";
 import { Dexie } from "dexie";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { intersection } from "es-toolkit";
 
 import type { Exercise } from "../types/exercise";
 
@@ -216,19 +217,8 @@ export const useExerciseStore = defineStore("exercises", () => {
     }
 
     function includesAnyMuscle(exercise: Exercise, muscleList: string[]): boolean {
-        for (const muscle of exercise.primaryMuscles) {
-            if (muscleList.includes(muscle)) {
-                return true;
-            }
-        }
-
-        for (const muscle of exercise.secondaryMuscles) {
-            if (muscleList.includes(muscle)) {
-                return true;
-            }
-        }
-
-        return false;
+        const allMuscles = [...exercise.primaryMuscles, ...exercise.secondaryMuscles];
+        return intersection(allMuscles, muscleList).length > 0;
     }
 
     const filteredExercises = computed(function (): Exercise[] {
@@ -427,51 +417,6 @@ export const useExerciseStore = defineStore("exercises", () => {
         return result;
     }
 
-    async function findExercisesByEquipment(equipment: string): Promise<Exercise[]> {
-        try {
-            if (exercises.value.length === 0) {
-                await loadAllExercises();
-            }
-
-            return await db.exercises.where("equipment").equals(equipment).toArray();
-        } catch (err) {
-            logger.error(
-                `Error finding exercises by equipment ${equipment}:`,
-                "ExerciseStore",
-                err,
-            );
-            return [];
-        }
-    }
-
-    async function findExercisesByMuscle(muscle: string): Promise<Exercise[]> {
-        try {
-            if (exercises.value.length === 0) {
-                await loadAllExercises();
-            }
-
-            return await db.exercises
-                .where("primaryMuscles")
-                .equals(muscle)
-                .or("secondaryMuscles")
-                .equals(muscle)
-                .toArray();
-        } catch (err) {
-            logger.error(`Error finding exercises by muscle ${muscle}:`, "ExerciseStore", err);
-            return [];
-        }
-    }
-
-    function getCacheAge(): null | number {
-        if (lastUpdated.value === null) {
-            const stored = localStorage.getItem("exercises-last-updated");
-            if (!stored) return null;
-            lastUpdated.value = Number.parseInt(stored);
-        }
-
-        return Math.floor((Date.now() - lastUpdated.value) / (60 * 1000));
-    }
-
     function resetFilters(): void {
         searchQuery.value = "";
         selectedMuscles.value = [];
@@ -509,9 +454,6 @@ export const useExerciseStore = defineStore("exercises", () => {
         exercises,
         filteredExercises,
         filterExercises,
-        findExercisesByEquipment,
-        findExercisesByMuscle,
-        getCacheAge,
         getExerciseById,
         getExerciseName,
         getExercisesByIds,
@@ -522,12 +464,10 @@ export const useExerciseStore = defineStore("exercises", () => {
         levels,
         loadAllExercises,
         loadMore,
-        matchesSearchQuery,
         muscleGroups,
         page,
         paginatedExercises,
         pendingLookups,
-        refreshExercises,
         resetFilters,
         searchExercises,
         searchQuery,

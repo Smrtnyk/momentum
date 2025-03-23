@@ -45,6 +45,17 @@
             >
                 Exercises Library
             </v-btn>
+            <v-btn
+                variant="text"
+                density="comfortable"
+                color="primary"
+                prepend-icon="mdi-clipboard-text-outline"
+                class="text-none"
+                to="/workout-plans"
+                size="small"
+            >
+                Workout plans
+            </v-btn>
         </div>
 
         <template v-if="workouts.length > 0">

@@ -20,9 +20,6 @@
                 offset-y="3"
             ></v-badge>
         </v-btn>
-        <v-btn to="/workout-plans" icon>
-            <v-icon>mdi-clipboard-text-outline</v-icon>
-        </v-btn>
         <v-btn to="/calories" icon>
             <v-icon>mdi-nutrition</v-icon>
         </v-btn>

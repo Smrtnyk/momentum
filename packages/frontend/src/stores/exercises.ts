@@ -117,18 +117,97 @@ export const useExerciseStore = defineStore("exercises", () => {
     });
 
     function matchesSearchQuery(exercise: Exercise, query: string): boolean {
-        if (exercise.name.toLowerCase().includes(query)) {
+        if (!query) return true;
+
+        const queryLower = query.toLowerCase();
+        const nameLower = exercise.name.toLowerCase();
+
+        if (nameLower.includes(queryLower)) {
+            return true;
+        }
+
+        const queryTerms = queryLower.split(/\s+/).filter(Boolean);
+        if (queryTerms.length === 0) return true;
+
+        // Handle multi-word queries - check for terms in sequence
+        if (queryTerms.length > 1) {
+            // Check if terms appear in sequence (with possible words between them)
+            let position = 0;
+
+            // Try to find each term in sequence
+            for (const term of queryTerms) {
+                // Look for this term starting from current position
+                const foundPos = nameLower.indexOf(term, position);
+
+                // If term not found after current position, this sequence check fails
+                if (foundPos === -1) {
+                    break;
+                }
+
+                // Move position past the found term
+                position = foundPos + term.length;
+            }
+
+            // If we reached the end position after finding the last term,
+            // it means all terms were found in sequence
+            if (
+                position > 0 &&
+                nameLower.indexOf(
+                    queryTerms[queryTerms.length - 1],
+                    nameLower.lastIndexOf(queryTerms[0]),
+                ) !== -1
+            ) {
+                return true;
+            }
+
+            // Alternative check: instead of being strict about positions,
+            // check if all the terms appear in the name in the correct order
+            const words = nameLower.split(/\s+/);
+            let termIndex = 0;
+
+            for (const word of words) {
+                if (word.includes(queryTerms[termIndex])) {
+                    termIndex++;
+                    if (termIndex >= queryTerms.length) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // Check if all terms appear in the name (in any order)
+        const allTermsInName = queryTerms.every((term) => nameLower.includes(term));
+        if (allTermsInName) {
             return true;
         }
 
         for (const muscle of exercise.primaryMuscles) {
-            if (muscle.toLowerCase().includes(query)) {
+            if (muscle.toLowerCase().includes(queryLower)) {
                 return true;
             }
         }
 
-        for (const muscle of exercise.secondaryMuscles) {
-            if (muscle.toLowerCase().includes(query)) {
+        // Partial match check (if query has multiple terms)
+        if (queryTerms.length > 1) {
+            const matchThreshold = Math.ceil(queryTerms.length * 0.7);
+            let matchCount = 0;
+
+            for (const term of queryTerms) {
+                if (nameLower.includes(term)) {
+                    matchCount++;
+                    continue;
+                }
+
+                const inAnyMuscle = exercise.primaryMuscles.some((muscle) =>
+                    muscle.toLowerCase().includes(term),
+                );
+
+                if (inAnyMuscle) {
+                    matchCount++;
+                }
+            }
+
+            if (matchCount >= matchThreshold) {
                 return true;
             }
         }
@@ -413,6 +492,13 @@ export const useExerciseStore = defineStore("exercises", () => {
         }
     }
 
+    function searchExercises(query: string): Exercise[] {
+        if (!query) return exercises.value;
+
+        const queryLower = query.toLowerCase();
+        return exercises.value.filter((exercise) => matchesSearchQuery(exercise, queryLower));
+    }
+
     return {
         activeFiltersCount,
         categories,
@@ -429,7 +515,6 @@ export const useExerciseStore = defineStore("exercises", () => {
         getExerciseById,
         getExerciseName,
         getExercisesByIds,
-
         getLevelColor,
         isLoading,
         itemsPerPage,
@@ -437,13 +522,14 @@ export const useExerciseStore = defineStore("exercises", () => {
         levels,
         loadAllExercises,
         loadMore,
+        matchesSearchQuery,
         muscleGroups,
-
         page,
         paginatedExercises,
         pendingLookups,
         refreshExercises,
         resetFilters,
+        searchExercises,
         searchQuery,
         selectedCategories,
         selectedEquipment,

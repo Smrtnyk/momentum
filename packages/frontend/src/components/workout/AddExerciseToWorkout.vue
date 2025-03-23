@@ -8,7 +8,8 @@
         <v-autocomplete
             v-else
             v-model="selectedExercise"
-            :items="exerciseStore.exercises"
+            v-model:search="searchText"
+            :items="filteredExercises"
             label="Search Exercise"
             variant="outlined"
             density="comfortable"
@@ -16,9 +17,24 @@
             item-value="id"
             return-object
             clearable
+            no-filter
             class="mb-4"
             :no-data-text="exerciseLoadError ? 'Error loading exercises' : 'No exercises found'"
-        ></v-autocomplete>
+        >
+            <template v-slot:item="{ item, props }">
+                <v-list-item v-bind="props">
+                    <v-list-item>
+                        <span>
+                            Primary: {{ item.raw.primaryMuscles.join(", ") }}
+                            <template v-if="item.raw.secondaryMuscles.length > 0">
+                                <br />
+                                Secondary: {{ item.raw.secondaryMuscles.join(", ") }}
+                            </template>
+                        </span>
+                    </v-list-item>
+                </v-list-item>
+            </template>
+        </v-autocomplete>
 
         <!-- Form fields for selected exercise -->
         <div v-if="selectedExercise" class="mt-3">
@@ -90,7 +106,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 
 import type { Exercise } from "../../types/exercise";
 import type { ActiveExercise, ExerciseEntry } from "../../types/workout";
@@ -111,6 +127,22 @@ const calories = ref(0);
 const intensity = ref<NonNullable<ActiveExercise["intensity"]>>("medium");
 
 const intensityOptions = ["low", "medium", "high"];
+
+const searchText = ref("");
+const filteredExercises = computed(() => {
+    if (!searchText.value) return exerciseStore.exercises;
+
+    return exerciseStore.searchExercises(searchText.value);
+});
+
+watch(
+    () => selectedExercise.value,
+    () => {
+        if (!selectedExercise.value) {
+            searchText.value = "";
+        }
+    },
+);
 
 function addExercise(): void {
     if (!selectedExercise.value) return;

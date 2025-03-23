@@ -33,6 +33,7 @@
                         v-model="scannedFood.name"
                         variant="outlined"
                         density="compact"
+                        :rules="[required]"
                     ></v-text-field>
                 </v-list-item>
 
@@ -93,6 +94,14 @@
                         ></v-text-field>
                     </div>
                 </v-list-item>
+
+                <v-list-item>
+                    <v-checkbox
+                        v-model="saveAsCustomFood"
+                        label="Save as custom food entry"
+                        color="primary"
+                    ></v-checkbox>
+                </v-list-item>
             </v-list>
         </div>
 
@@ -129,6 +138,7 @@ import type { FoodItem } from "../../types/food";
 import type { Meal } from "../../types/health-metrics";
 
 import { selectHighestResolutionCamera } from "../../helpers/camera-utils";
+import { required } from "../../helpers/form-validators";
 import { logger } from "../../logger/app-logger";
 import { scanNutritionLabel } from "../../services/nutrition-scanner";
 import { useGlobalStore } from "../../stores/global";
@@ -141,6 +151,7 @@ const { mealType } = defineProps<{
 
 const emit = defineEmits<{
     cancel: [];
+    "custom-food-saved": [food: FoodItem];
     "food-added": [food: FoodItem];
 }>();
 
@@ -149,6 +160,7 @@ const isScanning = ref(false);
 const isProcessing = ref(false);
 const scannedFood = ref<FoodItem | null>(null);
 const stream = ref<MediaStream | null>(null);
+const saveAsCustomFood = ref(false);
 
 function captureImage(): void {
     if (!videoRef.value || !isScanning.value) return;
@@ -174,8 +186,15 @@ function captureImage(): void {
 }
 
 function confirmFood(): void {
-    if (scannedFood.value) {
-        emit("food-added", scannedFood.value);
+    if (!scannedFood.value?.name.trim()) {
+        globalStore.notifyError("Please provide a name for the food item");
+        return;
+    }
+
+    emit("food-added", scannedFood.value);
+
+    if (saveAsCustomFood.value) {
+        emit("custom-food-saved", scannedFood.value);
     }
 }
 

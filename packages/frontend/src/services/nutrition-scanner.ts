@@ -55,7 +55,7 @@ function convertToFoodItem(data: RawNutritionData): FoodItem {
         carbs: normalizeNumericValue(data.carbs),
         fat: normalizeNumericValue(data.fat),
         id: `scanned-${Date.now()}`,
-        name: data.name ?? "Scanned Product",
+        name: data.name ?? "",
         protein: normalizeNumericValue(data.protein),
         servingSize: normalizeNumericValue(data.servingSize) || 1,
         servingUnit: data.servingUnit ?? "serving",

@@ -130,6 +130,7 @@ import {
     getMealsForDay,
     setCalorieGoal,
 } from "../services/calories";
+import { createCustomFood } from "../services/custom-foods";
 import { setDefaultCalorieGoal } from "../services/user";
 import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
@@ -335,6 +336,16 @@ function openNutritionScanner(mealType: Meal["mealType"]): void {
         NutritionScanner,
         {
             mealType,
+            async onCustomFoodSaved(food: FoodItem) {
+                try {
+                    const userId = authStore.nonNullableUser.uid;
+                    await createCustomFood(userId, food);
+                    globalStore.notify(`"${food.name}" saved to your custom foods`);
+                } catch (error) {
+                    logger.error(error, "PageCalories", { food });
+                    globalStore.notifyError("Failed to save custom food");
+                }
+            },
             onFoodAdded(food: FoodItem) {
                 globalDialog.closeDialog(dialogId);
                 openFoodPortionDialog(food, mealType);

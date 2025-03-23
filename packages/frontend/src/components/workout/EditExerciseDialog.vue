@@ -1,6 +1,29 @@
 <template>
     <div>
         <v-card-text>
+            <div class="mb-4">
+                <div v-if="exerciseStore.isLoading" class="mb-4">
+                    <v-skeleton-loader type="text" height="56"></v-skeleton-loader>
+                </div>
+                <v-autocomplete
+                    v-else
+                    v-model="selectedExercise"
+                    :items="filteredExercises"
+                    label="Change Exercise"
+                    variant="outlined"
+                    density="comfortable"
+                    item-title="name"
+                    item-value="id"
+                    return-object
+                    clearable
+                    :no-data-text="
+                        exerciseLoadError
+                            ? 'Error loading exercises'
+                            : 'No compatible exercises found'
+                    "
+                ></v-autocomplete>
+            </div>
+
             <v-text-field
                 v-model="editingExerciseNotes"
                 label="Notes"
@@ -59,19 +82,29 @@
 
 <script setup lang="ts">
 import { cloneDeep } from "es-toolkit";
-import { ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
+import type { Exercise } from "../../types/exercise";
 import type { ActiveExercise } from "../../types/workout";
 
 import { isCardioExercise } from "../../services/workout";
+import { useExerciseStore } from "../../stores/exercises";
+import { useGlobalStore } from "../../stores/global";
 
 interface EditExerciseDialogProps {
     exercise: ActiveExercise;
+    hasActualSets?: boolean;
+    isActiveWorkout?: boolean;
 }
 
 const { exercise } = defineProps<EditExerciseDialogProps>();
 const emit = defineEmits(["save"]);
 
+const exerciseStore = useExerciseStore();
+const globalStore = useGlobalStore();
+const exerciseLoadError = ref(false);
+
+const selectedExercise = ref<Exercise | null>(null);
 const editingExerciseNotes = ref(exercise.exerciseNotes ?? "");
 const editingExerciseDuration = ref<number>(0);
 const editingExerciseDistance = ref<number>(0);
@@ -85,8 +118,32 @@ if (isCardioExercise(exercise)) {
     editingExerciseIntensity.value = exercise.intensity ?? "medium";
 }
 
+const filteredExercises = computed(function () {
+    if (exerciseStore.exercises.length === 0) {
+        return [];
+    }
+
+    return exerciseStore.exercises.filter(function (ex) {
+        return ex.category === exercise.category;
+    });
+});
+
+async function loadExercisesData(): Promise<void> {
+    exerciseLoadError.value = false;
+    try {
+        await exerciseStore.loadAllExercises();
+    } catch (err) {
+        exerciseLoadError.value = true;
+        globalStore.notifyError("Failed to load exercises");
+    }
+}
+
 function onSave(): void {
     const updatedExercise = cloneDeep(exercise);
+
+    if (selectedExercise.value) {
+        updatedExercise.exerciseId = selectedExercise.value.id;
+    }
 
     updatedExercise.exerciseNotes = editingExerciseNotes.value;
 
@@ -99,4 +156,6 @@ function onSave(): void {
 
     emit("save", updatedExercise);
 }
+
+onMounted(loadExercisesData);
 </script>

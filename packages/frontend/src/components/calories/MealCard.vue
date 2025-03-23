@@ -30,6 +30,13 @@
                             <v-list-item-title>Scan nutrition label</v-list-item-title>
                         </v-list-item>
 
+                        <v-list-item @click="$emit('describe-food')">
+                            <template #prepend>
+                                <v-icon color="primary">mdi-food-variant</v-icon>
+                            </template>
+                            <v-list-item-title>Describe food with AI</v-list-item-title>
+                        </v-list-item>
+
                         <v-list-item @click="$emit('search-food')">
                             <template #prepend>
                                 <v-icon color="primary">mdi-magnify</v-icon>
@@ -156,6 +163,7 @@ const { meal, mealType } = defineProps<{
 const emit = defineEmits<{
     "add-macros": [];
     delete: [];
+    "describe-food": [];
     "remove-food": [index: number];
     "scan-label": [];
     "search-food": [];

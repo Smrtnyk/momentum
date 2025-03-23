@@ -11,7 +11,6 @@ import * as directives from "vuetify/directives";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import { VCalendar } from "vuetify/labs/VCalendar";
 import { VDateInput } from "vuetify/labs/VDateInput";
-import { VNumberInput } from "vuetify/labs/VNumberInput";
 import "virtual:pwa-register";
 import { VTimePicker } from "vuetify/labs/VTimePicker";
 
@@ -51,7 +50,6 @@ function createVuetifyInstance(): ReturnType<typeof createVuetify> {
             ...components,
             VCalendar,
             VDateInput,
-            VNumberInput,
             VTimePicker,
         },
         date: {

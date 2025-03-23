@@ -25,8 +25,6 @@ import type {
     WorkoutWithId,
 } from "../types/workout";
 
-import { cardioExercises } from "../data/cardio-exercises";
-import { strengthExercises } from "../data/strength-exercises";
 import { firestore } from "../firebase";
 
 export async function addWorkout(
@@ -141,17 +139,13 @@ export function isActiveWorkout(workout: ActiveWorkout | Workout): workout is Ac
 export function isCardioExercise(
     exercise: ActiveExercise | Exercise | ExerciseEntry,
 ): exercise is CardioExerciseEntry {
-    return cardioExercises.some((cardionExercise) => {
-        return cardionExercise.exerciseId === exercise.exerciseId;
-    });
+    return exercise.category === "cardio";
 }
 
 export function isStrengthExercise(
     exercise: ActiveExercise | Exercise | ExerciseEntry,
 ): exercise is StrengthExerciseEntry {
-    return strengthExercises.some((strengthExercise) => {
-        return strengthExercise.exerciseId === exercise.exerciseId;
-    });
+    return exercise.category === "strength";
 }
 
 export async function updateWorkout(

@@ -6,9 +6,6 @@
                 <div class="d-flex flex-column flex-md-row justify-space-between align-center">
                     <div>
                         <h1 class="text-h4 font-weight-bold text-white mb-1">Workout Tracker</h1>
-                        <p class="text-body-1 text-white text-opacity-70 mb-0">
-                            {{ lastWorkoutMessage }}
-                        </p>
                     </div>
                     <v-btn
                         v-if="!isWorkoutActive"
@@ -17,7 +14,6 @@
                         prepend-icon="mdi-plus"
                         class="mt-4 mt-md-0 px-6"
                         rounded="pill"
-                        size="large"
                         @click="showWorkoutStarter"
                     >
                         New Workout
@@ -28,7 +24,6 @@
                         prepend-icon="mdi-plus"
                         class="mt-4 mt-md-0 px-6"
                         rounded="pill"
-                        size="large"
                         @click="goToCustomWorkout"
                         v-else
                     >
@@ -38,84 +33,108 @@
             </div>
         </v-card>
 
-        <!-- View Selector and Filters -->
-        <div class="d-flex flex-column flex-sm-row align-start align-sm-center mb-4 gap-y-2">
-            <!-- View Toggle -->
-            <v-btn-toggle
-                v-model="view"
-                mandatory
-                color="primary"
-                rounded="pill"
+        <div class="mb-2">
+            <v-btn
+                variant="text"
                 density="comfortable"
-                class="mb-2 mb-sm-0"
+                color="primary"
+                prepend-icon="mdi-food-apple-outline"
+                class="text-none"
+                to="/exercises-library"
+                size="small"
             >
-                <v-btn value="list" variant="text" size="small">
-                    <v-icon start icon="mdi-format-list-bulleted"></v-icon>
-                    List
-                </v-btn>
-                <v-btn value="calendar" variant="text" size="small">
-                    <v-icon start icon="mdi-calendar-month"></v-icon>
-                    Calendar
-                </v-btn>
-            </v-btn-toggle>
-
-            <v-spacer></v-spacer>
-
-            <!-- Sort Option -->
-            <v-menu>
-                <template #activator="{ props }">
-                    <v-btn
-                        v-bind="props"
-                        variant="text"
-                        size="small"
-                        class="ml-0 ml-sm-auto"
-                        prepend-icon="mdi-sort"
-                    >
-                        {{ sortOptions[selectedSort].label }}
-                    </v-btn>
-                </template>
-                <v-list density="compact" nav>
-                    <v-list-item
-                        v-for="(option, index) in sortOptions"
-                        :key="index"
-                        :value="index"
-                        :title="option.label"
-                        @click="selectedSort = index"
-                    ></v-list-item>
-                </v-list>
-            </v-menu>
+                Exercises Library
+            </v-btn>
         </div>
 
-        <!-- Main Content -->
-        <div class="rounded-lg">
-            <!-- List View -->
-            <v-fade-transition>
-                <div v-if="view === 'list'">
-                    <WorkoutListItem
-                        v-for="workout in filteredWorkouts"
-                        :key="workout.id"
-                        :workout="workout"
-                        @click="viewWorkout(workout)"
-                        class="workout-item-transition"
-                    />
-                </div>
-            </v-fade-transition>
+        <template v-if="workouts.length > 0">
+            <!-- View Selector and Filters -->
+            <div class="d-flex flex-column flex-sm-row align-start align-sm-center mb-4 gap-y-2">
+                <!-- View Toggle -->
+                <v-btn-toggle
+                    v-model="view"
+                    mandatory
+                    color="primary"
+                    rounded="pill"
+                    density="comfortable"
+                    class="mb-2 mb-sm-0"
+                >
+                    <v-btn value="list" variant="text" size="small">
+                        <v-icon start icon="mdi-format-list-bulleted"></v-icon>
+                        List
+                    </v-btn>
+                    <v-btn value="calendar" variant="text" size="small">
+                        <v-icon start icon="mdi-calendar-month"></v-icon>
+                        Calendar
+                    </v-btn>
+                </v-btn-toggle>
 
-            <!-- Calendar View -->
-            <v-fade-transition>
-                <div v-if="view === 'calendar'" class="calendar-wrapper">
-                    <v-calendar
-                        :events="calendarEvents"
-                        view-mode="month"
-                        :event-ripple="false"
-                        :event-more="true"
-                        :event-overlap-threshold="30"
-                        :event-color="getEventColor"
-                        event-category="background"
-                        class="workout-calendar"
-                    ></v-calendar>
-                </div>
-            </v-fade-transition>
+                <v-spacer></v-spacer>
+
+                <!-- Sort Option -->
+                <v-menu>
+                    <template #activator="{ props }">
+                        <v-btn
+                            v-bind="props"
+                            variant="text"
+                            size="small"
+                            class="ml-0 ml-sm-auto"
+                            prepend-icon="mdi-sort"
+                        >
+                            {{ sortOptions[selectedSort].label }}
+                        </v-btn>
+                    </template>
+                    <v-list density="compact" nav>
+                        <v-list-item
+                            v-for="(option, index) in sortOptions"
+                            :key="index"
+                            :value="index"
+                            :title="option.label"
+                            @click="selectedSort = index"
+                        ></v-list-item>
+                    </v-list>
+                </v-menu>
+            </div>
+
+            <!-- Main Content -->
+            <div class="rounded-lg">
+                <!-- List View -->
+                <v-fade-transition>
+                    <div v-if="view === 'list'">
+                        <WorkoutListItem
+                            v-for="workout in filteredWorkouts"
+                            :key="workout.id"
+                            :workout="workout"
+                            @click="viewWorkout(workout)"
+                            class="workout-item-transition"
+                        />
+                    </div>
+                </v-fade-transition>
+
+                <!-- Calendar View -->
+                <v-fade-transition>
+                    <div v-if="view === 'calendar'" class="calendar-wrapper">
+                        <v-calendar
+                            :events="calendarEvents"
+                            view-mode="month"
+                            :event-ripple="false"
+                            :event-more="true"
+                            :event-overlap-threshold="30"
+                            :event-color="getEventColor"
+                            event-category="background"
+                            class="workout-calendar"
+                        ></v-calendar>
+                    </div>
+                </v-fade-transition>
+            </div>
+        </template>
+        <!-- Empty State -->
+        <div v-else class="pa-8 text-center">
+            <v-icon icon="mdi-dumbbell" size="64" color="grey-lighten-3" class="mb-4"></v-icon>
+            <h3 class="text-h6 text-medium-emphasis mb-2">No workouts found</h3>
+            <p class="text-body-2 text-medium-emphasis mb-6">
+                {{ "You haven't logged any workouts yet." }}
+            </p>
         </div>
     </v-container>
 </template>
@@ -145,36 +164,6 @@ const sortOptions = [
 ];
 
 const isWorkoutActive = computed(() => activeWorkoutStore.isWorkoutActive);
-
-const lastWorkoutMessage = computed(() => {
-    if (workouts.length === 0) {
-        return "Track your fitness journey";
-    }
-
-    const sortedWorkouts = [...workouts].sort(
-        (a, b) => b.date.toDate().getTime() - a.date.toDate().getTime(),
-    );
-    const lastWorkout = sortedWorkouts[0];
-    const lastWorkoutDate = lastWorkout.date.toDate();
-
-    const today = new Date();
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-
-    let dateStr: string;
-    if (lastWorkoutDate.toDateString() === today.toDateString()) {
-        dateStr = "Today";
-    } else if (lastWorkoutDate.toDateString() === yesterday.toDateString()) {
-        dateStr = "Yesterday";
-    } else {
-        dateStr = lastWorkoutDate.toLocaleDateString(undefined, {
-            day: "numeric",
-            month: "short",
-        });
-    }
-
-    return `Last workout: ${dateStr} · ${lastWorkout.name}`;
-});
 
 const filteredWorkouts = computed(() => {
     const result = [...workouts];

@@ -25,34 +25,34 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "push-ups",
+                        exerciseId: "Push-ups",
                         exerciseNotes: "Modify on knees if needed",
                         reps: 10,
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "bodyweight-squats",
+                        exerciseId: "Bodyweight_Squat",
                         reps: 15,
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "resistance-band-rows",
+                        exerciseId: "Back_Flyes_-_With_Bands",
                         exerciseNotes: "Anchor band to door or sturdy object",
                         reps: 12,
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "glute-bridges",
+                        exerciseId: "Butt_Lift_Bridge",
                         reps: 15,
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
                         durationSeconds: 30,
-                        exerciseId: "plank",
+                        exerciseId: "Plank",
                         restTime: 45,
                         setsCount: 3,
                     },
@@ -63,32 +63,32 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "lunges",
+                        exerciseId: "Barbell_Lunge",
                         exerciseNotes: "Alternating legs",
                         reps: 10,
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "resistance-band-chest-press",
+                        exerciseId: "Bench_Press_-_With_Bands",
                         reps: 12,
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "superman",
+                        exerciseId: "Superman",
                         reps: 12,
                         restTime: 45,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "resistance-band-bicep-curls",
+                        exerciseId: "Band_Pull_Apart",
                         reps: 15,
                         restTime: 45,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "resistance-band-tricep-extensions",
+                        exerciseId: "Band_Skull_Crusher",
                         reps: 15,
                         restTime: 45,
                         setsCount: 3,
@@ -100,32 +100,32 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "chair-dips",
+                        exerciseId: "Bench_Dips",
                         reps: 10,
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "bodyweight-bulgarian-split-squats",
+                        exerciseId: "Barbell_Lunge",
                         exerciseNotes: "Each leg",
                         reps: 8,
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "resistance-band-lateral-raises",
+                        exerciseId: "Alternating_Deltoid_Raise",
                         reps: 12,
                         restTime: 45,
                         setsCount: 3,
                     },
                     {
                         durationSeconds: 30,
-                        exerciseId: "mountain-climbers",
+                        exerciseId: "Mountain_Climbers",
                         restTime: 45,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "russian-twist",
+                        exerciseId: "Russian_Twist",
                         reps: 20,
                         restTime: 45,
                         setsCount: 3,
@@ -161,31 +161,31 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "jump-squats",
+                        exerciseId: "Front_Box_Jump",
                         reps: 15,
                         restTime: 30,
                         setsCount: 4,
                     },
                     {
-                        exerciseId: "push-ups",
+                        exerciseId: "Pushups",
                         reps: 12,
                         restTime: 30,
                         setsCount: 4,
                     },
                     {
                         durationSeconds: 30,
-                        exerciseId: "mountain-climbers",
+                        exerciseId: "Mountain_Climbers",
                         restTime: 30,
                         setsCount: 4,
                     },
                     {
-                        exerciseId: "burpees",
+                        exerciseId: "Burpees",
                         reps: 10,
                         restTime: 30,
                         setsCount: 4,
                     },
                     {
-                        exerciseId: "plank-shoulder-taps",
+                        exerciseId: "Plank",
                         reps: 20,
                         restTime: 30,
                         setsCount: 4,
@@ -200,31 +200,31 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 30,
-                        exerciseId: "high-knees",
+                        exerciseId: "High_Knees",
                         restTime: 30,
                         setsCount: 4,
                     },
                     {
-                        exerciseId: "resistance-band-rows",
+                        exerciseId: "Back_Flyes_-_With_Bands",
                         reps: 15,
                         restTime: 30,
                         setsCount: 4,
                     },
                     {
-                        exerciseId: "lateral-lunges",
+                        exerciseId: "Lateral_Lunge",
                         exerciseNotes: "Alternating sides",
                         reps: 16,
                         restTime: 30,
                         setsCount: 4,
                     },
                     {
-                        exerciseId: "resistance-band-chest-press",
+                        exerciseId: "Bench_Press_-_With_Bands",
                         reps: 15,
                         restTime: 30,
                         setsCount: 4,
                     },
                     {
-                        exerciseId: "bicycle-crunches",
+                        exerciseId: "Cross-Body_Crunch",
                         reps: 20,
                         restTime: 30,
                         setsCount: 4,
@@ -239,12 +239,12 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 30,
-                        exerciseId: "jumping-jacks",
+                        exerciseId: "Jumping_Jacks",
                         restTime: 15,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "chair-step-ups",
+                        exerciseId: "Barbell_Step_Ups",
                         exerciseNotes: "Alternating legs",
                         reps: 20,
                         restTime: 30,
@@ -252,24 +252,24 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
                     },
                     {
                         durationSeconds: 30,
-                        exerciseId: "jumping-jacks",
+                        exerciseId: "Jumping_Jacks",
                         restTime: 15,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "bodyweight-squats",
+                        exerciseId: "Bodyweight_Squat",
                         reps: 25,
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
                         durationSeconds: 30,
-                        exerciseId: "jumping-jacks",
+                        exerciseId: "Jumping_Jacks",
                         restTime: 15,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "push-ups",
+                        exerciseId: "Pushups",
                         reps: 15,
                         restTime: 30,
                         setsCount: 3,
@@ -283,7 +283,7 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "resistance-band-full-body-circuit",
+                        exerciseId: "Band_Pull_Apart",
                         exerciseNotes:
                             "Complete 5 exerciseEntries with band: curls, overhead press, squats, rows, tricep extensions",
                         reps: 12,
@@ -292,7 +292,7 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
                     },
                     {
                         durationSeconds: 120,
-                        exerciseId: "bodyweight-cardio-circuit",
+                        exerciseId: "Bodyweight_Walking_Lunge",
                         exerciseNotes:
                             "Complete 4 exerciseEntries: jumping jacks, mountain climbers, high knees, butt kicks",
                         restTime: 60,
@@ -332,25 +332,25 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 60,
-                        exerciseId: "jumping-jacks",
+                        exerciseId: "Jumping_Jacks",
                         restTime: 30,
                         setsCount: 4,
                     },
                     {
                         durationSeconds: 60,
-                        exerciseId: "high-knees",
+                        exerciseId: "High_Knees",
                         restTime: 30,
                         setsCount: 4,
                     },
                     {
                         durationSeconds: 60,
-                        exerciseId: "butt-kicks",
+                        exerciseId: "Butt-Ups",
                         restTime: 30,
                         setsCount: 4,
                     },
                     {
                         durationSeconds: 60,
-                        exerciseId: "jumping-jacks",
+                        exerciseId: "Jumping_Jacks",
                         restTime: 30,
                         setsCount: 4,
                     },
@@ -362,19 +362,19 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "jump-squats",
+                        exerciseId: "Front_Box_Jump",
                         reps: 15,
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
                         durationSeconds: 45,
-                        exerciseId: "mountain-climbers",
+                        exerciseId: "Mountain_Climbers",
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "burpees",
+                        exerciseId: "Burpees",
                         exerciseNotes: "Modify by stepping back instead of jumping if needed",
                         reps: 10,
                         restTime: 45,
@@ -382,12 +382,12 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
                     },
                     {
                         durationSeconds: 30,
-                        exerciseId: "plank-jacks",
+                        exerciseId: "Plank_Jacks",
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "skater-jumps",
+                        exerciseId: "Skater_Jump",
                         reps: 20,
                         restTime: 30,
                         setsCount: 3,
@@ -401,27 +401,27 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 120,
-                        exerciseId: "shadow-boxing",
+                        exerciseId: "Boxing",
                         exerciseNotes: "Alternate between punches, uppercuts and hooks",
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
                         durationSeconds: 120,
-                        exerciseId: "jumping-rope",
+                        exerciseId: "Rope_Jumping",
                         exerciseNotes: "Simulate if you don't have a rope",
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
                         durationSeconds: 60,
-                        exerciseId: "lateral-shuffles",
+                        exerciseId: "Lateral_Shuffle",
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
                         durationSeconds: 60,
-                        exerciseId: "standing-mountain-climbers",
+                        exerciseId: "Mountain_Climbers",
                         restTime: 30,
                         setsCount: 3,
                     },
@@ -457,33 +457,33 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "cat-cow",
+                        exerciseId: "Cat_Stretch",
                         reps: 15,
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "bird-dog",
+                        exerciseId: "Bird_Dog",
                         exerciseNotes: "Alternating sides with controlled movement",
                         reps: 12,
                         restTime: 45,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "glute-bridges",
+                        exerciseId: "Butt_Lift_Bridge",
                         reps: 15,
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "dead-bug",
+                        exerciseId: "Dead_Bug",
                         reps: 10,
                         restTime: 45,
                         setsCount: 3,
                     },
                     {
                         durationSeconds: 45,
-                        exerciseId: "plank",
+                        exerciseId: "Plank",
                         restTime: 60,
                         setsCount: 3,
                     },
@@ -495,35 +495,35 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "world's-greatest-stretch",
+                        exerciseId: "Worlds_Greatest_Stretch",
                         exerciseNotes: "Each side",
                         reps: 6,
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "thoracic-spine-rotations",
+                        exerciseId: "Thoracic_Spine_Rotation",
                         exerciseNotes: "Each side",
                         reps: 10,
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "hip-circles",
+                        exerciseId: "Hip_Circles_prone",
                         exerciseNotes: "Each direction",
                         reps: 10,
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "standing-side-bends",
+                        exerciseId: "Barbell_Side_Bend",
                         exerciseNotes: "Each side",
                         reps: 12,
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "wall-slides",
+                        exerciseId: "Linear_Acceleration_Wall_Drill",
                         reps: 12,
                         restTime: 30,
                         setsCount: 3,
@@ -536,32 +536,32 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "bicycle-crunches",
+                        exerciseId: "Cross-Body_Crunch",
                         reps: 20,
                         restTime: 45,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "superman",
+                        exerciseId: "Superman",
                         reps: 12,
                         restTime: 45,
                         setsCount: 3,
                     },
                     {
                         durationSeconds: 30,
-                        exerciseId: "side-plank",
+                        exerciseId: "Side_Bridge",
                         exerciseNotes: "Each side",
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "russian-twist",
+                        exerciseId: "Russian_Twist",
                         reps: 20,
                         restTime: 45,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "prone-y-t-w-raises",
+                        exerciseId: "Prone_lying_leg_raise",
                         exerciseNotes: "Hold each position briefly",
                         reps: 15,
                         restTime: 45,
@@ -599,16 +599,36 @@ export const strengthPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "squat",
+                        exerciseId: "Barbell_Squat",
                         exerciseNotes: "Focus on form and depth",
                         reps: 10,
                         restTime: 90,
                         setsCount: 3,
                     },
-                    { exerciseId: "bench-press", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "seated-row", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, setsCount: 3 },
-                    { durationSeconds: 30, exerciseId: "plank", restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Barbell_Bench_Press_-_Medium_Grip",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Seated_Cable_Rows",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Dumbbell_Shoulder_Press",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        durationSeconds: 30,
+                        exerciseId: "Plank",
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "fb-a",
                 name: "Full Body A",
@@ -616,27 +636,72 @@ export const strengthPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "deadlift",
+                        exerciseId: "Barbell_Deadlift",
                         exerciseNotes: "Focus on hip hinge movement",
                         reps: 8,
                         restTime: 120,
                         setsCount: 3,
                     },
-                    { exerciseId: "push-ups", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "lat-pulldown", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "lateral-raises", reps: 12, restTime: 60, setsCount: 3 },
-                    { exerciseId: "bicycle-crunches", reps: 15, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Pushups",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Full_Range-Of-Motion_Lat_Pulldown",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Lateral_Raise_-_With_Bands",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Cross-Body_Crunch",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "fb-b",
                 name: "Full Body B",
             },
             {
                 exerciseEntries: [
-                    { exerciseId: "leg-press", reps: 12, restTime: 90, setsCount: 3 },
-                    { exerciseId: "dumbbell-press", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "bent-over-row", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "bicep-curls", reps: 12, restTime: 60, setsCount: 3 },
-                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Leg_Press",
+                        reps: 12,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Dumbbell_Bench_Press",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Bent_Over_Barbell_Row",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Barbell_Curl",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Triceps_Pushdown",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "fb-c",
                 name: "Full Body C",
@@ -665,48 +730,168 @@ export const strengthPlans: readonly TrainingPlan[] = [
         workoutDays: [
             {
                 exerciseEntries: [
-                    { exerciseId: "bench-press", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "bent-over-row", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "lat-pulldown", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, setsCount: 3 },
-                    { exerciseId: "bicep-curls", reps: 12, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Barbell_Bench_Press_-_Medium_Grip",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Bent_Over_Barbell_Row",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Dumbbell_Shoulder_Press",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Full_Range-Of-Motion_Lat_Pulldown",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Triceps_Pushdown",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Barbell_Curl",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "upper-a",
                 name: "Upper Body A",
             },
             {
                 exerciseEntries: [
-                    { exerciseId: "squat", reps: 8, restTime: 150, setsCount: 4 },
-                    { exerciseId: "romanian-deadlift", reps: 8, restTime: 150, setsCount: 4 },
-                    { exerciseId: "leg-extension", reps: 12, restTime: 90, setsCount: 3 },
-                    { exerciseId: "leg-curl", reps: 12, restTime: 90, setsCount: 3 },
-                    { exerciseId: "calf-raises", reps: 15, restTime: 60, setsCount: 3 },
-                    { durationSeconds: 45, exerciseId: "plank", restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Barbell_Squat",
+                        reps: 8,
+                        restTime: 150,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Romanian_Deadlift",
+                        reps: 8,
+                        restTime: 150,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Leg_Extensions",
+                        reps: 12,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Lying_Leg_Curls",
+                        reps: 12,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Calf_Raises_-_With_Bands",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        durationSeconds: 45,
+                        exerciseId: "Plank",
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "lower-a",
                 name: "Lower Body A",
             },
             {
                 exerciseEntries: [
-                    { exerciseId: "incline-bench-press", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "pull-ups", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "lateral-raises", reps: 12, restTime: 90, setsCount: 3 },
-                    { exerciseId: "seated-row", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "skull-crushers", reps: 12, restTime: 60, setsCount: 3 },
-                    { exerciseId: "hammer-curls", reps: 12, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Barbell_Incline_Bench_Press_-_Medium_Grip",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Pullups",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Lateral_Raise_-_With_Bands",
+                        reps: 12,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Seated_Cable_Rows",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "EZ-Bar_Skullcrusher",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Hammer_Curls",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "upper-b",
                 name: "Upper Body B",
             },
             {
                 exerciseEntries: [
-                    { exerciseId: "deadlift", reps: 6, restTime: 180, setsCount: 4 },
-                    { exerciseId: "leg-press", reps: 10, restTime: 120, setsCount: 4 },
-                    { exerciseId: "lunges", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "hip-thrusts", reps: 12, restTime: 90, setsCount: 3 },
-                    { exerciseId: "calf-raises", reps: 15, restTime: 60, setsCount: 3 },
-                    { exerciseId: "russian-twist", reps: 20, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Barbell_Deadlift",
+                        reps: 6,
+                        restTime: 180,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Leg_Press",
+                        reps: 10,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Barbell_Lunge",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Barbell_Glute_Bridge",
+                        reps: 12,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Calf_Raises_-_With_Bands",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Russian_Twist",
+                        reps: 20,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "lower-b",
                 name: "Lower Body B",
@@ -735,22 +920,42 @@ export const strengthPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "bench-press",
+                        exerciseId: "Barbell_Bench_Press_-_Medium_Grip",
                         exerciseNotes: "RPE 8-9",
                         reps: 5,
                         restTime: 180,
                         setsCount: 5,
                     },
-                    { exerciseId: "dumbbell-shoulder-press", reps: 8, restTime: 120, setsCount: 4 },
                     {
-                        exerciseId: "incline-dumbbell-bench-press",
+                        exerciseId: "Dumbbell_Shoulder_Press",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Incline_Dumbbell_Bench_With_Palms_Facing_In",
                         reps: 10,
                         restTime: 120,
                         setsCount: 4,
                     },
-                    { exerciseId: "lateral-raises", reps: 12, restTime: 90, setsCount: 4 },
-                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, setsCount: 4 },
-                    { exerciseId: "skull-crushers", reps: 12, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Lateral_Raise_-_With_Bands",
+                        reps: 12,
+                        restTime: 90,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Triceps_Pushdown",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "EZ-Bar_Skullcrusher",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "push-a",
                 name: "Push Day A",
@@ -758,17 +963,42 @@ export const strengthPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "bent-over-row",
+                        exerciseId: "Bent_Over_Barbell_Row",
                         exerciseNotes: "RPE 8-9",
                         reps: 5,
                         restTime: 180,
                         setsCount: 5,
                     },
-                    { exerciseId: "pull-ups", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "seated-row", reps: 10, restTime: 120, setsCount: 4 },
-                    { exerciseId: "cable-face-pulls", reps: 15, restTime: 90, setsCount: 3 },
-                    { exerciseId: "bicep-curls", reps: 12, restTime: 60, setsCount: 4 },
-                    { exerciseId: "hammer-curls", reps: 12, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Pullups",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Seated_Cable_Rows",
+                        reps: 10,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Face_Pull",
+                        reps: 15,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Barbell_Curl",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Hammer_Curls",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "pull-a",
                 name: "Pull Day A",
@@ -776,17 +1006,42 @@ export const strengthPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "squat",
+                        exerciseId: "Barbell_Full_Squat",
                         exerciseNotes: "RPE 8-9",
                         reps: 5,
                         restTime: 180,
                         setsCount: 5,
                     },
-                    { exerciseId: "romanian-deadlift", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "leg-press", reps: 10, restTime: 120, setsCount: 4 },
-                    { exerciseId: "leg-extension", reps: 15, restTime: 90, setsCount: 3 },
-                    { exerciseId: "calf-raises", reps: 15, restTime: 60, setsCount: 4 },
-                    { exerciseId: "abdominal-crunches", reps: 15, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Romanian_Deadlift",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Leg_Press",
+                        reps: 10,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Leg_Extensions",
+                        reps: 15,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Calf_Raises_-_With_Bands",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Crunches",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "legs-a",
                 name: "Legs Day A",
@@ -794,17 +1049,42 @@ export const strengthPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "barbell-overhead-press",
+                        exerciseId: "Barbell_Shoulder_Press",
                         exerciseNotes: "RPE 8-9",
                         reps: 5,
                         restTime: 180,
                         setsCount: 5,
                     },
-                    { exerciseId: "incline-bench-press", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "dumbbell-press", reps: 10, restTime: 120, setsCount: 4 },
-                    { exerciseId: "front-raises", reps: 12, restTime: 90, setsCount: 3 },
-                    { exerciseId: "tricep-dips", reps: 10, restTime: 60, setsCount: 4 },
-                    { exerciseId: "tricep-kickbacks", reps: 12, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Barbell_Incline_Bench_Press_-_Medium_Grip",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Dumbbell_Bench_Press",
+                        reps: 10,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Front_Dumbbell_Raise",
+                        reps: 12,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Bench_Dips",
+                        reps: 10,
+                        restTime: 60,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Tricep_Dumbbell_Kickback",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "push-b",
                 name: "Push Day B",
@@ -812,29 +1092,84 @@ export const strengthPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "deadlift",
+                        exerciseId: "Barbell_Deadlift",
                         exerciseNotes: "RPE 8-9",
                         reps: 5,
                         restTime: 180,
                         setsCount: 5,
                     },
-                    { exerciseId: "lat-pulldown", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "one-arm-dumbbell-row", reps: 10, restTime: 120, setsCount: 4 },
-                    { exerciseId: "reverse-flyes", reps: 15, restTime: 90, setsCount: 3 },
-                    { exerciseId: "preacher-curls", reps: 12, restTime: 60, setsCount: 4 },
-                    { exerciseId: "cable-curls", reps: 12, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Full_Range-Of-Motion_Lat_Pulldown",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "One-Arm_Dumbbell_Row",
+                        reps: 10,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Reverse_Flyes",
+                        reps: 15,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Preacher_Curl",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Cable_Hammer_Curls_-_Rope_Attachment",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "pull-b",
                 name: "Pull Day B",
             },
             {
                 exerciseEntries: [
-                    { exerciseId: "bulgarian-split-squats", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "leg-press", reps: 12, restTime: 120, setsCount: 4 },
-                    { exerciseId: "hip-thrusts", reps: 12, restTime: 120, setsCount: 4 },
-                    { exerciseId: "leg-curl", reps: 15, restTime: 90, setsCount: 3 },
-                    { exerciseId: "calf-raises", reps: 20, restTime: 60, setsCount: 4 },
-                    { durationSeconds: 60, exerciseId: "plank", restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Bulgarian_Split_Squat",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Leg_Press",
+                        reps: 12,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Barbell_Hip_Thrust",
+                        reps: 12,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Lying_Leg_Curls",
+                        reps: 15,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Calf_Raises_-_With_Bands",
+                        reps: 20,
+                        restTime: 60,
+                        setsCount: 4,
+                    },
+                    {
+                        durationSeconds: 60,
+                        exerciseId: "Plank",
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "legs-b",
                 name: "Legs Day B",
@@ -866,39 +1201,74 @@ export const strengthPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "hip-thrusts",
+                        exerciseId: "Barbell_Hip_Thrust",
                         exerciseNotes: "Heavy load, focus on full contraction",
                         reps: 8,
                         restTime: 120,
                         setsCount: 4,
                     },
-                    { exerciseId: "romanian-deadlift", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "bulgarian-split-squats", reps: 12, restTime: 90, setsCount: 3 },
                     {
-                        exerciseId: "cable-kickbacks",
+                        exerciseId: "Romanian_Deadlift",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Bulgarian_Split_Squat",
+                        reps: 12,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Cable_Hip_Adduction",
                         exerciseNotes: "Slow eccentric",
                         reps: 15,
                         restTime: 60,
                         setsCount: 3,
                     },
-                    { exerciseId: "lateral-band-walks", reps: 15, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Lateral_Band_Walk",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "glute-focus-a",
                 name: "Glute Focus A",
             },
             {
                 exerciseEntries: [
-                    { exerciseId: "squat", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "deadlift", reps: 8, restTime: 120, setsCount: 3 },
-                    { exerciseId: "walking-lunges", reps: 12, restTime: 90, setsCount: 3 },
                     {
-                        exerciseId: "leg-press",
+                        exerciseId: "Barbell_Full_Squat",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Barbell_Deadlift",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Barbell_Walking_Lunge",
+                        reps: 12,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Leg_Press",
                         exerciseNotes: "High foot placement",
                         reps: 12,
                         restTime: 90,
                         setsCount: 3,
                     },
-                    { exerciseId: "calf-raises", reps: 15, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Calf_Raises_-_With_Bands",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "compound-lower",
                 name: "Compound Lower Body",
@@ -906,22 +1276,37 @@ export const strengthPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "glute-bridges",
+                        exerciseId: "Butt_Lift_Bridge",
                         exerciseNotes: "With resistance band",
                         reps: 15,
                         restTime: 90,
                         setsCount: 3,
                     },
-                    { exerciseId: "sumo-deadlift", reps: 8, restTime: 120, setsCount: 4 },
                     {
-                        exerciseId: "goblet-squats",
+                        exerciseId: "Sumo_Deadlift",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Goblet_Squat",
                         exerciseNotes: "Deep squat for glute activation",
                         reps: 12,
                         restTime: 90,
                         setsCount: 3,
                     },
-                    { exerciseId: "step-ups", reps: 12, restTime: 90, setsCount: 3 },
-                    { exerciseId: "frog-pumps", reps: 20, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Barbell_Step_Ups",
+                        reps: 12,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Frog_Sit-Ups",
+                        reps: 20,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "glute-focus-b",
                 name: "Glute Focus B",
@@ -954,36 +1339,51 @@ export const strengthPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 45,
-                        exerciseId: "plank",
+                        exerciseId: "Plank",
                         exerciseNotes: "Focus on proper alignment",
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
                         durationSeconds: 30,
-                        exerciseId: "side-plank",
-                        exerciseNotes: "Both sides",
+                        exerciseId: "Side_Bridge",
+                        exerciseNotes: "Each side",
                         restTime: 60,
                         setsCount: 3,
                     },
-                    { exerciseId: "pallof-press", reps: 12, restTime: 60, setsCount: 3 },
                     {
-                        exerciseId: "bird-dog",
+                        exerciseId: "Pallof_Press",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Bird_Dog",
                         exerciseNotes: "Slow and controlled",
                         reps: 10,
                         restTime: 60,
                         setsCount: 3,
                     },
-                    { exerciseId: "dead-bug", reps: 10, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Dead_Bug",
+                        reps: 10,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "anti-rotation",
                 name: "Anti-Rotation & Stability",
             },
             {
                 exerciseEntries: [
-                    { exerciseId: "hanging-leg-raises", reps: 12, restTime: 90, setsCount: 3 },
                     {
-                        exerciseId: "russian-twist",
+                        exerciseId: "Hanging_Leg_Raise",
+                        reps: 12,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Russian_Twist",
                         exerciseNotes: "With weight",
                         reps: 20,
                         restTime: 60,
@@ -991,13 +1391,23 @@ export const strengthPlans: readonly TrainingPlan[] = [
                     },
                     {
                         durationSeconds: 45,
-                        exerciseId: "mountain-climbers",
+                        exerciseId: "Mountain_Climbers",
                         exerciseNotes: "Fast pace",
                         restTime: 60,
                         setsCount: 3,
                     },
-                    { exerciseId: "bicycle-crunches", reps: 20, restTime: 60, setsCount: 3 },
-                    { exerciseId: "v-ups", reps: 15, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Cross-Body_Crunch",
+                        reps: 20,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "V_Up",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "dynamic-core",
                 name: "Dynamic Core Training",
@@ -1005,28 +1415,38 @@ export const strengthPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "turkish-get-up",
+                        exerciseId: "Kettlebell_Turkish_Get-Up_Lunge_style",
                         exerciseNotes: "Each side",
                         reps: 5,
                         restTime: 90,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "woodchoppers",
+                        exerciseId: "Standing_Cable_Wood_Chop",
                         exerciseNotes: "Each side",
                         reps: 12,
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "kettlebell-windmill",
+                        exerciseId: "Kettlebell_Windmill",
                         exerciseNotes: "Each side",
                         reps: 8,
                         restTime: 60,
                         setsCount: 3,
                     },
-                    { exerciseId: "plank-shoulder-taps", reps: 20, restTime: 60, setsCount: 3 },
-                    { exerciseId: "ab-rollouts", reps: 10, restTime: 90, setsCount: 3 },
+                    {
+                        exerciseId: "Plank_Shoulder_Tap",
+                        reps: 20,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Barbell_Ab_Rollout",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
                 ],
                 id: "functional-core",
                 name: "Functional Core Integration",
@@ -1059,7 +1479,7 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 1200,
-                        exerciseId: "incline-walk",
+                        exerciseId: "Incline_Walk",
                         exerciseNotes: "Moderate pace, 3-4 RPE",
                         restTime: 0,
                         setsCount: 1,
@@ -1072,7 +1492,7 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 120,
-                        exerciseId: "cycling",
+                        exerciseId: "Bicycling_Stationary",
                         exerciseNotes:
                             "Alternate between moderate (4-5 RPE) and light (2-3 RPE) intensities",
                         restTime: 90,
@@ -1086,14 +1506,14 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 600,
-                        exerciseId: "rowing-machine",
+                        exerciseId: "Rowing_Stationary",
                         exerciseNotes: "Steady pace (3-4 RPE)",
                         restTime: 0,
                         setsCount: 1,
                     },
                     {
                         durationSeconds: 600,
-                        exerciseId: "incline-walk",
+                        exerciseId: "Incline_Walk",
                         exerciseNotes: "Moderate pace (3-4 RPE)",
                         restTime: 0,
                         setsCount: 1,
@@ -1127,7 +1547,7 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 60,
-                        exerciseId: "running",
+                        exerciseId: "Running_Treadmill",
                         exerciseNotes: "High intensity (7-8 RPE) sprints with full recovery",
                         restTime: 120,
                         setsCount: 8,
@@ -1140,7 +1560,7 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 1800,
-                        exerciseId: "running",
+                        exerciseId: "Running_Treadmill",
                         exerciseNotes: "Sustained effort at 6-7 RPE",
                         restTime: 0,
                         setsCount: 1,
@@ -1153,7 +1573,7 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 180,
-                        exerciseId: "cycling",
+                        exerciseId: "Bicycling_Stationary",
                         exerciseNotes:
                             "1 min, 2 min, 3 min, 2 min, 1 min at high intensity (7-8 RPE)",
                         restTime: 120,
@@ -1167,14 +1587,14 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 900,
-                        exerciseId: "rowing-machine",
+                        exerciseId: "Rowing_Stationary",
                         exerciseNotes: "Moderate pace (5-6 RPE)",
                         restTime: 0,
                         setsCount: 1,
                     },
                     {
                         durationSeconds: 900,
-                        exerciseId: "stair-climber",
+                        exerciseId: "Stairmaster",
                         exerciseNotes: "Moderate pace (5-6 RPE)",
                         restTime: 0,
                         setsCount: 1,
@@ -1210,7 +1630,7 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 60,
-                        exerciseId: "running",
+                        exerciseId: "Running_Treadmill",
                         exerciseNotes: "Near max effort (8-9 RPE) with incomplete recovery",
                         restTime: 60,
                         setsCount: 12,
@@ -1223,7 +1643,7 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 600,
-                        exerciseId: "cycling",
+                        exerciseId: "Bicycling_Stationary",
                         exerciseNotes: "Sustained effort at threshold (7 RPE)",
                         restTime: 180,
                         setsCount: 3,
@@ -1236,7 +1656,7 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 20,
-                        exerciseId: "rowing-machine",
+                        exerciseId: "Rowing_Stationary",
                         exerciseNotes: "Maximum effort (9-10 RPE) with minimal rest",
                         restTime: 10,
                         setsCount: 8,
@@ -1249,7 +1669,7 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 3600,
-                        exerciseId: "running",
+                        exerciseId: "Running_Treadmill",
                         exerciseNotes: "Moderate sustainable pace (5-6 RPE)",
                         restTime: 0,
                         setsCount: 1,
@@ -1262,14 +1682,14 @@ export const cardioPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 180,
-                        exerciseId: "stair-climber",
+                        exerciseId: "Stairmaster",
                         exerciseNotes: "High intensity (8 RPE)",
                         restTime: 60,
                         setsCount: 5,
                     },
                     {
                         durationSeconds: 180,
-                        exerciseId: "rowing-machine",
+                        exerciseId: "Rowing_Stationary",
                         exerciseNotes: "High intensity (8 RPE)",
                         restTime: 60,
                         setsCount: 5,
@@ -1304,10 +1724,30 @@ export const hybridPlans: readonly TrainingPlan[] = [
         workoutDays: [
             {
                 exerciseEntries: [
-                    { exerciseId: "squat", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "bench-press", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "seated-row", reps: 10, restTime: 90, setsCount: 3 },
-                    { durationSeconds: 30, exerciseId: "plank", restTime: 60, setsCount: 2 },
+                    {
+                        exerciseId: "Barbell_Squat",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Barbell_Bench_Press_-_Medium_Grip",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Seated_Cable_Rows",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        durationSeconds: 30,
+                        exerciseId: "Plank",
+                        restTime: 60,
+                        setsCount: 2,
+                    },
                 ],
                 id: "strength-a",
                 name: "Full Body Strength A",
@@ -1316,7 +1756,7 @@ export const hybridPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 1500,
-                        exerciseId: "incline-walk",
+                        exerciseId: "Incline_Walk",
                         exerciseNotes: "Moderate pace (3-4 RPE)",
                         restTime: 0,
                         setsCount: 1,
@@ -1327,10 +1767,30 @@ export const hybridPlans: readonly TrainingPlan[] = [
             },
             {
                 exerciseEntries: [
-                    { exerciseId: "deadlift", reps: 8, restTime: 90, setsCount: 3 },
-                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "lat-pulldown", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "russian-twist", reps: 15, restTime: 60, setsCount: 2 },
+                    {
+                        exerciseId: "Barbell_Deadlift",
+                        reps: 8,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Dumbbell_Shoulder_Press",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Full_Range-Of-Motion_Lat_Pulldown",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Russian_Twist",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 2,
+                    },
                 ],
                 id: "strength-b",
                 name: "Full Body Strength B",
@@ -1339,7 +1799,7 @@ export const hybridPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 60,
-                        exerciseId: "cycling",
+                        exerciseId: "Bicycling_Stationary",
                         exerciseNotes: "Alternating between moderate (4-5 RPE) and light (2-3 RPE)",
                         restTime: 120,
                         setsCount: 6,
@@ -1371,11 +1831,36 @@ export const hybridPlans: readonly TrainingPlan[] = [
         workoutDays: [
             {
                 exerciseEntries: [
-                    { exerciseId: "bench-press", reps: 8, restTime: 90, setsCount: 4 },
-                    { exerciseId: "pull-ups", reps: 8, restTime: 90, setsCount: 4 },
-                    { exerciseId: "dumbbell-shoulder-press", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "seated-row", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "tricep-pushdown", reps: 12, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Barbell_Bench_Press_-_Medium_Grip",
+                        reps: 8,
+                        restTime: 90,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Pullups",
+                        reps: 8,
+                        restTime: 90,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Dumbbell_Shoulder_Press",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Seated_Cable_Rows",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Triceps_Pushdown",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "upper-strength",
                 name: "Upper Body Strength",
@@ -1384,7 +1869,7 @@ export const hybridPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 60,
-                        exerciseId: "rowing-machine",
+                        exerciseId: "Rowing_Stationary",
                         exerciseNotes: "High intensity (7-8 RPE) with active recovery",
                         restTime: 90,
                         setsCount: 8,
@@ -1395,11 +1880,36 @@ export const hybridPlans: readonly TrainingPlan[] = [
             },
             {
                 exerciseEntries: [
-                    { exerciseId: "squat", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "romanian-deadlift", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "lunges", reps: 10, restTime: 90, setsCount: 3 },
-                    { exerciseId: "leg-extension", reps: 12, restTime: 60, setsCount: 3 },
-                    { exerciseId: "calf-raises", reps: 15, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Barbell_Full_Squat",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Romanian_Deadlift",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Barbell_Lunge",
+                        reps: 10,
+                        restTime: 90,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Leg_Extensions",
+                        reps: 12,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Calf_Raises_-_With_Bands",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                 ],
                 id: "lower-strength",
                 name: "Lower Body Strength",
@@ -1408,7 +1918,7 @@ export const hybridPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 2400,
-                        exerciseId: "running",
+                        exerciseId: "Running_Treadmill",
                         exerciseNotes: "Moderate pace (5-6 RPE)",
                         restTime: 0,
                         setsCount: 1,
@@ -1419,17 +1929,27 @@ export const hybridPlans: readonly TrainingPlan[] = [
             },
             {
                 exerciseEntries: [
-                    { exerciseId: "kettlebell-swings", reps: 15, restTime: 60, setsCount: 3 },
-                    { exerciseId: "push-ups", reps: 15, restTime: 60, setsCount: 3 },
+                    {
+                        exerciseId: "Kettlebell_Swing",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Pushups",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 3,
+                    },
                     {
                         durationSeconds: 30,
-                        exerciseId: "mountain-climbers",
+                        exerciseId: "Mountain_Climbers",
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
                         durationSeconds: 60,
-                        exerciseId: "rowing-machine",
+                        exerciseId: "Rowing_Stationary",
                         restTime: 60,
                         setsCount: 3,
                     },
@@ -1465,21 +1985,36 @@ export const hybridPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "burpees",
+                        exerciseId: "Burpees",
                         exerciseNotes: "As fast as possible with good form",
                         reps: 15,
                         restTime: 45,
                         setsCount: 4,
                     },
-                    { exerciseId: "kettlebell-swings", reps: 20, restTime: 45, setsCount: 4 },
                     {
-                        durationSeconds: 40,
-                        exerciseId: "mountain-climbers",
+                        exerciseId: "Kettlebell_Swing",
+                        reps: 20,
                         restTime: 45,
                         setsCount: 4,
                     },
-                    { exerciseId: "jump-squats", reps: 15, restTime: 45, setsCount: 4 },
-                    { durationSeconds: 30, exerciseId: "battle-ropes", restTime: 45, setsCount: 4 },
+                    {
+                        durationSeconds: 40,
+                        exerciseId: "Mountain_Climbers",
+                        restTime: 45,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Front_Box_Jump",
+                        reps: 15,
+                        restTime: 45,
+                        setsCount: 4,
+                    },
+                    {
+                        durationSeconds: 30,
+                        exerciseId: "Battling_Ropes",
+                        restTime: 45,
+                        setsCount: 4,
+                    },
                 ],
                 id: "total-body-hiit",
                 name: "Total Body HIIT",
@@ -1490,21 +2025,21 @@ export const hybridPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 30,
-                        exerciseId: "sprint-intervals",
+                        exerciseId: "Running_Treadmill",
                         exerciseNotes: "All-out effort",
                         restTime: 90,
                         setsCount: 8,
                     },
                     {
                         durationSeconds: 60,
-                        exerciseId: "rowing-machine",
+                        exerciseId: "Rowing_Stationary",
                         exerciseNotes: "High intensity",
                         restTime: 60,
                         setsCount: 5,
                     },
                     {
                         durationSeconds: 40,
-                        exerciseId: "cycling",
+                        exerciseId: "Bicycling_Stationary",
                         exerciseNotes: "Tabata protocol",
                         restTime: 40,
                         setsCount: 6,
@@ -1515,11 +2050,36 @@ export const hybridPlans: readonly TrainingPlan[] = [
             },
             {
                 exerciseEntries: [
-                    { exerciseId: "deadlift", reps: 5, restTime: 60, setsCount: 5 },
-                    { exerciseId: "push-ups", reps: 15, restTime: 60, setsCount: 5 },
-                    { exerciseId: "dumbbell-row", reps: 15, restTime: 60, setsCount: 5 },
-                    { exerciseId: "goblet-squats", reps: 15, restTime: 60, setsCount: 5 },
-                    { durationSeconds: 45, exerciseId: "plank", restTime: 60, setsCount: 5 },
+                    {
+                        exerciseId: "Barbell_Deadlift",
+                        reps: 5,
+                        restTime: 60,
+                        setsCount: 5,
+                    },
+                    {
+                        exerciseId: "Pushups",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 5,
+                    },
+                    {
+                        exerciseId: "One-Arm_Dumbbell_Row",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 5,
+                    },
+                    {
+                        exerciseId: "Goblet_Squat",
+                        reps: 15,
+                        restTime: 60,
+                        setsCount: 5,
+                    },
+                    {
+                        durationSeconds: 45,
+                        exerciseId: "Plank",
+                        restTime: 60,
+                        setsCount: 5,
+                    },
                 ],
                 id: "strength-hiit",
                 name: "Strength HIIT",
@@ -1553,23 +2113,33 @@ export const hybridPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "shoulder-circles",
+                        exerciseId: "Shoulder_Circles",
                         exerciseNotes: "Each direction",
                         reps: 15,
                         restTime: 30,
                         setsCount: 3,
                     },
-                    { exerciseId: "wall-slides", reps: 12, restTime: 30, setsCount: 3 },
                     {
-                        exerciseId: "thoracic-spine-rotations",
+                        exerciseId: "Linear_Acceleration_Wall_Drill",
+                        reps: 12,
+                        restTime: 30,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Thoracic_Spine_Rotation",
                         exerciseNotes: "Each side",
                         reps: 10,
                         restTime: 30,
                         setsCount: 3,
                     },
-                    { exerciseId: "cat-cow", reps: 12, restTime: 30, setsCount: 3 },
                     {
-                        exerciseId: "open-book",
+                        exerciseId: "Cat_Stretch",
+                        reps: 12,
+                        restTime: 30,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Open_Book",
                         exerciseNotes: "Each side",
                         reps: 10,
                         restTime: 30,
@@ -1582,14 +2152,14 @@ export const hybridPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "hip-circles",
+                        exerciseId: "Hip_Circles_prone",
                         exerciseNotes: "Each direction",
                         reps: 12,
                         restTime: 30,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "cossack-squats",
+                        exerciseId: "Cossack_Squat",
                         exerciseNotes: "Each side",
                         reps: 10,
                         restTime: 45,
@@ -1597,14 +2167,20 @@ export const hybridPlans: readonly TrainingPlan[] = [
                     },
                     {
                         durationSeconds: 45,
-                        exerciseId: "lizard-pose",
+                        exerciseId: "Lizard_Crawl",
                         exerciseNotes: "Each side",
                         restTime: 30,
                         setsCount: 3,
                     },
-                    { durationSeconds: 60, exerciseId: "squat-hold", restTime: 45, setsCount: 3 },
                     {
-                        exerciseId: "ankle-mobility",
+                        durationSeconds: 60,
+                        exerciseId: "Bodyweight_Squat",
+                        exerciseNotes: "Hold",
+                        restTime: 45,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Ankle_Circles",
                         exerciseNotes: "Each ankle",
                         reps: 15,
                         restTime: 30,
@@ -1617,23 +2193,33 @@ export const hybridPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "sun-salutation",
+                        exerciseId: "Sun_Salutations",
                         exerciseNotes: "Full sequence",
                         reps: 5,
                         restTime: 60,
                         setsCount: 3,
                     },
                     {
-                        exerciseId: "world's-greatest-stretch",
+                        exerciseId: "Worlds_Greatest_Stretch",
                         exerciseNotes: "Each side",
                         reps: 6,
                         restTime: 45,
                         setsCount: 3,
                     },
-                    { exerciseId: "downward-upward-dog", reps: 10, restTime: 45, setsCount: 3 },
-                    { exerciseId: "inchworm", reps: 8, restTime: 45, setsCount: 3 },
                     {
-                        exerciseId: "bird-dog",
+                        exerciseId: "Downward-Facing_Dog",
+                        reps: 10,
+                        restTime: 45,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Inchworm",
+                        reps: 8,
+                        restTime: 45,
+                        setsCount: 3,
+                    },
+                    {
+                        exerciseId: "Bird_Dog",
                         exerciseNotes: "Alternating",
                         reps: 12,
                         restTime: 45,
@@ -1670,16 +2256,36 @@ export const hybridPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "hang-clean",
+                        exerciseId: "Hang_Clean",
                         exerciseNotes: "Focus on technique and explosiveness",
                         reps: 5,
                         restTime: 180,
                         setsCount: 5,
                     },
-                    { exerciseId: "box-jumps", reps: 8, restTime: 120, setsCount: 4 },
-                    { exerciseId: "medicine-ball-throws", reps: 10, restTime: 120, setsCount: 4 },
-                    { exerciseId: "jump-squats", reps: 10, restTime: 120, setsCount: 4 },
-                    { exerciseId: "plyo-push-ups", reps: 8, restTime: 120, setsCount: 3 },
+                    {
+                        exerciseId: "Front_Box_Jump",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Medicine_Ball_Chest_Pass",
+                        reps: 10,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Freehand_Jump_Squat",
+                        reps: 10,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Plyo_Push-up",
+                        reps: 8,
+                        restTime: 120,
+                        setsCount: 3,
+                    },
                 ],
                 id: "power-development",
                 name: "Power Development",
@@ -1687,34 +2293,39 @@ export const hybridPlans: readonly TrainingPlan[] = [
             {
                 exerciseEntries: [
                     {
-                        exerciseId: "squat",
+                        exerciseId: "Barbell_Squat",
                         exerciseNotes: "80-85% 1RM",
                         reps: 5,
                         restTime: 180,
                         setsCount: 5,
                     },
                     {
-                        exerciseId: "bench-press",
+                        exerciseId: "Barbell_Bench_Press_-_Medium_Grip",
                         exerciseNotes: "80-85% 1RM",
                         reps: 5,
                         restTime: 180,
                         setsCount: 5,
                     },
                     {
-                        exerciseId: "deadlift",
+                        exerciseId: "Barbell_Deadlift",
                         exerciseNotes: "80-85% 1RM",
                         reps: 5,
                         restTime: 180,
                         setsCount: 5,
                     },
                     {
-                        exerciseId: "pull-ups",
+                        exerciseId: "Pullups",
                         exerciseNotes: "Weighted if possible",
                         reps: 6,
                         restTime: 120,
                         setsCount: 4,
                     },
-                    { exerciseId: "barbell-overhead-press", reps: 6, restTime: 120, setsCount: 4 },
+                    {
+                        exerciseId: "Barbell_Shoulder_Press",
+                        reps: 6,
+                        restTime: 120,
+                        setsCount: 4,
+                    },
                 ],
                 id: "strength-day",
                 name: "Maximal Strength",
@@ -1723,21 +2334,31 @@ export const hybridPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 60,
-                        exerciseId: "ladder-drills",
+                        exerciseId: "Ladder_Drill",
                         exerciseNotes: "Various patterns",
                         restTime: 120,
                         setsCount: 4,
                     },
-                    { durationSeconds: 60, exerciseId: "cone-drills", restTime: 120, setsCount: 4 },
+                    {
+                        durationSeconds: 60,
+                        exerciseId: "Single-Cone_Sprint_Drill",
+                        restTime: 120,
+                        setsCount: 4,
+                    },
                     {
                         durationSeconds: 30,
-                        exerciseId: "shuttle-runs",
+                        exerciseId: "Shuttle_Run",
                         restTime: 120,
                         setsCount: 6,
                     },
-                    { exerciseId: "broad-jumps", reps: 5, restTime: 120, setsCount: 5 },
                     {
-                        exerciseId: "lateral-bounds",
+                        exerciseId: "Standing_Long_Jump",
+                        reps: 5,
+                        restTime: 120,
+                        setsCount: 5,
+                    },
+                    {
+                        exerciseId: "Lateral_Bound",
                         exerciseNotes: "Each side",
                         reps: 8,
                         restTime: 120,
@@ -1751,20 +2372,30 @@ export const hybridPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 30,
-                        exerciseId: "running",
+                        exerciseId: "Running_Treadmill",
                         exerciseNotes: "Sprint intervals",
                         restTime: 60,
                         setsCount: 10,
                     },
                     {
                         durationSeconds: 60,
-                        exerciseId: "rowing-machine",
+                        exerciseId: "Rowing_Stationary",
                         exerciseNotes: "High intensity",
                         restTime: 60,
                         setsCount: 5,
                     },
-                    { durationSeconds: 30, exerciseId: "battle-ropes", restTime: 60, setsCount: 4 },
-                    { exerciseId: "kettlebell-swings", reps: 20, restTime: 60, setsCount: 4 },
+                    {
+                        durationSeconds: 30,
+                        exerciseId: "Battling_Ropes",
+                        restTime: 60,
+                        setsCount: 4,
+                    },
+                    {
+                        exerciseId: "Kettlebell_Swing",
+                        reps: 20,
+                        restTime: 60,
+                        setsCount: 4,
+                    },
                 ],
                 id: "conditioning",
                 name: "Sport Conditioning",
@@ -1773,21 +2404,21 @@ export const hybridPlans: readonly TrainingPlan[] = [
                 exerciseEntries: [
                     {
                         durationSeconds: 600,
-                        exerciseId: "foam-rolling",
+                        exerciseId: "Calves-SMR",
                         exerciseNotes: "Full body foam rolling session",
                         restTime: 0,
                         setsCount: 1,
                     },
                     {
                         durationSeconds: 300,
-                        exerciseId: "dynamic-stretching",
+                        exerciseId: "Dynamic_Back_Stretch",
                         exerciseNotes: "Full body mobility flows",
                         restTime: 60,
                         setsCount: 2,
                     },
                     {
                         durationSeconds: 900,
-                        exerciseId: "yoga-flow",
+                        exerciseId: "Yoga",
                         exerciseNotes: "Restorative practice",
                         restTime: 0,
                         setsCount: 1,

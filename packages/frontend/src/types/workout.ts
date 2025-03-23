@@ -28,13 +28,7 @@ export type CardioExerciseEntry = ExerciseEntry & {
     intensity: NonNullable<ExerciseEntry["intensity"]>;
 };
 
-export interface ExerciseEntry {
-    calories?: number | undefined;
-    distanceKm?: number | undefined;
-    durationSeconds: number | undefined;
-    exerciseId: string;
-    exerciseNotes?: string;
-    intensity?: "high" | "low" | "medium" | undefined;
+export interface ExerciseEntry extends BaseExerciseEntry {
     sets?: ExerciseSet[];
 }
 
@@ -42,8 +36,8 @@ export interface ExerciseSet {
     reps: number;
     weight: number;
 }
-export type StrengthExerciseEntry = ExerciseEntry & { sets: NonNullable<ExerciseEntry["sets"]> };
 
+export type StrengthExerciseEntry = ExerciseEntry & { sets: NonNullable<ExerciseEntry["sets"]> };
 export type Workout = WorkoutBase;
 
 export interface WorkoutBase {
@@ -58,3 +52,13 @@ export interface WorkoutBase {
 export type WorkoutWithId = Workout & {
     id: string;
 };
+
+interface BaseExerciseEntry {
+    calories?: number | undefined;
+    category: string;
+    distanceKm?: number | undefined;
+    durationSeconds: number;
+    exerciseId: string;
+    exerciseNotes?: string;
+    intensity?: "high" | "low" | "medium" | undefined;
+}

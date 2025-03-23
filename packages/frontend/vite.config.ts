@@ -76,6 +76,21 @@ export default defineConfig({
                         },
                         urlPattern: /\.js$/i,
                     },
+
+                    {
+                        handler: "CacheFirst",
+                        options: {
+                            cacheableResponse: {
+                                statuses: [0, 200],
+                            },
+                            cacheName: "images-cache",
+                            expiration: {
+                                maxAgeSeconds: 60 * 60 * 24 * 7,
+                                maxEntries: 500,
+                            },
+                        },
+                        urlPattern: /\/.*\/(jpeg|jpg|png|gif|svg)$/i,
+                    },
                 ],
                 // Skip waiting by default - automatically activate the new SW
                 skipWaiting: true,

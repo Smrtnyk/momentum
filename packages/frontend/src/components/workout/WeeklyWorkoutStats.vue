@@ -11,7 +11,7 @@
 
         <v-card-text>
             <v-fade-transition>
-                <div v-if="isLoading" class="py-2">
+                <div v-if="isLoading || isExercisesLoading" class="py-2">
                     <!-- Skeleton loader -->
                     <div class="mb-4">
                         <div class="d-flex justify-space-between align-center mb-2">
@@ -63,16 +63,18 @@
                     </div>
                 </div>
 
-                <div v-else-if="error" class="text-center py-4">
+                <div v-else-if="error || exercisesLoadError" class="text-center py-4">
                     <v-icon size="large" color="error" class="mb-2">mdi-alert-circle</v-icon>
-                    <div class="text-body-1 text-error">{{ error }}</div>
+                    <div class="text-body-1 text-error">
+                        {{ error || "Failed to load exercises" }}
+                    </div>
                     <v-btn
                         color="primary"
                         class="mt-3"
                         size="small"
                         prepend-icon="mdi-refresh"
                         variant="tonal"
-                        @click="executeAsync"
+                        @click="retryLoading"
                     >
                         Retry
                     </v-btn>
@@ -147,7 +149,7 @@
                         <v-chip-group>
                             <v-chip
                                 v-for="muscle in topMuscles"
-                                :key="muscle.id"
+                                :key="muscle.name"
                                 size="small"
                                 color="primary"
                                 variant="tonal"
@@ -165,14 +167,14 @@
 
 <script setup lang="ts">
 import { useAsyncState } from "@vueuse/core";
-import { computed } from "vue";
+import { computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useDate } from "vuetify";
 
+import type { Exercise } from "../../types/exercise";
 import type { WorkoutWithId } from "../../types/workout";
 
 import { ONE_DAY } from "../../helpers/date-utils";
-import { getExerciseById, getMuscleById } from "../../helpers/exercise-utils";
 import { logger } from "../../logger/app-logger";
 import {
     getWorkoutsInDateRange,
@@ -180,12 +182,14 @@ import {
     isStrengthExercise,
 } from "../../services/workout";
 import { useAuthStore } from "../../stores/auth";
+import { useExerciseStore } from "../../stores/exercises";
 import { useGlobalStore } from "../../stores/global";
 
 const authStore = useAuthStore();
 const globalStore = useGlobalStore();
 const dateAdapter = useDate();
 const router = useRouter();
+const exerciseStore = useExerciseStore();
 
 function fetchWeeklyWorkouts(): Promise<WorkoutWithId[]> {
     const startOfWeek = dateAdapter.startOfWeek(new Date()) as Date;
@@ -203,6 +207,38 @@ function fetchWeeklyWorkouts(): Promise<WorkoutWithId[]> {
         orderByDate: "asc",
     });
 }
+
+const getExerciseIds = computed(() => {
+    const exerciseIds = new Set<string>();
+    for (const workout of workoutsThisWeek.value) {
+        for (const entry of workout.exerciseEntries) {
+            exerciseIds.add(entry.exerciseId);
+        }
+    }
+    return Array.from(exerciseIds);
+});
+
+async function fetchExerciseData(): Promise<Record<string, Exercise>> {
+    const exerciseIds = getExerciseIds.value;
+    if (exerciseIds.length === 0) return {};
+
+    const exerciseMap: Record<string, Exercise> = {};
+
+    await Promise.all(
+        exerciseIds.map(async function (id) {
+            exerciseMap[id] = await exerciseStore.getExerciseById(id);
+        }),
+    );
+
+    return exerciseMap;
+}
+
+const {
+    error: exercisesLoadError,
+    execute: loadExerciseData,
+    isLoading: isExercisesLoading,
+    state: exerciseState,
+} = useAsyncState(fetchExerciseData, {}, { immediate: false, resetOnExecute: false });
 
 function getCurrentWeekNumber(): number {
     const now = new Date();
@@ -226,6 +262,23 @@ const {
         logger.error("Failed loading weekly workouts:", "WeeklyWorkoutStats", e);
     },
 });
+
+watch(
+    workoutsThisWeek,
+    () => {
+        if (workoutsThisWeek.value.length > 0 && getExerciseIds.value.length > 0) {
+            loadExerciseData();
+        }
+    },
+    { immediate: true },
+);
+
+function retryLoading(): void {
+    executeAsync();
+    if (workoutsThisWeek.value.length > 0) {
+        loadExerciseData();
+    }
+}
 
 const strengthExercises = computed(() => {
     return workoutsThisWeek.value
@@ -285,15 +338,7 @@ const totalCaloriesBurned = computed(() => {
 });
 
 const totalExercises = computed(() => {
-    const exerciseIds = new Set<string>();
-
-    for (const workout of workoutsThisWeek.value) {
-        for (const entry of workout.exerciseEntries) {
-            exerciseIds.add(entry.exerciseId);
-        }
-    }
-
-    return exerciseIds.size;
+    return getExerciseIds.value.length;
 });
 
 const totalDuration = computed(() => {
@@ -317,26 +362,26 @@ const totalDuration = computed(() => {
 });
 
 const topMuscles = computed(() => {
+    if (isExercisesLoading.value || exercisesLoadError.value) return [];
+
     const muscleCounts: Record<string, number> = {};
+    const exerciseMap = exerciseState.value;
 
     for (const entry of strengthExercises.value) {
-        const exercise = getExerciseById(entry.exerciseId);
+        const exercise = exerciseMap[entry.exerciseId];
+        if (!exercise) continue;
 
         const exerciseWeight = entry.sets?.length ?? 1;
 
-        for (const muscleId of exercise.muscleIds) {
-            muscleCounts[muscleId] = (muscleCounts[muscleId] ?? 0) + exerciseWeight;
+        // Count both primary and secondary muscles
+        for (const muscle of [...exercise.primaryMuscles, ...exercise.secondaryMuscles]) {
+            muscleCounts[muscle] = (muscleCounts[muscle] ?? 0) + exerciseWeight;
         }
     }
 
     return Object.entries(muscleCounts)
-        .map(([id, count]) => {
-            const muscle = getMuscleById(id);
-            return {
-                count,
-                id,
-                name: muscle ? muscle.name : "Unknown",
-            };
+        .map(([name, count]) => {
+            return { count, name };
         })
         .sort((a, b) => b.count - a.count)
         .slice(0, 3);

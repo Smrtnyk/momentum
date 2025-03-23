@@ -40,48 +40,28 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
         }
     }
 
-    async searchFoods(query: string, page = 1, pageSize = 10): Promise<FoodSearchResult> {
+    searchFoods(query: string, page = 1, pageSize = 10): Promise<FoodSearchResult> {
         try {
-            const url = new URL(SEARCH_URL);
-            url.searchParams.append("search_terms", query);
-            url.searchParams.append("brands_tags", query);
-            url.searchParams.append("sort_by", "popularity_key");
-            url.searchParams.append("tagtype_0", "brands");
-            url.searchParams.append("tag_contains_0", "contains");
-            url.searchParams.append("tag_0", query);
-            url.searchParams.append("page", page.toString());
-            url.searchParams.append("page_size", pageSize.toString());
-            url.searchParams.append(
-                "fields",
-                "code,product_name,brands,image_url,nutriments,quantity,serving_size,popularity_key",
-            );
+            const cleanQuery = query.trim();
+            const words = cleanQuery.split(/\s+/);
+            const isMultiWord = words.length > 1;
 
-            const response = await fetch(url.toString());
-
-            if (!response.ok) {
-                throw new Error(`API request failed with status ${response.status}`);
+            // For single word use the API v2 directly
+            if (!isMultiWord) {
+                return this.searchWithV2(cleanQuery, page, pageSize);
             }
 
-            const data = await response.json();
-
-            const foods = data.products.map((product: OpenFoodFactsProduct) =>
-                this.mapProductToFoodItem(product),
-            );
-
-            return {
-                currentPage: data.page,
-                foods,
-                totalCount: data.count,
-                totalPages: data.page_count,
-            };
+            // For multi-word queries use v1
+            // v2 doesn't support full text search well
+            return this.searchMultiWordWithV1(cleanQuery, page, pageSize);
         } catch (error) {
             this.logError(error, "searchFoods", { page, pageSize, query });
-            return {
+            return Promise.resolve({
                 currentPage: page,
                 foods: [],
                 totalCount: 0,
                 totalPages: 0,
-            };
+            });
         }
     }
 
@@ -116,6 +96,27 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
         }
 
         return 0;
+    }
+
+    private async fetchAndProcessResults(url: URL, page: number): Promise<FoodSearchResult> {
+        const response = await fetch(url.toString());
+
+        if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        const foods = data.products.map((product: OpenFoodFactsProduct) =>
+            this.mapProductToFoodItem(product),
+        );
+
+        return {
+            currentPage: data.page ?? page,
+            foods,
+            totalCount: data.count ?? foods.length,
+            totalPages: data.page_count ?? 1,
+        };
     }
 
     private mapProductToFoodItem(product: OpenFoodFactsProduct): FoodItem {
@@ -178,5 +179,47 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
         }
 
         return { servingSize: defaultSize, servingUnit: defaultUnit };
+    }
+
+    private searchMultiWordWithV1(
+        query: string,
+        page: number,
+        pageSize: number,
+    ): Promise<FoodSearchResult> {
+        const url = new URL(`https://world.openfoodfacts.org/cgi/search.pl`);
+
+        url.searchParams.append("search_terms", query);
+        url.searchParams.append("search_simple", "1");
+        url.searchParams.append("action", "process");
+        url.searchParams.append("json", "1");
+        url.searchParams.append("sort_by", "popularity_key");
+        url.searchParams.append("page", page.toString());
+        url.searchParams.append("page_size", pageSize.toString());
+        url.searchParams.append(
+            "fields",
+            "code,product_name,brands,image_url,nutriments,quantity,serving_size,popularity_key",
+        );
+
+        return this.fetchAndProcessResults(url, page);
+    }
+
+    private searchWithV2(query: string, page: number, pageSize: number): Promise<FoodSearchResult> {
+        const url = new URL(SEARCH_URL);
+
+        url.searchParams.append("tagtype_0", "product_name");
+        url.searchParams.append("tag_contains_0", "contains");
+        url.searchParams.append("tag_0", query);
+        url.searchParams.append("tagtype_1", "brands");
+        url.searchParams.append("tag_contains_1", "contains");
+        url.searchParams.append("tag_1", query);
+        url.searchParams.append("sort_by", "popularity_key");
+        url.searchParams.append("page", page.toString());
+        url.searchParams.append("page_size", pageSize.toString());
+        url.searchParams.append(
+            "fields",
+            "code,product_name,brands,image_url,nutriments,quantity,serving_size,popularity_key",
+        );
+
+        return this.fetchAndProcessResults(url, page);
     }
 }

@@ -95,6 +95,7 @@
                         @search-food="openFoodSearch(mealType)"
                         @add-macros="openManualMacrosDialog(mealType)"
                         @scan-label="openNutritionScanner(mealType)"
+                        @describe-food="openFoodPromptDialog(mealType)"
                         @remove-food="(index) => removeFoodFromMeal(mealType, index)"
                     />
                 </v-col>
@@ -112,7 +113,9 @@ import type { FoodItem } from "../types/food";
 import type { Meal } from "../types/health-metrics";
 
 import CaloriesSummary from "../components/calories/CaloriesSummary.vue";
+import FoodAIResultDialog from "../components/calories/FoodAIResultDialog.vue";
 import FoodPortionDialog from "../components/calories/FoodPortionDialog.vue";
+import FoodPromptDialog from "../components/calories/FoodPromptDialog.vue";
 import FoodSearch from "../components/calories/FoodSearch.vue";
 import ManualMacrosDialog from "../components/calories/ManualMacrosDialog.vue";
 import MealCard from "../components/calories/MealCard.vue";
@@ -255,18 +258,50 @@ function getMealByType(type: Meal["mealType"]): Meal | undefined {
     return meals.value.find((meal) => meal.mealType === type);
 }
 
+function openFoodAIResultDialog(food: FoodItem, mealType: Meal["mealType"]): void {
+    globalDialog.openDialog(
+        FoodAIResultDialog,
+        {
+            food,
+            mealType,
+            onAdd(adjustedFood: FoodItem) {
+                addFoodToMeal(adjustedFood, mealType);
+            },
+        },
+        {
+            title: "AI Food Analysis",
+        },
+    );
+}
+
 function openFoodPortionDialog(food: FoodItem, mealType: Meal["mealType"]): void {
     globalDialog.openDialog(
         FoodPortionDialog,
         {
             food,
             mealType,
-            onAdd: async (adjustedFood: FoodItem) => {
-                await addFoodToMeal(adjustedFood, mealType);
+            onAdd(adjustedFood: FoodItem) {
+                addFoodToMeal(adjustedFood, mealType);
             },
         },
         {
             title: food.name,
+        },
+    );
+}
+
+function openFoodPromptDialog(mealType: Meal["mealType"]): void {
+    const dialogId = globalDialog.openDialog(
+        FoodPromptDialog,
+        {
+            mealType,
+            onFoodAnalyzed(food: FoodItem) {
+                globalDialog.closeDialog(dialogId);
+                openFoodAIResultDialog(food, mealType);
+            },
+        },
+        {
+            title: "Describe Your Food",
         },
     );
 }

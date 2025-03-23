@@ -29,32 +29,6 @@
                 </v-text-field>
             </div>
 
-            <!-- Simple pill filter that works correctly -->
-            <div class="d-flex justify-center mb-4">
-                <v-btn-toggle
-                    v-model="foodTypeFilter"
-                    color="primary"
-                    rounded="pill"
-                    mandatory
-                    density="comfortable"
-                >
-                    <v-btn
-                        value="ingredients"
-                        :variant="foodTypeFilter === 'ingredients' ? 'elevated' : 'text'"
-                        prepend-icon="mdi-food-apple"
-                    >
-                        Ingredients
-                    </v-btn>
-                    <v-btn
-                        value="products"
-                        :variant="foodTypeFilter === 'products' ? 'elevated' : 'text'"
-                        prepend-icon="mdi-package-variant"
-                    >
-                        Products
-                    </v-btn>
-                </v-btn-toggle>
-            </div>
-
             <!-- Tabs for different food sources -->
             <v-tabs v-model="activeTab" density="comfortable" color="primary" grow class="mb-3">
                 <v-tab value="search">Database</v-tab>
@@ -246,7 +220,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
 
 import type { CustomFood, FoodItem } from "../../types/food";
@@ -255,7 +229,6 @@ import { useBarcodeScanner } from "../../composables/useBarcodeScanner";
 import { logger } from "../../logger/app-logger";
 import { getUserCustomFoods } from "../../services/custom-foods";
 import { combinedFoodApi } from "../../services/food-api/combined-api";
-import { NutritionixApi } from "../../services/food-api/nutritionix-api";
 import { getRecentFoods } from "../../services/recent-food-db";
 import { useAuthStore } from "../../stores/auth";
 import { useGlobalStore } from "../../stores/global";
@@ -364,21 +337,6 @@ function debounceSearch(): void {
     }, 500);
 }
 
-const foodTypeFilter = ref<"ingredients" | "products">("ingredients");
-
-watch(foodTypeFilter, () => {
-    currentPage.value = 1;
-    searchResults.value = {
-        currentPage: 1,
-        foods: [],
-        totalCount: 0,
-        totalPages: 0,
-    };
-    if (searchQuery.value.length >= 2) {
-        performSearch();
-    }
-});
-
 function goToCustomFood(): void {
     router.push({ name: "CustomFood" });
     emit("close");
@@ -391,23 +349,11 @@ async function performSearch(): Promise<void> {
         isLoading.value = true;
         hasSearched.value = true;
 
-        const nutritionixApi = new NutritionixApi();
-
-        if (foodTypeFilter.value === "ingredients") {
-            // For ingredients, use Nutritionix's natural language endpoint
-            searchResults.value = await nutritionixApi.searchIngredients(
-                searchQuery.value,
-                currentPage.value,
-                10,
-            );
-        } else {
-            // For products, use the combined API (which includes OpenFoodFacts and others)
-            searchResults.value = await combinedFoodApi.searchFoods(
-                searchQuery.value,
-                currentPage.value,
-                10,
-            );
-        }
+        searchResults.value = await combinedFoodApi.searchFoods(
+            searchQuery.value,
+            currentPage.value,
+            10,
+        );
     } catch (error) {
         logger.error(error, "FoodSearch", { query: searchQuery.value });
     } finally {

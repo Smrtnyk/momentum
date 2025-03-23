@@ -28,14 +28,12 @@
 
         <GlobalSnackbar />
         <GenericDialog />
-        <ActiveWorkoutIndicator />
     </v-app>
 </template>
 
 <script setup lang="ts">
 import { onMounted, onUnmounted } from "vue";
 
-import ActiveWorkoutIndicator from "./components/ActiveWorkoutIndicator.vue";
 import TopMenu from "./components/TopMenu.vue";
 import GenericDialog from "./components/ui/GenericDialog.vue";
 import GlobalSnackbar from "./components/ui/GlobalSnackbar.vue";

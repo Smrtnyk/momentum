@@ -731,6 +731,15 @@ function getElapsedTimeText(): string {
 function handleSaveExercise(index: number, updatedExercise: ExerciseEntry): void {
     if (!workout.value) return;
 
+    if (
+        isStrengthExercise(updatedExercise) &&
+        workout.value.exerciseEntries[index] &&
+        isStrengthExercise(workout.value.exerciseEntries[index]) &&
+        (!updatedExercise.sets || updatedExercise.sets.length === 0)
+    ) {
+        updatedExercise.sets = workout.value.exerciseEntries[index].sets;
+    }
+
     workout.value.exerciseEntries[index] = updatedExercise;
 
     globalStore.notify(`Exercise updated`);

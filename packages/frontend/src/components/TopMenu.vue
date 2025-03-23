@@ -9,8 +9,16 @@
         <v-btn to="/home" icon>
             <v-icon>mdi-home</v-icon>
         </v-btn>
-        <v-btn to="/workouts" icon>
+        <v-btn to="/workouts" icon :class="{ 'workout-active-btn': hasActiveWorkout }">
             <v-icon>mdi-dumbbell</v-icon>
+            <v-badge
+                v-if="hasActiveWorkout"
+                color="success"
+                dot
+                location="bottom end"
+                offset-x="3"
+                offset-y="3"
+            ></v-badge>
         </v-btn>
         <v-btn to="/workout-plans" icon>
             <v-icon>mdi-clipboard-text-outline</v-icon>
@@ -32,8 +40,11 @@
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
+import { useActiveWorkoutStore } from "../stores/active-workout";
+
 const router = useRouter();
 const route = useRoute();
+const activeWorkoutStore = useActiveWorkoutStore();
 
 const mainRoutes = ["Home", "Auth"];
 
@@ -41,7 +52,17 @@ const showBackButton = computed(() => {
     return !mainRoutes.includes(route.name as string);
 });
 
+const hasActiveWorkout = computed(function () {
+    return activeWorkoutStore.isWorkoutActive;
+});
+
 function goBack(): void {
     router.back();
 }
 </script>
+
+<style scoped>
+.workout-active-btn {
+    position: relative;
+}
+</style>

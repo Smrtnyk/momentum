@@ -8,8 +8,7 @@ export interface CustomFood extends FoodItem {
 }
 
 export interface FoodItem {
-    // Alternative serving sizes (from Nutritionix)
-    altMeasures?: AlternativeMeasure[] | null;
+    aiMetadata?: AIFoodMetadata;
     barcode: null | string;
     brand?: null | string;
     calories: number;
@@ -32,25 +31,6 @@ export interface FoodSearchResult {
     foods: FoodItem[];
     totalCount: number;
     totalPages: number;
-}
-
-export interface NutritionixFood {
-    alt_measures?: AlternativeMeasure[];
-    brand_name?: string;
-    food_name: string;
-    full_nutrients?: Nutrient[];
-    ndb_no?: string;
-    nf_calories: number;
-    nf_protein: number;
-    nf_total_carbohydrate: number;
-    nf_total_fat: number;
-    photo?: {
-        highres: string;
-        thumb: string;
-    };
-    serving_qty: number;
-    serving_unit: string;
-    serving_weight_grams: number;
 }
 
 export interface OpenFoodFactsProduct {
@@ -151,11 +131,29 @@ export interface OpenFoodRepoProduct {
           }[];
 }
 
-interface AlternativeMeasure {
-    measure: string;
-    qty: number;
-    seq?: null | number;
-    serving_weight: number;
+interface AIFoodMetadata {
+    confidence?: number | undefined;
+    fitnessInfo?:
+        | undefined
+        | {
+              dietCompatibility: {
+                  keto: boolean;
+                  lowCarb: boolean;
+                  paleo: boolean;
+                  vegan: boolean;
+              };
+              glycemicImpact: string;
+              workoutSuitability: {
+                  postWorkout: number;
+                  preWorkout: number;
+              };
+          };
+    nutriScore?:
+        | undefined
+        | {
+              grade: "A" | "B" | "C" | "D" | "E";
+              score: number;
+          };
 }
 
 type FoodType = "ingredient" | "product";

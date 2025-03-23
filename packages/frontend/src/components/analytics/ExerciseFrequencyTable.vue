@@ -76,19 +76,17 @@
 </template>
 
 <script setup lang="ts">
-import { isNotNil } from "es-toolkit";
 import { computed } from "vue";
 
+import type { Exercise } from "../../types/exercise";
 import type { WorkoutWithId } from "../../types/workout";
 
-import { cardioExercises } from "../../data/cardio-exercises";
-import { strengthExercises } from "../../data/strength-exercises";
 import { formatRelativeDate } from "../../helpers/date-utils";
-import { getMuscleById } from "../../helpers/exercise-utils";
 import { isStrengthExercise } from "../../services/workout";
 import { CHART_COLORS } from "./colors";
 
-const props = defineProps<{
+const { exercisesMap, workoutData } = defineProps<{
+    exercisesMap: Record<string, Exercise>;
     workoutData: WorkoutWithId[];
 }>();
 
@@ -109,7 +107,9 @@ const exerciseFrequency = computed(() => {
         }
     >();
 
-    props.workoutData.forEach(function (workout) {
+    workoutData.forEach(function (workout) {
+        const workoutDate = workout.date.toDate();
+
         workout.exerciseEntries.forEach(function (entry) {
             const exerciseType = isStrengthExercise(entry) ? "strength" : "cardio";
 
@@ -117,7 +117,7 @@ const exerciseFrequency = computed(() => {
                 frequencyMap.set(entry.exerciseId, {
                     count: 0,
                     exerciseType,
-                    lastUsed: workout.date.toDate(),
+                    lastUsed: workoutDate,
                 });
             }
 
@@ -126,7 +126,6 @@ const exerciseFrequency = computed(() => {
             data.count++;
 
             // Update last used date if newer
-            const workoutDate = workout.date.toDate();
             if (workoutDate > data.lastUsed) {
                 data.lastUsed = workoutDate;
             }
@@ -139,19 +138,11 @@ const exerciseFrequency = computed(() => {
 const sortedExercises = computed(() => {
     const exercises = Array.from(exerciseFrequency.value.entries())
         .map(([id, data]) => {
-            const isStrength = data.exerciseType === "strength";
-            const exerciseList = isStrength ? strengthExercises : cardioExercises;
-            const exercise = exerciseList.find((e) => e.exerciseId === id);
+            const exercise = exercisesMap[id];
 
-            if (!exercise) return null;
-
-            let muscles: string[] = [];
-            if (isStrength && "muscleIds" in exercise) {
-                muscles = exercise.muscleIds.map((mid) => {
-                    const muscle = getMuscleById(mid);
-                    return muscle ? muscle.name : "Unknown";
-                });
-            }
+            const muscles = [
+                ...new Set([...exercise.primaryMuscles, ...exercise.secondaryMuscles]),
+            ];
 
             return {
                 count: data.count,
@@ -164,7 +155,6 @@ const sortedExercises = computed(() => {
                 rank: 0,
             };
         })
-        .filter(isNotNil)
         .sort((a, b) => b.count - a.count);
 
     return exercises.map((exercise, index) => ({

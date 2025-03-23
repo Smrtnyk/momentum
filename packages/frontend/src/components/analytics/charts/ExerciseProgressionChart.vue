@@ -146,31 +146,32 @@ import type { ApexOptions } from "apexcharts";
 
 import { computed, ref, watch } from "vue";
 
+import type { Exercise } from "../../../types/exercise";
 import type { WorkoutWithId } from "../../../types/workout";
 
 import { formatRelativeDate } from "../../../helpers/date-utils";
-import { getExerciseById } from "../../../helpers/exercise-utils";
 import { isStrengthExercise } from "../../../services/workout";
 import { getLineChartStyleOptions } from "./chart-options";
 
-const props = defineProps<{
+const { exerciseId, exercisesMap, workoutData } = defineProps<{
     exerciseId: string;
+    exercisesMap: Record<string, Exercise>;
     workoutData: WorkoutWithId[];
 }>();
 
 const showAllSets = ref(false);
 
 const exerciseData = computed(() => {
-    if (!props.exerciseId) {
+    if (!exerciseId) {
         return [];
     }
 
     const data = [];
 
-    for (const workout of props.workoutData) {
+    for (const workout of workoutData) {
         const exercises = workout.exerciseEntries.filter(isStrengthExercise);
         for (const entry of exercises) {
-            if (entry.exerciseId !== props.exerciseId) continue;
+            if (entry.exerciseId !== exerciseId) continue;
 
             const totalVolume = entry.sets.reduce((sum, set) => sum + set.weight * set.reps, 0);
             const maxWeight = Math.max(...entry.sets.map((set) => set.weight));
@@ -402,12 +403,12 @@ const chartOptions = ref<ApexOptions>({
     ],
 });
 
-watch([() => props.exerciseId, () => props.workoutData], () => {
+watch([() => exerciseId, () => workoutData], function () {
     if (exerciseData.value.length === 0) return;
 
     let exerciseName = "Exercise";
-    if (props.exerciseId) {
-        exerciseName = getExerciseById(props.exerciseId).name;
+    if (exerciseId) {
+        exerciseName = exercisesMap[exerciseId].name;
     }
 
     const prs = [];
@@ -444,7 +445,7 @@ watch([() => props.exerciseId, () => props.workoutData], () => {
         },
         chart: {
             ...chartOptions.value.chart,
-            id: `exercise-${props.exerciseId}`,
+            id: `exercise-${exerciseId}`,
         },
         title: {
             align: "left",

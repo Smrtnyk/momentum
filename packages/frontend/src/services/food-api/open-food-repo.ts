@@ -51,16 +51,54 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
         }
 
         try {
-            const searchQuery = {
-                from: (page - 1) * pageSize,
-                query: {
-                    wildcard: {
-                        _all_names: `*${query}*`,
+            const searchTerms = query.trim();
+            const words = searchTerms.split(/\s+/);
+
+            let searchQuery;
+
+            if (words.length > 1) {
+                // For multi-word queries use a combination of better Elasticsearch queries
+                searchQuery = {
+                    from: (page - 1) * pageSize,
+                    query: {
+                        bool: {
+                            should: [
+                                // Exact phrase match with higher boost
+                                {
+                                    match_phrase: {
+                                        _all_names: {
+                                            boost: 2,
+                                            query: searchTerms,
+                                        },
+                                    },
+                                },
+                                // All words must be present (AND operator)
+                                {
+                                    match: {
+                                        _all_names: {
+                                            operator: "and",
+                                            query: searchTerms,
+                                        },
+                                    },
+                                },
+                            ],
+                        },
                     },
-                },
-                size: pageSize,
-                track_total_hits: true,
-            };
+                    size: pageSize,
+                    track_total_hits: true,
+                };
+            } else {
+                searchQuery = {
+                    from: (page - 1) * pageSize,
+                    query: {
+                        wildcard: {
+                            _all_names: `*${searchTerms}*`,
+                        },
+                    },
+                    size: pageSize,
+                    track_total_hits: true,
+                };
+            }
 
             return await this.searchWithElasticSearch(searchQuery, page);
         } catch (error) {

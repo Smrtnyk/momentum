@@ -120,7 +120,7 @@
                                 </div>
                                 <div class="flex-grow-1">
                                     <div class="text-subtitle-2 font-weight-medium">
-                                        {{ getExerciseName(exercise.exerciseId) }}
+                                        {{ isLoading ? "Loading..." : state[exercise.exerciseId] }}
                                     </div>
                                     <div class="text-caption text-grey-lighten-1">
                                         <span v-if="exercise.setsCount"
@@ -164,37 +164,22 @@
             </v-expansion-panel>
         </v-expansion-panels>
 
-        <!-- Add Exercise Button -->
-        <v-card class="mb-8 rounded-lg">
-            <v-card-text class="text-center">
-                <p class="text-body-2 mb-3">
-                    Don't see an exercise you need? Add it to the library!
-                </p>
-                <v-btn
-                    color="primary"
-                    variant="outlined"
-                    prepend-icon="mdi-plus"
-                    @click="handleAddExercise"
-                >
-                    Add Exercise
-                </v-btn>
-            </v-card-text>
-        </v-card>
-
         <v-card-actions>
             <v-btn color="primary" variant="elevated" @click="handleAddToFavorites">
                 Add to Favorites
             </v-btn>
-            <v-spacer></v-spacer>
-            <v-btn color="success" variant="elevated" @click="handleStartPlan"> Start Plan </v-btn>
         </v-card-actions>
     </div>
 </template>
 
 <script setup lang="ts">
+import { useAsyncState } from "@vueuse/core";
+
 import type { DifficultyLevel, TrainingPlan } from "../../types/workout-plans";
 
-import { getExerciseById } from "../../helpers/exercise-utils";
+import { logger } from "../../logger/app-logger";
+import { useExerciseStore } from "../../stores/exercises";
+import { useGlobalStore } from "../../stores/global";
 import StartWorkoutButton from "./StartWorkoutButton.vue";
 
 const props = defineProps<{
@@ -204,7 +189,48 @@ const props = defineProps<{
     plan: TrainingPlan;
 }>();
 
-const emit = defineEmits<(e: "close") => void>();
+defineEmits<(e: "close") => void>();
+
+const globalStore = useGlobalStore();
+const { getExerciseById } = useExerciseStore();
+
+async function fetchAllExercises(): Promise<Record<string, string>> {
+    const exerciseIds = getAllExerciseIds();
+    const exercisesMap: Record<string, string> = {};
+
+    await Promise.all(
+        exerciseIds.map(async function (id) {
+            const exercise = await getExerciseById(id);
+            exercisesMap[id] = exercise.name;
+        }),
+    );
+
+    return exercisesMap;
+}
+
+function getAllExerciseIds(): string[] {
+    const ids = new Set<string>();
+
+    props.plan.workoutDays.forEach(function (day) {
+        day.exerciseEntries.forEach(function (entry) {
+            ids.add(entry.exerciseId);
+        });
+    });
+
+    return Array.from(ids);
+}
+
+const { isLoading, state } = useAsyncState(
+    () => fetchAllExercises(),
+    {},
+    {
+        immediate: true,
+        onError(error) {
+            logger.error(error);
+            globalStore.notifyError(error);
+        },
+    },
+);
 
 function formatDuration(seconds: number): string {
     if (seconds < 60) {
@@ -247,11 +273,6 @@ function getExerciseIcon(exerciseId: string): string {
     return "mdi-dumbbell";
 }
 
-function getExerciseName(exerciseId: string): string {
-    const exercise = getExerciseById(exerciseId);
-    return exercise.name;
-}
-
 function getLevelClass(level: DifficultyLevel): string {
     switch (level) {
         case "advanced":
@@ -271,23 +292,9 @@ function getTotalExercises(plan: TrainingPlan): number {
     }, 0);
 }
 
-function handleAddExercise(): void {
-    emit("close");
-    if (props.onAddExercise) {
-        props.onAddExercise();
-    }
-}
-
 function handleAddToFavorites(): void {
     if (props.onAddToFavorites) {
         props.onAddToFavorites(props.plan);
     }
-}
-
-function handleStartPlan(): void {
-    if (props.onStartPlan) {
-        props.onStartPlan(props.plan);
-    }
-    emit("close");
 }
 </script>

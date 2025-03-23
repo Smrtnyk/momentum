@@ -140,8 +140,14 @@
                         <div class="flex-grow-1 min-width-0">
                             <!-- Exercise Header -->
                             <div class="d-flex align-center justify-space-between">
-                                <div class="text-h6 font-weight-medium text-truncate">
-                                    {{ getExerciseName(entry.exerciseId) || "Unknown Exercise" }}
+                                <div
+                                    v-if="isLoading"
+                                    class="text-h6 font-weight-medium d-flex align-center"
+                                >
+                                    <v-skeleton-loader type="text" />
+                                </div>
+                                <div v-else class="text-h6 font-weight-medium text-truncate">
+                                    {{ toExerciseName(entry.exerciseId) }}
                                 </div>
                             </div>
 
@@ -195,8 +201,14 @@
                         <div class="flex-grow-1 min-width-0">
                             <!-- Activity Header -->
                             <div class="d-flex align-center justify-space-between">
-                                <div class="text-h6 font-weight-medium text-truncate">
-                                    {{ getExerciseName(entry.exerciseId) || "Unknown Activity" }}
+                                <div
+                                    v-if="isLoading"
+                                    class="text-h6 font-weight-medium d-flex align-center"
+                                >
+                                    <v-skeleton-loader type="text" />
+                                </div>
+                                <div v-else class="text-h6 font-weight-medium text-truncate">
+                                    {{ toExerciseName(entry.exerciseId) }}
                                 </div>
                             </div>
 
@@ -287,12 +299,13 @@
 </template>
 
 <script setup lang="ts">
+import { useAsyncState } from "@vueuse/core";
 import { computed } from "vue";
 
 import type { ExerciseEntry, Workout } from "../../types/workout";
 
-import { getExerciseById } from "../../helpers/exercise-utils";
 import { isCardioExercise, isStrengthExercise } from "../../services/workout";
+import { useExerciseStore } from "../../stores/exercises";
 import WorkoutDateInfo from "./WorkoutDateInfo.vue";
 import WorkoutHitMusclesChips from "./WorkoutHitMusclesChips.vue";
 
@@ -301,6 +314,8 @@ const emit = defineEmits<{
     delete: [];
     edit: [];
 }>();
+
+const exerciseStore = useExerciseStore();
 
 const allStrengthExercises = computed((): ExerciseEntry[] => {
     return props.workout.exerciseEntries.filter(isStrengthExercise);
@@ -338,9 +353,22 @@ const totalCalories = computed(function (): number {
     }, 0);
 });
 
-function getExerciseName(id: string): string {
-    return getExerciseById(id).name;
+async function fetchExerciseNames(): Promise<Record<string, string>> {
+    const exerciseIds = [
+        ...new Set(props.workout.exerciseEntries.map((entry) => entry.exerciseId)),
+    ];
+
+    const exerciseNames: Record<string, string> = {};
+    await Promise.all(
+        exerciseIds.map(async function (id) {
+            exerciseNames[id] = await exerciseStore.getExerciseName(id);
+        }),
+    );
+
+    return exerciseNames;
 }
+
+const { error, isLoading, state } = useAsyncState(fetchExerciseNames, {}, { immediate: true });
 
 function handleDeleteWorkout(): void {
     emit("delete");
@@ -361,6 +389,18 @@ function intensityColor(intensity: string): string {
         default:
             return "grey";
     }
+}
+
+function toExerciseName(exerciseId: string): string {
+    if (error.value) {
+        return "Failed to load exercise";
+    }
+
+    if (isLoading.value) {
+        return "Loading...";
+    }
+
+    return state.value[exerciseId];
 }
 </script>
 
@@ -397,5 +437,23 @@ function intensityColor(intensity: string): string {
 
 .min-width-0 {
     min-width: 0;
+}
+
+.skeleton-name {
+    height: 24px;
+    width: 180px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
 }
 </style>

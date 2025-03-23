@@ -96,6 +96,15 @@ const routes = [
         },
         name: "CustomWorkout",
         path: "/custom-workout/:id?",
+        props: true,
+    },
+    {
+        component: () => import("../pages/PageExercisesLibrary.vue"),
+        meta: {
+            requiresAuth: true,
+        },
+        name: "ExercisesLibrary",
+        path: "/exercises-library",
     },
     {
         path: "/:catchAll(.*)",

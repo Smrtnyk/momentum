@@ -227,16 +227,11 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 
-import type { Exercise } from "../types/exercise";
 import type { DifficultyLevel, TrainingPlan } from "../types/workout-plans";
 
-import AddExerciseDialog from "../components/workout-plans/AddExerciseDialog.vue";
 import PlanDetailsDialog from "../components/workout-plans/PlanDetailsDialog.vue";
 import { globalDialog } from "../composables/useDialog";
-import { cardioExercises } from "../data/cardio-exercises";
-import { strengthExercises } from "../data/strength-exercises";
 import { allTrainingPlans, cardioPlans, hybridPlans, strengthPlans } from "../data/training-plans";
-import { getMuscleGroups } from "../helpers/exercise-utils";
 import { logger } from "../logger/app-logger";
 
 type WorkoutImageMap = {
@@ -258,7 +253,6 @@ function hasBackgroundImage(type: TrainingPlan["type"]): boolean {
 }
 
 const activeTab = ref<string>("all");
-const allExercises = ref<Exercise[]>([...strengthExercises, ...cardioExercises]);
 const searchQuery = ref<string>("");
 const selectedDuration = ref<string>("all");
 const selectedLevel = ref<string>("all");
@@ -298,8 +292,6 @@ const durationOptions = [
     { title: "8-12 weeks", value: "medium" },
     { title: "12+ weeks", value: "long" },
 ] as const;
-
-const muscleGroups = getMuscleGroups();
 
 const filteredPlans = computed<TrainingPlan[]>(function () {
     let plans: TrainingPlan[];
@@ -354,20 +346,6 @@ const filteredPlans = computed<TrainingPlan[]>(function () {
     return plans;
 });
 
-function addNewExercise(exerciseData: Omit<Exercise, "id">): void {
-    const exerciseId = exerciseData.name
-        .toLowerCase()
-        .replaceAll(/\s+/g, "-")
-        .replaceAll(/[^\da-z-]/g, "");
-
-    allExercises.value.push({
-        ...exerciseData,
-        exerciseId,
-    });
-
-    logger.info(`Added ${exerciseData.name} to the exercise library!`);
-}
-
 function getCategoryClass(category: TrainingPlan["type"]): string {
     switch (category) {
         case "cardio":
@@ -411,13 +389,9 @@ function openPlanDetails(plan: TrainingPlan): void {
     globalDialog.openDialog(
         PlanDetailsDialog,
         {
-            onAddExercise: showAddExerciseDialog,
             onAddToFavorites(planData: TrainingPlan): void {
                 logger.info("Adding plan to Favorites");
                 logger.info(`Added ${planData.name} to favorites!`);
-            },
-            onStartPlan(planData: TrainingPlan): void {
-                logger.info("Starting plan...", "", planData);
             },
             plan,
         },
@@ -432,19 +406,6 @@ function resetFilters(): void {
     selectedLevel.value = "all";
     selectedDuration.value = "all";
     searchQuery.value = "";
-}
-
-function showAddExerciseDialog(): void {
-    globalDialog.openDialog(
-        AddExerciseDialog,
-        {
-            muscleGroups,
-            onAdd: addNewExercise,
-        },
-        {
-            title: "Add New Exercise",
-        },
-    );
 }
 
 function showCreatePlanDialog(): void {

@@ -311,43 +311,13 @@
                                 Total: {{ totalCalories }} kcal for {{ desiredServings }} servings
                             </div>
 
-                            <!-- Macros with progress bars -->
-                            <div class="macros mb-4">
-                                <div class="d-flex align-center justify-space-between mb-2">
-                                    <div class="text-subtitle-2 font-weight-medium">Protein</div>
-                                    <div class="text-subtitle-2">{{ adjustedMacros.protein }}g</div>
-                                </div>
-                                <v-progress-linear
-                                    :model-value="getPercentage(adjustedMacros.protein)"
-                                    color="deep-purple"
-                                    height="10"
-                                    rounded
-                                    class="mb-3"
-                                ></v-progress-linear>
-
-                                <div class="d-flex align-center justify-space-between mb-2">
-                                    <div class="text-subtitle-2 font-weight-medium">Carbs</div>
-                                    <div class="text-subtitle-2">{{ adjustedMacros.carbs }}g</div>
-                                </div>
-                                <v-progress-linear
-                                    :model-value="getPercentage(adjustedMacros.carbs)"
-                                    color="amber"
-                                    height="10"
-                                    rounded
-                                    class="mb-3"
-                                ></v-progress-linear>
-
-                                <div class="d-flex align-center justify-space-between mb-2">
-                                    <div class="text-subtitle-2 font-weight-medium">Fat</div>
-                                    <div class="text-subtitle-2">{{ adjustedMacros.fat }}g</div>
-                                </div>
-                                <v-progress-linear
-                                    :model-value="getPercentage(adjustedMacros.fat)"
-                                    color="blue"
-                                    height="10"
-                                    rounded
-                                    class="mb-3"
-                                ></v-progress-linear>
+                            <!-- Macronutrient Display with Progress Bar -->
+                            <div class="mb-4">
+                                <MacroProgress
+                                    :protein="adjustedMacros.protein"
+                                    :carbs="adjustedMacros.carbs"
+                                    :fat="adjustedMacros.fat"
+                                />
                             </div>
 
                             <!-- Macro percentages -->
@@ -622,6 +592,7 @@ import { useRoute, useRouter } from "vue-router";
 
 import type { Ingredient, Recipe } from "../types/recipe";
 
+import MacroProgress from "../components/calories/MacroProgress.vue";
 import {
     getCategoryColor,
     getCategoryIcon,
@@ -725,15 +696,6 @@ function calculateMacroPercentage(macroType: "carbs" | "fat" | "protein"): numbe
 function clearCheckedIngredients(): void {
     checkedIngredients.value.clear();
     saveIngredientState();
-}
-
-function getPercentage(macroValue: number): number {
-    if (!recipe.value) return 0;
-
-    const totalMacros =
-        adjustedMacros.value.protein + adjustedMacros.value.carbs + adjustedMacros.value.fat;
-
-    return (macroValue / totalMacros) * 100;
 }
 
 function getTicksForServings(): Record<number, string> {

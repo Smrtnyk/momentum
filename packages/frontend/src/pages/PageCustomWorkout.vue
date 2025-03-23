@@ -6,17 +6,18 @@
         </div>
 
         <!-- Workout content -->
-        <div v-else-if="workout">
+        <div v-else-if="workout" class="workout-container">
             <v-card class="mb-4 rounded-lg">
                 <v-card-title class="d-flex align-center pa-4">
                     <div class="d-flex flex-column">
                         <div class="d-flex align-center">
                             <v-icon
-                                :icon="getWorkoutTypeIcon()"
-                                :color="getWorkoutTypeColor()"
-                                class="mr-2"
+                                size="xs"
+                                icon="mdi-timer"
+                                color="primary"
+                                class="mr-1"
                             ></v-icon>
-                            <h2 class="text-h5 font-weight-bold">
+                            <h2 class="text-h6 font-weight-bold text-truncate">
                                 <span
                                     v-if="!isEditingName"
                                     @click="startEditingName"
@@ -53,43 +54,6 @@
                             <template v-else> Editing saved workout </template>
                         </div>
                     </div>
-                    <v-spacer></v-spacer>
-
-                    <!-- Different actions based on mode -->
-                    <template v-if="isActiveWorkout(workout)">
-                        <v-btn
-                            color="error"
-                            variant="outlined"
-                            size="small"
-                            @click="cancelWorkout"
-                            class="mr-2"
-                            icon="mdi-close"
-                        />
-                        <v-btn
-                            color="success"
-                            variant="elevated"
-                            @click="finishWorkout"
-                            icon="mdi-check"
-                        />
-                    </template>
-                    <template v-else>
-                        <v-btn
-                            color="error"
-                            variant="outlined"
-                            size="small"
-                            @click="discardChanges"
-                            class="mr-2"
-                            :disabled="!hasChanges"
-                            icon="mdi-close"
-                        />
-                        <v-btn
-                            color="success"
-                            variant="elevated"
-                            @click="saveWorkout"
-                            :disabled="!hasChanges"
-                            icon="mdi-check"
-                        />
-                    </template>
                 </v-card-title>
             </v-card>
 
@@ -117,213 +81,231 @@
                 </div>
 
                 <div v-else>
-                    <!-- Exercises / Activities Cards -->
-                    <v-card
-                        v-for="(exercise, index) in exerciseEntries"
-                        :key="index"
-                        class="mb-3 rounded-lg"
-                        :class="{
-                            'completed-exercise': isActiveExercise(exercise) && exercise.completed,
-                        }"
-                    >
-                        <div class="pa-3">
-                            <div class="d-flex align-center">
-                                <!-- Completion toggle (only for active workouts) -->
-                                <v-btn
-                                    v-if="isActiveExercise(exercise)"
-                                    :icon="
-                                        exercise.completed
-                                            ? 'mdi-check-circle'
-                                            : 'mdi-circle-outline'
-                                    "
-                                    :color="exercise.completed ? 'success' : 'grey-lighten-2'"
-                                    variant="text"
-                                    @click="toggleExercise(index)"
-                                    class="mr-2"
-                                ></v-btn>
+                    <v-form ref="exercisesForm">
+                        <!-- Exercises / Activities Cards -->
+                        <v-card
+                            v-for="(exercise, index) in exerciseEntries"
+                            :key="index"
+                            class="mb-3 rounded-lg"
+                            :class="{
+                                'completed-exercise':
+                                    isActiveExercise(exercise) && exercise.completed,
+                            }"
+                        >
+                            <div class="pa-3">
+                                <div class="d-flex align-center">
+                                    <!-- Completion toggle (only for active workouts) -->
+                                    <v-btn
+                                        v-if="isActiveExercise(exercise)"
+                                        :icon="
+                                            exercise.completed
+                                                ? 'mdi-check-circle'
+                                                : 'mdi-circle-outline'
+                                        "
+                                        :color="exercise.completed ? 'success' : 'grey-lighten-2'"
+                                        variant="text"
+                                        @click="toggleExercise(index)"
+                                        class="mr-2"
+                                    ></v-btn>
 
-                                <div class="flex-grow-1">
-                                    <div class="font-weight-medium">
-                                        {{ getExerciseName(exercise.exerciseId) }}
+                                    <div class="flex-grow-1">
+                                        <v-skeleton-loader
+                                            v-if="isLoadingNames"
+                                            type="text"
+                                            width="180"
+                                            class="font-weight-medium my-1"
+                                        ></v-skeleton-loader>
+                                        <div v-else class="font-weight-medium">
+                                            {{ getExerciseName(exercise.exerciseId) }}
+                                        </div>
+                                        <div class="text-caption text-grey-lighten-1">
+                                            <template v-if="isCardioExercise(exercise)">
+                                                {{ exercise.durationSeconds / 60 }}
+                                                min
+                                            </template>
+                                            <template v-if="isCardioExercise(exercise)">
+                                                •
+                                                {{ exercise.distanceKm }} km
+                                            </template>
+                                            <template v-if="isCardioExercise(exercise)">
+                                                • {{ exercise.intensity }} intensity
+                                            </template>
+                                        </div>
                                     </div>
-                                    <div class="text-caption text-grey-lighten-1">
-                                        <template v-if="isCardioExercise(exercise)">
-                                            {{ exercise.durationSeconds / 60 }}
-                                            min
-                                        </template>
-                                        <template v-if="isCardioExercise(exercise)">
-                                            •
-                                            {{ exercise.distanceKm }} km
-                                        </template>
-                                        <template v-if="isCardioExercise(exercise)">
-                                            • {{ exercise.intensity }} intensity
-                                        </template>
+
+                                    <div class="d-flex">
+                                        <v-btn
+                                            icon="mdi-pencil"
+                                            variant="text"
+                                            color="grey-lighten-1"
+                                            @click="editExercise(index, workout)"
+                                            size="small"
+                                            class="mr-1"
+                                        ></v-btn>
+                                        <v-btn
+                                            icon="mdi-delete"
+                                            variant="text"
+                                            color="error"
+                                            @click="confirmRemoveExercise(index)"
+                                            size="small"
+                                        ></v-btn>
                                     </div>
                                 </div>
 
-                                <div class="d-flex">
-                                    <v-btn
-                                        icon="mdi-pencil"
-                                        variant="text"
-                                        color="grey-lighten-1"
-                                        @click="editExercise(index, workout)"
-                                        size="small"
-                                        class="mr-1"
-                                    ></v-btn>
-                                    <v-btn
-                                        icon="mdi-delete"
-                                        variant="text"
-                                        color="error"
-                                        @click="confirmRemoveExercise(index)"
-                                        size="small"
-                                    ></v-btn>
-                                </div>
-                            </div>
-
-                            <!-- Show sets for strength exercises -->
-                            <div v-if="isStrengthExercise(exercise)" class="mt-3">
-                                <v-expansion-panels variant="accordion">
-                                    <v-expansion-panel>
-                                        <v-expansion-panel-title>
-                                            <div class="d-flex align-center">
-                                                <v-icon size="small" class="mr-2"
-                                                    >mdi-clipboard-list</v-icon
-                                                >
-                                                Sets
-                                                <v-chip size="x-small" class="ml-2">
-                                                    <template v-if="isActiveExercise(exercise)">
-                                                        {{ getCompletedSetsCount(exercise) }}/{{
-                                                            exercise.sets.length
-                                                        }}
-                                                    </template>
-                                                    <template v-else>{{
-                                                        exercise.sets.length
-                                                    }}</template>
-                                                </v-chip>
-                                            </div>
-                                        </v-expansion-panel-title>
-                                        <v-expansion-panel-text>
-                                            <!-- Add Set Button -->
-                                            <div class="d-flex justify-end mb-2">
-                                                <v-btn
-                                                    color="primary"
-                                                    size="small"
-                                                    variant="text"
-                                                    prepend-icon="mdi-plus"
-                                                    @click="addSet(index)"
-                                                >
-                                                    Add Set
-                                                </v-btn>
-                                            </div>
-                                            <v-table density="compact" class="rounded-lg">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col" class="set-column">Set</th>
-                                                        <th scope="col" class="reps-column">
-                                                            Reps
-                                                        </th>
-                                                        <th scope="col" class="weight-column">
-                                                            Weight
-                                                        </th>
-                                                        <th
-                                                            scope="col"
-                                                            class="complete-column"
-                                                            v-if="isActiveWorkout(workout)"
-                                                        ></th>
-                                                        <th
-                                                            scope="col"
-                                                            class="action-column text-center"
-                                                        ></th>
-                                                    </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                    <tr
-                                                        v-for="(set, setIndex) in exercise.sets"
-                                                        :key="setIndex"
+                                <!-- Show sets for strength exercises -->
+                                <div v-if="isStrengthExercise(exercise)" class="mt-3">
+                                    <v-expansion-panels variant="accordion">
+                                        <v-expansion-panel>
+                                            <v-expansion-panel-title>
+                                                <div class="d-flex align-center">
+                                                    <v-icon size="small" class="mr-2"
+                                                        >mdi-clipboard-list</v-icon
                                                     >
-                                                        <td>{{ setIndex + 1 }}</td>
-                                                        <td class="pa-1">
-                                                            <v-text-field
-                                                                v-model.number="set.reps"
-                                                                type="number"
-                                                                variant="outlined"
-                                                                density="compact"
-                                                                hide-details
-                                                                class="narrow-input"
-                                                                @update:model-value="
-                                                                    updateSet(
-                                                                        index,
-                                                                        setIndex,
-                                                                        set.reps,
-                                                                        set.weight,
-                                                                    )
-                                                                "
-                                                            ></v-text-field>
-                                                        </td>
-                                                        <td class="pa-1">
-                                                            <v-text-field
-                                                                v-model.number="set.weight"
-                                                                type="number"
-                                                                variant="outlined"
-                                                                density="compact"
-                                                                hide-details
-                                                                class="narrow-input"
-                                                                @update:model-value="
-                                                                    updateSet(
-                                                                        index,
-                                                                        setIndex,
-                                                                        set.reps,
-                                                                        set.weight,
-                                                                    )
-                                                                "
-                                                            ></v-text-field>
-                                                        </td>
-                                                        <td
-                                                            v-if="isActiveExercise(exercise)"
-                                                            class="text-center"
+                                                    Sets
+                                                    <v-chip size="x-small" class="ml-2">
+                                                        <template v-if="isActiveExercise(exercise)">
+                                                            {{ getCompletedSetsCount(exercise) }}/{{
+                                                                exercise.sets.length
+                                                            }}
+                                                        </template>
+                                                        <template v-else>{{
+                                                            exercise.sets.length
+                                                        }}</template>
+                                                    </v-chip>
+                                                </div>
+                                            </v-expansion-panel-title>
+                                            <v-expansion-panel-text>
+                                                <!-- Add Set Button -->
+                                                <div class="d-flex justify-end mb-2">
+                                                    <v-btn
+                                                        color="primary"
+                                                        size="small"
+                                                        variant="text"
+                                                        prepend-icon="mdi-plus"
+                                                        @click="addSet(index)"
+                                                    >
+                                                        Add Set
+                                                    </v-btn>
+                                                </div>
+
+                                                <v-table density="compact" class="rounded-lg">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col" class="set-column">
+                                                                Set
+                                                            </th>
+                                                            <th scope="col" class="reps-column">
+                                                                Reps
+                                                            </th>
+                                                            <th scope="col" class="weight-column">
+                                                                Weight
+                                                            </th>
+                                                            <th
+                                                                scope="col"
+                                                                class="complete-column"
+                                                                v-if="isActiveWorkout(workout)"
+                                                            ></th>
+                                                            <th
+                                                                scope="col"
+                                                                class="action-column text-center"
+                                                            ></th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                        <tr
+                                                            v-for="(set, setIndex) in exercise.sets"
+                                                            :key="setIndex"
                                                         >
-                                                            <v-checkbox
-                                                                :model-value="
-                                                                    (set as ActiveSet).completed
-                                                                "
-                                                                hide-details
-                                                                @update:model-value="
-                                                                    toggleSet(index, setIndex)
-                                                                "
-                                                            ></v-checkbox>
-                                                        </td>
+                                                            <td>{{ setIndex + 1 }}</td>
+                                                            <td class="pa-1">
+                                                                <v-text-field
+                                                                    v-model.number="set.reps"
+                                                                    type="number"
+                                                                    variant="outlined"
+                                                                    density="compact"
+                                                                    hide-details
+                                                                    class="narrow-input"
+                                                                    :rules="[nonZeroPositive]"
+                                                                    @update:model-value="
+                                                                        updateSet(
+                                                                            index,
+                                                                            setIndex,
+                                                                            set.reps,
+                                                                            set.weight,
+                                                                        )
+                                                                    "
+                                                                ></v-text-field>
+                                                            </td>
+                                                            <td class="pa-1">
+                                                                <v-text-field
+                                                                    v-model.number="set.weight"
+                                                                    type="number"
+                                                                    variant="outlined"
+                                                                    density="compact"
+                                                                    hide-details
+                                                                    class="narrow-input"
+                                                                    @update:model-value="
+                                                                        updateSet(
+                                                                            index,
+                                                                            setIndex,
+                                                                            set.reps,
+                                                                            set.weight,
+                                                                        )
+                                                                    "
+                                                                ></v-text-field>
+                                                            </td>
+                                                            <td
+                                                                v-if="isActiveExercise(exercise)"
+                                                                class="text-center"
+                                                            >
+                                                                <v-checkbox
+                                                                    :disabled="
+                                                                        !set.reps || set.reps <= 0
+                                                                    "
+                                                                    :model-value="
+                                                                        (set as ActiveSet).completed
+                                                                    "
+                                                                    hide-details
+                                                                    @update:model-value="
+                                                                        toggleSet(index, setIndex)
+                                                                    "
+                                                                ></v-checkbox>
+                                                            </td>
 
-                                                        <td class="text-center">
-                                                            <v-btn
-                                                                icon="mdi-delete"
-                                                                size="x-small"
-                                                                color="error"
-                                                                variant="text"
-                                                                @click="removeSet(index, setIndex)"
-                                                                :disabled="
-                                                                    exercise.sets.length <= 1
-                                                                "
-                                                            ></v-btn>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </v-table>
-                                        </v-expansion-panel-text>
-                                    </v-expansion-panel>
-                                </v-expansion-panels>
-                            </div>
+                                                            <td class="text-center">
+                                                                <v-btn
+                                                                    icon="mdi-delete"
+                                                                    size="x-small"
+                                                                    color="error"
+                                                                    variant="text"
+                                                                    @click="
+                                                                        removeSet(index, setIndex)
+                                                                    "
+                                                                    :disabled="
+                                                                        exercise.sets.length <= 1
+                                                                    "
+                                                                ></v-btn>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </v-table>
+                                            </v-expansion-panel-text>
+                                        </v-expansion-panel>
+                                    </v-expansion-panels>
+                                </div>
 
-                            <!-- Notes if available -->
-                            <div
-                                v-if="exercise.exerciseNotes"
-                                class="mt-3 text-caption text-grey-lighten-2"
-                            >
-                                <v-icon size="small" class="mr-1">mdi-note-text</v-icon>
-                                {{ exercise.exerciseNotes }}
+                                <!-- Notes if available -->
+                                <div
+                                    v-if="exercise.exerciseNotes"
+                                    class="mt-3 text-caption text-grey-lighten-2"
+                                >
+                                    <v-icon size="small" class="mr-1">mdi-note-text</v-icon>
+                                    {{ exercise.exerciseNotes }}
+                                </div>
                             </div>
-                        </div>
-                    </v-card>
+                        </v-card>
+                    </v-form>
                 </div>
             </div>
 
@@ -357,14 +339,60 @@
                 ></v-textarea>
             </div>
         </div>
+
+        <!-- Bottom fixed action buttons -->
+        <v-footer app fixed class="px-4 py-2 justify-space-evenly" v-if="workout">
+            <template v-if="isActiveWorkout(workout)">
+                <v-btn
+                    color="error"
+                    variant="tonal"
+                    @click="cancelWorkout"
+                    class="mr-2"
+                    prepend-icon="mdi-close"
+                >
+                    Cancel
+                </v-btn>
+
+                <v-btn
+                    color="success"
+                    variant="elevated"
+                    @click="finishWorkout"
+                    prepend-icon="mdi-check"
+                >
+                    Finish
+                </v-btn>
+            </template>
+            <template v-else>
+                <v-btn
+                    color="error"
+                    variant="tonal"
+                    @click="discardChanges"
+                    class="mr-2"
+                    :disabled="!hasChanges"
+                    prepend-icon="mdi-close"
+                >
+                    Discard
+                </v-btn>
+                <v-btn
+                    color="success"
+                    variant="elevated"
+                    @click="saveWorkout"
+                    :disabled="!hasChanges"
+                    prepend-icon="mdi-check"
+                >
+                    Save
+                </v-btn>
+            </template>
+        </v-footer>
     </v-container>
 </template>
 
 <script setup lang="ts">
 import { useNow } from "@vueuse/core";
 import { cloneDeep } from "es-toolkit";
-import { computed, onMounted, ref, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
+import { computed, onMounted, ref, useTemplateRef, watch } from "vue";
+import { useRouter } from "vue-router";
 
 import type {
     ActiveExercise,
@@ -379,7 +407,7 @@ import AddExerciseToWorkout from "../components/workout/AddExerciseToWorkout.vue
 import EditExerciseDialog from "../components/workout/EditExerciseDialog.vue";
 import { globalDialog } from "../composables/useDialog";
 import { getDateFromMaybeTimestamp, ONE_HOUR, ONE_MINUTE, ONE_SECOND } from "../helpers/date-utils";
-import { getExerciseById } from "../helpers/exercise-utils";
+import { nonZeroPositive } from "../helpers/form-validators";
 import { logger } from "../logger/app-logger";
 import {
     getWorkoutById,
@@ -391,18 +419,22 @@ import {
 } from "../services/workout";
 import { useActiveWorkoutStore } from "../stores/active-workout";
 import { useAuthStore } from "../stores/auth";
+import { useExerciseStore } from "../stores/exercises";
 import { useGlobalStore } from "../stores/global";
 
-const route = useRoute();
+const { id: workoutId } = defineProps<{ id?: string }>();
+
 const router = useRouter();
+const exerciseStore = useExerciseStore();
 const activeWorkoutStore = useActiveWorkoutStore();
 const globalStore = useGlobalStore();
 const authStore = useAuthStore();
 
-const workoutId = route.params.id as string;
+const { exerciseCache, pendingLookups } = storeToRefs(exerciseStore);
 
 const isActive = computed(() => !workoutId);
 
+const exercisesForm = useTemplateRef("exercisesForm");
 const isLoading = ref(false);
 const workout = ref<ActiveWorkout | null | WorkoutWithId>(null);
 const originalWorkout = ref<null | WorkoutWithId>(null);
@@ -416,6 +448,29 @@ const exerciseEntries = computed(() => {
     if (!workout.value) return [];
     return workout.value.exerciseEntries ?? [];
 });
+
+const exerciseIds = computed(() => {
+    if (!workout.value) return [];
+    return workout.value.exerciseEntries.map((entry) => entry.exerciseId);
+});
+
+const isLoadingNames = computed(() => {
+    return exerciseIds.value.some((id) => pendingLookups.value.has(id));
+});
+
+function getExerciseName(exerciseId: string): string {
+    if (pendingLookups.value.has(exerciseId)) {
+        return "Loading...";
+    }
+
+    if (exerciseCache.value[exerciseId]) {
+        return exerciseCache.value[exerciseId].name;
+    }
+
+    exerciseStore.getExerciseById(exerciseId);
+
+    return "Loading...";
+}
 
 const hasChanges = computed(() => {
     if (isActive.value) {
@@ -431,13 +486,18 @@ const hasChanges = computed(() => {
 
 onMounted(async () => {
     try {
-        if (!isActive.value) {
+        if (!isActive.value && workoutId) {
             isLoading.value = true;
             const loadedWorkout = await getWorkoutById(authStore.nonNullableUser.uid, workoutId);
             workout.value = cloneDeep(loadedWorkout);
             originalWorkout.value = cloneDeep(loadedWorkout);
             editedName.value = loadedWorkout.name;
             editedNotes.value = loadedWorkout.overallNotes ?? "";
+
+            if (loadedWorkout.exerciseEntries.length > 0) {
+                const ids = loadedWorkout.exerciseEntries.map((entry) => entry.exerciseId);
+                await exerciseStore.getExercisesByIds(ids);
+            }
         } else if (activeWorkoutStore.isWorkoutActive) {
             workout.value = activeWorkoutStore.activeWorkout;
         } else {
@@ -473,6 +533,7 @@ function addExerciseToWorkout(exercise: Omit<ActiveExercise, "id">): void {
 
     const newEntry: ExerciseEntry = {
         calories: 0,
+        category: exercise.category,
         distanceKm: exercise.distanceKm ?? 0,
         durationSeconds: exercise.durationSeconds ?? 0,
         exerciseId: exercise.exerciseId,
@@ -515,19 +576,16 @@ function addSet(exerciseIndex: number): void {
     }
 
     const sets = exercise.sets;
-
-    const setDefault = { reps: 10, weight: 0 };
-
+    const setDefault = { reps: 0, weight: 0 };
     const newSet = isActive.value
         ? {
               completed: false,
               ...setDefault,
           }
         : setDefault;
-
     sets.push(newSet);
 
-    if (!workoutId) {
+    if (isActive.value) {
         activeWorkoutStore.saveToLocalStorage();
     }
 }
@@ -592,6 +650,11 @@ async function finishWorkout(): Promise<void> {
             return;
         }
 
+        if (!exercisesForm.value?.isValid) {
+            globalStore.notifyError("Please fix validation errors before saving");
+            return;
+        }
+
         const confirmed = await globalDialog.confirm({
             message: "Are you ready to finish and save this workout?",
             title: "Finish Workout",
@@ -626,6 +689,24 @@ function formatStartTime(): string {
     });
 }
 
+watch(
+    () => workout.value?.exerciseEntries,
+    function (newExercises) {
+        if (!workout.value || !isActiveWorkout(workout.value) || !newExercises) return;
+
+        for (const exercise of newExercises) {
+            if (!isActiveExercise(exercise) || !exercise.sets?.length) continue;
+
+            const allSetsCompleted = exercise.sets.every((set) => set.completed);
+
+            if (exercise.completed !== allSetsCompleted) {
+                exercise.completed = allSetsCompleted;
+            }
+        }
+    },
+    { deep: true },
+);
+
 function getCompletedSetsCount(exercise: ActiveExercise): number {
     if (!exercise.sets) return 0;
 
@@ -645,18 +726,6 @@ function getElapsedTimeText(): string {
         return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
     }
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-}
-
-function getExerciseName(exerciseId: string): string {
-    return getExerciseById(exerciseId).name;
-}
-
-function getWorkoutTypeColor(): string {
-    return "primary";
-}
-
-function getWorkoutTypeIcon(): string {
-    return "mdi-timer";
 }
 
 function handleSaveExercise(index: number, updatedExercise: ExerciseEntry): void {
@@ -716,15 +785,16 @@ function removeSet(exerciseIndex: number, setIndex: number): void {
 async function saveWorkout(): Promise<void> {
     if (!workout.value || isActiveWorkout(workout.value)) return;
 
+    if (!exercisesForm.value?.isValid) {
+        globalStore.notifyError("Please fix validation errors before saving");
+        return;
+    }
+
     try {
         workout.value.overallNotes = editedNotes.value.trim();
-
         globalStore.setLoading(true);
         await updateWorkout(authStore.nonNullableUser.uid, workout.value.id, workout.value);
-
-        // Update original to reflect the saved state
         originalWorkout.value = cloneDeep(workout.value);
-
         globalStore.notify("Workout updated successfully!");
     } catch (error) {
         logger.error("Error saving workout:", "PageCustomWorkout", error);
@@ -779,23 +849,7 @@ function toggleSet(exerciseIndex: number, setIndex: number): void {
     if (!isActiveWorkout(workout.value)) return;
 
     activeWorkoutStore.toggleSetCompletion(exerciseIndex, setIndex);
-
-    // Check all sets' status after toggling
-    const exercise = (workout.value as ActiveWorkout).exerciseEntries[exerciseIndex];
-    if (exercise.sets) {
-        const allCompleted = exercise.sets.every((set) => set.completed);
-
-        // Update exercise status without toggling sets again
-        if (allCompleted && !exercise.completed) {
-            // All sets completed but exercise marked incomplete - mark complete
-            exercise.completed = true;
-            activeWorkoutStore.saveToLocalStorage();
-        } else if (!allCompleted && exercise.completed) {
-            // Not all sets completed but exercise marked complete - mark incomplete
-            exercise.completed = false;
-            activeWorkoutStore.saveToLocalStorage();
-        }
-    }
+    activeWorkoutStore.saveToLocalStorage();
 }
 
 function updateSet(exerciseIndex: number, setIndex: number, reps: number, weight: number): void {
@@ -841,7 +895,6 @@ function updateSet(exerciseIndex: number, setIndex: number, reps: number, weight
     padding-right: 10px !important;
 }
 
-/* Column width classes */
 .set-column {
     width: 15%;
 }
@@ -857,5 +910,24 @@ function updateSet(exerciseIndex: number, setIndex: number, reps: number, weight
 
 .action-column {
     width: 5%;
+}
+
+.workout-container {
+    padding-bottom: 72px;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+@media (min-width: 600px) {
+    .workout-container {
+        padding-bottom: 64px;
+    }
 }
 </style>

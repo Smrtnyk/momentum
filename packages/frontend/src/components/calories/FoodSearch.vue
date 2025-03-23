@@ -18,7 +18,9 @@
                         <v-btn
                             icon
                             variant="text"
-                            @click="handleBarcodeScanner"
+                            @mousedown.stop
+                            @mouseup.stop
+                            @click.stop="handleBarcodeScanner"
                             :disabled="isScanning || isSearching || isLoading"
                         >
                             <v-icon>mdi-barcode-scan</v-icon>

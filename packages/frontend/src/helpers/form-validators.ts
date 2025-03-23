@@ -6,8 +6,9 @@ export function betweenValues(min: number, max: number) {
     };
 }
 
-export function hasItems(value: unknown[]): boolean | string {
-    return value.length > 0 || "Select at least one item";
+export function nonZeroPositive(value: number): boolean | string {
+    if (!value && value !== 0) return "Required";
+    return value > 0 || "Must be greater than zero";
 }
 
 export function positiveNumber(value: number): boolean | string {
@@ -18,7 +19,6 @@ export function positiveRequired(value: number): boolean | string {
     if (!value && value !== 0) return "Required";
     return value > 0 || "Must be positive";
 }
-
 export function required(value: unknown): boolean | string {
     return Boolean(value) || "Required";
 }

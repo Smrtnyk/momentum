@@ -10,6 +10,7 @@ import { getDateFromMaybeTimestamp } from "../helpers/date-utils";
 import { logger } from "../logger/app-logger";
 import { addWorkout } from "../services/workout";
 import { useAuthStore } from "./auth";
+import { useExerciseStore } from "./exercises";
 
 const STORAGE_KEY = "active-workout";
 
@@ -17,6 +18,7 @@ export const useActiveWorkoutStore = defineStore("activeWorkout", () => {
     const authStore = useAuthStore();
     const activeWorkout = ref<ActiveWorkout | null>(null);
     const isWorkoutActive = computed(() => activeWorkout.value !== null);
+    const exerciseStore = useExerciseStore();
 
     function withWorkout<T>(fn: (workout: ActiveWorkout) => T): T | undefined {
         if (!activeWorkout.value) return;
@@ -59,8 +61,8 @@ export const useActiveWorkoutStore = defineStore("activeWorkout", () => {
         });
     }
 
-    function startWorkout(plan: TrainingPlan, day: WorkoutDay): void {
-        const exercises = createExercisesFromPlan(day);
+    async function startWorkout(plan: TrainingPlan, day: WorkoutDay): Promise<void> {
+        const exercises = await createExercisesFromPlan(day);
 
         activeWorkout.value = {
             ...createBaseWorkout(day.id, day.name, plan.id, plan.name),
@@ -153,8 +155,6 @@ export const useActiveWorkoutStore = defineStore("activeWorkout", () => {
     }
 
     function endWorkout(): Promise<null | string> {
-        if (!activeWorkout.value) return Promise.resolve(null);
-
         return (async () => {
             try {
                 if (!activeWorkout.value) return null;
@@ -187,6 +187,28 @@ export const useActiveWorkoutStore = defineStore("activeWorkout", () => {
         })();
     }
 
+    function createExercisesFromPlan(day: WorkoutDay): Promise<ActiveExercise[]> {
+        return Promise.all(
+            day.exerciseEntries.map(async function (exercise) {
+                return {
+                    ...exercise,
+                    category: (await exerciseStore.getExerciseById(exercise.exerciseId)).category,
+                    completed: false,
+                    durationSeconds: exercise.durationSeconds ?? 0,
+                    sets: exercise.setsCount
+                        ? Array.from({ length: exercise.setsCount })
+                              .fill(null)
+                              .map(() => ({
+                                  completed: false,
+                                  reps: exercise.reps ?? 0,
+                                  weight: 0,
+                              }))
+                        : [],
+                };
+            }),
+        );
+    }
+
     function cancelWorkout(): void {
         activeWorkout.value = null;
         saveToStorage(null);
@@ -212,25 +234,6 @@ export const useActiveWorkoutStore = defineStore("activeWorkout", () => {
         updateSetData,
     };
 });
-
-function createExercisesFromPlan(day: WorkoutDay): ActiveExercise[] {
-    return day.exerciseEntries.map((exercise) => ({
-        ...exercise,
-        completed: false,
-        durationSeconds: exercise.durationSeconds
-            ? Math.round(exercise.durationSeconds)
-            : undefined,
-        sets: exercise.setsCount
-            ? Array.from({ length: exercise.setsCount })
-                  .fill(null)
-                  .map(() => ({
-                      completed: false,
-                      reps: exercise.reps ?? 0,
-                      weight: 0,
-                  }))
-            : [],
-    }));
-}
 
 function filterCompletedExercises(exercises: ActiveExercise[]): ActiveExercise[] {
     return exercises.filter(
@@ -258,8 +261,9 @@ function loadFromStorage(): ActiveWorkout | null {
 function mapToExerciseEntries(exercises: ActiveExercise[]): ExerciseEntry[] {
     return exercises.map((exercise) => ({
         calories: 0,
+        category: exercise.category,
         distanceKm: exercise.distanceKm ?? 0,
-        durationSeconds: exercise.durationSeconds,
+        durationSeconds: exercise.durationSeconds ?? 0,
         exerciseId: exercise.exerciseId,
         exerciseNotes: exercise.exerciseNotes ?? "",
         intensity: exercise.intensity ?? "high",

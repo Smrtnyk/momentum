@@ -1,5 +1,6 @@
 <template>
     <div class="muscle-group-chart">
+        <!-- Chart with data -->
         <apexchart
             v-if="muscleData.length > 0"
             type="bar"
@@ -8,6 +9,7 @@
             :series="series"
         ></apexchart>
 
+        <!-- No data state -->
         <v-alert
             v-else
             type="info"
@@ -22,44 +24,42 @@
 <script setup lang="ts">
 import type { ApexOptions } from "apexcharts";
 
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 
+import type { Exercise } from "../../../types/exercise";
 import type { WorkoutWithId } from "../../../types/workout";
 
-import { getExerciseById, getMuscleById } from "../../../helpers/exercise-utils";
-import { logger } from "../../../logger/app-logger";
 import { isStrengthExercise } from "../../../services/workout";
 
-const props = defineProps<{
+const { exercisesMap, workoutData } = defineProps<{
+    exercisesMap: Record<string, Exercise>;
     workoutData: WorkoutWithId[];
 }>();
 
 const muscleData = computed(() => {
     const muscleFrequency: Record<string, number> = {};
-    const muscleNames: Record<string, string> = {};
 
-    props.workoutData.forEach(function (workout) {
+    workoutData.forEach(function (workout) {
         workout.exerciseEntries.filter(isStrengthExercise).forEach((entry) => {
-            try {
-                const exercise = getExerciseById(entry.exerciseId);
+            const exercise = exercisesMap[entry.exerciseId];
+            if (!exercise) return;
 
-                const volume = calculateExerciseVolume(entry.sets);
+            const volume = calculateExerciseVolume(entry.sets);
 
-                for (const muscleId of exercise.muscleIds) {
-                    muscleFrequency[muscleId] = (muscleFrequency[muscleId] ?? 0) + volume;
-                    muscleNames[muscleId] = getMuscleById(muscleId).name;
-                }
-            } catch (e) {
-                logger.error("Exercise not found:", entry.exerciseId);
+            for (const muscle of exercise.primaryMuscles) {
+                muscleFrequency[muscle] = (muscleFrequency[muscle] ?? 0) + volume;
+            }
+
+            for (const muscle of exercise.secondaryMuscles) {
+                muscleFrequency[muscle] = (muscleFrequency[muscle] ?? 0) + volume * 0.5;
             }
         });
     });
 
     return Object.entries(muscleFrequency)
-        .map(([id, count]) => ({
-            count,
-            id,
-            name: muscleNames[id],
+        .map(([name, count]) => ({
+            count: Math.round(count),
+            name,
         }))
         .sort((a, b) => b.count - a.count)
         .slice(0, 10);
@@ -69,7 +69,7 @@ const series = computed(() => {
     return [
         {
             data: muscleData.value.map((muscle) => muscle.count),
-            name: "Training Frequency",
+            name: "Training Volume",
         },
     ];
 });
@@ -171,6 +171,8 @@ const chartOptions = ref<ApexOptions>({
 function calculateExerciseVolume(sets: Array<{ reps: number; weight: number }>): number {
     return sets.reduce((total, set) => total + set.reps * set.weight, 0);
 }
+
+watch([categories, muscleData], updateChart);
 
 function updateChart(): void {
     chartOptions.value = {

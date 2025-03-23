@@ -30,36 +30,13 @@
                 class="mb-4"
             ></v-progress-linear>
 
-            <!-- Macronutrient Breakdown -->
-            <div class="d-flex justify-space-around mb-2">
-                <div class="text-center">
-                    <div class="text-caption">PROTEIN</div>
-                    <div class="text-h6">{{ summary.protein.toFixed(0) }}g</div>
-                    <div class="text-caption">{{ proteinCalories }} cal</div>
-                </div>
-
-                <div class="text-center">
-                    <div class="text-caption">CARBS</div>
-                    <div class="text-h6">{{ summary.carbs.toFixed(0) }}g</div>
-                    <div class="text-caption">{{ carbCalories }} cal</div>
-                </div>
-
-                <div class="text-center">
-                    <div class="text-caption">FAT</div>
-                    <div class="text-h6">{{ summary.fat.toFixed(0) }}g</div>
-                    <div class="text-caption">{{ fatCalories }} cal</div>
-                </div>
-            </div>
-
-            <!-- Macronutrient Progress Bars -->
-            <div class="macro-bars">
-                <div
-                    class="macro-bar protein"
-                    :style="{ width: `${macroPercentages.protein}%` }"
-                ></div>
-                <div class="macro-bar carbs" :style="{ width: `${macroPercentages.carbs}%` }"></div>
-                <div class="macro-bar fat" :style="{ width: `${macroPercentages.fat}%` }"></div>
-            </div>
+            <!-- Macronutrient Display with Progress Bar -->
+            <MacroProgress
+                :protein="summary.protein"
+                :carbs="summary.carbs"
+                :fat="summary.fat"
+                :show-calories="true"
+            />
 
             <!-- Meal Breakdown -->
             <div class="text-subtitle-2 mt-4 mb-2">Meals</div>
@@ -82,6 +59,7 @@ import { computed } from "vue";
 import { globalDialog } from "../../composables/useDialog";
 import { useGlobalStore } from "../../stores/global";
 import CalorieGoalDialog from "./CalorieGoalDialog.vue";
+import MacroProgress from "./MacroProgress.vue";
 
 const props = defineProps<{
     summary: {
@@ -117,24 +95,6 @@ const progressColor = computed(() => {
     return "success";
 });
 
-const proteinCalories = computed(() => Math.round(props.summary.protein * 4));
-const carbCalories = computed(() => Math.round(props.summary.carbs * 4));
-const fatCalories = computed(() => Math.round(props.summary.fat * 9));
-
-const macroPercentages = computed(() => {
-    const totalCalories = proteinCalories.value + carbCalories.value + fatCalories.value;
-
-    if (totalCalories === 0) {
-        return { carbs: 0, fat: 0, protein: 0 };
-    }
-
-    return {
-        carbs: Math.round((carbCalories.value / totalCalories) * 100),
-        fat: Math.round((fatCalories.value / totalCalories) * 100),
-        protein: Math.round((proteinCalories.value / totalCalories) * 100),
-    };
-});
-
 function openCalorieGoalDialog(): void {
     globalDialog.openDialog(
         CalorieGoalDialog,
@@ -154,29 +114,3 @@ function openCalorieGoalDialog(): void {
     );
 }
 </script>
-
-<style scoped>
-.macro-bars {
-    display: flex;
-    height: 8px;
-    width: 100%;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.macro-bar {
-    height: 100%;
-}
-
-.macro-bar.protein {
-    background-color: #7986cb;
-}
-
-.macro-bar.carbs {
-    background-color: #4fc3f7;
-}
-
-.macro-bar.fat {
-    background-color: #ffb74d;
-}
-</style>

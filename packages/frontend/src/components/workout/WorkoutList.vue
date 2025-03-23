@@ -1,5 +1,5 @@
 <template>
-    <v-container fluid class="workout-dashboard pa-0">
+    <v-container fluid class="pa-0">
         <!-- Dashboard Header with Stats -->
         <v-card class="mb-4 rounded-lg" elevation="1">
             <div class="pa-4">
@@ -59,30 +59,7 @@
         </div>
 
         <template v-if="workouts.length > 0">
-            <!-- View Selector and Filters -->
             <div class="d-flex flex-column flex-sm-row align-start align-sm-center mb-4 gap-y-2">
-                <!-- View Toggle -->
-                <v-btn-toggle
-                    v-model="view"
-                    mandatory
-                    color="primary"
-                    rounded="pill"
-                    density="comfortable"
-                    class="mb-2 mb-sm-0"
-                >
-                    <v-btn value="list" variant="text" size="small">
-                        <v-icon start icon="mdi-format-list-bulleted"></v-icon>
-                        List
-                    </v-btn>
-                    <v-btn value="calendar" variant="text" size="small">
-                        <v-icon start icon="mdi-calendar-month"></v-icon>
-                        Calendar
-                    </v-btn>
-                </v-btn-toggle>
-
-                <v-spacer></v-spacer>
-
-                <!-- Sort Option -->
                 <v-menu>
                     <template #activator="{ props }">
                         <v-btn
@@ -110,33 +87,12 @@
             <!-- Main Content -->
             <div class="rounded-lg">
                 <!-- List View -->
-                <v-fade-transition>
-                    <div v-if="view === 'list'">
-                        <WorkoutListItem
-                            v-for="workout in filteredWorkouts"
-                            :key="workout.id"
-                            :workout="workout"
-                            @click="viewWorkout(workout)"
-                            class="workout-item-transition"
-                        />
-                    </div>
-                </v-fade-transition>
-
-                <!-- Calendar View -->
-                <v-fade-transition>
-                    <div v-if="view === 'calendar'" class="calendar-wrapper">
-                        <v-calendar
-                            :events="calendarEvents"
-                            view-mode="month"
-                            :event-ripple="false"
-                            :event-more="true"
-                            :event-overlap-threshold="30"
-                            :event-color="getEventColor"
-                            event-category="background"
-                            class="workout-calendar"
-                        ></v-calendar>
-                    </div>
-                </v-fade-transition>
+                <WorkoutListItem
+                    v-for="workout in filteredWorkouts"
+                    :key="workout.id"
+                    :workout="workout"
+                    @click="viewWorkout(workout)"
+                />
             </div>
         </template>
         <!-- Empty State -->
@@ -151,7 +107,6 @@
 </template>
 
 <script setup lang="ts">
-import { useStorage } from "@vueuse/core";
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -165,7 +120,6 @@ import WorkoutListItem from "./WorkoutListItem.vue";
 const { workouts } = defineProps<{ workouts: WorkoutWithId[] }>();
 const router = useRouter();
 const activeWorkoutStore = useActiveWorkoutStore();
-const view = useStorage("workout-view-preference", "list");
 
 const selectedSort = ref(0);
 const sortOptions = [
@@ -191,36 +145,6 @@ const filteredWorkouts = computed(() => {
     return result;
 });
 
-function getEventColor(event: WorkoutWithId): string {
-    const workout = workouts.find(({ id }) => id === event.id);
-    if (!workout) return "grey";
-
-    return "amber-darken-2";
-}
-
-function viewWorkout(workout: WorkoutWithId): void {
-    router.push({ name: "WorkoutDetail", params: { id: workout.id } });
-}
-
-const calendarEvents = computed(() => {
-    return workouts.map((workout) => {
-        const date = workout.date.toDate();
-        const category = "circuit";
-        const color = "amber-darken-2";
-
-        return {
-            category,
-            color,
-            end: date,
-            id: workout.id,
-            name: workout.name,
-            start: date,
-            timed: false,
-            title: workout.name,
-        };
-    });
-});
-
 function goToCustomWorkout(): void {
     router.push({ name: "CustomWorkout" });
 }
@@ -232,22 +156,8 @@ function showWorkoutStarter(): void {
         { fullscreen: false, title: "Start a Custom Workout" },
     );
 }
+
+function viewWorkout(workout: WorkoutWithId): void {
+    router.push({ name: "WorkoutDetail", params: { id: workout.id } });
+}
 </script>
-
-<style scoped>
-.workout-item-transition {
-    transition: all 0.3s ease;
-}
-
-.calendar-wrapper {
-    min-height: 500px;
-}
-
-.workout-calendar {
-    border-radius: 12px;
-}
-
-.workout-dashboard {
-    min-height: 100vh;
-}
-</style>

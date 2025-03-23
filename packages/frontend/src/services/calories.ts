@@ -48,7 +48,7 @@ export async function addMeal(
         const addFoodPromises = foods.map(function (food) {
             return addRecentFood(userId, food);
         });
-        await Promise.any(addFoodPromises);
+        await Promise.all(addFoodPromises);
 
         return mealDocRef.id;
     } catch (error) {

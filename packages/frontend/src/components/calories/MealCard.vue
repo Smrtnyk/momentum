@@ -43,13 +43,6 @@
                             </template>
                             <v-list-item-title>Search food in database</v-list-item-title>
                         </v-list-item>
-
-                        <v-list-item @click="$emit('delete')">
-                            <template #prepend>
-                                <v-icon color="error">mdi-delete</v-icon>
-                            </template>
-                            <v-list-item-title>Delete Meal</v-list-item-title>
-                        </v-list-item>
                     </v-list>
                 </v-menu>
             </template>
@@ -162,7 +155,6 @@ const { meal, mealType } = defineProps<{
 
 const emit = defineEmits<{
     "add-macros": [];
-    delete: [];
     "describe-food": [];
     "remove-food": [index: number];
     "scan-label": [];

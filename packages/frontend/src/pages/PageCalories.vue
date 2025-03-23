@@ -91,7 +91,6 @@
                     <MealCard
                         :meal="getMealByType(mealType)"
                         :meal-type="mealType"
-                        @delete="confirmDeleteMeal(getMealByType(mealType)!.id)"
                         @search-food="openFoodSearch(mealType)"
                         @add-macros="openManualMacrosDialog(mealType)"
                         @scan-label="openNutritionScanner(mealType)"
@@ -242,19 +241,6 @@ function changeDate(dayOffset: number): void {
     selectedDate.value = formatISODate(date);
 }
 
-async function confirmDeleteMeal(mealId: string): Promise<void> {
-    const confirmed = await globalDialog.confirm({
-        message: "Are you sure you want to delete this meal?",
-        title: "Delete Meal",
-    });
-
-    if (!confirmed) {
-        return;
-    }
-
-    await removeMeal(mealId);
-}
-
 function getMealByType(type: Meal["mealType"]): Meal | undefined {
     return meals.value.find((meal) => meal.mealType === type);
 }
@@ -393,21 +379,6 @@ async function removeFoodFromMeal(mealType: Meal["mealType"], index: number): Pr
     } catch (error) {
         logger.error(error, "PageCalories", { index, mealType });
         globalStore.notifyError("Failed to remove food");
-    } finally {
-        globalStore.setLoading(false);
-    }
-}
-
-async function removeMeal(mealId: string): Promise<void> {
-    try {
-        globalStore.setLoading(true);
-        const userId = authStore.nonNullableUser.uid;
-        await deleteMeal(userId, mealId, selectedDate.value, authStore.defaultCalorieGoal);
-        await refreshData();
-        globalStore.notify("Meal deleted successfully");
-    } catch (error) {
-        logger.error(error, "PageCalories", { mealId });
-        globalStore.notifyError("Failed to delete meal");
     } finally {
         globalStore.setLoading(false);
     }

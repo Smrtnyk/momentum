@@ -83,23 +83,43 @@
                             type="number"
                             label="Calories (kcal)"
                             variant="outlined"
-                            readonly
-                            hint="Auto-calculated from macros"
+                            :hint="
+                                isCaloriesManuallySet
+                                    ? 'Manual value (click reset icon to auto-calculate)'
+                                    : 'Auto-calculated from macros'
+                            "
                             persistent-hint
+                            :rules="[positiveNumber]"
                         >
                             <template #append-inner>
-                                <v-tooltip
-                                    location="top"
-                                    text="Calories are calculated using the 4-4-9 formula"
-                                >
-                                    <template #activator="{ props }">
-                                        <v-icon
-                                            v-bind="props"
-                                            icon="mdi-information-outline"
-                                            size="small"
-                                        ></v-icon>
-                                    </template>
-                                </v-tooltip>
+                                <div class="d-flex align-center">
+                                    <v-tooltip
+                                        location="top"
+                                        :text="
+                                            isCaloriesManuallySet
+                                                ? 'Reset to auto-calculation'
+                                                : 'Calories are calculated using the 4-4-9 formula'
+                                        "
+                                    >
+                                        <template #activator="{ props }">
+                                            <v-icon
+                                                v-bind="props"
+                                                :icon="
+                                                    isCaloriesManuallySet
+                                                        ? 'mdi-refresh'
+                                                        : 'mdi-information-outline'
+                                                "
+                                                size="small"
+                                                @click="
+                                                    isCaloriesManuallySet
+                                                        ? resetToAutoCalculation()
+                                                        : null
+                                                "
+                                                :class="{ 'cursor-pointer': isCaloriesManuallySet }"
+                                            ></v-icon>
+                                        </template>
+                                    </v-tooltip>
+                                </div>
                             </template>
                         </v-text-field>
                     </v-col>
@@ -245,9 +265,32 @@ const foodData = ref<Omit<FoodItem, "id">>({
     source: "Custom Food",
 });
 
-const displayCalories = computed(function (): number {
-    return foodData.value.calories;
+const isCaloriesManuallySet = ref(Boolean(props.initialFood?.calories));
+
+const displayCalories = computed({
+    get(): number {
+        return foodData.value.calories;
+    },
+    set(value: number): void {
+        foodData.value.calories = value;
+        isCaloriesManuallySet.value = true;
+    },
 });
+
+function resetToAutoCalculation(): void {
+    isCaloriesManuallySet.value = false;
+    updateCalories();
+}
+
+function updateCalories(): void {
+    if (isCaloriesManuallySet.value) return;
+
+    const proteinCalories = (foodData.value.protein ?? 0) * 4;
+    const carbCalories = (foodData.value.carbs ?? 0) * 4;
+    const fatCalories = (foodData.value.fat ?? 0) * 9;
+
+    foodData.value.calories = Math.round(proteinCalories + carbCalories + fatCalories);
+}
 
 const macroRatios = computed(function (): { carbs: number; fat: number; protein: number } {
     const protein = foodData.value.protein ?? 0;
@@ -277,15 +320,6 @@ function handleBarcodeScanning(): void {
             globalStore.notifyError(message);
         },
     });
-}
-
-function updateCalories(): void {
-    // Calculate calories using the standard 4-4-9 formula
-    const proteinCalories = (foodData.value.protein ?? 0) * 4;
-    const carbCalories = (foodData.value.carbs ?? 0) * 4;
-    const fatCalories = (foodData.value.fat ?? 0) * 9;
-
-    foodData.value.calories = Math.round(proteinCalories + carbCalories + fatCalories);
 }
 
 const isValid = computed(function (): boolean {

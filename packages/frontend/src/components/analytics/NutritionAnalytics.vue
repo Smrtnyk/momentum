@@ -284,13 +284,11 @@ const frequentFoods = computed(() => {
         for (const food of meal.foods) {
             const foodId = food.id;
 
-            if (!foodCounts[foodId]) {
-                foodCounts[foodId] = {
-                    calories: food.calories,
-                    count: 0,
-                    name: food.name,
-                };
-            }
+            foodCounts[foodId] ??= {
+                calories: food.calories,
+                count: 0,
+                name: food.name,
+            };
 
             foodCounts[foodId].count++;
         }

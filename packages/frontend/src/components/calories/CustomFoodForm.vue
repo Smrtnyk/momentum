@@ -3,7 +3,7 @@
         <v-card-title v-if="title">{{ title }}</v-card-title>
 
         <v-card-text>
-            <v-form ref="form" @submit.prevent="saveFood">
+            <v-form ref="form" @submit.prevent="saveFood" validate-on="eager">
                 <v-row dense>
                     <!-- Food Name -->
                     <v-col cols="12">

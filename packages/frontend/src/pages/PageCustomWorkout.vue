@@ -650,7 +650,7 @@ async function finishWorkout(): Promise<void> {
             return;
         }
 
-        if (!exercisesForm.value?.isValid) {
+        if (exercisesForm.value?.isValid === false) {
             globalStore.notifyError("Please fix validation errors before saving");
             return;
         }
@@ -794,7 +794,7 @@ function removeSet(exerciseIndex: number, setIndex: number): void {
 async function saveWorkout(): Promise<void> {
     if (!workout.value || isActiveWorkout(workout.value)) return;
 
-    if (!exercisesForm.value?.isValid) {
+    if (exercisesForm.value?.isValid === false) {
         globalStore.notifyError("Please fix validation errors before saving");
         return;
     }

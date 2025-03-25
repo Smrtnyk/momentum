@@ -51,7 +51,9 @@ const initializeFirebase = memoize(() => {
         initEmulators(firestore, auth, functions, storage);
     } else {
         vertexAI = getVertexAI(firebaseApp);
-        geminiModel = getGenerativeModel(vertexAI, { model: "gemini-2.0-flash" });
+        geminiModel = getGenerativeModel(vertexAI, {
+            model: "gemini-2.0-flash-thinking-exp-01-21",
+        });
     }
     return { auth, firebaseApp, firestore, functions, geminiModel, storage };
 });

@@ -136,6 +136,10 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
             "fats_100g",
             "fat",
         ]);
+        const sugarsPer100 = this.extractNutrient(product.nutriments, "sugars_100g", [
+            "sugar_100g",
+            "sugars",
+        ]);
 
         const scaleFactor = servingSize / 100;
 
@@ -153,6 +157,7 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
             servingSize,
             servingUnit,
             source: "OpenFoodFacts",
+            sugars: sugarsPer100 * scaleFactor,
         };
     }
 

@@ -39,10 +39,12 @@ const { initialMethod = "calipers", initialPercentage = null } = defineProps<{
     initialPercentage?: number;
 }>();
 
-const emit = defineEmits<{
-    close: [];
-    save: [percentage: number, method: string];
-}>();
+interface Emits {
+    (e: "close"): void;
+    (e: "save", percentage: number, method: string): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const percentage = ref<null | number>(initialPercentage ?? null);
 const method = ref<string>(initialMethod ?? "calipers");

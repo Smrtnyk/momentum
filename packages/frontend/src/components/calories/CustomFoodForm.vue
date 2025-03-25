@@ -157,6 +157,19 @@
                         ></v-text-field>
                     </v-col>
 
+                    <!-- Sugars (Optional) -->
+                    <v-col cols="6" sm="3" offset-sm="3">
+                        <v-text-field
+                            v-model.number="foodData.sugars"
+                            type="number"
+                            label="Sugars (g)"
+                            variant="outlined"
+                            :rules="[positiveNumber]"
+                            hint="Optional - part of total carbs"
+                            persistent-hint
+                        ></v-text-field>
+                    </v-col>
+
                     <!-- Macro Ratio Display -->
                     <v-col cols="12">
                         <v-card variant="flat" density="compact" border class="mb-2">
@@ -236,8 +249,8 @@ interface Props {
 const props = defineProps<Props>();
 
 interface Emits {
-    close: [];
-    save: [food: Omit<FoodItem, "id">];
+    (e: "close"): void;
+    (e: "save", food: Omit<FoodItem, "id">): void;
 }
 
 const emit = defineEmits<Emits>();
@@ -245,7 +258,7 @@ const emit = defineEmits<Emits>();
 const form = useTemplateRef("form");
 const servingUnits = ["g", "ml", "oz", "cup", "tbsp", "tsp", "piece", "serving"];
 const globalStore = useGlobalStore();
-const { isScanning, scanBarcodeOnly } = useBarcodeScanner();
+const { isScanning, scanBarcode } = useBarcodeScanner();
 
 const proteinColor = "#4CAF50";
 const carbsColor = "#2196F3";
@@ -263,6 +276,7 @@ const foodData = ref<Omit<FoodItem, "id">>({
     servingSize: props.initialFood?.servingSize ?? 100,
     servingUnit: props.initialFood?.servingUnit ?? "g",
     source: "Custom Food",
+    sugars: props.initialFood?.sugars ?? 0,
 });
 
 const isCaloriesManuallySet = ref(Boolean(props.initialFood?.calories));
@@ -311,7 +325,7 @@ const macroRatios = computed(function (): { carbs: number; fat: number; protein:
 });
 
 function handleBarcodeScanning(): void {
-    scanBarcodeOnly({
+    scanBarcode({
         onBarcodeScanned(barcode: string): void {
             foodData.value.barcode = barcode;
             globalStore.notify(`Barcode scanned: ${barcode}`);

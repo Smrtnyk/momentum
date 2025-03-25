@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 
-import type { UserProfile } from "../../services/user";
+import type { UserProfile } from "../../types/user-profile";
 
 import { betweenValues, required } from "../../helpers/form-validators";
 import { useAuthStore } from "../../stores/auth";

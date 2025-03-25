@@ -3,7 +3,7 @@ import type { User } from "firebase/auth";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
-import type { UserProfile } from "../services/user";
+import type { UserProfile } from "../types/user-profile";
 
 import { auth } from "../firebase";
 import { getUserProfile, updateUserProfile } from "../services/user";

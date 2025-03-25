@@ -317,6 +317,7 @@
                                     :protein="adjustedMacros.protein"
                                     :carbs="adjustedMacros.carbs"
                                     :fat="adjustedMacros.fat"
+                                    :sugars="undefined"
                                 />
                             </div>
 

@@ -74,7 +74,11 @@
                             </template>
                             <v-list-item-title>Current Weight</v-list-item-title>
                             <v-list-item-subtitle>
-                                {{ currentWeight ? `${currentWeight} kg` : "No data available" }}
+                                {{
+                                    currentWeight
+                                        ? `${currentWeight.toFixed(1)} kg`
+                                        : "No data available"
+                                }}
                             </v-list-item-subtitle>
                         </v-list-item>
 
@@ -108,7 +112,11 @@
                             </template>
                             <v-list-item-title>Body Fat Percentage</v-list-item-title>
                             <v-list-item-subtitle>
-                                {{ currentBodyFat ? `${currentBodyFat}%` : "No data available" }}
+                                {{
+                                    currentBodyFat
+                                        ? `${currentBodyFat.toFixed(1)}%`
+                                        : "No data available"
+                                }}
                             </v-list-item-subtitle>
                         </v-list-item>
 
@@ -153,6 +161,7 @@
 </template>
 
 <script setup lang="ts">
+import { isNotNil } from "es-toolkit";
 import { computed } from "vue";
 
 import type { DateRangeOption } from "../../types/analytics";
@@ -197,7 +206,7 @@ const avgSteps = computed(() =>
     calculateAverage(
         props.bodyData,
         (day) => day.steps ?? 0,
-        (day) => day.steps !== undefined && day.steps > 0,
+        (day) => isNotNil(day.steps) && day.steps > 0,
     ),
 );
 

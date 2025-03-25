@@ -9,15 +9,18 @@ import { saveAppState } from "./state-persistence";
 export function useAppUpdates() {
     const router = useRouter();
     const updateAvailable = ref(false);
+    const updateDismissed = ref(false);
 
     const { needRefresh, updateServiceWorker } = useRegisterSW({
-        onRegisteredSW(scriptUrl, registration) {
-            logger.info("Service worker registered:", "AppUpdates", registration);
+        immediate: false,
+        onRegisteredSW(swUrl, registration) {
+            logger.info("Service worker registered:", "AppUpdates", swUrl);
 
-            // a periodic check for updates
             if (registration) {
                 setInterval(() => {
-                    registration.update().catch(logger.error.bind(logger));
+                    registration
+                        .update()
+                        .catch((err) => logger.error("Failed to update SW:", "AppUpdates", err));
                 }, ONE_HOUR);
             }
         },
@@ -27,10 +30,12 @@ export function useAppUpdates() {
     });
 
     watch(needRefresh, (value) => {
-        updateAvailable.value = value;
-    });
+        if (!value) {
+            return;
+        }
+        updateAvailable.value = true;
+        updateDismissed.value = false;
 
-    async function applyUpdate(): Promise<void> {
         if (router) {
             const route = router.currentRoute.value;
             saveAppState({
@@ -45,16 +50,31 @@ export function useAppUpdates() {
                 },
             });
         }
+    });
 
+    watch(updateAvailable, (value) => {
+        if (!value && needRefresh.value) {
+            updateDismissed.value = true;
+        }
+    });
+
+    async function applyUpdate(): Promise<void> {
         updateAvailable.value = false;
+        updateDismissed.value = false;
         await updateServiceWorker(true);
+    }
+
+    function showUpdateNotification(): void {
+        updateAvailable.value = true;
+        updateDismissed.value = false;
     }
 
     return {
         applyUpdate,
         checkForUpdates,
-        needRefresh,
+        showUpdateNotification,
         updateAvailable,
+        updateDismissed,
     };
 }
 
@@ -63,8 +83,11 @@ async function checkForUpdates(): Promise<void> {
 
     try {
         const registrations = await navigator.serviceWorker.getRegistrations();
-        const updatePromises = registrations.map((registration) => registration.update());
-        await Promise.all(updatePromises);
+        for (const registration of registrations) {
+            // eslint-disable-next-line no-await-in-loop -- fine here
+            await registration.update();
+        }
+        logger.info("Manual update check completed", "AppUpdates");
     } catch (err) {
         logger.error("Failed to check for updates:", "AppUpdates", err);
     }

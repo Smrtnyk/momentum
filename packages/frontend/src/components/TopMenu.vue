@@ -3,6 +3,15 @@
         <v-btn v-if="showBackButton" icon @click="goBack">
             <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
+        <v-btn
+            v-if="updateDismissed"
+            icon
+            color="warning"
+            @click="emit('show-update-notification')"
+            class="ml-2"
+        >
+            <v-icon>mdi-update</v-icon>
+        </v-btn>
 
         <v-spacer></v-spacer>
 
@@ -38,6 +47,14 @@ import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { useActiveWorkoutStore } from "../stores/active-workout";
+
+const { updateDismissed } = defineProps<{
+    updateDismissed: boolean;
+}>();
+
+type Emits = (e: "show-update-notification") => void;
+
+const emit = defineEmits<Emits>();
 
 const router = useRouter();
 const route = useRoute();

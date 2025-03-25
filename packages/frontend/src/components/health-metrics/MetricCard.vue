@@ -6,13 +6,7 @@
                 <span class="text-subtitle-1">{{ title }}</span>
             </div>
 
-            <v-btn
-                icon
-                variant="text"
-                :color="color"
-                density="comfortable"
-                @click="$emit('action')"
-            >
+            <v-btn icon variant="text" :color="color" density="comfortable" @click="emit('action')">
                 <v-icon>{{ actionIcon }}</v-icon>
             </v-btn>
         </div>
@@ -33,9 +27,9 @@ interface Props {
 
 const props = defineProps<Props>();
 
-defineEmits<{
-    action: [];
-}>();
+type Emits = (e: "action") => void;
+
+const emit = defineEmits<Emits>();
 
 const actionIcon = props.actionIcon ?? "mdi-plus";
 </script>

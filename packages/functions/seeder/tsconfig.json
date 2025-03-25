@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "esModuleInterop": true,
+        "moduleResolution": "nodenext",
+        "noImplicitReturns": true,
+        "noUnusedLocals": true,
+        "outDir": "lib",
+        "sourceMap": true,
+        "strict": true,
+        "target": "ESNext",
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
+        "paths": {
+            "@frontend-types/*": ["../../frontend/src/types/*"]
+        },
+        "types": ["node"]
+    },
+    "compileOnSave": true,
+    "include": [
+        "./**.ts"
+    ]
+}

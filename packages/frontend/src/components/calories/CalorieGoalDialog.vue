@@ -40,10 +40,12 @@ const props = defineProps<{
     currentGoal: number;
 }>();
 
-const emit = defineEmits<{
-    close: [];
-    save: [goal: number, setAsDefault: boolean];
-}>();
+interface Emits {
+    (e: "close"): void;
+    (e: "save", goal: number, setAsDefault: boolean): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const calorieGoal = ref(props.currentGoal);
 const setAsDefault = ref(false);

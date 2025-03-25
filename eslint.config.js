@@ -46,6 +46,8 @@ export default config(
             ecmaVersion: "latest",
             globals: {
                 ...globals.browser,
+                __BUILD_NUMBER__: "readonly",
+                __GIT_COMMIT_HASH__: "readonly",
             },
             parser: vueParser,
             parserOptions: {
@@ -256,7 +258,7 @@ export default config(
             "no-underscore-dangle": [
                 "error",
                 {
-                    allow: ["_doc", "_objects"],
+                    allow: ["_doc", "_objects", "__BUILD_NUMBER__", "__GIT_COMMIT_HASH__"],
                 },
             ],
             "no-unexpected-multiline": "error",
@@ -389,14 +391,14 @@ export default config(
         files: [
             "**/functions/src/**/*.ts",
             "**/functions/test-helpers/**/*.ts",
-            "**/seeds/**/*.ts",
+            "**/seeder/**/*.ts",
         ],
         rules: {
             "no-await-in-loop": "off",
         },
     },
     {
-        files: ["**/functions/test-helpers/**/*.ts", "**/seeds/**/*.ts"],
+        files: ["**/functions/test-helpers/**/*.ts", "**/seeder/**/*.ts"],
         rules: {
             "@typescript-eslint/no-non-null-assertion": "off",
             "no-console": "off",

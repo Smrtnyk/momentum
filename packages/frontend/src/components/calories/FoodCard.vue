@@ -22,15 +22,15 @@
 
             <div class="d-flex justify-space-between mt-4">
                 <div class="text-center">
-                    <div class="text-body-2 font-weight-bold">{{ food.protein }}g</div>
+                    <div class="text-body-2 font-weight-bold">{{ food.protein.toFixed(1) }}g</div>
                     <div class="text-caption">Protein</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-body-2 font-weight-bold">{{ food.carbs }}g</div>
+                    <div class="text-body-2 font-weight-bold">{{ food.carbs.toFixed(1) }}g</div>
                     <div class="text-caption">Carbs</div>
                 </div>
                 <div class="text-center">
-                    <div class="text-body-2 font-weight-bold">{{ food.fat }}g</div>
+                    <div class="text-body-2 font-weight-bold">{{ food.fat.toFixed(1) }}g</div>
                     <div class="text-caption">Fat</div>
                 </div>
             </div>

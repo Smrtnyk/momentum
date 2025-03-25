@@ -24,10 +24,12 @@ const { initialSteps = null } = defineProps<{
     initialSteps?: number;
 }>();
 
-const emit = defineEmits<{
-    close: [];
-    save: [steps: number];
-}>();
+interface Emits {
+    (e: "close"): void;
+    (e: "save", steps: number): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const steps = ref<null | number>(initialSteps);
 

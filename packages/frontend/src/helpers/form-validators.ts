@@ -1,12 +1,15 @@
+import { isNil, isString } from "es-toolkit";
+import { isNumber } from "es-toolkit/compat";
+
 export function betweenValues(min: number, max: number) {
     return function (value: unknown): boolean | string {
-        if (value === null || value === undefined || value === "") {
+        if (isNil(value) || value === "") {
             return "Value is required";
         }
 
-        const numValue = typeof value === "string" ? Number(value) : value;
+        const numValue = isString(value) ? Number(value) : value;
 
-        if (typeof numValue !== "number" || Number.isNaN(numValue)) {
+        if (!isNumber(numValue) || Number.isNaN(numValue)) {
             return "Must be a valid number";
         }
 
@@ -17,13 +20,13 @@ export function betweenValues(min: number, max: number) {
 }
 
 export function nonZeroPositive(value: unknown): boolean | string {
-    if (value === null || value === undefined || value === "") {
+    if (isNil(value) || value === "") {
         return "Required";
     }
 
-    const numValue = typeof value === "string" ? Number(value) : value;
+    const numValue = isString(value) ? Number(value) : value;
 
-    if (typeof numValue !== "number" || Number.isNaN(numValue)) {
+    if (!isNumber(numValue) || Number.isNaN(numValue)) {
         return "Must be a valid number";
     }
 
@@ -31,13 +34,13 @@ export function nonZeroPositive(value: unknown): boolean | string {
 }
 
 export function positiveNumber(value: unknown): boolean | string {
-    if (value === null || value === undefined || value === "") {
+    if (isNil(value) || value === "") {
         return "Value is required";
     }
 
-    const numValue = typeof value === "string" ? Number(value) : value;
+    const numValue = isString(value) ? Number(value) : value;
 
-    if (typeof numValue !== "number" || Number.isNaN(numValue)) {
+    if (!isNumber(numValue) || Number.isNaN(numValue)) {
         return "Must be a valid number";
     }
 
@@ -45,13 +48,13 @@ export function positiveNumber(value: unknown): boolean | string {
 }
 
 export function positiveRequired(value: unknown): boolean | string {
-    if (value === null || value === undefined || value === "") {
+    if (isNil(value) || value === "") {
         return "Required";
     }
 
-    const numValue = typeof value === "string" ? Number(value) : value;
+    const numValue = isString(value) ? Number(value) : value;
 
-    if (typeof numValue !== "number" || Number.isNaN(numValue)) {
+    if (!isNumber(numValue) || Number.isNaN(numValue)) {
         return "Must be a valid number";
     }
 

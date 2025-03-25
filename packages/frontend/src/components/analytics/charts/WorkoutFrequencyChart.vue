@@ -54,20 +54,13 @@ import {
 } from "../../../helpers/date-utils";
 import { isCardioExercise, isStrengthExercise } from "../../../services/workout";
 
-interface WorkoutWeekData {
-    cardioWorkouts: number;
-    mixedWorkouts: number;
-    strengthWorkouts: number;
-    weekStart: string;
-}
-
 const props = defineProps<{
     workoutData: WorkoutWithId[];
 }>();
 
 const hasData = computed(() => props.workoutData.length > 0);
 
-const processedData = computed((): WorkoutWeekData[] => {
+const processedData = computed(() => {
     const workoutsByWeek = new Map<string, { cardio: number; mixed: number; strength: number }>();
 
     props.workoutData.forEach(function (workout) {

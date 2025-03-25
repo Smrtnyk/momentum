@@ -1,4 +1,4 @@
-import { isNotNil } from "es-toolkit";
+import { isNotNil, isPlainObject, isString } from "es-toolkit";
 
 import type { FoodItem, FoodSearchResult, OpenFoodRepoProduct } from "../../types/food";
 
@@ -129,7 +129,7 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
             return providedBarcode;
         }
 
-        if (typeof product.barcode === "string") {
+        if (isString(product.barcode)) {
             return product.barcode;
         }
 
@@ -145,7 +145,7 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
             return this.extractNutrientFromArray(product.nutrients, "energy");
         }
 
-        if (!product.nutrients || typeof product.nutrients !== "object") {
+        if (!product.nutrients || !isPlainObject(product.nutrients)) {
             return 0;
         }
 
@@ -180,7 +180,7 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
             return this.extractNutrientFromArray(product.nutrients, nutrientName);
         }
 
-        if (product.nutrients && typeof product.nutrients === "object") {
+        if (product.nutrients && isPlainObject(product.nutrients)) {
             return this.extractNutrientFromObject(product.nutrients, nutrientName);
         }
 
@@ -204,7 +204,7 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
 
         if (
             product.nutrients &&
-            typeof product.nutrients === "object" &&
+            isPlainObject(product.nutrients) &&
             "proteins" in product.nutrients &&
             product.nutrients.proteins?.per_hundred
         ) {
@@ -234,6 +234,7 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
                 servingSize: 100,
                 servingUnit: isLiquid ? "ml" : "g",
                 source: "OpenFoodRepo",
+                sugars: this.extractNutrientValue(product, "sugars"),
             };
         } catch (error) {
             logger.error("Error mapping product to food item", "OpenFoodRepoAPI", {
@@ -280,10 +281,9 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
                 }
             }
 
-            const totalHits =
-                typeof data.hits?.total === "object"
-                    ? data.hits.total.value
-                    : (data.hits?.total ?? 0);
+            const totalHits = isPlainObject(data.hits?.total)
+                ? data.hits.total.value
+                : (data.hits?.total ?? 0);
 
             const size = query.size ?? 10;
 

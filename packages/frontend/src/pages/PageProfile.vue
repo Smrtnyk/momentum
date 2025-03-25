@@ -58,7 +58,9 @@
                                 </template>
                                 <v-list-item-title>Latest weight</v-list-item-title>
                                 <v-list-item-subtitle>
-                                    {{ latestWeight ? `${latestWeight.weight} kg` : "-" }}
+                                    {{
+                                        latestWeight ? `${latestWeight.weight.toFixed(1)} kg` : "-"
+                                    }}
                                 </v-list-item-subtitle>
                             </v-list-item>
 
@@ -167,6 +169,8 @@
                 Logout
             </v-btn>
         </div>
+
+        <BuildInfoFooter :show-git-hash="true" />
     </v-container>
 </template>
 
@@ -175,6 +179,7 @@ import { useAsyncState } from "@vueuse/core";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
 
+import BuildInfoFooter from "../components/BuildInfoFooter.vue";
 import EditProfileForm from "../components/profile/EditProfileForm.vue";
 import { globalDialog } from "../composables/useDialog";
 import { logger } from "../logger/app-logger";

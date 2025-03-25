@@ -21,22 +21,24 @@ import type {
     ExerciseEntry,
     StrengthExerciseEntry,
     Workout,
-    WorkoutBase,
     WorkoutWithId,
 } from "../types/workout";
 
 import { firestore } from "../firebase";
 
-export async function addWorkout(
-    workout: Omit<WorkoutBase, "id">,
-    userId: string,
-): Promise<string> {
+export async function addWorkout(workout: Omit<Workout, "id">, userId: string): Promise<string> {
     if (!userId) {
         throw new Error("Cannot add workout: User ID is required");
     }
 
+    const exercisesExecuted = workout.exerciseEntries.map((entry) => entry.exerciseId);
+    const workoutWithExercisesExecuted = {
+        ...workout,
+        exercisesExecuted,
+    };
+
     const workoutsRef = collection(firestore, "users", userId, "workouts");
-    const docRef = await addDoc(workoutsRef, workout);
+    const docRef = await addDoc(workoutsRef, workoutWithExercisesExecuted);
     return docRef.id;
 }
 
@@ -46,6 +48,40 @@ export async function deleteWorkout(userId: string, workoutId: string): Promise<
     }
 
     await deleteDoc(doc(firestore, "users", userId, "workouts", workoutId));
+}
+
+export async function getPreviousExerciseExecution(
+    userId: string,
+    exerciseId: string,
+    currentWorkoutDate: Timestamp,
+): Promise<null | StrengthExerciseEntry> {
+    if (!userId || !exerciseId) {
+        throw new Error("Both userId and exerciseId are required");
+    }
+
+    const workoutsRef = collection(firestore, "users", userId, "workouts");
+    const q = query(
+        workoutsRef,
+        where("exercisesExecuted", "array-contains", exerciseId),
+        where("date", "<", currentWorkoutDate),
+        orderBy("date", "desc"),
+        limit(1),
+    );
+
+    const snapshot = await getDocs(q);
+
+    if (snapshot.empty) {
+        return null;
+    }
+
+    const workout = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as WorkoutWithId;
+    const exerciseEntry = workout.exerciseEntries.find((entry) => entry.exerciseId === exerciseId);
+
+    if (exerciseEntry && isStrengthExercise(exerciseEntry)) {
+        return exerciseEntry;
+    }
+
+    return null;
 }
 
 export async function getWorkoutById(userId: string, workoutId: string): Promise<WorkoutWithId> {
@@ -145,7 +181,7 @@ export function isCardioExercise(
 export function isStrengthExercise(
     exercise: ActiveExercise | Exercise | ExerciseEntry,
 ): exercise is StrengthExerciseEntry {
-    return exercise.category === "strength";
+    return ["powerlifting", "strength"].includes(exercise.category);
 }
 
 export async function updateWorkout(
@@ -157,6 +193,7 @@ export async function updateWorkout(
         throw new Error("Both userId and workoutId are required");
     }
 
+    const exercisesExecuted = workout.exerciseEntries.map(({ exerciseId }) => exerciseId);
     const workoutRef = doc(firestore, "users", userId, "workouts", workoutId);
-    await updateDoc(workoutRef, { ...workout });
+    await updateDoc(workoutRef, { ...workout, exercisesExecuted });
 }

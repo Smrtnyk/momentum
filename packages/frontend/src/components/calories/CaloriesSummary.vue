@@ -35,6 +35,7 @@
                 :protein="summary.protein"
                 :carbs="summary.carbs"
                 :fat="summary.fat"
+                :sugars="summary.sugars"
                 :show-calories="true"
             />
 
@@ -74,13 +75,14 @@ const props = defineProps<{
         goal: number;
         protein: number;
         remaining: number;
+        sugars?: number;
         total: number;
     };
 }>();
 
-const emit = defineEmits<{
-    "update:goal": [goal: number, setAsDefault: boolean];
-}>();
+type Emits = (e: "update:goal", goal: number, setAsDefault: boolean) => void;
+
+const emit = defineEmits<Emits>();
 
 const globalStore = useGlobalStore();
 

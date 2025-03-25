@@ -1,6 +1,7 @@
 .idea
 
 local-db
+cert.json
 
 # Compiled JavaScript files
 lib/**/*.js

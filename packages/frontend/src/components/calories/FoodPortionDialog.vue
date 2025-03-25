@@ -67,26 +67,28 @@
             <div class="text-body-1">{{ calculatedNutrition.carbs.toFixed(1) }}g</div>
         </div>
 
+        <div class="d-flex justify-space-between mb-1" v-if="calculatedNutrition.sugars">
+            <div class="text-caption">Of which sugars:</div>
+            <div class="text-caption">{{ calculatedNutrition.sugars.toFixed(1) }}g</div>
+        </div>
+
         <div class="d-flex justify-space-between mb-1">
             <div class="text-body-1">Fat:</div>
             <div class="text-body-1">{{ calculatedNutrition.fat.toFixed(1) }}g</div>
         </div>
 
-        <v-alert
-            v-if="mealType === 'snack'"
-            type="info"
-            variant="tonal"
-            class="mt-4"
-            density="compact"
-        >
-            This will be added to your {{ mealType }}.
+        <v-alert type="info" variant="tonal" class="mt-4" density="compact">
+            {{ isEditing ? "This will update the food in your" : "This will be added to your" }}
+            {{ mealType }}.
         </v-alert>
     </v-card-text>
 
     <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="default" variant="text" @click="$emit('close')">Cancel</v-btn>
-        <v-btn color="primary" @click="addFood" :disabled="!isValid"> Add Food </v-btn>
+        <v-btn color="primary" @click="saveFood" :disabled="!isValid">
+            {{ isEditing ? "Update Food" : "Add Food" }}
+        </v-btn>
     </v-card-actions>
 </template>
 
@@ -105,15 +107,22 @@ import {
     isStandardUnit,
 } from "../../helpers/units-utils";
 
-const { food, mealType } = defineProps<{
+const {
+    food,
+    isEditing = false,
+    mealType,
+} = defineProps<{
     food: FoodItem;
+    isEditing?: boolean;
     mealType: Meal["mealType"];
 }>();
 
-const emit = defineEmits<{
-    add: [adjustedFood: FoodItem];
-    close: [];
-}>();
+interface Emits {
+    (e: "add", adjustedFood: FoodItem, originalFood: FoodItem): void;
+    (e: "close"): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const quantity = ref<number>(1);
 const unit = ref<string>("g");
@@ -164,7 +173,7 @@ onMounted(function () {
     }
 });
 
-function addFood(): void {
+function saveFood(): void {
     if (!isValid.value) return;
 
     const adjustedFood: FoodItem = {
@@ -175,9 +184,10 @@ function addFood(): void {
         protein: calculatedNutrition.value.protein,
         servingSize: quantity.value,
         servingUnit: unit.value,
+        sugars: calculatedNutrition.value.sugars,
     };
 
-    emit("add", adjustedFood);
+    emit("add", adjustedFood, food);
     emit("close");
 }
 </script>

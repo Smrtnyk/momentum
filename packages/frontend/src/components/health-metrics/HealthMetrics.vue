@@ -37,7 +37,7 @@
             </v-row>
 
             <!-- Loaded State -->
-            <v-row v-else>
+            <v-row v-else-if="!healthDataError">
                 <!-- Water Intake Metric Card -->
                 <v-col cols="12" sm="6" md="3">
                     <metric-card
@@ -77,7 +77,7 @@
                     >
                         <div v-if="healthData.latestWeight" class="text-center">
                             <div class="text-h4 font-weight-bold">
-                                {{ healthData.latestWeight.weight }} kg
+                                {{ healthData.latestWeight.weight.toFixed(1) }} kg
                             </div>
                             <div class="text-caption">
                                 {{ formatDate(healthData.latestWeight.date) }}
@@ -102,7 +102,7 @@
                     >
                         <div v-if="healthData.latestBodyFat" class="text-center">
                             <div class="text-h4 font-weight-bold">
-                                {{ healthData.latestBodyFat.percentage }}%
+                                {{ healthData.latestBodyFat.percentage.toFixed(1) }}%
                             </div>
                             <div class="text-caption">
                                 {{ formatDate(healthData.latestBodyFat.date) }}
@@ -138,6 +138,13 @@
                     </metric-card>
                 </v-col>
             </v-row>
+
+            <RetryFetcher
+                title=""
+                message="Failed to fetch health data"
+                v-if="healthDataError"
+                :fetcher="refreshHealthData"
+            />
         </v-card-text>
 
         <!-- Water Bottom Sheet Menu -->
@@ -262,6 +269,7 @@ import {
 } from "../../services/health-metrics";
 import { useAuthStore } from "../../stores/auth";
 import { useGlobalStore } from "../../stores/global";
+import RetryFetcher from "../ui/RetryFetcher.vue";
 import BodyFatDialog from "./BodyFatDialog.vue";
 import MetricCard from "./MetricCard.vue";
 import StepsEntryDialog from "./StepsEntryDialog.vue";
@@ -307,6 +315,7 @@ async function fetchAllHealthData(): Promise<HealthData> {
 }
 
 const {
+    error: healthDataError,
     execute: refreshHealthData,
     isLoading,
     state: healthData,
@@ -319,8 +328,7 @@ const {
         waterProgress: { current: 0, percentage: 0, target: 2500, waterIntakeLog: [] },
     },
     {
-        onError: (error) => {
-            globalStore.notifyError("Failed to load health metrics");
+        onError(error) {
             logger.error(error);
         },
     },
@@ -401,9 +409,7 @@ function openBodyFatDialog(): void {
         BodyFatDialog,
         {
             initialMethod: "calipers",
-            onSave: async (percentage: number, method: string) => {
-                await logBodyFatPercentage(percentage, method);
-            },
+            onSave: logBodyFatPercentage,
         },
         {
             title: "Log Body Fat Percentage",
@@ -415,9 +421,7 @@ function openStepsDialog(): void {
     globalDialog.openDialog(
         StepsEntryDialog,
         {
-            onSave: async (steps: number) => {
-                await logDailySteps(steps);
-            },
+            onSave: logDailySteps,
         },
         {
             title: "Log Daily Steps",
@@ -430,9 +434,7 @@ function openWaterCustomDialog(): void {
     globalDialog.openDialog(
         WaterIntakeDialog,
         {
-            onSave: async (amount: number) => {
-                await logWater(amount);
-            },
+            onSave: logWater,
         },
         {
             title: "Custom Water Intake",
@@ -449,9 +451,7 @@ function openWeightDialog(): void {
     globalDialog.openDialog(
         WeightEntryDialog,
         {
-            onSave: async (weight: number) => {
-                await logTodayWeight(weight);
-            },
+            onSave: logTodayWeight,
         },
         {
             title: "Log Today's Weight",
@@ -461,14 +461,6 @@ function openWeightDialog(): void {
 </script>
 
 <style scoped>
-.water-add-btn {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    transform: translate(25%, 25%);
-    z-index: 1;
-}
-
 .metric-card {
     height: 100%;
     padding: 12px;

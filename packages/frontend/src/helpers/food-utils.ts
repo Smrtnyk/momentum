@@ -7,6 +7,7 @@ interface NutritionValues {
     carbs: number;
     fat: number;
     protein: number;
+    sugars: number;
 }
 
 export function calculateNutrition(
@@ -15,7 +16,7 @@ export function calculateNutrition(
     unit: string,
 ): NutritionValues {
     if (!quantity || quantity <= 0) {
-        return { calories: 0, carbs: 0, fat: 0, protein: 0 };
+        return { calories: 0, carbs: 0, fat: 0, protein: 0, sugars: 0 };
     }
 
     if (!isStandardUnit(unit) && unit === food.servingUnit) {
@@ -24,12 +25,12 @@ export function calculateNutrition(
             carbs: food.carbs * quantity,
             fat: food.fat * quantity,
             protein: food.protein * quantity,
+            sugars: Number(food.sugars) * quantity,
         };
     }
 
     const baseAmount = normalizeToBaseUnit(quantity, unit);
     const baseServingSize = normalizeToBaseUnit(food.servingSize, food.servingUnit);
-
     const factor = baseAmount / baseServingSize;
 
     return {
@@ -37,5 +38,6 @@ export function calculateNutrition(
         carbs: food.carbs * factor,
         fat: food.fat * factor,
         protein: food.protein * factor,
+        sugars: Number(food.sugars) * factor,
     };
 }

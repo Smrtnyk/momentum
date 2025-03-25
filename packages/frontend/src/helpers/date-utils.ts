@@ -11,31 +11,36 @@ export const ONE_SECOND = 1000;
 export const ONE_DAY = 24 * 60 * 60 * 1000;
 export const ONE_HOUR = 60 * 60 * 1000;
 
-/**
- * Format a date with weekday, month, and day (Mon, Jan 15)
- */
-export function formatDateWithDay(date: Date): string {
-    return date.toLocaleDateString(currentLocale, {
-        day: "numeric",
-        month: "short",
-        weekday: "short",
-    });
-}
-
-/**
- * Format a date with month, day, and year (Jan 15, 2023)
- */
-export function formatFullDate(date: Date): string {
-    return date.toLocaleDateString(currentLocale, {
+const CACHED_FORMATTERS = {
+    fullDate: new Intl.DateTimeFormat(currentLocale, {
         day: "numeric",
         month: "short",
         year: "numeric",
-    });
+    }),
+    mediumDate: new Intl.DateTimeFormat(currentLocale, {
+        day: "numeric",
+        month: "short",
+    }),
+    relativeTime: new Intl.RelativeTimeFormat(currentLocale, { numeric: "auto" }),
+    shortDate: new Intl.DateTimeFormat(currentLocale, {
+        day: "numeric",
+        month: "numeric",
+    }),
+    withDay: new Intl.DateTimeFormat(currentLocale, {
+        day: "numeric",
+        month: "short",
+        weekday: "short",
+    }),
+};
+
+export function formatDateWithDay(date: Date): string {
+    return CACHED_FORMATTERS.withDay.format(date);
 }
 
-/**
- * Format a date as ISO string (YYYY-MM-DD)
- */
+export function formatFullDate(date: Date): string {
+    return CACHED_FORMATTERS.fullDate.format(date);
+}
+
 export function formatISODate(date: Date): string {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -47,10 +52,7 @@ export function formatISODate(date: Date): string {
  * Format a date with month and day (Jan 15)
  */
 export function formatMediumDate(date: Date): string {
-    return date.toLocaleDateString(currentLocale, {
-        day: "numeric",
-        month: "short",
-    });
+    return CACHED_FORMATTERS.mediumDate.format(date);
 }
 
 /**
@@ -63,7 +65,7 @@ export function formatRelativeDate(date: Date): string {
 
     if (days === 0) return "Today";
     if (days === 1) return "Yesterday";
-    if (days < 7) return `${days} days ago`;
+    if (days < 7) return CACHED_FORMATTERS.relativeTime.format(-days, "day");
 
     return formatMediumDate(date);
 }
@@ -72,7 +74,7 @@ export function formatRelativeDate(date: Date): string {
  * Format a date as short date (M/D)
  */
 export function formatShortDate(date: Date): string {
-    return `${date.getMonth() + 1}/${date.getDate()}`;
+    return CACHED_FORMATTERS.shortDate.format(date);
 }
 
 export function getDateFromMaybeTimestamp(date: Date | string | Timestamp): Date {
@@ -142,6 +144,14 @@ export function getDaysBetween(startDate: Date, endDate: Date): number {
     return Math.floor(diffTime / ONE_DAY);
 }
 
+export function getMinutesFromSeconds(seconds: number): number {
+    return Math.round(seconds / 60);
+}
+
+export function getSecondsFromMinutes(minutes: number): number {
+    return minutes * 60;
+}
+
 /**
  * Get a short display name for a date range option
  */
@@ -174,11 +184,13 @@ export function getStartOfToday(): Date {
 }
 
 /**
- * Get week start date (Sunday) for a given date
+ * Get week start date (Monday) for a given date
  */
 export function getWeekStart(date: Date): Date {
     const result = new Date(date);
-    result.setDate(date.getDate() - date.getDay());
+    const day = date.getDay();
+    const diff = day === 0 ? 6 : day - 1;
+    result.setDate(date.getDate() - diff);
     result.setHours(0, 0, 0, 0);
     return result;
 }
@@ -190,11 +202,7 @@ export function isToday(date: Date | Timestamp): boolean {
     const dateToCheck = date instanceof Date ? date : date.toDate();
     const today = new Date();
 
-    return (
-        dateToCheck.getDate() === today.getDate() &&
-        dateToCheck.getMonth() === today.getMonth() &&
-        dateToCheck.getFullYear() === today.getFullYear()
-    );
+    return areSameDates(dateToCheck, today);
 }
 
 /**
@@ -202,6 +210,14 @@ export function isToday(date: Date | Timestamp): boolean {
  */
 export function timestampToDate(timestamp: Timestamp): Date {
     return timestamp.toDate();
+}
+
+function areSameDates(date1: Date, date2: Date): boolean {
+    return (
+        date1.getDate() === date2.getDate() &&
+        date1.getMonth() === date2.getMonth() &&
+        date1.getFullYear() === date2.getFullYear()
+    );
 }
 
 /**

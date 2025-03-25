@@ -22,7 +22,10 @@ interface ConfirmProps {
 }
 
 const props = defineProps<ConfirmProps>();
-const emit = defineEmits(["close"]);
+
+type Emits = (e: "close") => void;
+
+const emit = defineEmits<Emits>();
 
 function onCancel(): void {
     props.onResult(false);

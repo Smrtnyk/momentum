@@ -120,7 +120,9 @@
                                         </div>
                                         <div class="text-caption text-grey-lighten-1">
                                             <template v-if="isCardioExercise(exercise)">
-                                                {{ exercise.durationSeconds / 60 }}
+                                                {{
+                                                    getMinutesFromSeconds(exercise.durationSeconds)
+                                                }}
                                                 min
                                             </template>
                                             <template v-if="isCardioExercise(exercise)">
@@ -165,11 +167,11 @@
                                                     <v-chip size="x-small" class="ml-2">
                                                         <template v-if="isActiveExercise(exercise)">
                                                             {{ getCompletedSetsCount(exercise) }}/{{
-                                                                exercise.sets.length
+                                                                exercise.sets?.length
                                                             }}
                                                         </template>
                                                         <template v-else>{{
-                                                            exercise.sets.length
+                                                            exercise.sets?.length
                                                         }}</template>
                                                     </v-chip>
                                                 </div>
@@ -283,13 +285,119 @@
                                                                         removeSet(index, setIndex)
                                                                     "
                                                                     :disabled="
-                                                                        exercise.sets.length <= 1
+                                                                        exercise.sets?.length <= 1
                                                                     "
                                                                 ></v-btn>
                                                             </td>
                                                         </tr>
                                                     </tbody>
                                                 </v-table>
+
+                                                <v-divider class="my-3"></v-divider>
+
+                                                <!-- Notes field for strength exercises -->
+                                                <v-textarea
+                                                    v-model="exercise.exerciseNotes"
+                                                    label="Notes"
+                                                    variant="outlined"
+                                                    density="comfortable"
+                                                    hide-details
+                                                    rows="2"
+                                                    auto-grow
+                                                    class="mt-2"
+                                                    @update:model-value="updateStrengthNotes(index)"
+                                                ></v-textarea>
+                                            </v-expansion-panel-text>
+                                        </v-expansion-panel>
+                                    </v-expansion-panels>
+                                </div>
+
+                                <!-- Show details for cardio exercises  -->
+                                <div v-if="isCardioExercise(exercise)" class="mt-3">
+                                    <v-expansion-panels variant="accordion">
+                                        <v-expansion-panel>
+                                            <v-expansion-panel-title>
+                                                <div class="d-flex align-center">
+                                                    <v-icon size="small" class="mr-2"
+                                                        >mdi-run</v-icon
+                                                    >
+                                                    Cardio Details
+                                                </div>
+                                            </v-expansion-panel-title>
+                                            <v-expansion-panel-text>
+                                                <v-row>
+                                                    <v-col cols="6">
+                                                        <v-text-field
+                                                            :model-value="
+                                                                getMinutesFromSeconds(
+                                                                    exercise.durationSeconds,
+                                                                )
+                                                            "
+                                                            @update:model-value="
+                                                                updateDuration(
+                                                                    index,
+                                                                    Number($event),
+                                                                )
+                                                            "
+                                                            label="Duration (minutes)"
+                                                            type="number"
+                                                            variant="outlined"
+                                                            density="comfortable"
+                                                            min="1"
+                                                            :rules="[nonZeroPositive]"
+                                                            hide-details
+                                                            class="mb-2"
+                                                        ></v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="6">
+                                                        <v-text-field
+                                                            v-model.number="exercise.distanceKm"
+                                                            label="Distance (km)"
+                                                            type="number"
+                                                            variant="outlined"
+                                                            density="comfortable"
+                                                            min="0"
+                                                            step="0.1"
+                                                            hide-details
+                                                            class="mb-2"
+                                                        ></v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="6">
+                                                        <v-text-field
+                                                            v-model.number="exercise.calories"
+                                                            label="Calories (Kcal)"
+                                                            type="number"
+                                                            variant="outlined"
+                                                            density="comfortable"
+                                                            min="0"
+                                                            hide-details
+                                                            class="mb-2"
+                                                        ></v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="6">
+                                                        <v-select
+                                                            v-model="exercise.intensity"
+                                                            label="Intensity"
+                                                            :items="intensityOptions"
+                                                            variant="outlined"
+                                                            density="comfortable"
+                                                            hide-details
+                                                            class="mb-2"
+                                                        ></v-select>
+                                                    </v-col>
+                                                    <v-col cols="12">
+                                                        <v-textarea
+                                                            v-model="exercise.exerciseNotes"
+                                                            label="Notes"
+                                                            variant="outlined"
+                                                            density="comfortable"
+                                                            hide-details
+                                                            rows="2"
+                                                            auto-grow
+                                                            class="mb-2"
+                                                        ></v-textarea>
+                                                    </v-col>
+                                                </v-row>
                                             </v-expansion-panel-text>
                                         </v-expansion-panel>
                                     </v-expansion-panels>
@@ -404,9 +512,15 @@ import type {
 } from "../types/workout";
 
 import AddExerciseToWorkout from "../components/workout/AddExerciseToWorkout.vue";
-import EditExerciseDialog from "../components/workout/EditExerciseDialog.vue";
 import { globalDialog } from "../composables/useDialog";
-import { getDateFromMaybeTimestamp, ONE_HOUR, ONE_MINUTE, ONE_SECOND } from "../helpers/date-utils";
+import {
+    getDateFromMaybeTimestamp,
+    getMinutesFromSeconds,
+    getSecondsFromMinutes,
+    ONE_HOUR,
+    ONE_MINUTE,
+    ONE_SECOND,
+} from "../helpers/date-utils";
 import { nonZeroPositive } from "../helpers/form-validators";
 import { logger } from "../logger/app-logger";
 import {
@@ -433,7 +547,7 @@ const authStore = useAuthStore();
 const { exerciseCache, pendingLookups } = storeToRefs(exerciseStore);
 
 const isActive = computed(() => !workoutId);
-
+const intensityOptions = ["low", "medium", "high"];
 const exercisesForm = useTemplateRef("exercisesForm");
 const isLoading = ref(false);
 const workout = ref<ActiveWorkout | null | WorkoutWithId>(null);
@@ -470,6 +584,30 @@ function getExerciseName(exerciseId: string): string {
     exerciseStore.getExerciseById(exerciseId);
 
     return "Loading...";
+}
+
+function updateDuration(index: number, minutes: number): void {
+    if (!workout.value) return;
+
+    const exercise = workout.value.exerciseEntries[index];
+    if (!isCardioExercise(exercise)) return;
+
+    exercise.durationSeconds = getSecondsFromMinutes(minutes);
+
+    if (isActiveWorkout(workout.value)) {
+        activeWorkoutStore.saveToLocalStorage();
+    }
+}
+
+function updateStrengthNotes(index: number): void {
+    if (!workout.value) return;
+
+    const exercise = workout.value.exerciseEntries[index];
+    if (!isStrengthExercise(exercise)) return;
+
+    if (isActive.value && isActiveWorkout(workout.value)) {
+        activeWorkoutStore.saveToLocalStorage();
+    }
 }
 
 const hasChanges = computed(() => {
@@ -575,6 +713,7 @@ function addSet(exerciseIndex: number): void {
         return;
     }
 
+    exercise.sets ??= [];
     const sets = exercise.sets;
     const setDefault = { reps: 0, weight: 0 };
     const newSet = isActive.value
@@ -630,12 +769,13 @@ function editExercise(index: number, currWorkout: ActiveWorkout | Workout): void
     if (!exercise) return;
 
     globalDialog.openDialog(
-        EditExerciseDialog,
+        AddExerciseToWorkout,
         {
-            exercise: cloneDeep(exercise),
-            hasActualSets: hasActualSets(index),
-            isActiveWorkout: isActive.value,
-            onSave: (updatedExercise: ExerciseEntry) => handleSaveExercise(index, updatedExercise),
+            existingExercise: cloneDeep(exercise),
+            isEditMode: true,
+            onSave(updatedExercise: ExerciseEntry) {
+                handleSaveExercise(index, updatedExercise);
+            },
         },
         {
             title: `Edit exercise`,
@@ -746,13 +886,6 @@ function handleSaveExercise(index: number, updatedExercise: ExerciseEntry): void
     globalDialog.closeLatestDialog();
 }
 
-function hasActualSets(index: number): boolean {
-    const exercise = workout.value?.exerciseEntries[index];
-    if (!exercise) return false;
-
-    return isStrengthExercise(exercise);
-}
-
 function removeExercise(index: number): void {
     if (!workout.value) {
         return;
@@ -835,6 +968,7 @@ function showAddExerciseDialog(): void {
     globalDialog.openDialog(
         AddExerciseToWorkout,
         {
+            isEditMode: false,
             onAdd: addExerciseToWorkout,
         },
         {
@@ -873,7 +1007,6 @@ function updateSet(exerciseIndex: number, setIndex: number, reps: number, weight
         return;
     }
 
-    // For saved workouts, just update the values directly
     const sets = exercise.sets;
     sets[setIndex].reps = reps;
     sets[setIndex].weight = weight;

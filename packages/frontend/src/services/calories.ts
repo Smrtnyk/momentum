@@ -17,7 +17,6 @@ import type { Meal } from "../types/health-metrics";
 import { firestore } from "../firebase";
 import { logger } from "../logger/app-logger";
 import { updateHealthMetrics } from "./health-metrics";
-import { addRecentFood } from "./recent-food-db";
 
 export async function addMeal(
     userId: string,
@@ -44,11 +43,6 @@ export async function addMeal(
 
         const mealDocRef = await addDoc(mealsRef, mealData);
         await updateDailyCalorieTotals(userId, dateString, defaultCalorieGoal);
-
-        const addFoodPromises = foods.map(function (food) {
-            return addRecentFood(userId, food);
-        });
-        await Promise.all(addFoodPromises);
 
         return mealDocRef.id;
     } catch (error) {

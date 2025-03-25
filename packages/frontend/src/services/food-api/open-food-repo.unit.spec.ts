@@ -59,6 +59,7 @@ describe("OpenFoodRepoApi", () => {
             // response has energy_calories_kcal with per_hundred value of 50
             expect(result?.calories).toBe(50);
             expect(result?.carbs).toBe(2.3);
+            expect(result?.sugars).toBe(2.3);
             expect(result?.fat).toBe(1.1);
             expect(result?.protein).toBe(7.7);
             expect(result?.servingSize).toBe(100);
@@ -122,6 +123,7 @@ describe("OpenFoodRepoApi", () => {
             expect(result.foods[0].carbs).toBe(7.6);
             expect(result.foods[0].fat).toBe(1.3);
             expect(result.foods[0].protein).toBe(8.1);
+            expect(result.foods[0].sugars).toBe(5.1);
         });
 
         it("should handle pagination correctly", async () => {

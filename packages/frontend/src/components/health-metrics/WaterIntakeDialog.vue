@@ -10,7 +10,7 @@
     </v-card-text>
     <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="$emit('close')">Cancel</v-btn>
+        <v-btn @click="emit('close')">Cancel</v-btn>
         <v-btn color="primary" @click="saveWaterIntake" :disabled="!amount || amount <= 0">
             Save
         </v-btn>
@@ -26,10 +26,12 @@ const { initialAmount = null } = defineProps<{
     initialAmount?: number;
 }>();
 
-const emit = defineEmits<{
-    close: [];
-    save: [amount: number];
-}>();
+interface Emits {
+    (e: "close"): void;
+    (e: "save", amount: number): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const amount = ref<null | number>(initialAmount);
 

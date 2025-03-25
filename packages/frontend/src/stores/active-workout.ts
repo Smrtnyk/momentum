@@ -3,7 +3,7 @@ import { Timestamp } from "firebase/firestore";
 import { defineStore } from "pinia";
 import { computed, ref, toRaw } from "vue";
 
-import type { ActiveExercise, ActiveWorkout, ExerciseEntry, WorkoutBase } from "../types/workout";
+import type { ActiveExercise, ActiveWorkout, ExerciseEntry, Workout } from "../types/workout";
 import type { TrainingPlan, WorkoutDay } from "../types/workout-plans";
 
 import { getDateFromMaybeTimestamp } from "../helpers/date-utils";
@@ -144,7 +144,7 @@ export const useActiveWorkoutStore = defineStore("activeWorkout", () => {
 
     function getWorkoutBasics(
         workout: ActiveWorkout,
-    ): Pick<WorkoutBase, "date" | "name" | "overallNotes"> {
+    ): Pick<Workout, "date" | "name" | "overallNotes"> {
         return {
             date: Timestamp.fromDate(getDateFromMaybeTimestamp(workout.date)),
             name: workout.name,
@@ -168,7 +168,7 @@ export const useActiveWorkoutStore = defineStore("activeWorkout", () => {
                 const basics = getWorkoutBasics(workout);
                 const completedExercises = filterCompletedExercises(workout.exerciseEntries);
 
-                const workoutData: Omit<WorkoutBase, "id"> = {
+                const workoutData: Omit<Workout, "id"> = {
                     ...basics,
                     exerciseEntries: mapToExerciseEntries(completedExercises),
                     workoutDurationMinutes: durationMinutes,

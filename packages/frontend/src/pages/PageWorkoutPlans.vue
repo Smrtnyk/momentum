@@ -1,238 +1,305 @@
 <template>
-    <v-container class="pa-2 mx-auto">
-        <v-row>
-            <v-col cols="12">
-                <div class="d-flex flex-column">
-                    <!-- Page Header -->
-                    <v-card class="px-4 py-6 rounded-lg mb-4">
-                        <h1 class="text-h4 text-white font-weight-bold mb-2">Training Programs</h1>
-                        <p class="text-body-1 text-white mb-0">
-                            Science-based workout plans for all fitness levels
-                        </p>
-                    </v-card>
+    <div class="workout-plans">
+        <v-container fluid class="pa-0">
+            <v-app-bar flat density="comfortable" color="background" class="sticky-header">
+                <v-app-bar-title class="text-h6">Training Programs</v-app-bar-title>
 
-                    <!-- Filters -->
-                    <v-card class="mb-4 rounded-lg">
-                        <v-card-text>
-                            <v-row dense>
-                                <v-col cols="12" class="pa-0 pb-2">
-                                    <v-tabs
-                                        v-model="activeTab"
-                                        color="primary"
-                                        class="fitness-tabs rounded-lg overflow-hidden"
-                                        density="compact"
-                                    >
-                                        <v-tab
-                                            v-for="tab in tabOptions"
-                                            :key="tab.value"
-                                            :value="tab.value"
-                                            class="text-body-1 font-weight-medium"
-                                            :ripple="false"
+                <v-btn icon variant="text" @click="showSortMenu = true">
+                    <v-icon>mdi-sort</v-icon>
+                </v-btn>
+
+                <v-btn icon variant="text" @click="showFilterDrawer = true" class="ml-2">
+                    <v-badge
+                        :content="activeFiltersCount"
+                        :model-value="activeFiltersCount > 0"
+                        color="primary"
+                        location="top end"
+                    >
+                        <v-icon>mdi-filter</v-icon>
+                    </v-badge>
+                </v-btn>
+            </v-app-bar>
+
+            <!-- Search bar -->
+            <v-container class="pa-2">
+                <v-text-field
+                    v-model="searchQuery"
+                    prepend-inner-icon="mdi-magnify"
+                    label="Search programs"
+                    density="comfortable"
+                    variant="outlined"
+                    hide-details
+                    clearable
+                ></v-text-field>
+            </v-container>
+
+            <v-container class="pa-2 mx-auto">
+                <!-- Page Header -->
+                <v-card class="px-4 py-6 rounded-lg mb-4">
+                    <h1 class="text-h4 text-white font-weight-bold mb-2">Training Programs</h1>
+                    <p class="text-body-1 text-white mb-0">
+                        Science-based workout plans for all fitness levels
+                    </p>
+                </v-card>
+
+                <!-- Empty state -->
+                <v-fade-transition>
+                    <div v-if="filteredPlans.length === 0" class="text-center pa-8">
+                        <v-icon icon="mdi-dumbbell-off" size="56" color="grey"></v-icon>
+                        <div class="mt-4 text-h6">No programs found</div>
+                        <div class="text-body-2 text-grey mb-4">
+                            Try adjusting your filters or search query
+                        </div>
+                        <v-btn color="primary" variant="tonal" @click="resetFilters">
+                            Reset filters
+                        </v-btn>
+                    </div>
+                </v-fade-transition>
+
+                <!-- Programs List -->
+                <div v-if="filteredPlans.length > 0">
+                    <!-- Results count -->
+                    <div class="text-body-2 text-grey mb-2">
+                        {{ filteredPlans.length }} programs found
+                    </div>
+
+                    <!-- Program cards -->
+                    <v-list class="pa-0 bg-transparent">
+                        <template v-for="plan in filteredPlans" :key="plan.id">
+                            <v-list-item @click="openPlanDetails(plan)" class="plan-item pa-0 mb-3">
+                                <v-card flat class="pa-0 ma-0 rounded-lg">
+                                    <div class="d-flex flex-column flex-sm-row">
+                                        <!-- Image for plan -->
+                                        <div
+                                            class="plan-image d-flex align-center justify-center"
+                                            :class="{
+                                                'bg-grey-lighten-3': !hasBackgroundImage(plan.type),
+                                            }"
+                                            :style="{
+                                                minHeight: '150px',
+                                                minWidth: '120px',
+                                                backgroundImage: hasBackgroundImage(plan.type)
+                                                    ? `url('${getWorkoutImageUrl(plan.type)}')`
+                                                    : '',
+                                                backgroundSize: 'cover',
+                                                backgroundPosition: 'center',
+                                            }"
                                         >
-                                            <v-icon :icon="tab.icon" class="mr-2" size="small" />
-                                            {{ tab.title }}
-                                        </v-tab>
-                                    </v-tabs>
-                                </v-col>
-                            </v-row>
+                                            <v-icon
+                                                v-if="!hasBackgroundImage(plan.type)"
+                                                size="64"
+                                                color="grey-lighten-1"
+                                                >{{ getPlanIcon(plan.type) }}</v-icon
+                                            >
+                                        </div>
 
-                            <v-row class="mt-2">
-                                <v-col cols="6" sm="4">
-                                    <v-select
-                                        v-model="selectedLevel"
-                                        label="Level"
-                                        :items="difficultyLevels"
-                                        variant="outlined"
-                                        density="comfortable"
-                                        hide-details
-                                        class="text-body-2"
-                                    ></v-select>
-                                </v-col>
-                                <v-col cols="6" sm="4">
-                                    <v-select
-                                        v-model="selectedDuration"
-                                        label="Duration"
-                                        :items="durationOptions"
-                                        variant="outlined"
-                                        density="comfortable"
-                                        hide-details
-                                        class="text-body-2"
-                                    ></v-select>
-                                </v-col>
-                                <v-col cols="12" sm="4">
-                                    <v-text-field
-                                        v-model="searchQuery"
-                                        label="Search"
-                                        prepend-inner-icon="mdi-magnify"
-                                        variant="outlined"
-                                        density="comfortable"
-                                        hide-details
-                                        class="text-body-2"
-                                    ></v-text-field>
-                                </v-col>
-
-                                <v-col cols="6" sm="4">
-                                    <v-select
-                                        v-model="selectedLocation"
-                                        label="Location"
-                                        :items="locationOptions"
-                                        variant="outlined"
-                                        density="comfortable"
-                                        hide-details
-                                        class="text-body-2"
-                                    ></v-select>
-                                </v-col>
-                            </v-row>
-                        </v-card-text>
-                    </v-card>
-
-                    <!-- Programs List -->
-                    <div class="flex-grow-1 rounded-lg">
-                        <div class="pa-0">
-                            <div
-                                v-if="filteredPlans.length === 0"
-                                class="d-flex flex-column align-center justify-center pa-8"
-                            >
-                                <v-icon size="64" color="grey-lighten-1">mdi-dumbbell</v-icon>
-                                <p class="text-body-1 text-center mt-4 text-grey-darken-1">
-                                    No training plans match your filters.<br />
-                                    Try adjusting your search criteria.
-                                </p>
-                                <v-btn
-                                    color="primary"
-                                    variant="text"
-                                    @click="resetFilters"
-                                    class="mt-2"
-                                >
-                                    Reset Filters
-                                </v-btn>
-                            </div>
-
-                            <v-list v-else class="pa-0 bg-transparent">
-                                <template v-for="plan in filteredPlans" :key="plan.id">
-                                    <v-list-item
-                                        @click="openPlanDetails(plan)"
-                                        class="plan-item pa-0 mb-3"
-                                    >
-                                        <v-card flat class="pa-0 ma-0 rounded-lg">
-                                            <div class="d-flex flex-column flex-sm-row">
-                                                <!-- Image for plan -->
+                                        <!-- Plan content -->
+                                        <div class="d-flex flex-column flex-grow-1 pa-4">
+                                            <div class="d-flex align-center mb-2">
                                                 <div
-                                                    class="plan-image d-flex align-center justify-center"
-                                                    :class="{
-                                                        'bg-grey-lighten-3': !hasBackgroundImage(
-                                                            plan.type,
-                                                        ),
-                                                    }"
-                                                    :style="{
-                                                        minHeight: '150px',
-                                                        minWidth: '120px',
-                                                        backgroundImage: hasBackgroundImage(
-                                                            plan.type,
-                                                        )
-                                                            ? `url('${getWorkoutImageUrl(plan.type)}')`
-                                                            : '',
-                                                        backgroundSize: 'cover',
-                                                        backgroundPosition: 'center',
-                                                    }"
+                                                    class="text-uppercase text-caption font-weight-bold mr-2 px-2 py-1 rounded"
+                                                    :class="getLevelClass(plan.level)"
                                                 >
-                                                    <v-icon
-                                                        v-if="!hasBackgroundImage(plan.type)"
-                                                        size="64"
-                                                        color="grey-lighten-1"
-                                                        >{{ getPlanIcon(plan.type) }}</v-icon
-                                                    >
+                                                    {{ plan.level }}
                                                 </div>
-
-                                                <!-- Plan content -->
-                                                <div class="d-flex flex-column flex-grow-1 pa-4">
-                                                    <div class="d-flex align-center mb-2">
-                                                        <div
-                                                            class="text-uppercase text-caption font-weight-bold mr-2 px-2 py-1 rounded"
-                                                            :class="getLevelClass(plan.level)"
-                                                        >
-                                                            {{ plan.level }}
-                                                        </div>
-                                                        <div
-                                                            class="text-uppercase text-caption font-weight-bold px-2 py-1 rounded"
-                                                            :class="getCategoryClass(plan.type)"
-                                                        >
-                                                            {{ plan.type }}
-                                                        </div>
-                                                        <v-spacer></v-spacer>
-                                                        <div
-                                                            class="text-caption text-grey-lighten-1"
-                                                        >
-                                                            {{ plan.durationWeeks }} weeks •
-                                                            {{ plan.frequency }}x/week
-                                                        </div>
-                                                    </div>
-
-                                                    <h3 class="text-h6 font-weight-bold mb-1">
-                                                        {{ plan.name }}
-                                                    </h3>
-                                                    <p
-                                                        class="text-body-2 text-grey-lighten-1 mb-2 line-clamp-2"
-                                                    >
-                                                        {{ plan.description }}
-                                                    </p>
-
-                                                    <div
-                                                        class="d-flex align-center flex-wrap mt-auto pt-2"
-                                                    >
-                                                        <v-chip
-                                                            v-for="(goal, i) in plan.goals.slice(
-                                                                0,
-                                                                2,
-                                                            )"
-                                                            :key="i"
-                                                            size="small"
-                                                            color="grey-lighten-3"
-                                                            class="mr-2 mb-2 text-caption"
-                                                        >
-                                                            {{ goal }}
-                                                        </v-chip>
-                                                        <v-chip
-                                                            v-if="plan.goals.length > 2"
-                                                            size="small"
-                                                            color="grey-lighten-3"
-                                                            class="mb-2 text-caption"
-                                                        >
-                                                            +{{ plan.goals.length - 2 }} more
-                                                        </v-chip>
-                                                    </div>
+                                                <div
+                                                    class="text-uppercase text-caption font-weight-bold px-2 py-1 rounded"
+                                                    :class="getCategoryClass(plan.type)"
+                                                >
+                                                    {{ plan.type }}
+                                                </div>
+                                                <v-spacer></v-spacer>
+                                                <div class="text-caption text-grey-lighten-1">
+                                                    {{ plan.durationWeeks }} weeks •
+                                                    {{ plan.frequency }}x/week
                                                 </div>
                                             </div>
-                                        </v-card>
-                                    </v-list-item>
-                                </template>
-                            </v-list>
-                        </div>
-                    </div>
-                </div>
-            </v-col>
-        </v-row>
 
-        <!-- Floating Action Button -->
+                                            <h3 class="text-h6 font-weight-bold mb-1">
+                                                {{ plan.name }}
+                                            </h3>
+                                            <p
+                                                class="text-body-2 text-grey-lighten-1 mb-2 line-clamp-2"
+                                            >
+                                                {{ plan.description }}
+                                            </p>
+
+                                            <div class="d-flex align-center flex-wrap mt-auto pt-2">
+                                                <v-chip
+                                                    v-for="(goal, i) in plan.goals.slice(0, 2)"
+                                                    :key="i"
+                                                    size="small"
+                                                    color="grey-lighten-3"
+                                                    class="mr-2 mb-2 text-caption"
+                                                >
+                                                    {{ goal }}
+                                                </v-chip>
+                                                <v-chip
+                                                    v-if="plan.goals.length > 2"
+                                                    size="small"
+                                                    color="grey-lighten-3"
+                                                    class="mb-2 text-caption"
+                                                >
+                                                    +{{ plan.goals.length - 2 }} more
+                                                </v-chip>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </v-card>
+                            </v-list-item>
+                        </template>
+                    </v-list>
+                </div>
+            </v-container>
+        </v-container>
+
+        <!-- Filters drawer -->
+        <v-bottom-sheet v-model="showFilterDrawer" class="filter-sheet">
+            <v-card height="90vh">
+                <v-card-title class="d-flex align-center py-4 px-4">
+                    <span>Filters</span>
+                    <v-spacer></v-spacer>
+                    <v-btn variant="text" color="primary" @click="resetFilters"> Reset </v-btn>
+                    <v-btn variant="text" icon @click="showFilterDrawer = false">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                </v-card-title>
+
+                <v-divider></v-divider>
+
+                <v-card-text class="filter-content">
+                    <div class="py-2">
+                        <div class="text-subtitle-1 font-weight-bold mb-3">Program Type</div>
+                        <v-chip-group
+                            v-model="selectedTypes"
+                            class="d-flex flex-wrap"
+                            multiple
+                            column
+                        >
+                            <v-chip
+                                v-for="tab in tabOptions"
+                                :key="tab.value"
+                                :value="tab.value"
+                                filter
+                                variant="outlined"
+                                class="text-capitalize ma-1"
+                            >
+                                <v-icon start :icon="tab.icon" size="small"></v-icon>
+                                {{ tab.title }}
+                            </v-chip>
+                        </v-chip-group>
+                    </div>
+
+                    <v-divider class="my-3"></v-divider>
+
+                    <div class="py-2">
+                        <div class="text-subtitle-1 font-weight-bold mb-3">Level</div>
+                        <v-radio-group v-model="selectedLevel" class="filter-radio-group">
+                            <v-radio
+                                v-for="level in difficultyLevels"
+                                :key="level.value"
+                                :label="level.title"
+                                :value="level.value"
+                                class="text-capitalize"
+                            ></v-radio>
+                        </v-radio-group>
+                    </div>
+
+                    <v-divider class="my-3"></v-divider>
+
+                    <div class="py-2">
+                        <div class="text-subtitle-1 font-weight-bold mb-3">Duration</div>
+                        <v-radio-group v-model="selectedDuration" class="filter-radio-group">
+                            <v-radio
+                                v-for="duration in durationOptions"
+                                :key="duration.value"
+                                :label="duration.title"
+                                :value="duration.value"
+                                class="text-capitalize"
+                            ></v-radio>
+                        </v-radio-group>
+                    </div>
+
+                    <v-divider class="my-3"></v-divider>
+
+                    <div class="py-2">
+                        <div class="text-subtitle-1 font-weight-bold mb-3">Location</div>
+                        <v-radio-group v-model="selectedLocation" class="filter-radio-group">
+                            <v-radio
+                                v-for="location in locationOptions"
+                                :key="location.value"
+                                :label="location.title"
+                                :value="location.value"
+                                class="text-capitalize"
+                            ></v-radio>
+                        </v-radio-group>
+                    </div>
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions class="pa-4">
+                    <v-btn block color="primary" size="large" @click="applyFilters">
+                        Apply Filters
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-bottom-sheet>
+
+        <!-- Sort menu -->
+        <v-dialog v-model="showSortMenu" max-width="300">
+            <v-card>
+                <v-card-title class="text-subtitle-1 font-weight-bold">
+                    Sort Programs
+                </v-card-title>
+                <v-divider></v-divider>
+                <v-list density="comfortable" nav>
+                    <v-list-item
+                        v-for="option in sortOptions"
+                        :key="option.value"
+                        :value="option.value"
+                        @click="selectSortOption(option.value)"
+                    >
+                        <template v-slot:prepend>
+                            <v-icon color="primary" v-if="sortBy === option.value">
+                                mdi-check
+                            </v-icon>
+                        </template>
+                        <v-list-item-title>{{ option.title }}</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-card>
+        </v-dialog>
+
         <v-btn
+            class="custom-plan-fab"
             color="primary"
-            icon="mdi-clipboard-text-outline"
+            icon="mdi-plus"
             size="large"
-            style="position: fixed; bottom: 80px; right: 16px"
-            @click="showCreatePlanDialog"
+            elevation="4"
+            @click="openCustomPlanCreator"
         ></v-btn>
-    </v-container>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 
 import type { DifficultyLevel, TrainingPlan } from "../types/workout-plans";
 
+import CustomWorkoutPlanCreator from "../components/workout-plans/CustomWorkoutPlanCreator.vue";
 import PlanDetailsDialog from "../components/workout-plans/PlanDetailsDialog.vue";
 import { globalDialog } from "../composables/useDialog";
-import { allTrainingPlans, cardioPlans, hybridPlans, strengthPlans } from "../data/training-plans";
+import { allTrainingPlans } from "../data/training-plans";
 import { logger } from "../logger/app-logger";
+import { getCustomWorkoutPlans } from "../services/workout-plans";
+import { useAuthStore } from "../stores/auth";
+
+const LEVEL_ORDER = {
+    advanced: 3,
+    beginner: 1,
+    intermediate: 2,
+} as const;
 
 type WorkoutImageMap = {
     [key in TrainingPlan["type"]]: string;
@@ -240,31 +307,22 @@ type WorkoutImageMap = {
 
 const workoutImages: WorkoutImageMap = {
     cardio: "/workout-images/cardio-workout.jpg",
-    circuit: "/workout-images/circuit-workout.jpg",
+    hybrid: "/workout-images/circuit-workout.jpg",
     strength: "/workout-images/strength-workout.jpg",
 };
 
-function getWorkoutImageUrl(category: TrainingPlan["type"]): string {
-    return workoutImages[category] ?? "";
-}
+const authStore = useAuthStore();
 
-function hasBackgroundImage(type: TrainingPlan["type"]): boolean {
-    return Boolean(getWorkoutImageUrl(type));
-}
-
-const activeTab = ref<string>("all");
+const customPlans = ref<TrainingPlan[]>([]);
+const isLoadingCustomPlans = ref(false);
+const showFilterDrawer = ref<boolean>(false);
+const showSortMenu = ref<boolean>(false);
 const searchQuery = ref<string>("");
-const selectedDuration = ref<string>("all");
 const selectedLevel = ref<string>("all");
-
-const locationOptions = [
-    { title: "Any Location", value: "all" },
-    { title: "Home Workouts", value: "home" },
-    { title: "Gym Workouts", value: "gym" },
-    { title: "Anywhere", value: "anywhere" },
-] as const;
-
+const selectedDuration = ref<string>("all");
 const selectedLocation = ref<string>("all");
+const selectedTypes = ref<string[]>([]);
+const sortBy = ref<string>("name");
 
 type TabOption = {
     icon: string;
@@ -273,7 +331,6 @@ type TabOption = {
 };
 
 const tabOptions: TabOption[] = [
-    { icon: "mdi-view-dashboard-outline", title: "All", value: "all" },
     { icon: "mdi-weight-lifter", title: "Strength", value: "strength" },
     { icon: "mdi-run", title: "Cardio", value: "cardio" },
     { icon: "mdi-timer-outline", title: "Hybrid", value: "hybrid" },
@@ -293,22 +350,38 @@ const durationOptions = [
     { title: "12+ weeks", value: "long" },
 ] as const;
 
-const filteredPlans = computed<TrainingPlan[]>(function () {
-    let plans: TrainingPlan[];
+const locationOptions = [
+    { title: "Any Location", value: "all" },
+    { title: "Home Workouts", value: "home" },
+    { title: "Gym Workouts", value: "gym" },
+    { title: "Anywhere", value: "anywhere" },
+] as const;
 
-    switch (activeTab.value) {
-        case "cardio":
-            plans = [...cardioPlans];
-            break;
-        case "hybrid":
-            plans = [...hybridPlans];
-            break;
-        case "strength":
-            plans = [...strengthPlans];
-            break;
-        default:
-            plans = [...allTrainingPlans];
-            break;
+const sortOptions = [
+    { title: "Name (A-Z)", value: "name" },
+    { title: "Name (Z-A)", value: "-name" },
+    { title: "Duration (Shortest first)", value: "duration" },
+    { title: "Duration (Longest first)", value: "-duration" },
+    { title: "Level (Beginner first)", value: "level" },
+    { title: "Level (Advanced first)", value: "-level" },
+];
+
+const activeFiltersCount = computed<number>(function () {
+    let count = 0;
+
+    if (selectedTypes.value.length > 0) count++;
+    if (selectedLevel.value !== "all") count++;
+    if (selectedDuration.value !== "all") count++;
+    if (selectedLocation.value !== "all") count++;
+
+    return count;
+});
+
+const filteredPlans = computed<TrainingPlan[]>(function () {
+    let plans: TrainingPlan[] = [...allTrainingPlans, ...customPlans.value];
+
+    if (selectedTypes.value.length > 0) {
+        plans = plans.filter((plan) => selectedTypes.value.includes(plan.type));
     }
 
     if (selectedLevel.value !== "all") {
@@ -333,7 +406,7 @@ const filteredPlans = computed<TrainingPlan[]>(function () {
         plans = plans.filter((plan) => plan.location === selectedLocation.value);
     }
 
-    if (searchQuery.value.trim()) {
+    if (searchQuery.value?.trim()) {
         const query = searchQuery.value.toLowerCase();
         plans = plans.filter(
             (plan) =>
@@ -343,14 +416,18 @@ const filteredPlans = computed<TrainingPlan[]>(function () {
         );
     }
 
-    return plans;
+    return sortPlans(plans);
 });
+
+function applyFilters(): void {
+    showFilterDrawer.value = false;
+}
 
 function getCategoryClass(category: TrainingPlan["type"]): string {
     switch (category) {
         case "cardio":
             return "bg-teal-lighten-5 text-teal-darken-3";
-        case "circuit":
+        case "hybrid":
             return "bg-amber-lighten-5 text-amber-darken-3";
         case "strength":
             return "bg-red-lighten-5 text-red-darken-3";
@@ -376,13 +453,47 @@ function getPlanIcon(category: TrainingPlan["type"]): string {
     switch (category) {
         case "cardio":
             return "mdi-run";
-        case "circuit":
+        case "hybrid":
             return "mdi-timer-outline";
         case "strength":
             return "mdi-weight-lifter";
         default:
             return "mdi-dumbbell";
     }
+}
+
+function getWorkoutImageUrl(category: TrainingPlan["type"]): string {
+    return workoutImages[category] ?? "";
+}
+
+function hasBackgroundImage(type: TrainingPlan["type"]): boolean {
+    return Boolean(getWorkoutImageUrl(type));
+}
+
+async function loadCustomPlans(): Promise<void> {
+    isLoadingCustomPlans.value = true;
+    try {
+        customPlans.value = await getCustomWorkoutPlans(authStore.nonNullableUser.uid);
+    } catch (error) {
+        logger.error("Failed to load custom workout plans:", "PageWorkoutPlans", error);
+    } finally {
+        isLoadingCustomPlans.value = false;
+    }
+}
+
+function openCustomPlanCreator(): void {
+    globalDialog.openDialog(
+        CustomWorkoutPlanCreator,
+        {
+            onSaved() {
+                loadCustomPlans();
+            },
+        },
+        {
+            fullscreen: true,
+            title: "Create Custom Workout Plan",
+        },
+    );
 }
 
 function openPlanDetails(plan: TrainingPlan): void {
@@ -402,18 +513,74 @@ function openPlanDetails(plan: TrainingPlan): void {
 }
 
 function resetFilters(): void {
-    activeTab.value = "all";
+    selectedTypes.value = [];
     selectedLevel.value = "all";
     selectedDuration.value = "all";
+    selectedLocation.value = "all";
     searchQuery.value = "";
 }
 
-function showCreatePlanDialog(): void {
-    logger.info("Create custom plan functionality coming soon!");
+function selectSortOption(option: string): void {
+    sortBy.value = option;
+    showSortMenu.value = false;
 }
+
+function sortPlans(plans: TrainingPlan[]): TrainingPlan[] {
+    const result = [...plans];
+
+    switch (sortBy.value) {
+        case "-duration":
+            return result.sort((a, b) => b.durationWeeks - a.durationWeeks);
+        case "-level":
+            return result.sort((a, b) => LEVEL_ORDER[b.level] - LEVEL_ORDER[a.level]);
+        case "-name":
+            return result.sort((a, b) => b.name.localeCompare(a.name));
+        case "duration":
+            return result.sort((a, b) => a.durationWeeks - b.durationWeeks);
+        case "level":
+            return result.sort((a, b) => LEVEL_ORDER[a.level] - LEVEL_ORDER[b.level]);
+        case "name":
+            return result.sort((a, b) => a.name.localeCompare(b.name));
+        default:
+            return result;
+    }
+}
+
+onMounted(loadCustomPlans);
 </script>
 
 <style scoped>
+.workout-plans {
+    position: relative;
+    min-height: 100vh;
+}
+
+.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+
+.filter-sheet {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-content {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-bottom: 72px;
+}
+
+.filter-radio-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.filter-radio-group .v-radio {
+    margin-right: 16px;
+}
+
 .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -422,21 +589,10 @@ function showCreatePlanDialog(): void {
     overflow: hidden;
 }
 
-.fitness-tabs :deep(.v-tab) {
-    border-radius: 12px 12px 0 0;
-    opacity: 0.75;
-    transition: all 0.2s ease;
-    margin: 0 4px;
-}
-
-.fitness-tabs :deep(.v-tab--selected) {
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-    opacity: 1;
-    font-weight: bold;
-}
-
-.fitness-tabs :deep(.v-tabs-slider) {
-    height: 3px;
-    border-radius: 3px;
+.custom-plan-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 5;
 }
 </style>

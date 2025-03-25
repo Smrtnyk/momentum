@@ -101,15 +101,28 @@
                     </div>
 
                     <template #append>
-                        <v-btn
-                            icon
-                            size="small"
-                            variant="text"
-                            color="error"
-                            @click="removeFood(index)"
-                        >
-                            <v-icon>mdi-close</v-icon>
-                        </v-btn>
+                        <v-menu location="bottom end">
+                            <template #activator="{ props }">
+                                <v-btn icon size="small" variant="text" v-bind="props">
+                                    <v-icon>mdi-dots-vertical</v-icon>
+                                </v-btn>
+                            </template>
+                            <v-list>
+                                <v-list-item @click="$emit('edit-food', food, index)">
+                                    <template #prepend>
+                                        <v-icon color="primary">mdi-pencil</v-icon>
+                                    </template>
+                                    <v-list-item-title>Edit</v-list-item-title>
+                                </v-list-item>
+
+                                <v-list-item @click="removeFood(index)">
+                                    <template #prepend>
+                                        <v-icon color="error">mdi-delete</v-icon>
+                                    </template>
+                                    <v-list-item-title>Remove</v-list-item-title>
+                                </v-list-item>
+                            </v-list>
+                        </v-menu>
                     </template>
                 </v-list-item>
 
@@ -153,13 +166,13 @@ const { meal, mealType } = defineProps<{
     mealType: Meal["mealType"];
 }>();
 
-const emit = defineEmits<{
-    "add-macros": [];
-    "describe-food": [];
-    "remove-food": [index: number];
-    "scan-label": [];
-    "search-food": [];
-}>();
+interface Emits {
+    (e: "add-macros" | "describe-food" | "scan-label" | "search-food"): void;
+    (e: "remove-food", index: number): void;
+    (e: "edit-food", food: FoodItem, index: number): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const mealTitle = computed(() => {
     return mealType.charAt(0).toUpperCase() + mealType.slice(1);

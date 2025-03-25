@@ -1,3 +1,4 @@
+import { isString } from "es-toolkit";
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
@@ -32,7 +33,7 @@ export const useGlobalStore = defineStore("global", () => {
         let msg: string;
         if (error instanceof Error) {
             msg = error.message;
-        } else if (typeof error === "string") {
+        } else if (isString(error)) {
             msg = error;
         } else {
             msg = "An unknown error occurred.";

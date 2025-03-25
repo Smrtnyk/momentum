@@ -60,6 +60,19 @@
                         @update:model-value="updateCalories"
                     ></v-text-field>
                 </v-col>
+
+                <!-- Sugars (Optional) -->
+                <v-col cols="6" sm="3" offset-sm="3">
+                    <v-text-field
+                        v-model.number="sugars"
+                        type="number"
+                        label="Sugars (g)"
+                        variant="outlined"
+                        :rules="[positiveNumber]"
+                        hint="Optional - part of total carbs"
+                        persistent-hint
+                    ></v-text-field>
+                </v-col>
             </v-row>
 
             <v-card rounded="lg" variant="outlined" class="mt-2 pa-2">
@@ -72,6 +85,7 @@
                     <div>P: {{ protein }}g</div>
                     <div>C: {{ carbs }}g</div>
                     <div>F: {{ fat }}g</div>
+                    <div v-if="sugars > 0">Sugars: {{ sugars }}g</div>
                 </div>
             </v-card>
         </v-card-text>
@@ -98,16 +112,19 @@ const { mealType } = defineProps<{
     mealType: Meal["mealType"];
 }>();
 
-const emit = defineEmits<{
-    close: [];
-    save: [food: FoodItem];
-}>();
+interface Emits {
+    (e: "close"): void;
+    (e: "save", food: FoodItem): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const description = ref("");
 const calories = ref(0);
 const protein = ref(0);
 const carbs = ref(0);
 const fat = ref(0);
+const sugars = ref(0);
 
 function updateCalories(): void {
     const proteinCalories = (protein.value || 0) * 4;
@@ -124,7 +141,13 @@ watch(
 );
 
 const isValid = computed(() => {
-    return calories.value >= 0 && protein.value >= 0 && carbs.value >= 0 && fat.value >= 0;
+    return (
+        calories.value >= 0 &&
+        protein.value >= 0 &&
+        carbs.value >= 0 &&
+        fat.value >= 0 &&
+        sugars.value >= 0
+    );
 });
 
 function addMacros(): void {
@@ -142,6 +165,7 @@ function addMacros(): void {
         servingSize: 1,
         servingUnit: "serving",
         source: "Manual",
+        sugars: Number(sugars.value) || 0,
     };
 
     emit("save", manualFood);

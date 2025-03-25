@@ -1,3 +1,5 @@
+import { isNil, isString } from "es-toolkit";
+
 import type { FoodItem } from "../types/food";
 
 import { geminiModel } from "../firebase";
@@ -13,6 +15,7 @@ interface RawNutritionData {
     protein?: null | number | string;
     servingSize?: null | number | string;
     servingUnit?: null | string;
+    sugars?: null | number | string;
 }
 
 export async function scanNutritionLabel(imageData: string): Promise<FoodItem | null> {
@@ -59,6 +62,7 @@ function convertToFoodItem(data: RawNutritionData): FoodItem {
         protein: normalizeNumericValue(data.protein),
         servingSize: normalizeNumericValue(data.servingSize) || 1,
         servingUnit: data.servingUnit ?? "serving",
+        sugars: normalizeNumericValue(data.sugars),
     };
 }
 
@@ -71,11 +75,12 @@ Return ONLY a JSON object with these fields (use numeric values, not strings):
 - calories: total calories per serving (number)
 - protein: grams of protein (number)
 - carbs: grams of carbohydrates (number)
+- sugars: grams of sugars (number)
 - fat: grams of fat (number)
 - fiber: grams of fiber if available (number or 0)
 
 Example format:
-{"name":"Protein Bar","servingSize":100,"servingUnit":"g","calories":200,"protein":20,"carbs":25,"fat":8,"fiber":5}`;
+{"name":"Protein Bar","servingSize":100,"servingUnit":"g","calories":200,"protein":20,"carbs":25,"sugars":16,"fat":8,"fiber":5}`;
 }
 
 function extractJsonFromText(text: string): null | string {
@@ -84,11 +89,11 @@ function extractJsonFromText(text: string): null | string {
 }
 
 function normalizeNumericValue(value: null | number | string | undefined): number {
-    if (value === null || value === undefined) {
+    if (isNil(value)) {
         return 0;
     }
 
-    return typeof value === "string" ? Number.parseFloat(value) : value;
+    return isString(value) ? Number.parseFloat(value) : value;
 }
 
 function parseNutritionData(jsonString: string): null | RawNutritionData {

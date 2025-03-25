@@ -76,6 +76,7 @@ describe("CombinedFoodApi", function () {
                 protein: 10,
                 servingSize: 100,
                 servingUnit: "g",
+                sugars: 5,
             };
 
             const mockFood2: FoodItem = {
@@ -89,6 +90,7 @@ describe("CombinedFoodApi", function () {
                 protein: 12,
                 servingSize: 100,
                 servingUnit: "g",
+                sugars: 8,
             };
 
             mockApi1.mockGetFoodByBarcode = vi.fn().mockResolvedValue(mockFood1);
@@ -114,6 +116,7 @@ describe("CombinedFoodApi", function () {
                 protein: 10,
                 servingSize: 100,
                 servingUnit: "g",
+                sugars: 0,
             };
 
             const validFood: FoodItem = {
@@ -127,6 +130,7 @@ describe("CombinedFoodApi", function () {
                 protein: 12,
                 servingSize: 100,
                 servingUnit: "g",
+                sugars: 10,
             };
 
             mockApi1.mockGetFoodByBarcode = vi.fn().mockResolvedValue(zeroCalorieFood);
@@ -152,6 +156,7 @@ describe("CombinedFoodApi", function () {
                 protein: 0,
                 servingSize: 100,
                 servingUnit: "g",
+                sugars: 0,
             };
 
             const mediumFood: FoodItem = {
@@ -166,6 +171,7 @@ describe("CombinedFoodApi", function () {
                 protein: 0,
                 servingSize: 100,
                 servingUnit: "g",
+                sugars: 12,
             };
 
             const completeFood: FoodItem = {
@@ -181,6 +187,7 @@ describe("CombinedFoodApi", function () {
                 protein: 8,
                 servingSize: 100,
                 servingUnit: "g",
+                sugars: 7,
             };
 
             mockApi1.mockGetFoodByBarcode = vi.fn().mockResolvedValue(basicFood);
@@ -228,6 +235,7 @@ describe("CombinedFoodApi", function () {
                 protein: 10,
                 servingSize: 100,
                 servingUnit: "g",
+                sugars: 4,
             };
 
             mockApi1.mockGetFoodByBarcode = vi.fn().mockRejectedValue(new Error("API error"));
@@ -260,6 +268,7 @@ describe("CombinedFoodApi", function () {
                         protein: 10,
                         servingSize: 100,
                         servingUnit: "g",
+                        sugars: 4,
                     },
                 ],
                 totalCount: 1,
@@ -280,6 +289,7 @@ describe("CombinedFoodApi", function () {
                         protein: 20,
                         servingSize: 100,
                         servingUnit: "g",
+                        sugars: 4,
                     },
                 ],
                 totalCount: 1,
@@ -315,6 +325,7 @@ describe("CombinedFoodApi", function () {
                         protein: 10,
                         servingSize: 100,
                         servingUnit: "g",
+                        sugars: 4,
                     },
                 ],
                 totalCount: 1,
@@ -359,6 +370,7 @@ describe("CombinedFoodApi", function () {
                         protein: 10,
                         servingSize: 100,
                         servingUnit: "g",
+                        sugars: 4,
                     },
                     {
                         barcode: null,
@@ -372,6 +384,7 @@ describe("CombinedFoodApi", function () {
                         protein: 20,
                         servingSize: 100,
                         servingUnit: "g",
+                        sugars: 4,
                     },
                     {
                         barcode: null,
@@ -385,6 +398,7 @@ describe("CombinedFoodApi", function () {
                         protein: 10,
                         servingSize: 100,
                         servingUnit: "g",
+                        sugars: 4,
                     },
                 ],
                 totalCount: 3,
@@ -424,6 +438,7 @@ describe("CombinedFoodApi", function () {
                         protein: 10,
                         servingSize: 100,
                         servingUnit: "g",
+                        sugars: 4,
                     },
                     {
                         barcode: null,
@@ -437,6 +452,7 @@ describe("CombinedFoodApi", function () {
                         protein: 10,
                         servingSize: 100,
                         servingUnit: "g",
+                        sugars: 4,
                     },
                     {
                         barcode: null,
@@ -451,6 +467,7 @@ describe("CombinedFoodApi", function () {
                         protein: 10,
                         servingSize: 100,
                         servingUnit: "g",
+                        sugars: 4,
                     },
                 ],
                 totalCount: 3,
@@ -485,6 +502,7 @@ describe("CombinedFoodApi", function () {
                         protein: 10,
                         servingSize: 100,
                         servingUnit: "g",
+                        sugars: 4,
                     },
                 ],
                 totalCount: 1,

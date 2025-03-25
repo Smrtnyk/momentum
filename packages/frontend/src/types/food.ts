@@ -24,6 +24,7 @@ export interface FoodItem {
     servingSize: number;
     servingUnit: string;
     source?: string;
+    sugars?: number;
 }
 
 export interface FoodSearchResult {
@@ -31,6 +32,25 @@ export interface FoodSearchResult {
     foods: FoodItem[];
     totalCount: number;
     totalPages: number;
+}
+
+export interface NutritionixFood {
+    brand_name?: string;
+    food_name: string;
+    full_nutrients?: Nutrient[];
+    ndb_no?: string;
+    nf_calories: number;
+    nf_protein: number;
+    nf_sugars?: number;
+    nf_total_carbohydrate: number;
+    nf_total_fat: number;
+    photo?: {
+        highres: string;
+        thumb: string;
+    };
+    serving_qty: number;
+    serving_unit: string;
+    serving_weight_grams: number;
 }
 
 export interface OpenFoodFactsProduct {
@@ -56,6 +76,9 @@ export interface OpenFoodFactsProduct {
         protein_100g?: number;
         proteins?: number;
         proteins_100g?: number;
+
+        sugars?: number;
+        sugars_100g?: number;
     };
     popularity_key?: number;
     product_name: string;
@@ -119,6 +142,12 @@ export interface OpenFoodRepoProduct {
                   unit?: string;
               };
               proteins?: {
+                  name_translations?: Record<string, string>;
+                  per_hundred: number;
+                  per_portion: null | number;
+                  unit?: string;
+              };
+              sugars?: {
                   name_translations?: Record<string, string>;
                   per_hundred: number;
                   per_portion: null | number;

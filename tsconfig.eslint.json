@@ -29,6 +29,7 @@
         "packages/*/vitest.config.ts",
         "eslint.config.js",
         "packages/*/src",
+        "packages/*/seeder",
         "packages/*/vite.config.ts",
         "packages/*/vitest.workspace.ts",
         "packages/*/vitest.config.ts"

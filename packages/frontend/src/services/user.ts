@@ -1,16 +1,8 @@
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
-import { firestore } from "../firebase";
+import type { UserProfile } from "../types/user-profile";
 
-export interface UserProfile {
-    birthDate: string;
-    defaultCalorieGoal: number;
-    gender: "Female" | "Male";
-    height: number;
-    id: string;
-    name: string;
-    profilePictureUrl?: string;
-}
+import { firestore } from "../firebase";
 
 export async function getUserProfile(uid: string): Promise<UserProfile> {
     const docRef = doc(firestore, "users", uid);

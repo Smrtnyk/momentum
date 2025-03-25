@@ -156,7 +156,7 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
         name: "Home HIIT Fusion",
         scienceReference:
             "Based on metabolic conditioning research and time-efficient exercise protocols",
-        type: "circuit",
+        type: "hybrid",
         workoutDays: [
             {
                 exerciseEntries: [
@@ -576,7 +576,7 @@ const homeWorkoutPlans: readonly TrainingPlan[] = [
     },
 ];
 
-export const strengthPlans: readonly TrainingPlan[] = [
+const strengthPlans: readonly TrainingPlan[] = [
     {
         author: "FitApp Science Team",
         description:
@@ -1455,7 +1455,7 @@ export const strengthPlans: readonly TrainingPlan[] = [
     },
 ];
 
-export const cardioPlans: readonly TrainingPlan[] = [
+const cardioPlans: readonly TrainingPlan[] = [
     {
         author: "FitApp Science Team",
         description:
@@ -1702,7 +1702,7 @@ export const cardioPlans: readonly TrainingPlan[] = [
     },
 ];
 
-export const hybridPlans: readonly TrainingPlan[] = [
+const hybridPlans: readonly TrainingPlan[] = [
     {
         author: "FitApp Science Team",
         description:
@@ -1720,7 +1720,7 @@ export const hybridPlans: readonly TrainingPlan[] = [
         location: "gym",
         name: "Balanced Fitness Foundation",
         scienceReference: "Based on ACSM guidelines for concurrent training for general fitness",
-        type: "circuit",
+        type: "hybrid",
         workoutDays: [
             {
                 exerciseEntries: [
@@ -1827,7 +1827,7 @@ export const hybridPlans: readonly TrainingPlan[] = [
         location: "gym",
         name: "Functional Athlete Program",
         scienceReference: "Based on studies of concurrent training for athletic performance",
-        type: "circuit",
+        type: "hybrid",
         workoutDays: [
             {
                 exerciseEntries: [
@@ -1980,7 +1980,7 @@ export const hybridPlans: readonly TrainingPlan[] = [
         name: "HIIT Metabolic Conditioning",
         scienceReference:
             "Based on EPOC (Excess Post-exercise Oxygen Consumption) research and HIIT effectiveness studies",
-        type: "circuit",
+        type: "hybrid",
         workoutDays: [
             {
                 exerciseEntries: [
@@ -2108,7 +2108,7 @@ export const hybridPlans: readonly TrainingPlan[] = [
         name: "Functional Mobility & Flexibility",
         scienceReference:
             "Based on FMS (Functional Movement Screen) principles and dynamic mobility research",
-        type: "circuit",
+        type: "hybrid",
         workoutDays: [
             {
                 exerciseEntries: [
@@ -2251,7 +2251,7 @@ export const hybridPlans: readonly TrainingPlan[] = [
         name: "Athletic Performance Elite",
         scienceReference:
             "Based on NSCA sport performance principles and periodized training models",
-        type: "circuit",
+        type: "hybrid",
         workoutDays: [
             {
                 exerciseEntries: [

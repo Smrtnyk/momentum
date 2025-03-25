@@ -1,131 +1,217 @@
-interface UnitConversion {
-    fromUnit: string;
-    ratio: number;
-    threshold: number;
-    toUnit: string;
+enum UnitSystem {
+    COOKING = "cooking",
+    CUSTOM = "custom",
+    IMPERIAL = "imperial",
+    METRIC = "metric",
 }
 
-type UnitSystem = "cooking" | "custom" | "imperial" | "metric";
-type UnitType = "custom" | "volume" | "weight";
+enum UnitType {
+    CUSTOM = "custom",
+    VOLUME = "volume",
+    WEIGHT = "weight",
+}
 
-// Units classification maps
-const WEIGHT_UNITS = ["g", "kg", "oz", "lb"];
-const VOLUME_UNITS = ["ml", "l", "L", "liter", "fl_oz", "cup", "cups", "tbsp", "tsp"];
-const METRIC_UNITS = ["g", "kg", "ml", "l", "L", "liter"];
-const IMPERIAL_UNITS = ["oz", "lb", "fl_oz"];
-const COOKING_UNITS = ["cup", "cups", "tbsp", "tsp"];
-const STANDARD_UNITS = [...WEIGHT_UNITS, ...VOLUME_UNITS];
+enum VolumeUnit {
+    CUP = "cup",
+    CUPS = "cups",
+    FLUID_OUNCE = "fl_oz",
+    LITER = "l",
+    LITER_CAP = "L",
+    LITER_FULL = "liter",
+    MILLILITER = "ml",
+    TABLESPOON = "tbsp",
+    TEASPOON = "tsp",
+}
 
-// Conversion ratios and thresholds
-const UNIT_CONVERSIONS: UnitConversion[] = [
-    // Weight conversions
-    { fromUnit: "kg", ratio: 1000, threshold: 0.1, toUnit: "g" },
-    { fromUnit: "lb", ratio: 16, threshold: 0.5, toUnit: "oz" },
-    { fromUnit: "oz", ratio: 28.35, threshold: 0, toUnit: "g" },
-    { fromUnit: "g", ratio: 1 / 28.35, threshold: 0, toUnit: "oz" },
+enum WeightUnit {
+    GRAM = "g",
+    KILOGRAM = "kg",
+    OUNCE = "oz",
+    POUND = "lb",
+}
 
-    // Volume conversions
-    { fromUnit: "L", ratio: 1000, threshold: 0.1, toUnit: "ml" },
-    { fromUnit: "l", ratio: 1000, threshold: 0.1, toUnit: "ml" },
-    { fromUnit: "liter", ratio: 1000, threshold: 0.1, toUnit: "ml" },
-    { fromUnit: "fl_oz", ratio: 29.57, threshold: 0, toUnit: "ml" },
-    { fromUnit: "ml", ratio: 1 / 29.57, threshold: 0, toUnit: "fl_oz" },
+type CookingConversionTable = Record<string, number>;
 
-    // Cooking measurement conversions
-    { fromUnit: "cup", ratio: 16, threshold: 0.25, toUnit: "tbsp" },
-    { fromUnit: "cups", ratio: 16, threshold: 0.25, toUnit: "tbsp" },
-    { fromUnit: "tbsp", ratio: 3, threshold: 1, toUnit: "tsp" },
-
-    // Cross-system conversions (for cooking)
-    // liquid ounce approximation
-    { fromUnit: "oz", ratio: 2, threshold: 1, toUnit: "tbsp" },
-];
+type Unit = string | VolumeUnit | WeightUnit;
 
 /**
- * Converts cooking measurement units (cups, tbsp, tsp)
+ * Normalizes unit string to handle case insensitivity
  */
-export function convertCookingMeasure(value: number, fromUnit: string, toUnit: string): number {
-    if (fromUnit === toUnit) return value;
+function normalizeUnit(unit: Unit): Unit {
+    if (!unit) return unit;
 
-    const normalizedFromUnit = fromUnit === "cups" ? "cup" : fromUnit;
-    const normalizedToUnit = toUnit === "cups" ? "cup" : toUnit;
-
-    //  everything to teaspoons first as the base unit
-    let tspValue = value;
-
-    if (normalizedFromUnit === "cup") {
-        // 1 cup = 16 tbsp = 48 tsp
-        tspValue = value * 48;
-    } else if (normalizedFromUnit === "tbsp") {
-        // 1 tbsp = 3 tsp
-        tspValue = value * 3;
+    const lowercased = unit.toString().toLowerCase();
+    const allUnits = { ...WeightUnit, ...VolumeUnit };
+    for (const [, enumValue] of Object.entries(allUnits)) {
+        if (enumValue.toLowerCase() === lowercased) {
+            return enumValue;
+        }
     }
 
-    // Then convert from teaspoons to target unit
-    if (normalizedToUnit === "tsp") {
-        return formatConvertedValue(tspValue, normalizedToUnit);
-    } else if (normalizedToUnit === "tbsp") {
-        return formatConvertedValue(tspValue / 3, normalizedToUnit);
-    } else if (normalizedToUnit === "cup") {
-        return formatConvertedValue(tspValue / 48, normalizedToUnit);
+    return lowercased;
+}
+
+const CONVERSION_FACTORS = {
+    // 1 cup = 236.59 ml
+    [VolumeUnit.CUP]: { fromBase: 1 / 236.59, toBase: 236.59 },
+    // Same as cup
+    [VolumeUnit.CUPS]: { fromBase: 1 / 236.59, toBase: 236.59 },
+    // 1 fl_oz = 29.57 ml
+    [VolumeUnit.FLUID_OUNCE]: { fromBase: 1 / 29.57, toBase: 29.57 },
+    // 1 L = 1000 ml
+    [VolumeUnit.LITER]: { fromBase: 0.001, toBase: 1000 },
+    // 1 L = 1000 ml
+    [VolumeUnit.LITER_CAP]: { fromBase: 0.001, toBase: 1000 },
+    // 1 liter = 1000 ml
+    [VolumeUnit.LITER_FULL]: { fromBase: 0.001, toBase: 1000 },
+    // Base unit for volume
+    [VolumeUnit.MILLILITER]: { fromBase: 1, toBase: 1 },
+    // 1 tbsp = 14.79 ml
+    [VolumeUnit.TABLESPOON]: { fromBase: 1 / 14.79, toBase: 14.79 },
+    // 1 tsp = 4.93 ml
+    [VolumeUnit.TEASPOON]: { fromBase: 1 / 4.93, toBase: 4.93 },
+    // Base unit for weight
+    [WeightUnit.GRAM]: { fromBase: 1, toBase: 1 },
+    // 1 kg = 1000 g
+    [WeightUnit.KILOGRAM]: { fromBase: 0.001, toBase: 1000 },
+    // 1 oz = 28.35 g
+    [WeightUnit.OUNCE]: { fromBase: 1 / 28.35, toBase: 28.35 },
+    // 1 lb = 453.59 g
+    [WeightUnit.POUND]: { fromBase: 1 / 453.59, toBase: 453.59 },
+};
+
+const CONVERSION_THRESHOLDS = [
+    { fromUnit: WeightUnit.KILOGRAM, ratio: 1000, threshold: 0.1, toUnit: WeightUnit.GRAM },
+    { fromUnit: WeightUnit.POUND, ratio: 16, threshold: 0.5, toUnit: WeightUnit.OUNCE },
+    { fromUnit: VolumeUnit.LITER, ratio: 1000, threshold: 0.1, toUnit: VolumeUnit.MILLILITER },
+    { fromUnit: VolumeUnit.LITER_CAP, ratio: 1000, threshold: 0.1, toUnit: VolumeUnit.MILLILITER },
+    { fromUnit: VolumeUnit.LITER_FULL, ratio: 1000, threshold: 0.1, toUnit: VolumeUnit.MILLILITER },
+    { fromUnit: VolumeUnit.CUP, ratio: 16, threshold: 0.25, toUnit: VolumeUnit.TABLESPOON },
+    { fromUnit: VolumeUnit.CUPS, ratio: 16, threshold: 0.25, toUnit: VolumeUnit.TABLESPOON },
+    { fromUnit: VolumeUnit.TABLESPOON, ratio: 3, threshold: 1, toUnit: VolumeUnit.TEASPOON },
+    // Liquid ounce approx
+    { fromUnit: WeightUnit.OUNCE, ratio: 2, threshold: 1, toUnit: VolumeUnit.TABLESPOON },
+];
+
+const UNIT_METADATA = {
+    [VolumeUnit.CUP]: { precision: 1, system: UnitSystem.COOKING, type: UnitType.VOLUME },
+    [VolumeUnit.CUPS]: { precision: 1, system: UnitSystem.COOKING, type: UnitType.VOLUME },
+    [VolumeUnit.FLUID_OUNCE]: { precision: 1, system: UnitSystem.IMPERIAL, type: UnitType.VOLUME },
+    [VolumeUnit.LITER]: { precision: 2, system: UnitSystem.METRIC, type: UnitType.VOLUME },
+    [VolumeUnit.LITER_CAP]: { precision: 2, system: UnitSystem.METRIC, type: UnitType.VOLUME },
+    [VolumeUnit.LITER_FULL]: { precision: 2, system: UnitSystem.METRIC, type: UnitType.VOLUME },
+    [VolumeUnit.MILLILITER]: { precision: 0, system: UnitSystem.METRIC, type: UnitType.VOLUME },
+    [VolumeUnit.TABLESPOON]: { precision: 1, system: UnitSystem.COOKING, type: UnitType.VOLUME },
+    [VolumeUnit.TEASPOON]: { precision: 1, system: UnitSystem.COOKING, type: UnitType.VOLUME },
+
+    [WeightUnit.GRAM]: { precision: 0, system: UnitSystem.METRIC, type: UnitType.WEIGHT },
+    [WeightUnit.KILOGRAM]: { precision: 2, system: UnitSystem.METRIC, type: UnitType.WEIGHT },
+    [WeightUnit.OUNCE]: { precision: 1, system: UnitSystem.IMPERIAL, type: UnitType.WEIGHT },
+    [WeightUnit.POUND]: { precision: 1, system: UnitSystem.IMPERIAL, type: UnitType.WEIGHT },
+};
+
+const COOKING_CONVERSIONS: Record<string, CookingConversionTable> = {
+    [VolumeUnit.CUP]: {
+        [VolumeUnit.TABLESPOON]: 16,
+        [VolumeUnit.TEASPOON]: 48,
+    },
+    [VolumeUnit.CUPS]: {
+        [VolumeUnit.TABLESPOON]: 16,
+        [VolumeUnit.TEASPOON]: 48,
+    },
+    [VolumeUnit.TABLESPOON]: {
+        [VolumeUnit.CUP]: 1 / 16,
+        [VolumeUnit.CUPS]: 1 / 16,
+        [VolumeUnit.TEASPOON]: 3,
+    },
+    [VolumeUnit.TEASPOON]: {
+        [VolumeUnit.CUP]: 1 / 48,
+        [VolumeUnit.CUPS]: 1 / 48,
+        [VolumeUnit.TABLESPOON]: 1 / 3,
+    },
+};
+
+/**
+ * Converts cooking measurement units (cups, tbsp, tsp) using direct ratios
+ */
+export function convertCookingMeasure(value: number, fromUnit: Unit, toUnit: Unit): number {
+    if (fromUnit === toUnit) {
+        return value;
     }
 
-    return value;
+    const normalizedFromUnit = normalizeUnit(fromUnit);
+    const normalizedToUnit = normalizeUnit(toUnit);
+
+    if (normalizedFromUnit === normalizedToUnit) {
+        return value;
+    }
+
+    const cookingConversions = COOKING_CONVERSIONS[normalizedFromUnit];
+    if (cookingConversions && normalizedToUnit in cookingConversions) {
+        const ratio = cookingConversions[normalizedToUnit];
+        return formatConvertedValue(value * ratio, normalizedToUnit);
+    }
+
+    return convertQuantity(value, fromUnit, toUnit);
 }
 
 /**
  * Converts a quantity from one unit to another
  */
-export function convertQuantity(value: number, fromUnit: string, toUnit: string): number {
-    if (!fromUnit || !toUnit || fromUnit === toUnit) return value;
-
-    // direct conversion first
-    const directConversion = findDirectConversion(fromUnit, toUnit);
-    if (directConversion) {
-        return formatConvertedValue(value * directConversion.ratio, toUnit);
-    }
-
-    const fromType = getUnitType(fromUnit);
-    const toType = getUnitType(toUnit);
-
-    // Cannot convert between different types
-    if (fromType !== toType && fromType !== "custom" && toType !== "custom") {
+export function convertQuantity(value: number, fromUnit: Unit, toUnit: Unit): number {
+    if (!fromUnit || !toUnit) {
         return value;
     }
 
-    // conversions by unit type
-    if (fromType === "weight" && toType === "weight") {
-        return handleWeightConversion(value, fromUnit, toUnit);
+    const normalizedFromUnit = normalizeUnit(fromUnit);
+    const normalizedToUnit = normalizeUnit(toUnit);
+
+    if (normalizedFromUnit === normalizedToUnit) {
+        return value;
     }
 
-    if (fromType === "volume" && toType === "volume") {
-        return handleVolumeConversion(value, fromUnit, toUnit);
+    // Handle direct cooking conversions for better precision
+    if (isCookingUnit(normalizedFromUnit) && isCookingUnit(normalizedToUnit)) {
+        return convertCookingMeasure(value, normalizedFromUnit, normalizedToUnit);
     }
 
-    return value;
+    const fromType = getUnitType(normalizedFromUnit);
+    const toType = getUnitType(normalizedToUnit);
+    // Cannot convert between different types
+    if (fromType !== toType && fromType !== UnitType.CUSTOM && toType !== UnitType.CUSTOM) {
+        return value;
+    }
+    // Convert to base unit first, then to target unit
+    const baseQuantity = normalizeToBaseUnit(value, normalizedFromUnit);
+    const convertedValue = convertFromBaseUnit(baseQuantity, normalizedToUnit);
+
+    return formatConvertedValue(convertedValue, normalizedToUnit);
 }
 
 /**
  * Converts units if below a threshold
  * Used in recipes to make small amounts more readable (e.g., 0.25 cup -> 4 tbsp)
  */
-export function convertUnitIfNeeded(
-    amount: number,
-    unit: string,
-): { amount: number; unit: string } {
-    if (!unit) return { amount, unit };
+export function convertUnitIfNeeded(amount: number, unit: Unit): { amount: number; unit: Unit } {
+    if (!unit) {
+        return { amount, unit };
+    }
 
-    const conversion = UNIT_CONVERSIONS.find(
+    const normalizedUnit = normalizeUnit(unit);
+
+    const conversionThreshold = CONVERSION_THRESHOLDS.find(
         (conv) =>
-            conv.fromUnit.toLowerCase() === unit.toLowerCase() &&
+            normalizeUnit(conv.fromUnit) === normalizedUnit &&
             amount < conv.threshold &&
             conv.threshold > 0,
     );
 
-    if (conversion) {
+    if (conversionThreshold) {
+        const converted = amount * conversionThreshold.ratio;
+
         return {
-            amount: amount * conversion.ratio,
-            unit: conversion.toUnit,
+            amount: formatConvertedValue(converted, conversionThreshold.toUnit),
+            unit: conversionThreshold.toUnit,
         };
     }
 
@@ -133,237 +219,120 @@ export function convertUnitIfNeeded(
 }
 
 /**
- * Converts volume units
- */
-export function convertVolume(value: number, fromUnit: string, toUnit: string): number {
-    if (fromUnit === toUnit) return value;
-
-    if (fromUnit === "ml" && toUnit === "fl_oz") {
-        return formatConvertedValue(value / 29.57, toUnit);
-    } else if (fromUnit === "fl_oz" && toUnit === "ml") {
-        return formatConvertedValue(value * 29.57, toUnit);
-    }
-
-    return value;
-}
-
-/**
- * Converts weight units
- */
-export function convertWeight(value: number, fromUnit: string, toUnit: string): number {
-    if (fromUnit === toUnit) return value;
-
-    if (fromUnit === "g" && toUnit === "oz") {
-        return formatConvertedValue(value / 28.35, toUnit);
-    } else if (fromUnit === "oz" && toUnit === "g") {
-        return formatConvertedValue(value * 28.35, toUnit);
-    }
-
-    return value;
-}
-
-/**
  * Gets available units for conversion based on the current unit
  */
-export function getAvailableUnits(unit: string): string[] {
+export function getAvailableUnits(unit: Unit): Unit[] {
     if (!isStandardUnit(unit)) {
         return [unit];
     }
 
     const unitType = getUnitType(unit);
-    if (unitType === "weight") {
-        return ["g", "oz"];
-    } else if (unitType === "volume") {
-        if (["cup", "cups", "tbsp", "tsp"].includes(unit.toLowerCase())) {
-            return ["cup", "tbsp", "tsp"];
+
+    if (unitType === UnitType.WEIGHT) {
+        return [WeightUnit.GRAM, WeightUnit.OUNCE];
+    }
+
+    if (unitType === UnitType.VOLUME) {
+        if (isCookingUnit(unit)) {
+            return [VolumeUnit.CUP, VolumeUnit.TABLESPOON, VolumeUnit.TEASPOON];
         }
-        return ["ml", "fl_oz"];
+        return [VolumeUnit.MILLILITER, VolumeUnit.FLUID_OUNCE];
     }
 
     return [unit];
 }
 
 /**
- * Determines the system a unit belongs to (metric, imperial, cooking, custom)
+ * Gets unit system (METRIC, IMPERIAL, COOKING or CUSTOM)
  */
-export function getUnitSystem(unit: string): UnitSystem {
-    if (!unit) return "custom";
-
-    const normalizedUnit = unit.toLowerCase();
-    if (METRIC_UNITS.includes(normalizedUnit)) return "metric";
-    if (IMPERIAL_UNITS.includes(normalizedUnit)) return "imperial";
-    if (COOKING_UNITS.includes(normalizedUnit)) return "cooking";
-    return "custom";
+export function getUnitSystem(unit: Unit): UnitSystem {
+    const normalizedUnit = normalizeUnit(unit);
+    const metadata = UNIT_METADATA[normalizedUnit as keyof typeof UNIT_METADATA];
+    return metadata?.system ?? UnitSystem.CUSTOM;
 }
 
 /**
- * Determines the type of unit (weight, volume, or custom)
+ * Gets unit type (WEIGHT, VOLUME or CUSTOM)
  */
-export function getUnitType(unit: string): UnitType {
-    if (!unit) return "custom";
-
-    const normalizedUnit = unit.toLowerCase();
-    if (WEIGHT_UNITS.includes(normalizedUnit)) return "weight";
-    if (VOLUME_UNITS.includes(normalizedUnit)) return "volume";
-    return "custom";
+export function getUnitType(unit: Unit): UnitType {
+    const normalizedUnit = normalizeUnit(unit);
+    const metadata = UNIT_METADATA[normalizedUnit as keyof typeof UNIT_METADATA];
+    return metadata?.type ?? UnitType.CUSTOM;
 }
 
 /**
- * Checks if a unit is a liquid volume unit
+ * Checks if unit is a volume/liquid unit
  */
-export function isLiquidUnit(unit: string): boolean {
-    if (!unit) return false;
-    return VOLUME_UNITS.includes(unit.toLowerCase());
+export function isLiquidUnit(unit: Unit): boolean {
+    return getUnitType(unit) === UnitType.VOLUME;
 }
 
 /**
- * Checks if a unit is a standard unit (not custom)
+ * Checks if unit is a standard unit (not custom)
  */
-export function isStandardUnit(unit: string): boolean {
-    if (!unit) return false;
-    return STANDARD_UNITS.includes(unit.toLowerCase());
+export function isStandardUnit(unit: Unit): boolean {
+    const normalizedUnit = normalizeUnit(unit);
+    return normalizedUnit in UNIT_METADATA;
 }
 
 /**
- * Checks if a unit is a weight unit
+ * Checks if unit is a weight unit
  */
-export function isWeightUnit(unit: string): boolean {
-    if (!unit) return false;
-    return WEIGHT_UNITS.includes(unit.toLowerCase());
+export function isWeightUnit(unit: Unit): boolean {
+    return getUnitType(unit) === UnitType.WEIGHT;
 }
 
 /**
  * Normalizes to base units (g for weight, ml for volume)
  */
-export function normalizeToBaseUnit(quantity: number, unit: string): number {
-    if (!unit) return quantity;
-
-    const unitType = getUnitType(unit);
-
-    if (unitType === "weight") {
-        if (unit === "g") {
-            return quantity;
-        } else if (unit === "oz") {
-            return quantity * 28.35;
-        } else if (unit === "kg") {
-            return quantity * 1000;
-        } else if (unit === "lb") {
-            // 1 lb = 16 oz = 453.59g
-            return quantity * 453.59;
-        }
-    } else if (unitType === "volume") {
-        if (unit === "ml") {
-            return quantity;
-        } else if (unit === "fl_oz") {
-            return quantity * 29.57;
-        } else if (unit === "L" || unit === "l" || unit === "liter") {
-            return quantity * 1000;
-        } else if (unit === "cup" || unit === "cups") {
-            // 1 cup ≈ 236.59ml
-            return quantity * 236.59;
-        } else if (unit === "tbsp") {
-            // 1 tbsp ≈ 14.79ml
-            return quantity * 14.79;
-        } else if (unit === "tsp") {
-            // 1 tsp ≈ 4.93ml
-            return quantity * 4.93;
-        }
+export function normalizeToBaseUnit(quantity: number, unit: Unit): number {
+    if (!isStandardUnit(unit)) {
+        return quantity;
     }
 
-    return quantity;
+    const normalizedUnit = normalizeUnit(unit);
+    const conversionFactor = CONVERSION_FACTORS[normalizedUnit as keyof typeof CONVERSION_FACTORS];
+    if (!conversionFactor) {
+        return quantity;
+    }
+
+    return quantity * conversionFactor.toBase;
 }
 
 /**
- * Helper function to find a direct conversion in the unit conversions list
+ * Convert from base unit to target unit
  */
-function findDirectConversion(fromUnit: string, toUnit: string): undefined | UnitConversion {
-    return UNIT_CONVERSIONS.find(
-        (conv) =>
-            conv.fromUnit.toLowerCase() === fromUnit.toLowerCase() &&
-            conv.toUnit.toLowerCase() === toUnit.toLowerCase(),
-    );
+function convertFromBaseUnit(baseQuantity: number, targetUnit: Unit): number {
+    if (!isStandardUnit(targetUnit)) {
+        return baseQuantity;
+    }
+
+    const normalizedUnit = normalizeUnit(targetUnit);
+    const conversionFactor = CONVERSION_FACTORS[normalizedUnit as keyof typeof CONVERSION_FACTORS];
+    if (!conversionFactor) {
+        return baseQuantity;
+    }
+
+    return baseQuantity * conversionFactor.fromBase;
 }
 
 /**
- * Formats the converted value with the appropriate precision based on unit type
+ * Formats the converted value with appropriate precision based on unit type
  */
-function formatConvertedValue(value: number, unit: string): number {
-    if (isWeightUnit(unit) && (unit === "g" || unit === "oz" || unit === "lb")) {
-        return unit === "g"
-            ? Math.round(value)
-            : value < 1
-              ? Number(value.toFixed(1))
-              : Number(value.toFixed(1));
+function formatConvertedValue(value: number, unit: Unit): number {
+    const normalizedUnit = normalizeUnit(unit);
+    const metadata = UNIT_METADATA[normalizedUnit as keyof typeof UNIT_METADATA];
+
+    if (!metadata) {
+        return Number(value.toFixed(1));
     }
 
-    if (isLiquidUnit(unit)) {
-        if (unit === "ml") {
-            // Round to nearest integer for ml
-            return Math.round(value);
-        } else if (unit === "fl_oz") {
-            // 1 decimal place for fl_oz
-            return Number(value.toFixed(1));
-        } else if (unit === "L" || unit === "l" || unit === "liter") {
-            // 2 decimal places for liters
-            return Number(value.toFixed(2));
-        } else if (unit === "cup" || unit === "cups") {
-            return Number(value.toFixed(1));
-        } else if (unit === "tbsp" || unit === "tsp") {
-            return Number(value.toFixed(1));
-        }
-    }
-
-    return Number(value.toFixed(1));
-}
-
-function handleVolumeConversion(value: number, fromUnit: string, toUnit: string): number {
-    if ((fromUnit === "ml" && toUnit === "fl_oz") || (fromUnit === "fl_oz" && toUnit === "ml")) {
-        return convertVolume(value, fromUnit, toUnit);
-    }
-
-    if (isCookingUnit(fromUnit) && isCookingUnit(toUnit)) {
-        return convertCookingMeasure(value, fromUnit, toUnit);
-    }
-
-    if (isLiterUnit(fromUnit) && toUnit === "ml") {
-        return formatConvertedValue(value * 1000, toUnit);
-    }
-    if (fromUnit === "ml" && isLiterUnit(toUnit)) {
-        return formatConvertedValue(value / 1000, toUnit);
-    }
-
-    return value;
+    return Number(value.toFixed(metadata.precision));
 }
 
 /**
- * Helper function to handle weight unit conversions
+ * Checks if unit is a cooking measurement
  */
-function handleWeightConversion(value: number, fromUnit: string, toUnit: string): number {
-    if ((fromUnit === "g" && toUnit === "oz") || (fromUnit === "oz" && toUnit === "g")) {
-        return convertWeight(value, fromUnit, toUnit);
-    }
-
-    if (fromUnit === "g" && toUnit === "kg") {
-        return formatConvertedValue(value / 1000, toUnit);
-    }
-    if (fromUnit === "kg" && toUnit === "g") {
-        return formatConvertedValue(value * 1000, toUnit);
-    }
-
-    if (fromUnit === "oz" && toUnit === "lb") {
-        return formatConvertedValue(value / 16, toUnit);
-    }
-    if (fromUnit === "lb" && toUnit === "oz") {
-        return formatConvertedValue(value * 16, toUnit);
-    }
-
-    return value;
-}
-
-function isCookingUnit(unit: string): boolean {
-    return ["cup", "cups", "tbsp", "tsp"].includes(unit.toLowerCase());
-}
-
-function isLiterUnit(unit: string): boolean {
-    return ["L", "l", "liter"].includes(unit);
+function isCookingUnit(unit: Unit): boolean {
+    return getUnitSystem(unit) === UnitSystem.COOKING;
 }

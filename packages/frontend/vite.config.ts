@@ -1,9 +1,36 @@
 import vue from "@vitejs/plugin-vue";
+import { execSync } from "node:child_process";
 import { defineConfig } from "vite";
 import { VitePWA } from "vite-plugin-pwa";
 import vuetify from "vite-plugin-vuetify";
 
+function getBuildNumber(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+
+    return `${year}${month}${day}.${hours}${minutes}`;
+}
+
+function getGitCommitHash(): string {
+    try {
+        return execSync("git rev-parse --short HEAD").toString().trim();
+    } catch (e) {
+        return "unknown";
+    }
+}
+
+const BUILD_NUMBER = getBuildNumber();
+const GIT_COMMIT_HASH = getGitCommitHash();
+
 export default defineConfig({
+    define: {
+        __BUILD_NUMBER__: JSON.stringify(BUILD_NUMBER),
+        __GIT_COMMIT_HASH__: JSON.stringify(GIT_COMMIT_HASH),
+    },
     plugins: [
         vue(),
         vuetify({
@@ -29,7 +56,7 @@ export default defineConfig({
                 short_name: "Momentum",
                 theme_color: "#27293D",
             },
-            registerType: "autoUpdate",
+            registerType: "prompt",
             workbox: {
                 cleanupOutdatedCaches: true,
                 // Cache static resources
@@ -92,8 +119,7 @@ export default defineConfig({
                         urlPattern: /\/.*\/(jpeg|jpg|png|gif|svg)$/i,
                     },
                 ],
-                // Skip waiting by default - automatically activate the new SW
-                skipWaiting: true,
+                skipWaiting: false,
             },
         }),
     ],

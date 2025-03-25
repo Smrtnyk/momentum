@@ -24,6 +24,7 @@ describe("food-utils", function () {
                 carbs: 0,
                 fat: 0,
                 protein: 0,
+                sugars: 0,
             });
 
             expect(calculateNutrition(testFood, -1, "g")).toEqual({
@@ -31,6 +32,7 @@ describe("food-utils", function () {
                 carbs: 0,
                 fat: 0,
                 protein: 0,
+                sugars: 0,
             });
         });
 

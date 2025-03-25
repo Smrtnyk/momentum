@@ -1,5 +1,3 @@
-import type { ComponentPublicInstance } from "vue";
-
 import { createPinia } from "pinia";
 import { createApp, h } from "vue";
 import VueApexCharts from "vue3-apexcharts";
@@ -16,7 +14,6 @@ import { VTimePicker } from "vuetify/labs/VTimePicker";
 
 import App from "./App.vue";
 import ErrorBoundary from "./components/ErrorBoundary.vue";
-import { auth } from "./firebase";
 import { currentLocale } from "./helpers/date-utils";
 import { logger } from "./logger/app-logger";
 import router from "./router";
@@ -90,21 +87,13 @@ function createVuetifyInstance(): ReturnType<typeof createVuetify> {
     });
 }
 
-let app: ComponentPublicInstance | null = null;
-
-auth.onAuthStateChanged(function () {
-    if (app) {
-        return;
-    }
-
-    const vuetify = createVuetifyInstance();
-    const vueApp = createApp({
-        render: () =>
-            h(ErrorBoundary, null, {
-                default: () => h(App),
-            }),
-    });
-    vueApp.component("ErrorBoundary", ErrorBoundary);
-    vueApp.use(router).use(pinia).use(vuetify).use(VueApexCharts);
-    app = vueApp.mount("#app");
+const vuetify = createVuetifyInstance();
+const vueApp = createApp({
+    render: () =>
+        h(ErrorBoundary, null, {
+            default: () => h(App),
+        }),
 });
+vueApp.component("ErrorBoundary", ErrorBoundary);
+vueApp.use(router).use(pinia).use(vuetify).use(VueApexCharts);
+vueApp.mount("#app");

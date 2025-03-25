@@ -1,6 +1,10 @@
 <template>
     <v-app>
-        <TopMenu v-if="authStore.currentUser" />
+        <TopMenu
+            :update-dismissed="updateDismissed"
+            @showUpdateNotification="showUpdateNotification"
+            v-if="authStore.currentUser"
+        />
 
         <v-progress-linear
             v-if="globalStore.globalLoading"
@@ -17,7 +21,14 @@
             </router-view>
         </v-main>
 
-        <v-snackbar v-model="updateAvailable" :timeout="-1" color="info" location="top">
+        <v-snackbar
+            v-model="updateAvailable"
+            :timeout="4000"
+            color="info"
+            location="bottom"
+            close-on-back
+            timer
+        >
             <div class="d-flex align-center">
                 <v-icon icon="mdi-update" class="mr-2" />
                 <span>A new version of the app is available</span>
@@ -32,6 +43,7 @@
 </template>
 
 <script setup lang="ts">
+import { useEventListener } from "@vueuse/core";
 import { onMounted, onUnmounted } from "vue";
 
 import TopMenu from "./components/TopMenu.vue";
@@ -43,12 +55,13 @@ import { useGlobalStore } from "./stores/global";
 
 const globalStore = useGlobalStore();
 const authStore = useAuthStore();
-const { applyUpdate, checkForUpdates, updateAvailable } = useAppUpdates();
+const { applyUpdate, checkForUpdates, showUpdateNotification, updateAvailable, updateDismissed } =
+    useAppUpdates();
 
 onMounted(() => {
     const authCleanup = authStore.initializeAuthListener();
 
-    document.addEventListener("visibilitychange", () => {
+    useEventListener(document, "visibilitychange", () => {
         if (document.visibilityState === "visible") {
             checkForUpdates();
         }
@@ -56,7 +69,6 @@ onMounted(() => {
 
     onUnmounted(() => {
         authCleanup();
-        document.removeEventListener("visibilitychange", checkForUpdates);
     });
 });
 </script>
@@ -65,7 +77,7 @@ onMounted(() => {
 /* Fade transition */
 .page-enter-active,
 .page-leave-active {
-    transition: opacity 0.5s ease;
+    transition: opacity 0.2s ease;
 }
 .page-enter-from,
 .page-leave-to {

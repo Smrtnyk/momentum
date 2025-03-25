@@ -1,6 +1,7 @@
 import type { Table } from "dexie";
 
 import { Dexie } from "dexie";
+import { cloneDeep } from "es-toolkit";
 
 import type { FoodItem } from "../types/food";
 
@@ -21,10 +22,12 @@ class RecentFoodsDatabase extends Dexie {
 
     constructor() {
         super("RecentFoodsDatabase");
-
         // schema with indexes
         this.version(1).stores({
             recentFoods: "&id, userId, barcode, lastUsed, useCount",
+        });
+        this.version(2).stores({
+            recentFoods: "&id, userId, barcode, lastUsed, useCount, [id+userId]",
         });
     }
 }
@@ -37,14 +40,14 @@ export async function addRecentFood(userId: string, food: FoodItem): Promise<voi
 
         if (existingFood) {
             await db.recentFoods.update(food.id, {
-                ...structuredClone(food),
+                ...cloneDeep(food),
                 lastUsed: Date.now(),
                 useCount: (existingFood.useCount ?? 0) + 1,
                 userId,
             });
         } else {
             await db.recentFoods.add({
-                ...structuredClone(food),
+                ...cloneDeep(food),
                 lastUsed: Date.now(),
                 useCount: 1,
                 userId,

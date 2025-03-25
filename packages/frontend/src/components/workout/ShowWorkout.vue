@@ -182,6 +182,8 @@
                                         </tr>
                                     </tbody>
                                 </v-table>
+
+                                <ExerciseComparison :workout="workout" :exercise="entry" />
                             </div>
                         </div>
                     </div>
@@ -302,26 +304,26 @@
 import { useAsyncState } from "@vueuse/core";
 import { computed } from "vue";
 
-import type { ExerciseEntry, Workout } from "../../types/workout";
+import type { Workout } from "../../types/workout";
 
 import { isCardioExercise, isStrengthExercise } from "../../services/workout";
 import { useExerciseStore } from "../../stores/exercises";
+import ExerciseComparison from "./ExerciseComparison.vue";
 import WorkoutDateInfo from "./WorkoutDateInfo.vue";
 import WorkoutHitMusclesChips from "./WorkoutHitMusclesChips.vue";
 
 const props = defineProps<{ workout: Workout }>();
-const emit = defineEmits<{
-    delete: [];
-    edit: [];
-}>();
 
+type Emits = (e: "delete" | "edit") => void;
+
+const emit = defineEmits<Emits>();
 const exerciseStore = useExerciseStore();
 
-const allStrengthExercises = computed((): ExerciseEntry[] => {
+const allStrengthExercises = computed(() => {
     return props.workout.exerciseEntries.filter(isStrengthExercise);
 });
 
-const allCardioExercises = computed((): ExerciseEntry[] => {
+const allCardioExercises = computed(() => {
     return props.workout.exerciseEntries.filter(isCardioExercise);
 });
 

@@ -25,10 +25,12 @@ const { initialWeight = null } = defineProps<{
     initialWeight?: number;
 }>();
 
-const emit = defineEmits<{
-    close: [];
-    save: [weight: number];
-}>();
+interface Emits {
+    (e: "close"): void;
+    (e: "save", weight: number): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const weight = ref<null | number>(initialWeight);
 

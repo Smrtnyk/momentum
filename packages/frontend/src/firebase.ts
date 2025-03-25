@@ -2,9 +2,8 @@ import type { Auth } from "firebase/auth";
 import type { Firestore } from "firebase/firestore";
 import type { Functions } from "firebase/functions";
 import type { FirebaseStorage } from "firebase/storage";
-import type { GenerativeModel, VertexAI } from "firebase/vertexai";
 
-import { memoize, noop } from "es-toolkit";
+import { memoize } from "es-toolkit";
 import { initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
@@ -44,18 +43,18 @@ const initializeFirebase = memoize(() => {
     const functions = getFunctions(firebaseApp, "europe-west3");
     const auth = getAuth(firebaseApp);
     const storage = getStorage(firebaseApp);
-    let vertexAI = noop as unknown as VertexAI;
-    let geminiModel = noop as unknown as GenerativeModel;
+    const vertexAI = getVertexAI(firebaseApp);
+    const geminiModel = getGenerativeModel(vertexAI, {
+        model: "gemini-2.0-flash",
+    });
+    const geminiModelThinking = getGenerativeModel(vertexAI, {
+        model: "gemini-2.0-flash-thinking-exp-01-21",
+    });
 
     if (location.hostname === "localhost" || ipAddressPattern.test(location.hostname)) {
         initEmulators(firestore, auth, functions, storage);
-    } else {
-        vertexAI = getVertexAI(firebaseApp);
-        geminiModel = getGenerativeModel(vertexAI, {
-            model: "gemini-2.0-flash-thinking-exp-01-21",
-        });
     }
-    return { auth, firebaseApp, firestore, functions, geminiModel, storage };
+    return { auth, firebaseApp, firestore, functions, geminiModel, geminiModelThinking, storage };
 });
 
-export const { auth, firestore, geminiModel } = initializeFirebase();
+export const { auth, firestore, geminiModel, geminiModelThinking } = initializeFirebase();

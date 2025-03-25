@@ -46,10 +46,12 @@ import { required } from "../../helpers/form-validators";
 import { logger } from "../../logger/app-logger";
 import { analyzeFood as analyzeFoodWithAI } from "../../services/food-ai";
 
-const emit = defineEmits<{
-    close: [];
-    "food-analyzed": [food: FoodItem];
-}>();
+interface Emits {
+    (e: "close"): void;
+    (e: "food-analyzed", food: FoodItem): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const foodDescription = ref("");
 const isProcessing = ref(false);

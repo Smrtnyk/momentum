@@ -81,6 +81,17 @@
             </v-row>
         </template>
 
+        <!-- Error State -->
+        <template v-else-if="error">
+            <RetryFetcher
+                :fetcher="refreshData"
+                title="Failed to load nutrition data"
+                message="We couldn't load your nutrition data. Please check your connection and try again."
+                height="60vh"
+                icon="mdi-food-off"
+            />
+        </template>
+
         <!-- Loaded Content -->
         <template v-else>
             <!-- Calories Summary Section -->
@@ -96,6 +107,7 @@
                         @scan-label="openNutritionScanner(mealType)"
                         @describe-food="openFoodPromptDialog(mealType)"
                         @remove-food="(index) => removeFoodFromMeal(mealType, index)"
+                        @edit-food="(food, index) => openEditFoodDialog(food, index, mealType)"
                     />
                 </v-col>
             </v-row>
@@ -119,6 +131,7 @@ import FoodSearch from "../components/calories/FoodSearch.vue";
 import ManualMacrosDialog from "../components/calories/ManualMacrosDialog.vue";
 import MealCard from "../components/calories/MealCard.vue";
 import NutritionScanner from "../components/calories/NutritionScanner.vue";
+import RetryFetcher from "../components/ui/RetryFetcher.vue";
 import { globalDialog } from "../composables/useDialog";
 import { formatISODate } from "../helpers/date-utils";
 import { logger } from "../logger/app-logger";
@@ -130,6 +143,7 @@ import {
     setCalorieGoal,
 } from "../services/calories";
 import { createCustomFood } from "../services/custom-foods";
+import { addRecentFood } from "../services/recent-food-db";
 import { setDefaultCalorieGoal } from "../services/user";
 import { useAuthStore } from "../stores/auth";
 import { useGlobalStore } from "../stores/global";
@@ -155,6 +169,7 @@ const defaultSummary = {
 };
 
 const {
+    error,
     execute: refreshData,
     isLoading,
     state: caloriesData,
@@ -173,14 +188,34 @@ const {
     { meals: [], summary: defaultSummary },
     {
         immediate: false,
-        onError: (error) => {
-            logger.error(error, "PageCalories");
-            globalStore.notifyError("Failed to load nutrition data");
+        onError(e) {
+            logger.error(e, "PageCalories");
         },
     },
 );
 
-const calorieSummary = computed(() => caloriesData.value.summary);
+const totalSugars = computed(() => {
+    if (caloriesData.value.meals.length === 0) return 0;
+
+    let sugarsTotal = 0;
+
+    for (const meal of caloriesData.value.meals) {
+        for (const food of meal.foods) {
+            const sugars = Number(food.sugars);
+            if (!Number.isNaN(sugars)) {
+                sugarsTotal += sugars;
+            }
+        }
+    }
+
+    return sugarsTotal;
+});
+
+const calorieSummary = computed(() => ({
+    ...caloriesData.value.summary,
+    sugars: totalSugars.value,
+}));
+
 const meals = computed(() => caloriesData.value.meals);
 
 const formattedDate = computed(() => {
@@ -203,12 +238,15 @@ const isToday = computed(() => {
     return dateAdapter.isSameDay(new Date(selectedDate.value), today);
 });
 
-async function addFoodToMeal(food: FoodItem, mealType: Meal["mealType"]): Promise<void> {
+async function addFoodToMeal(
+    food: FoodItem,
+    mealType: Meal["mealType"],
+    originalFood?: FoodItem,
+): Promise<void> {
     try {
         globalStore.setLoading(true);
         const userId = authStore.nonNullableUser.uid;
         const dateString = selectedDate.value;
-
         const existingMeal = getMealByType(mealType);
 
         if (existingMeal) {
@@ -220,10 +258,18 @@ async function addFoodToMeal(food: FoodItem, mealType: Meal["mealType"]): Promis
             await addMeal(userId, mealType, [food], authStore.defaultCalorieGoal, dateString);
         }
 
+        if (originalFood) {
+            try {
+                await addRecentFood(userId, originalFood);
+            } catch (e) {
+                logger.error(e);
+            }
+        }
+
         await refreshData();
         globalStore.notify("Food added successfully");
-    } catch (error) {
-        logger.error(error, "PageCalories", { mealType });
+    } catch (e) {
+        logger.error(e, "PageCalories", { mealType });
         globalStore.notifyError("Failed to add food to meal");
     } finally {
         globalStore.setLoading(false);
@@ -241,8 +287,50 @@ function changeDate(dayOffset: number): void {
     selectedDate.value = formatISODate(date);
 }
 
+async function editFoodInMeal(
+    mealType: Meal["mealType"],
+    index: number,
+    adjustedFood: FoodItem,
+): Promise<void> {
+    try {
+        globalStore.setLoading(true);
+        const userId = authStore.nonNullableUser.uid;
+        const dateString = selectedDate.value;
+        const existingMeal = getMealByType(mealType);
+        if (!existingMeal) return;
+        const updatedFoods = [...existingMeal.foods];
+        updatedFoods[index] = adjustedFood;
+        await deleteMeal(userId, existingMeal.id, dateString, authStore.defaultCalorieGoal);
+        await addMeal(userId, mealType, updatedFoods, authStore.defaultCalorieGoal, dateString);
+        await refreshData();
+        globalStore.notify("Food updated successfully");
+    } catch (e) {
+        logger.error(e, "PageCalories", { index, mealType });
+        globalStore.notifyError("Failed to update food");
+    } finally {
+        globalStore.setLoading(false);
+    }
+}
+
 function getMealByType(type: Meal["mealType"]): Meal | undefined {
     return meals.value.find((meal) => meal.mealType === type);
+}
+
+function openEditFoodDialog(food: FoodItem, index: number, mealType: Meal["mealType"]): void {
+    globalDialog.openDialog(
+        FoodPortionDialog,
+        {
+            food,
+            isEditing: true,
+            mealType,
+            onAdd(adjustedFood: FoodItem) {
+                editFoodInMeal(mealType, index, adjustedFood);
+            },
+        },
+        {
+            title: `Edit ${food.name}`,
+        },
+    );
 }
 
 function openFoodAIResultDialog(food: FoodItem, mealType: Meal["mealType"]): void {
@@ -251,8 +339,8 @@ function openFoodAIResultDialog(food: FoodItem, mealType: Meal["mealType"]): voi
         {
             food,
             mealType,
-            onAdd(adjustedFood: FoodItem) {
-                addFoodToMeal(adjustedFood, mealType);
+            onAdd(adjustedFood: FoodItem, originalFood: FoodItem) {
+                addFoodToMeal(adjustedFood, mealType, originalFood);
             },
         },
         {
@@ -267,8 +355,8 @@ function openFoodPortionDialog(food: FoodItem, mealType: Meal["mealType"]): void
         {
             food,
             mealType,
-            onAdd(adjustedFood: FoodItem) {
-                addFoodToMeal(adjustedFood, mealType);
+            onAdd(adjustedFood: FoodItem, originalFood: FoodItem) {
+                addFoodToMeal(adjustedFood, mealType, originalFood);
             },
         },
         {
@@ -281,7 +369,6 @@ function openFoodPromptDialog(mealType: Meal["mealType"]): void {
     const dialogId = globalDialog.openDialog(
         FoodPromptDialog,
         {
-            mealType,
             onFoodAnalyzed(food: FoodItem) {
                 globalDialog.closeDialog(dialogId);
                 openFoodAIResultDialog(food, mealType);
@@ -327,8 +414,8 @@ function openNutritionScanner(mealType: Meal["mealType"]): void {
                     const userId = authStore.nonNullableUser.uid;
                     await createCustomFood(userId, food);
                     globalStore.notify(`"${food.name}" saved to your custom foods`);
-                } catch (error) {
-                    logger.error(error, "PageCalories", { food });
+                } catch (e) {
+                    logger.error(e, "PageCalories", { food });
                     globalStore.notifyError("Failed to save custom food");
                 }
             },
@@ -376,8 +463,8 @@ async function removeFoodFromMeal(mealType: Meal["mealType"], index: number): Pr
 
         await refreshData();
         globalStore.notify("Food removed");
-    } catch (error) {
-        logger.error(error, "PageCalories", { index, mealType });
+    } catch (e) {
+        logger.error(e, "PageCalories", { index, mealType });
         globalStore.notifyError("Failed to remove food");
     } finally {
         globalStore.setLoading(false);
@@ -393,8 +480,8 @@ async function updateCalorieGoal(goal: number, setAsDefault: boolean): Promise<v
         }
         await refreshData();
         globalStore.notify("Calorie goal updated successfully");
-    } catch (error) {
-        logger.error(error, "PageCalories", { goal });
+    } catch (e) {
+        logger.error(e, "PageCalories", { goal });
         globalStore.notifyError("Failed to update calorie goal");
     }
 }

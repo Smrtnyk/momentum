@@ -1,99 +1,71 @@
 <template>
-    <v-container class="pa-2 mx-auto">
-        <v-row>
-            <v-col cols="12">
-                <div class="d-flex flex-column">
-                    <!-- Page Header -->
-                    <v-card class="px-4 py-6 rounded-lg mb-4">
-                        <h1 class="text-h4 text-white font-weight-bold mb-2">Fitness Recipes</h1>
-                        <p class="text-body-1 text-white mb-0">
-                            Nutritious and delicious meals to support your fitness goals
-                        </p>
-                    </v-card>
+    <div class="recipes">
+        <!-- Main content area -->
+        <v-container fluid class="pa-0">
+            <!-- Header with title and filter/sort buttons -->
+            <v-app-bar flat density="comfortable" color="background" class="sticky-header">
+                <v-app-bar-title class="text-h6">Fitness Recipes</v-app-bar-title>
 
-                    <!-- Filters -->
-                    <v-card class="mb-4 rounded-lg">
-                        <v-card-text>
-                            <v-row dense>
-                                <v-col cols="12" class="pa-0 pb-2">
-                                    <v-tabs
-                                        v-model="activeCategory"
-                                        color="primary"
-                                        class="recipe-tabs rounded-lg overflow-hidden"
-                                        density="compact"
-                                    >
-                                        <v-tab
-                                            v-for="category in categoryOptions"
-                                            :key="category.value"
-                                            :value="category.value"
-                                            class="text-body-1 font-weight-medium"
-                                            :ripple="false"
-                                        >
-                                            <v-icon
-                                                :icon="category.icon"
-                                                class="mr-2"
-                                                size="small"
-                                            />
-                                            {{ category.title }}
-                                        </v-tab>
-                                    </v-tabs>
-                                </v-col>
-                            </v-row>
+                <v-btn icon variant="text" @click="showSortMenu = true">
+                    <v-icon>mdi-sort</v-icon>
+                </v-btn>
 
-                            <v-row class="mt-2">
-                                <v-col cols="12" sm="4">
-                                    <v-select
-                                        v-model="selectedTags"
-                                        label="Tags"
-                                        :items="tagOptions"
-                                        item-title="title"
-                                        item-value="value"
-                                        variant="outlined"
-                                        density="comfortable"
-                                        chips
-                                        multiple
-                                        hide-details
-                                        class="text-body-2"
-                                    ></v-select>
-                                </v-col>
-                                <v-col cols="12" sm="4">
-                                    <v-select
-                                        v-model="selectedDifficulty"
-                                        label="Difficulty"
-                                        :items="difficultyOptions"
-                                        variant="outlined"
-                                        density="comfortable"
-                                        hide-details
-                                        class="text-body-2"
-                                    ></v-select>
-                                </v-col>
-                                <v-col cols="12" sm="4">
-                                    <v-text-field
-                                        v-model="searchQuery"
-                                        label="Search"
-                                        prepend-inner-icon="mdi-magnify"
-                                        variant="outlined"
-                                        density="comfortable"
-                                        hide-details
-                                        class="text-body-2"
-                                    ></v-text-field>
-                                </v-col>
-                            </v-row>
-                        </v-card-text>
-                    </v-card>
+                <v-btn icon variant="text" @click="showFilterDrawer = true" class="ml-2">
+                    <v-badge
+                        :content="activeFiltersCount"
+                        :model-value="activeFiltersCount > 0"
+                        color="primary"
+                        location="top end"
+                    >
+                        <v-icon>mdi-filter</v-icon>
+                    </v-badge>
+                </v-btn>
+            </v-app-bar>
 
-                    <!-- Recipes Grid -->
+            <!-- Search bar -->
+            <v-container class="pa-2">
+                <v-text-field
+                    v-model="searchQuery"
+                    prepend-inner-icon="mdi-magnify"
+                    label="Search recipes"
+                    density="comfortable"
+                    variant="outlined"
+                    hide-details
+                    clearable
+                ></v-text-field>
+            </v-container>
+
+            <!-- Page Header -->
+            <v-container class="pa-2 mx-auto">
+                <v-card class="px-4 py-6 rounded-lg mb-4">
+                    <h1 class="text-h4 text-white font-weight-bold mb-2">Fitness Recipes</h1>
+                    <p class="text-body-1 text-white mb-0">
+                        Nutritious and delicious meals to support your fitness goals
+                    </p>
+                </v-card>
+
+                <!-- Empty state -->
+                <v-fade-transition>
                     <div v-if="filteredRecipes.length === 0" class="text-center pa-8">
-                        <v-icon icon="mdi-food-off" size="64" color="grey-lighten-1"></v-icon>
-                        <p class="text-body-1 mt-4 text-grey-darken-1">
-                            No recipes match your current filters.
-                        </p>
-                        <v-btn color="primary" variant="text" @click="resetFilters" class="mt-2">
-                            Reset Filters
+                        <v-icon icon="mdi-food-off" size="56" color="grey"></v-icon>
+                        <div class="mt-4 text-h6">No recipes found</div>
+                        <div class="text-body-2 text-grey mb-4">
+                            Try adjusting your filters or search query
+                        </div>
+                        <v-btn color="primary" variant="tonal" @click="resetFilters">
+                            Reset filters
                         </v-btn>
                     </div>
+                </v-fade-transition>
 
-                    <v-row v-else>
+                <!-- Recipes Grid -->
+                <div v-if="filteredRecipes.length > 0">
+                    <!-- Results count -->
+                    <div class="text-body-2 text-grey mb-2">
+                        {{ filteredRecipes.length }} recipes found
+                    </div>
+
+                    <v-row>
                         <v-col
                             v-for="recipe in filteredRecipes"
                             :key="recipe.id"
@@ -223,9 +195,130 @@
                         </v-col>
                     </v-row>
                 </div>
-            </v-col>
-        </v-row>
-    </v-container>
+            </v-container>
+        </v-container>
+
+        <!-- Filters drawer -->
+        <v-bottom-sheet v-model="showFilterDrawer" class="filter-sheet">
+            <v-card height="90vh">
+                <v-card-title class="d-flex align-center py-4 px-4">
+                    <span>Filters</span>
+                    <v-spacer></v-spacer>
+                    <v-btn variant="text" color="primary" @click="resetFilters"> Reset </v-btn>
+                    <v-btn variant="text" icon @click="showFilterDrawer = false">
+                        <v-icon>mdi-close</v-icon>
+                    </v-btn>
+                </v-card-title>
+
+                <v-divider></v-divider>
+
+                <v-card-text class="filter-content">
+                    <div class="py-2">
+                        <div class="text-subtitle-1 font-weight-bold mb-3">Category</div>
+                        <v-chip-group
+                            v-model="selectedCategories"
+                            class="d-flex flex-wrap"
+                            multiple
+                            column
+                        >
+                            <v-chip
+                                v-for="category in categoryOptions.filter((c) => c.value !== 'all')"
+                                :key="category.value"
+                                :value="category.value"
+                                filter
+                                variant="outlined"
+                                class="text-capitalize ma-1"
+                            >
+                                <v-icon start :icon="category.icon" size="small"></v-icon>
+                                {{ category.title }}
+                            </v-chip>
+                        </v-chip-group>
+                    </div>
+
+                    <v-divider class="my-3"></v-divider>
+
+                    <div class="py-2">
+                        <div class="text-subtitle-1 font-weight-bold mb-3">Tags</div>
+                        <v-chip-group
+                            v-model="selectedTags"
+                            class="d-flex flex-wrap"
+                            multiple
+                            column
+                        >
+                            <v-chip
+                                v-for="tag in tagOptions"
+                                :key="tag.value"
+                                :value="tag.value"
+                                filter
+                                variant="outlined"
+                                class="text-capitalize ma-1"
+                            >
+                                {{ tag.title }}
+                            </v-chip>
+                        </v-chip-group>
+                    </div>
+
+                    <v-divider class="my-3"></v-divider>
+
+                    <div class="py-2">
+                        <div class="text-subtitle-1 font-weight-bold mb-3">Difficulty</div>
+                        <v-radio-group v-model="selectedDifficulty" class="filter-radio-group">
+                            <v-radio
+                                v-for="difficulty in difficultyOptions"
+                                :key="difficulty.value"
+                                :label="difficulty.title"
+                                :value="difficulty.value"
+                                class="text-capitalize"
+                            ></v-radio>
+                        </v-radio-group>
+                    </div>
+
+                    <v-divider class="my-3"></v-divider>
+
+                    <div class="py-2">
+                        <div class="text-subtitle-1 font-weight-bold mb-3">Calories</div>
+                        <v-radio-group v-model="selectedCalories" class="filter-radio-group">
+                            <v-radio label="Any calories" value="all"></v-radio>
+                            <v-radio label="Under 300 kcal" value="low"></v-radio>
+                            <v-radio label="300-600 kcal" value="medium"></v-radio>
+                            <v-radio label="Over 600 kcal" value="high"></v-radio>
+                        </v-radio-group>
+                    </div>
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions class="pa-4">
+                    <v-btn block color="primary" size="large" @click="applyFilters">
+                        Apply Filters
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-bottom-sheet>
+
+        <!-- Sort menu -->
+        <v-dialog v-model="showSortMenu" max-width="300">
+            <v-card>
+                <v-card-title class="text-subtitle-1 font-weight-bold"> Sort Recipes </v-card-title>
+                <v-divider></v-divider>
+                <v-list density="comfortable" nav>
+                    <v-list-item
+                        v-for="option in sortOptions"
+                        :key="option.value"
+                        :value="option.value"
+                        @click="selectSortOption(option.value)"
+                    >
+                        <template v-slot:prepend>
+                            <v-icon color="primary" v-if="sortBy === option.value">
+                                mdi-check
+                            </v-icon>
+                        </template>
+                        <v-list-item-title>{{ option.title }}</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-card>
+        </v-dialog>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -238,10 +331,14 @@ import { getCategoryColor, getCategoryIcon, getTagColor, recipes } from "../data
 
 const router = useRouter();
 
-const activeCategory = ref("all");
-const searchQuery = ref("");
+const showFilterDrawer = ref<boolean>(false);
+const showSortMenu = ref<boolean>(false);
+const searchQuery = ref<string>("");
+const selectedCategories = ref<string[]>([]);
 const selectedTags = ref<RecipeTag[]>([]);
-const selectedDifficulty = ref("all");
+const selectedDifficulty = ref<string>("all");
+const selectedCalories = ref<string>("all");
+const sortBy = ref<string>("name");
 
 const categoryOptions = [
     { icon: "mdi-food-variant", title: "All Recipes", value: "all" },
@@ -270,11 +367,32 @@ const difficultyOptions = [
     { title: "Hard", value: "hard" },
 ];
 
-const filteredRecipes = computed(function (): Recipe[] {
+const sortOptions = [
+    { title: "Name (A-Z)", value: "name" },
+    { title: "Name (Z-A)", value: "-name" },
+    { title: "Calories (Low to High)", value: "calories" },
+    { title: "Calories (High to Low)", value: "-calories" },
+    { title: "Prep Time (Quickest First)", value: "time" },
+    { title: "Prep Time (Longest First)", value: "-time" },
+    { title: "Protein (Highest First)", value: "-protein" },
+];
+
+const activeFiltersCount = computed<number>(function () {
+    let count = 0;
+
+    if (selectedCategories.value.length > 0) count++;
+    if (selectedTags.value.length > 0) count++;
+    if (selectedDifficulty.value !== "all") count++;
+    if (selectedCalories.value !== "all") count++;
+
+    return count;
+});
+
+const filteredRecipes = computed<Recipe[]>(function () {
     let result = [...recipes];
 
-    if (activeCategory.value !== "all") {
-        result = result.filter((recipe) => recipe.category === activeCategory.value);
+    if (selectedCategories.value.length > 0) {
+        result = result.filter((recipe) => selectedCategories.value.includes(recipe.category));
     }
 
     if (selectedTags.value.length > 0) {
@@ -287,7 +405,23 @@ const filteredRecipes = computed(function (): Recipe[] {
         result = result.filter((recipe) => recipe.difficulty === selectedDifficulty.value);
     }
 
-    if (searchQuery.value.trim()) {
+    if (selectedCalories.value !== "all") {
+        switch (selectedCalories.value) {
+            case "high":
+                result = result.filter((recipe) => recipe.calories > 600);
+                break;
+            case "low":
+                result = result.filter((recipe) => recipe.calories < 300);
+                break;
+            case "medium":
+                result = result.filter(
+                    (recipe) => recipe.calories >= 300 && recipe.calories <= 600,
+                );
+                break;
+        }
+    }
+
+    if (searchQuery.value?.trim()) {
         const query = searchQuery.value.toLowerCase();
         result = result.filter(
             (recipe) =>
@@ -299,8 +433,12 @@ const filteredRecipes = computed(function (): Recipe[] {
         );
     }
 
-    return result;
+    return sortRecipes(result);
 });
+
+function applyFilters(): void {
+    showFilterDrawer.value = false;
+}
 
 function getDifficultyColor(difficulty: string): string {
     switch (difficulty) {
@@ -316,10 +454,40 @@ function getDifficultyColor(difficulty: string): string {
 }
 
 function resetFilters(): void {
-    activeCategory.value = "all";
+    selectedCategories.value = [];
     selectedTags.value = [];
     selectedDifficulty.value = "all";
+    selectedCalories.value = "all";
     searchQuery.value = "";
+    showFilterDrawer.value = false;
+}
+
+function selectSortOption(option: string): void {
+    sortBy.value = option;
+    showSortMenu.value = false;
+}
+
+function sortRecipes(recipesVal: Recipe[]): Recipe[] {
+    const result = [...recipesVal];
+
+    switch (sortBy.value) {
+        case "-calories":
+            return result.sort((a, b) => b.calories - a.calories);
+        case "-name":
+            return result.sort((a, b) => b.name.localeCompare(a.name));
+        case "-protein":
+            return result.sort((a, b) => b.macros.protein - a.macros.protein);
+        case "-time":
+            return result.sort((a, b) => b.prepTime + b.cookTime - (a.prepTime + a.cookTime));
+        case "calories":
+            return result.sort((a, b) => a.calories - b.calories);
+        case "name":
+            return result.sort((a, b) => a.name.localeCompare(b.name));
+        case "time":
+            return result.sort((a, b) => a.prepTime + a.cookTime - (b.prepTime + b.cookTime));
+        default:
+            return result;
+    }
 }
 
 function viewRecipe(id: string): void {
@@ -328,6 +496,37 @@ function viewRecipe(id: string): void {
 </script>
 
 <style scoped>
+.recipes {
+    position: relative;
+    min-height: 100vh;
+}
+
+.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+}
+
+.filter-sheet {
+    display: flex;
+    flex-direction: column;
+}
+
+.filter-content {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-bottom: 72px;
+}
+
+.filter-radio-group {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.filter-radio-group .v-radio {
+    margin-right: 16px;
+}
+
 .line-clamp-1 {
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -361,23 +560,5 @@ function viewRecipe(id: string): void {
     top: 0;
     right: 0;
     text-transform: capitalize;
-}
-
-.recipe-tabs :deep(.v-tab) {
-    border-radius: 12px 12px 0 0;
-    opacity: 0.75;
-    transition: all 0.2s ease;
-    margin: 0 4px;
-}
-
-.recipe-tabs :deep(.v-tab--selected) {
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-    opacity: 1;
-    font-weight: bold;
-}
-
-.recipe-tabs :deep(.v-tabs-slider) {
-    height: 3px;
-    border-radius: 3px;
 }
 </style>

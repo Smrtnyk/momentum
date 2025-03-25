@@ -6,11 +6,15 @@
             <div class="chart-stats d-flex">
                 <div class="stat-item mr-4" v-if="startWeight">
                     <div class="text-caption text-medium-emphasis">Starting</div>
-                    <div class="text-subtitle-1 font-weight-bold">{{ startWeight }} kg</div>
+                    <div class="text-subtitle-1 font-weight-bold">
+                        {{ startWeight.toFixed(1) }} kg
+                    </div>
                 </div>
                 <div class="stat-item mr-4" v-if="currentWeight">
                     <div class="text-caption text-medium-emphasis">Current</div>
-                    <div class="text-subtitle-1 font-weight-bold">{{ currentWeight }} kg</div>
+                    <div class="text-subtitle-1 font-weight-bold">
+                        {{ currentWeight.toFixed(1) }} kg
+                    </div>
                 </div>
                 <div class="stat-item" v-if="weightChange !== 0">
                     <div class="text-caption text-medium-emphasis">Change</div>
@@ -37,6 +41,7 @@
 <script setup lang="ts">
 import type { ApexOptions } from "apexcharts";
 
+import { isNotNil } from "es-toolkit";
 import { computed, ref, watch } from "vue";
 
 import type { HealthMetrics } from "../../../types/health-metrics";
@@ -51,7 +56,7 @@ const showTrendline = ref(true);
 
 const weightData = computed(() => {
     return props.bodyData
-        .filter((day) => day.weight !== undefined)
+        .filter((day) => isNotNil(day.weight))
         .map((day) => ({
             date: day.date.toDate(),
             dateString: day.dateString,

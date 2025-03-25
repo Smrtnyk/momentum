@@ -38,11 +38,11 @@ export interface ExerciseSet {
 }
 
 export type StrengthExerciseEntry = ExerciseEntry & { sets: NonNullable<ExerciseEntry["sets"]> };
-export type Workout = WorkoutBase;
 
-export interface WorkoutBase {
+export interface Workout {
     date: Timestamp;
     exerciseEntries: ExerciseEntry[];
+    exercisesExecuted?: string[];
     id: string;
     name: string;
     overallNotes: string;

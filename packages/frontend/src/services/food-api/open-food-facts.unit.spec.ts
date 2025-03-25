@@ -134,6 +134,7 @@ describe("OpenFoodFactsApi", () => {
             expect(result?.protein).toBe(2);
             expect(result?.carbs).toBe(19);
             expect(result?.fat).toBe(2);
+            expect(result?.sugars).toBe(10);
         });
     });
 });

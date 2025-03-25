@@ -10,6 +10,9 @@
             <div class="text-center">
                 <div class="text-caption">Carbs</div>
                 <div class="text-h6">{{ carbs.toFixed(1) }}g</div>
+                <span v-if="sugars" class="text-caption text-medium-emphasis">
+                    (sugars {{ sugars.toFixed(1) }}g)
+                </span>
                 <div v-if="showCalories" class="text-caption">{{ carbCalories }} cal</div>
             </div>
 
@@ -36,9 +39,10 @@ interface Props {
     fat: number;
     protein: number;
     showCalories?: boolean;
+    sugars: number | undefined;
 }
 
-const { carbs, fat, protein, showCalories = false } = defineProps<Props>();
+const { carbs, fat, protein, showCalories = false, sugars } = defineProps<Props>();
 
 const proteinCalories = computed(function () {
     return Math.round(protein * 4);

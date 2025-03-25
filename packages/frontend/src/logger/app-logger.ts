@@ -1,3 +1,5 @@
+import { isNotNil, isPlainObject, isString } from "es-toolkit";
+
 enum LogLevel {
     DEBUG = 0,
     ERROR = 3,
@@ -6,20 +8,9 @@ enum LogLevel {
     WARN = 2,
 }
 
-interface LoggerConfig {
-    allowedContexts?: string[];
-    minLevel: LogLevel;
-    useColors: boolean;
-}
-
-const DEFAULT_CONFIG: LoggerConfig = {
-    minLevel: import.meta.env.MODE === "production" ? LogLevel.WARN : LogLevel.DEBUG,
-    useColors: true,
-};
-
 export class AppLogger {
     private static instance: AppLogger;
-    private config: LoggerConfig;
+    minLevel = import.meta.env.MODE === "production" ? LogLevel.WARN : LogLevel.DEBUG;
 
     private readonly levelConfig = {
         [LogLevel.DEBUG]: { badge: "🔍 DEBUG", color: "color: #9e9e9e", method: "log" },
@@ -28,21 +19,11 @@ export class AppLogger {
         [LogLevel.WARN]: { badge: "⚠️ WARN", color: "color: #ff9800", method: "warn" },
     } as const;
 
-    private constructor(config: LoggerConfig = DEFAULT_CONFIG) {
-        this.config = { ...DEFAULT_CONFIG, ...config };
-    }
-
-    public static getInstance(config?: LoggerConfig): AppLogger {
+    public static getInstance(): AppLogger {
         if (!AppLogger.instance) {
-            AppLogger.instance = new AppLogger(config);
-        } else if (config) {
-            AppLogger.instance.configure(config);
+            AppLogger.instance = new AppLogger();
         }
         return AppLogger.instance;
-    }
-
-    public configure(config: Partial<LoggerConfig>): void {
-        this.config = { ...this.config, ...config };
     }
 
     public debug(message: string, context?: string, ...args: any[]): void {
@@ -56,12 +37,11 @@ export class AppLogger {
         if (err instanceof Error) {
             message = `${err.name}: ${err.message}`;
             stack = err.stack;
-        } else if (typeof err === "string") {
+        } else if (isString(err)) {
             message = err;
         } else {
             try {
-                message =
-                    typeof err === "object" && err !== null ? JSON.stringify(err) : String(err);
+                message = isPlainObject(err) && isNotNil(err) ? JSON.stringify(err) : String(err);
             } catch (jsonError) {
                 message = "[Unstringifiable error object]";
             }
@@ -83,16 +63,7 @@ export class AppLogger {
     }
 
     private log(level: LogLevel, message: string, context?: string, ...args: any[]): void {
-        if (level < this.config.minLevel || level === LogLevel.NONE) {
-            return;
-        }
-
-        // Skip if context filtering is enabled and this context isn't allowed
-        if (
-            this.config.allowedContexts?.length &&
-            context &&
-            !this.config.allowedContexts.includes(context)
-        ) {
+        if (level < this.minLevel || level === LogLevel.NONE) {
             return;
         }
 
@@ -102,12 +73,12 @@ export class AppLogger {
 
         // Format: [TIMESTAMP] LEVEL [CONTEXT] MESSAGE
         const formattedMessage = `[${timestamp}] ${contextStr} ${message}`;
-        if (this.config.useColors && method !== "error") {
-            // eslint-disable-next-line no-console
-            console[method](`%c${badge} ${formattedMessage}`, color, ...args);
-        } else {
+        if (method === "error") {
             // eslint-disable-next-line no-console
             console[method](`${badge} ${formattedMessage}`, ...args);
+        } else {
+            // eslint-disable-next-line no-console
+            console[method](`%c${badge} ${formattedMessage}`, color, ...args);
         }
     }
 }

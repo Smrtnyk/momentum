@@ -29,6 +29,32 @@
                 </v-text-field>
             </div>
 
+            <!-- Simple pill filter that works correctly -->
+            <div class="d-flex justify-center mb-4">
+                <v-btn-toggle
+                    v-model="foodTypeFilter"
+                    color="primary"
+                    rounded="pill"
+                    mandatory
+                    density="comfortable"
+                >
+                    <v-btn
+                        value="ingredients"
+                        :variant="foodTypeFilter === 'ingredients' ? 'elevated' : 'text'"
+                        prepend-icon="mdi-food-apple"
+                    >
+                        Ingredients
+                    </v-btn>
+                    <v-btn
+                        value="products"
+                        :variant="foodTypeFilter === 'products' ? 'elevated' : 'text'"
+                        prepend-icon="mdi-package-variant"
+                    >
+                        Products
+                    </v-btn>
+                </v-btn-toggle>
+            </div>
+
             <!-- Tabs for different food sources -->
             <v-tabs v-model="activeTab" density="comfortable" color="primary" grow class="mb-3">
                 <v-tab value="search">Database</v-tab>
@@ -129,7 +155,31 @@
 
                 <!-- Custom Foods Tab -->
                 <v-window-item value="custom">
-                    <div v-if="customFoods.length > 0">
+                    <!-- Loading State -->
+                    <div v-if="isLoadingCustomFoods" class="pa-2">
+                        <v-skeleton-loader
+                            v-for="i in 4"
+                            :key="i"
+                            type="list-item-avatar-two-line"
+                            class="mb-2"
+                        ></v-skeleton-loader>
+                    </div>
+
+                    <!-- Error State -->
+                    <div v-else-if="customFoodsError" class="pa-2">
+                        <RetryFetcher
+                            :fetcher="fetchCustomFoods"
+                            message="We couldn't load your custom foods. Please check your connection and try again."
+                            height="200px"
+                            icon="mdi-food-off"
+                            icon-size="32"
+                            iconColor="warning"
+                            buttonText="Reload Foods"
+                        />
+                    </div>
+
+                    <!-- Data Loaded Successfully -->
+                    <div v-else-if="customFoodsData.length > 0">
                         <v-list lines="two">
                             <v-list-item
                                 v-for="food in filteredCustomFoods"
@@ -153,6 +203,7 @@
                         </v-list>
                     </div>
 
+                    <!-- No Custom Foods -->
                     <div v-else class="text-center pa-4 text-medium-emphasis">
                         <v-icon icon="mdi-food-apple-outline" size="48" class="mb-2"></v-icon>
                         <div>No custom foods yet</div>
@@ -220,7 +271,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { useAsyncState } from "@vueuse/core";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 import type { CustomFood, FoodItem } from "../../types/food";
@@ -229,18 +281,22 @@ import { useBarcodeScanner } from "../../composables/useBarcodeScanner";
 import { logger } from "../../logger/app-logger";
 import { getUserCustomFoods } from "../../services/custom-foods";
 import { combinedFoodApi } from "../../services/food-api/combined-api";
-import { getRecentFoods } from "../../services/recent-food-db";
+import { NutritionixApi } from "../../services/food-api/nutritionix-api";
+import { findRecentFoodByBarcode, getRecentFoods } from "../../services/recent-food-db";
 import { useAuthStore } from "../../stores/auth";
 import { useGlobalStore } from "../../stores/global";
+import RetryFetcher from "../ui/RetryFetcher.vue";
 
 const { limitRecent = 30 } = defineProps<{
     limitRecent?: number;
 }>();
 
-const emit = defineEmits<{
-    close: [];
-    select: [food: FoodItem];
-}>();
+interface Emits {
+    (e: "close"): void;
+    (e: "select", food: FoodItem): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const router = useRouter();
 const globalStore = useGlobalStore();
@@ -253,7 +309,6 @@ const isLoading = ref(false);
 const hasSearched = ref(false);
 const currentPage = ref(1);
 const recentFoods = ref<FoodItem[]>([]);
-const customFoods = ref<CustomFood[]>([]);
 
 const searchResults = ref<{
     currentPage: number;
@@ -267,13 +322,25 @@ const searchResults = ref<{
     totalPages: 0,
 });
 
+const {
+    error: customFoodsError,
+    execute: fetchCustomFoods,
+    isLoading: isLoadingCustomFoods,
+    state: customFoodsData,
+} = useAsyncState(() => getUserCustomFoods(authStore.nonNullableUser.uid), [] as CustomFood[], {
+    immediate: false,
+    onError(e) {
+        logger.error(e, "FoodSearch - Custom Foods");
+    },
+});
+
 const filteredCustomFoods = computed(() => {
     if (!searchQuery.value) {
-        return customFoods.value;
+        return customFoodsData.value;
     }
 
     const normalizedQuery = searchQuery.value.toLowerCase();
-    return customFoods.value.filter(
+    return customFoodsData.value.filter(
         (food) =>
             food.name.toLowerCase().includes(normalizedQuery) ??
             food.brand?.toLowerCase().includes(normalizedQuery),
@@ -281,33 +348,18 @@ const filteredCustomFoods = computed(() => {
 });
 
 onMounted(async () => {
-    await Promise.all([loadRecentFoods(), loadCustomFoods()]);
+    await Promise.all([loadRecentFoods(), fetchCustomFoods()]);
 });
 
 function handleBarcodeScanner(): void {
     scanBarcode({
+        onBarcodeScanned(barcode) {
+            searchByBarcode(barcode);
+        },
         onError(message) {
             globalStore.notifyError(message);
         },
-        onFoodFound(food) {
-            selectFood(food);
-        },
-        onNotFound(barcode) {
-            globalStore.notifyError(`No food found with barcode: ${barcode}`);
-        },
-        userId: authStore.nonNullableUser.uid,
     });
-}
-
-async function loadCustomFoods(): Promise<void> {
-    try {
-        isLoading.value = true;
-        customFoods.value = await getUserCustomFoods(authStore.nonNullableUser.uid);
-    } catch (error) {
-        logger.error(error, "FoodSearch");
-    } finally {
-        isLoading.value = false;
-    }
 }
 
 async function loadRecentFoods(): Promise<void> {
@@ -337,6 +389,45 @@ function debounceSearch(): void {
     }, 500);
 }
 
+async function searchByBarcode(barcode: string): Promise<void> {
+    try {
+        isSearching.value = true;
+        logger.info(`Searching for barcode: ${barcode}`, "BarcodeScanner");
+
+        const food =
+            (await findRecentFoodByBarcode(authStore.nonNullableUser.uid, barcode)) ??
+            (await combinedFoodApi.getFoodByBarcode(barcode));
+
+        if (food) {
+            logger.info(`Food found with ${food.calories} calories`, "BarcodeScanner", {
+                barcode,
+                calories: food.calories,
+                foodName: food.name,
+            });
+            selectFood(food);
+        } else {
+            globalStore.notifyError(`No food found with barcode: ${barcode}`);
+        }
+    } finally {
+        isSearching.value = false;
+    }
+}
+
+const foodTypeFilter = ref<"ingredients" | "products">("ingredients");
+
+watch(foodTypeFilter, () => {
+    currentPage.value = 1;
+    searchResults.value = {
+        currentPage: 1,
+        foods: [],
+        totalCount: 0,
+        totalPages: 0,
+    };
+    if (searchQuery.value && searchQuery.value.length >= 2) {
+        performSearch();
+    }
+});
+
 function goToCustomFood(): void {
     router.push({ name: "CustomFood" });
     emit("close");
@@ -349,11 +440,23 @@ async function performSearch(): Promise<void> {
         isLoading.value = true;
         hasSearched.value = true;
 
-        searchResults.value = await combinedFoodApi.searchFoods(
-            searchQuery.value,
-            currentPage.value,
-            10,
-        );
+        const nutritionixApi = new NutritionixApi();
+
+        if (foodTypeFilter.value === "ingredients") {
+            // For ingredients, use Nutritionix's natural language endpoint
+            searchResults.value = await nutritionixApi.searchIngredients(
+                searchQuery.value,
+                currentPage.value,
+                10,
+            );
+        } else {
+            // For products, use the combined API (which includes OpenFoodFacts and others)
+            searchResults.value = await combinedFoodApi.searchFoods(
+                searchQuery.value,
+                currentPage.value,
+                10,
+            );
+        }
     } catch (error) {
         logger.error(error, "FoodSearch", { query: searchQuery.value });
     } finally {

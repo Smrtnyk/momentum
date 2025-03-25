@@ -10,16 +10,22 @@
             v-model="selectedExercise"
             v-model:search="searchText"
             :items="filteredExercises"
-            label="Search Exercise"
+            :label="isEditMode ? 'Change Exercise' : 'Search Exercise'"
             variant="outlined"
             density="comfortable"
             item-title="name"
             item-value="id"
             return-object
             clearable
-            no-filter
+            :no-filter="!isEditMode"
             class="mb-4"
-            :no-data-text="exerciseLoadError ? 'Error loading exercises' : 'No exercises found'"
+            :no-data-text="
+                exerciseLoadError
+                    ? 'Error loading exercises'
+                    : isEditMode
+                      ? 'No compatible exercises found'
+                      : 'No exercises found'
+            "
         >
             <template v-slot:item="{ item, props }">
                 <v-list-item v-bind="props">
@@ -36,55 +42,10 @@
             </template>
         </v-autocomplete>
 
-        <!-- Form fields for selected exercise -->
         <div v-if="selectedExercise" class="mt-3">
-            <v-row v-if="isCardioExercise(selectedExercise)">
-                <v-col cols="6">
-                    <v-text-field
-                        v-model.number="duration"
-                        label="Duration (minutes)"
-                        type="number"
-                        variant="outlined"
-                        density="comfortable"
-                        min="1"
-                    ></v-text-field>
-                </v-col>
-                <v-col cols="6">
-                    <v-text-field
-                        v-model.number="distance"
-                        label="Distance (km)"
-                        type="number"
-                        variant="outlined"
-                        density="comfortable"
-                        min="0"
-                        step="0.1"
-                    ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                    <v-text-field
-                        v-model.number="calories"
-                        label="Calories (Kcal)"
-                        type="number"
-                        variant="outlined"
-                        density="comfortable"
-                        min="0"
-                    ></v-text-field>
-                </v-col>
-            </v-row>
-
-            <v-row v-if="isCardioExercise(selectedExercise)">
-                <v-col cols="12">
-                    <v-select
-                        v-model="intensity"
-                        label="Intensity"
-                        :items="intensityOptions"
-                        variant="outlined"
-                        density="comfortable"
-                    ></v-select>
-                </v-col>
-            </v-row>
-
-            <v-btn color="primary" block @click="addExercise" class="mt-3"> Add Exercise </v-btn>
+            <v-btn color="primary" block @click="submitExercise" class="mt-3">
+                {{ isEditMode ? "Save Changes" : "Add Exercise" }}
+            </v-btn>
         </div>
 
         <!-- No exercise selected but exercises loaded state -->
@@ -106,6 +67,7 @@
 </template>
 
 <script setup lang="ts">
+import { cloneDeep } from "es-toolkit";
 import { computed, onMounted, ref, watch } from "vue";
 
 import type { Exercise } from "../../types/exercise";
@@ -115,23 +77,42 @@ import { isActiveExercise, isCardioExercise, isStrengthExercise } from "../../se
 import { useExerciseStore } from "../../stores/exercises";
 import { useGlobalStore } from "../../stores/global";
 
-const emit = defineEmits(["add"]);
+interface ExerciseSelectorProps {
+    existingExercise?: ActiveExercise | ExerciseEntry;
+    isEditMode?: boolean;
+}
+
+const { existingExercise, isEditMode = false } = defineProps<ExerciseSelectorProps>();
+
+type Emits = {
+    (e: "add", value: ExerciseEntry): void;
+    (e: "save", value: ActiveExercise | ExerciseEntry): void;
+};
+
+const emit = defineEmits<Emits>();
 const exerciseStore = useExerciseStore();
 const globalStore = useGlobalStore();
 const exerciseLoadError = ref(false);
 
 const selectedExercise = ref<Exercise | null>(null);
 const duration = ref(10);
-const distance = ref(0);
-const calories = ref(0);
-const intensity = ref<NonNullable<ActiveExercise["intensity"]>>("medium");
-
-const intensityOptions = ["low", "medium", "high"];
+const DEFAULT_DISTANCE = 0;
+const DEFAULT_CALORIES = 0;
+const DEFAULT_INTENSITY = "medium";
 
 const searchText = ref("");
 const filteredExercises = computed(() => {
-    if (!searchText.value) return exerciseStore.exercises;
+    if (exerciseStore.exercises.length === 0) {
+        return [];
+    }
 
+    if (isEditMode && existingExercise) {
+        return exerciseStore.exercises.filter((ex) => {
+            return ex.category === existingExercise?.category;
+        });
+    }
+
+    if (!searchText.value) return exerciseStore.exercises;
     return exerciseStore.searchExercises(searchText.value);
 });
 
@@ -144,34 +125,24 @@ watch(
     },
 );
 
-function addExercise(): void {
-    if (!selectedExercise.value) return;
-
-    const exercise: ActiveExercise | ExerciseEntry = {
-        category: selectedExercise.value.category,
-        durationSeconds: duration.value * 60,
-        exerciseId: selectedExercise.value.id,
-        exerciseNotes: "",
-    };
-
-    if (isStrengthExercise(selectedExercise.value)) {
-        const set = { reps: 0, weight: 0 };
-        if (isActiveExercise(selectedExercise.value)) {
-            Object.assign(set, { completed: false });
+onMounted(() => {
+    if (isEditMode && existingExercise) {
+        async function findCurrentExercise(): Promise<void> {
+            await loadExercisesData();
+            const currentExerciseId = existingExercise?.exerciseId;
+            if (currentExerciseId) {
+                const exercise = exerciseStore.exercises.find((ex) => ex.id === currentExerciseId);
+                if (exercise) {
+                    // Pre-select the current exercise
+                    selectedExercise.value = exercise;
+                }
+            }
         }
-        exercise.sets = [set];
+        findCurrentExercise();
+    } else {
+        loadExercisesData();
     }
-
-    if (isCardioExercise(selectedExercise.value)) {
-        exercise.intensity = intensity.value;
-        exercise.calories = calories.value;
-        exercise.distanceKm = distance.value;
-    }
-
-    emit("add", exercise);
-
-    selectedExercise.value = null;
-}
+});
 
 async function loadExercisesData(): Promise<void> {
     exerciseLoadError.value = false;
@@ -187,7 +158,40 @@ function retryLoading(): void {
     loadExercisesData();
 }
 
-onMounted(function () {
-    loadExercisesData();
-});
+function submitExercise(): void {
+    if (!selectedExercise.value) return;
+
+    if (isEditMode && existingExercise) {
+        // In edit mode, maintain all existing properties and only update the exercise ID
+        const updatedExercise = cloneDeep(existingExercise);
+        updatedExercise.exerciseId = selectedExercise.value.id;
+        emit("save", updatedExercise);
+    } else {
+        // In add mode, create a new exercise entry
+        const exercise: ActiveExercise | ExerciseEntry = {
+            category: selectedExercise.value.category,
+            durationSeconds: duration.value * 60,
+            exerciseId: selectedExercise.value.id,
+            exerciseNotes: "",
+        };
+
+        if (isStrengthExercise(selectedExercise.value)) {
+            const set = { reps: 0, weight: 0 };
+            if (isActiveExercise(selectedExercise.value)) {
+                Object.assign(set, { completed: false });
+            }
+            exercise.sets = [set];
+        }
+
+        if (isCardioExercise(selectedExercise.value)) {
+            exercise.intensity = DEFAULT_INTENSITY;
+            exercise.calories = DEFAULT_CALORIES;
+            exercise.distanceKm = DEFAULT_DISTANCE;
+        }
+
+        emit("add", exercise);
+    }
+
+    selectedExercise.value = null;
+}
 </script>

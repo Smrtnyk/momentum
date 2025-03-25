@@ -23,13 +23,9 @@ import {
 vi.hoisted(() => {
     vi.stubEnv("TZ", "UTC");
     vi.stubEnv("TC_ALL", "en_US.UTF-8");
+    const originalIntl = globalThis.Intl.DateTimeFormat;
     vi.spyOn(globalThis.Intl, "DateTimeFormat").mockImplementation(
-        () =>
-            ({
-                resolvedOptions: () => ({
-                    locale: "en-US",
-                }),
-            }) as any,
+        (timezone, opts) => new originalIntl("en-US", opts),
     );
 });
 
@@ -216,23 +212,34 @@ describe("date-utils", () => {
     });
 
     describe("getWeekStart", () => {
-        it("returns Sunday for the week containing the date", () => {
-            // May 15, 2023 is a Monday
-            const monday = new Date(2023, 4, 15);
-            const result = getWeekStart(monday);
+        it("returns Monday for the week containing the date", () => {
+            // May 17, 2023 is a Wednesday
+            const wednesday = new Date(2023, 4, 17);
+            const result = getWeekStart(wednesday);
 
-            // May 14, 2023 is the Sunday before
-            expect(result.getDate()).toBe(14);
+            // May 15, 2023 is the Monday before
+            expect(result.getDate()).toBe(15);
             expect(result.getMonth()).toBe(4);
             expect(result.getFullYear()).toBe(2023);
         });
 
-        it("returns the same date if it is already Sunday", () => {
+        it("returns the same date if it is already Monday", () => {
+            const monday = new Date(2023, 4, 15);
+            const result = getWeekStart(monday);
+
+            expect(result.getDate()).toBe(15);
+            expect(result.getHours()).toBe(0);
+        });
+
+        it("handles Sunday correctly by returning previous Monday", () => {
+            // May 14, 2023 is a Sunday
             const sunday = new Date(2023, 4, 14);
             const result = getWeekStart(sunday);
 
-            expect(result.getDate()).toBe(14);
-            expect(result.getHours()).toBe(0);
+            // May 8, 2023 is the Monday before
+            expect(result.getDate()).toBe(8);
+            expect(result.getMonth()).toBe(4);
+            expect(result.getFullYear()).toBe(2023);
         });
     });
 

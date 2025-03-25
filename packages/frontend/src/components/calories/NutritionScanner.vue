@@ -77,6 +77,16 @@
                             class="me-2 macros-field"
                         ></v-text-field>
                         <v-text-field
+                            v-model.number="scannedFood.fat"
+                            type="number"
+                            label="Fat"
+                            variant="outlined"
+                            density="compact"
+                            class="macros-field"
+                        ></v-text-field>
+                    </div>
+                    <div class="d-flex flex-wrap">
+                        <v-text-field
                             v-model.number="scannedFood.carbs"
                             type="number"
                             label="Carbs"
@@ -85,11 +95,13 @@
                             class="me-2 macros-field"
                         ></v-text-field>
                         <v-text-field
-                            v-model.number="scannedFood.fat"
+                            v-model.number="scannedFood.sugars"
                             type="number"
-                            label="Fat"
+                            label="of which sugars"
                             variant="outlined"
                             density="compact"
+                            hint="Part of total carbs"
+                            persistent-hint
                             class="macros-field"
                         ></v-text-field>
                     </div>
@@ -137,7 +149,13 @@ import { onUnmounted, ref } from "vue";
 import type { FoodItem } from "../../types/food";
 import type { Meal } from "../../types/health-metrics";
 
-import { selectHighestResolutionCamera } from "../../helpers/camera-utils";
+import {
+    attachStreamToVideo,
+    detachStreamFromVideo,
+    initializeCamera,
+    selectHighestResolutionCamera,
+    stopCameraStream,
+} from "../../helpers/camera-utils";
 import { required } from "../../helpers/form-validators";
 import { logger } from "../../logger/app-logger";
 import { scanNutritionLabel } from "../../services/nutrition-scanner";
@@ -149,11 +167,12 @@ const { mealType } = defineProps<{
     mealType: Meal["mealType"];
 }>();
 
-const emit = defineEmits<{
-    cancel: [];
-    "custom-food-saved": [food: FoodItem];
-    "food-added": [food: FoodItem];
-}>();
+interface Emits {
+    (e: "cancel"): void;
+    (e: "custom-food-saved" | "food-added", food: FoodItem): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const videoRef = ref<HTMLVideoElement | null>(null);
 const isScanning = ref(false);
@@ -226,27 +245,8 @@ async function startScanning(): Promise<void> {
 
     try {
         const preferredDeviceId = await selectHighestResolutionCamera();
-
-        const constraints = {
-            video: preferredDeviceId
-                ? {
-                      deviceId: { exact: preferredDeviceId },
-                      height: { ideal: 1080, min: 720 },
-                      width: { ideal: 1920, min: 1280 },
-                  }
-                : {
-                      facingMode: "environment",
-                      height: { ideal: 1080, min: 720 },
-                      width: { ideal: 1920, min: 1280 },
-                  },
-        };
-
-        const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
-        stream.value = mediaStream;
-
-        if (videoRef.value) {
-            videoRef.value.srcObject = mediaStream;
-        }
+        stream.value = await initializeCamera(preferredDeviceId);
+        attachStreamToVideo(videoRef.value, stream.value);
     } catch (err) {
         globalStore.notifyError(`Camera access error: ${(err as Error).message}`);
         isScanning.value = false;
@@ -254,21 +254,13 @@ async function startScanning(): Promise<void> {
 }
 
 function stopScanning(): void {
-    if (stream.value) {
-        stream.value.getTracks().forEach((track) => track.stop());
-        stream.value = null;
-    }
-
-    if (videoRef.value) {
-        videoRef.value.srcObject = null;
-    }
-
+    stopCameraStream(stream.value);
+    detachStreamFromVideo(videoRef.value);
+    stream.value = null;
     isScanning.value = false;
 }
 
-onUnmounted(function () {
-    stopScanning();
-});
+onUnmounted(stopScanning);
 </script>
 
 <style scoped>

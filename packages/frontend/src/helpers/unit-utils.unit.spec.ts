@@ -4,8 +4,6 @@ import {
     convertCookingMeasure,
     convertQuantity,
     convertUnitIfNeeded,
-    convertVolume,
-    convertWeight,
     getAvailableUnits,
     getUnitSystem,
     getUnitType,
@@ -135,34 +133,6 @@ describe("units-utils", function () {
     });
 
     describe("Unit Conversion", function () {
-        it("convertWeight converts between weight units correctly", function () {
-            // g to oz
-            expect(convertWeight(100, "g", "oz")).toBe(3.5);
-            expect(convertWeight(28.35, "g", "oz")).toBe(1);
-
-            // oz to g
-            expect(convertWeight(1, "oz", "g")).toBe(28);
-            expect(convertWeight(3.5, "oz", "g")).toBe(99);
-
-            // Same unit
-            expect(convertWeight(100, "g", "g")).toBe(100);
-            expect(convertWeight(3, "oz", "oz")).toBe(3);
-        });
-
-        it("convertVolume converts between volume units correctly", function () {
-            // ml to fl_oz
-            expect(convertVolume(100, "ml", "fl_oz")).toBe(3.4);
-            expect(convertVolume(29.57, "ml", "fl_oz")).toBe(1);
-
-            // fl_oz to ml
-            expect(convertVolume(1, "fl_oz", "ml")).toBe(30);
-            expect(convertVolume(3.4, "fl_oz", "ml")).toBe(101);
-
-            // Same unit
-            expect(convertVolume(100, "ml", "ml")).toBe(100);
-            expect(convertVolume(2, "fl_oz", "fl_oz")).toBe(2);
-        });
-
         it("convertCookingMeasure converts between cooking units correctly", function () {
             // cup to tbsp
             expect(convertCookingMeasure(1, "cup", "tbsp")).toBe(16);
@@ -313,6 +283,69 @@ describe("units-utils", function () {
 
             expect(convertQuantity(1, "liter", "ml")).toBe(1000);
             expect(convertQuantity(1, "L", "ml")).toBe(1000);
+        });
+    });
+
+    describe("Multi-step Conversions", function () {
+        it("handles cross-system conversions correctly", function () {
+            expect(convertQuantity(1, "kg", "oz")).toBeCloseTo(35.3, 0);
+            expect(convertQuantity(1, "lb", "g")).toBeCloseTo(454, 0);
+
+            expect(convertQuantity(1, "cup", "ml")).toBeCloseTo(237, 0);
+            expect(convertQuantity(1, "l", "fl_oz")).toBeCloseTo(33.8, 0);
+            expect(convertQuantity(1, "fl_oz", "ml")).toBeCloseTo(30, 0);
+
+            expect(convertQuantity(0.5, "cup", "tsp")).toBe(24);
+        });
+    });
+
+    describe("Boundary Cases", function () {
+        it("handles threshold boundary values correctly", function () {
+            expect(convertUnitIfNeeded(0.25, "cup")).toEqual({
+                amount: 0.25,
+                unit: "cup",
+            });
+
+            expect(convertUnitIfNeeded(0.249, "cup")).toEqual({
+                amount: 4,
+                unit: "tbsp",
+            });
+
+            expect(convertUnitIfNeeded(1, "tbsp")).toEqual({
+                amount: 1,
+                unit: "tbsp",
+            });
+
+            expect(convertUnitIfNeeded(0.99, "tbsp")).toEqual({
+                amount: 3,
+                unit: "tsp",
+            });
+        });
+    });
+
+    describe("Extreme Values", function () {
+        it("handles very large values appropriately", function () {
+            expect(convertQuantity(1_000_000, "g", "kg")).toBe(1000);
+            expect(convertQuantity(5000, "ml", "l")).toBe(5);
+        });
+
+        it("handles very small values appropriately", function () {
+            expect(convertQuantity(0.001, "kg", "g")).toBe(1);
+            expect(convertQuantity(0.01, "l", "ml")).toBe(10);
+        });
+    });
+
+    describe("Unit Normalization", function () {
+        it("handles mixed case conversions", function () {
+            expect(convertQuantity(1, "Cup", "tbsp")).toBe(16);
+            expect(convertQuantity(1, "TSP", "Tbsp")).toBe(0.3);
+            expect(convertQuantity(100, "G", "Kg")).toBe(0.1);
+        });
+
+        it("handles unit variants consistently", function () {
+            expect(convertQuantity(1, "L", "ml")).toBe(1000);
+            expect(convertQuantity(1, "l", "ml")).toBe(1000);
+            expect(convertQuantity(1, "liter", "ml")).toBe(1000);
         });
     });
 });

@@ -1,7 +1,9 @@
+import { isNil } from "es-toolkit";
+
 import type { FoodItem } from "../types/food";
 
-import { geminiModel } from "../firebase";
 import { logger } from "../logger/app-logger";
+import { DEEP_SEEK_MODEL, openai } from "./ai";
 
 interface AIFoodAnalysis {
     calories: number;
@@ -30,49 +32,50 @@ interface AIFoodAnalysis {
     protein: number;
     servingSize: number;
     servingUnit: string;
+    sugars: number;
 }
 
-const FOOD_ANALYSIS_PROMPT = `Analyze this food description and extract detailed nutritional information.
-Return ONLY a valid JSON object with these fields (all numeric values should be numbers, not strings):
-- name: concise descriptive name for this food entry
-- servingSize: estimated numeric portion size
-- servingUnit: appropriate unit of measurement (g, oz, ml, cup, etc.)
-- calories: estimated total calories
-- protein: estimated grams of protein
-- carbs: estimated grams of carbohydrates
-- fat: estimated grams of fat
-- fiber: estimated grams of fiber if applicable
-- confidence: your confidence in this estimation (0-100)
-- estimatedNutriScore: { score: number, grade: "A"|"B"|"C"|"D"|"E" }
-- fitnessInfo: {
-    workoutSuitability: { preWorkout: 0-100, postWorkout: 0-100 },
-    glycemicImpact: string description,
-    dietCompatibility: { keto: boolean, paleo: boolean, vegan: boolean, lowCarb: boolean }
-  }
+const FOOD_ANALYSIS_SYSTEM_PROMPT = `You are a professional nutritionist AI. Analyze food descriptions and:
+1. Calculate nutrition FOR THE EXACT PORTION SPECIFIED IN THE INPUT
+2. Never default to 100g - use the described serving size
+3. For countable items (like eggs):
+   - Calculate total weight based on standard sizes
+   - Provide nutrition totals for the specified quantity
 
-Return your best estimate based on standard nutritional databases. If the description is too vague, estimate based on typical preparation methods and portion sizes.`;
+Example conversions:
+- "2 eggs" → ~100g total (50g per egg)
+- "1 banana" → ~120g (medium size)
+- "1 cup rice" → ~185g cooked`;
 
 export async function analyzeFood(description: string): Promise<FoodItem | null> {
     try {
         logger.info("Analyzing food description", "FoodAIService", { description });
 
-        const result = await geminiModel.generateContent([FOOD_ANALYSIS_PROMPT, description]);
+        const response = await openai.chat.completions.create({
+            max_tokens: 500,
+            messages: [
+                { content: FOOD_ANALYSIS_SYSTEM_PROMPT, role: "system" },
+                { content: foodAnalysisUserPrompt(description), role: "user" },
+            ],
+            model: DEEP_SEEK_MODEL,
+            response_format: { type: "json_object" },
+            temperature: 1,
+        });
 
-        const textResponse = result.response.text();
-        logger.info("AI response received", "FoodAIService", { textResponse });
+        const jsonContent = response.choices[0]?.message?.content;
+        if (!jsonContent) {
+            logger.error("Empty response from DeepSeek", "FoodAIService");
+            return null;
+        }
 
-        const jsonString = extractJsonFromText(textResponse);
+        const jsonString = extractJsonFromText(jsonContent);
         if (!jsonString) {
-            logger.error("No JSON found in response", "FoodAIService");
+            logger.error("Invalid JSON structure", "FoodAIService", { jsonContent });
             return null;
         }
 
         const parsedData = parseNutritionData(jsonString);
-        if (!parsedData) {
-            return null;
-        }
-
-        return convertToFoodItem(parsedData);
+        return parsedData ? convertToFoodItem(parsedData) : null;
     } catch (error) {
         logger.error("Food analysis error:", "FoodAIService", error);
         return null;
@@ -91,42 +94,80 @@ function convertToFoodItem(data: AIFoodAnalysis): FoodItem {
         calories: Math.round(data.calories),
         carbs: Number(data.carbs.toFixed(1)),
         fat: Number(data.fat.toFixed(1)),
-        id: `ai-${Date.now()}`,
-        name: data.name,
+        id: `deepseek-${Date.now()}`,
+        name: data.name.trim(),
         protein: Number(data.protein.toFixed(1)),
         servingSize: data.servingSize,
         servingUnit: data.servingUnit,
-        source: "AI Analysis",
+        source: "DeepSeek AI Analysis",
+        sugars: Number(data.sugars.toFixed(1)),
     };
 }
 
 function extractJsonFromText(text: string): null | string {
-    // First try to extract JSON between code blocks
-    const jsonMatch = /```(?:json)?\n([\S\s]*?)\n```/.exec(text);
-    if (jsonMatch?.[1]) {
-        return jsonMatch[1];
+    try {
+        JSON.parse(text);
+        return text;
+    } catch {
+        const match = /({[\S\s]*})/.exec(text);
+        return match ? match[1] : null;
     }
+}
 
-    // If no code blocks, try to find JSON object directly
-    const directJsonMatch = /{[\S\s]*?}/.exec(text);
-    return directJsonMatch ? directJsonMatch[0] : null;
+function foodAnalysisUserPrompt(description: string): string {
+    return `Food description: ${description}
+
+Generate JSON with:
+- "servingSize": TOTAL GRAMS for specified portion
+- Nutritional values FOR ENTIRE SERVING
+- No per-100g calculations
+
+Required JSON structure:
+{
+    "name": "Descriptive food name",
+    "servingSize": number, // TOTAL grams for specified portion
+    "servingUnit": "g",
+    "calories": number,    // TOTAL for specified portion
+    "protein": number,     // TOTAL for specified portion
+    "carbs": number,       // TOTAL for specified portion
+    "sugars": number,      // TOTAL for specified portion
+    "fat": number,         // TOTAL for specified portion
+    "fiber": number?,      // TOTAL for specified portion
+    "confidence": number,
+    "estimatedNutriScore": { "score": number, "grade": "A"-"E" },
+    "fitnessInfo": {
+        "workoutSuitability": { "preWorkout": 0-100, "postWorkout": 0-100 },
+        "glycemicImpact": "low|medium|high",
+        "dietCompatibility": {
+            "keto": boolean,
+            "paleo": boolean,
+            "vegan": boolean,
+            "lowCarb": boolean
+        }
+    }
+}`;
 }
 
 function parseNutritionData(jsonString: string): AIFoodAnalysis | null {
     try {
-        const parsedData = JSON.parse(jsonString) as AIFoodAnalysis;
+        const data = JSON.parse(jsonString) as AIFoodAnalysis;
 
-        // Ensure required fields exist and are numbers
-        const requiredFields = ["calories", "protein", "carbs", "fat", "servingSize"] as const;
-        for (const field of requiredFields) {
-            if (typeof parsedData[field] !== "number") {
-                parsedData[field] = Number.parseFloat(String(parsedData[field])) || 0;
+        const numericFields = ["calories", "protein", "carbs", "fat", "servingSize"] as const;
+        const required = ["name", ...numericFields] as const;
+
+        for (const field of required) {
+            if (isNil(data[field])) {
+                throw new TypeError(`Missing required field: ${field}`);
             }
         }
 
-        return parsedData;
-    } catch (e) {
-        logger.error("Failed to parse nutrition JSON", "FoodAIService", e);
+        numericFields.forEach(function (field) {
+            data[field] = Number(data[field]);
+        });
+
+        return data;
+    } catch (error) {
+        logger.error("Nutrition data parsing failed", "FoodAIService", error);
         return null;
     }
 }

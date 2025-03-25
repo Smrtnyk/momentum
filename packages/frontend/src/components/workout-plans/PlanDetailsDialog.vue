@@ -168,16 +168,25 @@
             <v-btn color="primary" variant="elevated" @click="handleAddToFavorites">
                 Add to Favorites
             </v-btn>
+
+            <v-spacer></v-spacer>
+            <v-btn v-if="isCustomPlan" color="error" variant="text" @click="handleDeleteCustomPlan">
+                Delete Plan
+            </v-btn>
         </v-card-actions>
     </div>
 </template>
 
 <script setup lang="ts">
 import { useAsyncState } from "@vueuse/core";
+import { computed } from "vue";
 
 import type { DifficultyLevel, TrainingPlan } from "../../types/workout-plans";
 
+import { globalDialog } from "../../composables/useDialog";
 import { logger } from "../../logger/app-logger";
+import { deleteCustomWorkoutPlan } from "../../services/workout-plans";
+import { useAuthStore } from "../../stores/auth";
 import { useExerciseStore } from "../../stores/exercises";
 import { useGlobalStore } from "../../stores/global";
 import StartWorkoutButton from "./StartWorkoutButton.vue";
@@ -189,10 +198,16 @@ const props = defineProps<{
     plan: TrainingPlan;
 }>();
 
-defineEmits<(e: "close") => void>();
+const emit = defineEmits<(e: "close") => void>();
+
+const authStore = useAuthStore();
 
 const globalStore = useGlobalStore();
 const { getExerciseById } = useExerciseStore();
+
+const isCustomPlan = computed(() => {
+    return Boolean(props.plan.isCustom);
+});
 
 async function fetchAllExercises(): Promise<Record<string, string>> {
     const exerciseIds = getAllExerciseIds();
@@ -220,6 +235,28 @@ function getAllExerciseIds(): string[] {
     return Array.from(ids);
 }
 
+async function handleDeleteCustomPlan(): Promise<void> {
+    if (!isCustomPlan.value) return;
+
+    try {
+        const shouldDelete = await globalDialog.confirm({
+            message: `Are you sure you want to delete "${props.plan.name}"? This action cannot be undone.`,
+            title: "Delete Custom Plan",
+        });
+
+        if (!shouldDelete) {
+            return;
+        }
+
+        await deleteCustomWorkoutPlan(authStore.nonNullableUser.uid, props.plan.id);
+        globalStore.notify("Custom workout plan deleted");
+        emit("close");
+    } catch (error) {
+        globalStore.notifyError("Failed to delete custom plan");
+        logger.error("Failed to delete custom plan:", "PlanDetailsDialog", error);
+    }
+}
+
 const { isLoading, state } = useAsyncState(
     () => fetchAllExercises(),
     {},
@@ -245,7 +282,7 @@ function getCategoryClass(category: TrainingPlan["type"]): string {
     switch (category) {
         case "cardio":
             return "bg-teal-lighten-5 text-teal-darken-3";
-        case "circuit":
+        case "hybrid":
             return "bg-amber-lighten-5 text-amber-darken-3";
         case "strength":
             return "bg-red-lighten-5 text-red-darken-3";

@@ -88,13 +88,28 @@
                     </v-col>
 
                     <v-col cols="4">
-                        <v-text-field
-                            v-model.number="editableFood.carbs"
-                            type="number"
-                            label="Carbs (g)"
-                            variant="outlined"
-                            density="comfortable"
-                        ></v-text-field>
+                        <div>
+                            <v-text-field
+                                v-model.number="editableFood.carbs"
+                                type="number"
+                                label="Carbs (g)"
+                                variant="outlined"
+                                density="comfortable"
+                            ></v-text-field>
+
+                            <v-text-field
+                                v-if="hasSugars"
+                                v-model.number="editableFood.sugars"
+                                type="number"
+                                label="Sugars (g)"
+                                variant="outlined"
+                                density="comfortable"
+                                hint="Part of total carbs"
+                                persistent-hint
+                                class="mt-2"
+                                hide-details="auto"
+                            ></v-text-field>
+                        </div>
                     </v-col>
 
                     <v-col cols="4">
@@ -193,38 +208,46 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { isNil, isNotNil } from "es-toolkit";
+import { computed, ref } from "vue";
 
 import type { FoodItem } from "../../types/food";
 import type { Meal } from "../../types/health-metrics";
 
-const props = defineProps<{
+const { food, mealType } = defineProps<{
     food: FoodItem;
     mealType: Meal["mealType"];
 }>();
 
-const emit = defineEmits<{
-    add: [food: FoodItem];
-    close: [];
-}>();
+interface Emits {
+    (e: "add", adjustedFood: FoodItem, originalFood: FoodItem): void;
+    (e: "close"): void;
+}
+
+const emit = defineEmits<Emits>();
 
 const editableFood = ref<FoodItem>({
-    ...props.food,
-    calories: Number(props.food.calories),
-    carbs: Number(props.food.carbs),
-    fat: Number(props.food.fat),
-    protein: Number(props.food.protein),
-    servingSize: Number(props.food.servingSize),
+    ...food,
+    calories: Number(food.calories),
+    carbs: Number(food.carbs),
+    fat: Number(food.fat),
+    protein: Number(food.protein),
+    servingSize: Number(food.servingSize),
+    sugars: isNil(food.sugars) ? 0 : Number(food.sugars),
 });
 
+const hasSugars = computed(() => isNotNil(food.sugars));
+
 function addToMeal(): void {
-    emit("add", {
+    const adjustedFood = {
         ...editableFood.value,
         calories: Math.round(Number(editableFood.value.calories)),
         carbs: Number(Number(editableFood.value.carbs).toFixed(1)),
         fat: Number(Number(editableFood.value.fat).toFixed(1)),
         protein: Number(Number(editableFood.value.protein).toFixed(1)),
-    });
+        sugars: Number(Number(editableFood.value.sugars ?? 0).toFixed(1)),
+    };
+    emit("add", adjustedFood, food);
     emit("close");
 }
 

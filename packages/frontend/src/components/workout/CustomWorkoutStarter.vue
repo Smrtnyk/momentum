@@ -37,7 +37,9 @@ import { required } from "../../helpers/form-validators";
 import { useActiveWorkoutStore } from "../../stores/active-workout";
 import { useGlobalStore } from "../../stores/global";
 
-const emit = defineEmits(["close"]);
+type Emits = (e: "close") => void;
+
+const emit = defineEmits<Emits>();
 
 const activeWorkoutStore = useActiveWorkoutStore();
 const globalStore = useGlobalStore();

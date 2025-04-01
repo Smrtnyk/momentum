@@ -33,6 +33,10 @@ const CACHED_FORMATTERS = {
     }),
 };
 
+export function dateToIsoString(date: Date): string {
+    return date.toISOString().split("T")[0];
+}
+
 export function formatDateWithDay(date: Date): string {
     return CACHED_FORMATTERS.withDay.format(date);
 }

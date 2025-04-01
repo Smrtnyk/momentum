@@ -76,10 +76,20 @@
                             density="compact"
                             class="me-2 macros-field"
                         ></v-text-field>
+                    </div>
+                    <div class="d-flex flex-wrap">
                         <v-text-field
                             v-model.number="scannedFood.fat"
                             type="number"
                             label="Fat"
+                            variant="outlined"
+                            density="compact"
+                            class="macros-field"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model.number="scannedFood.saturatedFat"
+                            type="number"
+                            label="Saturated Fat"
                             variant="outlined"
                             density="compact"
                             class="macros-field"
@@ -103,6 +113,14 @@
                             hint="Part of total carbs"
                             persistent-hint
                             class="macros-field"
+                        ></v-text-field>
+                        <v-text-field
+                            v-model.number="scannedFood.fiber"
+                            type="number"
+                            label="Fiber"
+                            variant="outlined"
+                            density="compact"
+                            class="me-2 macros-field"
                         ></v-text-field>
                     </div>
                 </v-list-item>

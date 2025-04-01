@@ -2,13 +2,10 @@ import type { FoodItem } from "../types/food";
 
 import { isStandardUnit, normalizeToBaseUnit } from "./units-utils";
 
-interface NutritionValues {
-    calories: number;
-    carbs: number;
-    fat: number;
-    protein: number;
-    sugars: number;
-}
+type NutritionValues = Pick<
+    FoodItem,
+    "calories" | "carbs" | "fat" | "fiber" | "protein" | "saturatedFat" | "sugars"
+>;
 
 export function calculateNutrition(
     food: FoodItem,
@@ -37,7 +34,9 @@ export function calculateNutrition(
         calories: Math.round(food.calories * factor),
         carbs: food.carbs * factor,
         fat: food.fat * factor,
+        fiber: factor * (food.fiber ?? 0),
         protein: food.protein * factor,
-        sugars: Number(food.sugars) * factor,
+        saturatedFat: factor * (food.saturatedFat ?? 0),
+        sugars: (food.sugars ?? 0) * factor,
     };
 }

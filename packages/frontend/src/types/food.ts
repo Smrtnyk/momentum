@@ -14,13 +14,14 @@ export interface FoodItem {
     calories: number;
     carbs: number;
     fat: number;
+    fiber?: number;
     foodType?: FoodType;
-    fullNutrients?: null | Nutrient[];
     id: string;
     imageUrl?: null | string;
     name: string;
     protein: number;
     provider?: string;
+    saturatedFat?: number;
     servingSize: number;
     servingUnit: string;
     source?: string;
@@ -37,10 +38,11 @@ export interface FoodSearchResult {
 export interface NutritionixFood {
     brand_name?: string;
     food_name: string;
-    full_nutrients?: Nutrient[];
     ndb_no?: string;
     nf_calories: number;
+    nf_dietary_fiber?: number;
     nf_protein: number;
+    nf_saturated_fat?: number;
     nf_sugars?: number;
     nf_total_carbohydrate: number;
     nf_total_fat: number;
@@ -186,8 +188,3 @@ interface AIFoodMetadata {
 }
 
 type FoodType = "ingredient" | "product";
-
-interface Nutrient {
-    attr_id: number;
-    value: number;
-}

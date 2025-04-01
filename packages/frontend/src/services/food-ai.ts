@@ -31,6 +31,7 @@ interface AIFoodAnalysis {
     };
     name: string;
     protein: number;
+    saturatedFat: number;
     servingSize: number;
     servingUnit: string;
     sugars: number;
@@ -72,6 +73,7 @@ const FOOD_ANALYSIS_SCHEMA = Schema.object({
         }),
         name: Schema.string(),
         protein: Schema.number(),
+        saturatedFat: Schema.number(),
         servingSize: Schema.number(),
         servingUnit: Schema.string(),
         sugars: Schema.number(),
@@ -83,7 +85,7 @@ const foodAnalysisModel = getGenerativeModel(vertexAI, {
         responseMimeType: "application/json",
         responseSchema: FOOD_ANALYSIS_SCHEMA,
     },
-    model: "gemini-2.0-pro-exp-02-05",
+    model: "gemini-2.0-flash-001",
 });
 
 export async function analyzeFood(description: string): Promise<FoodItem> {
@@ -102,9 +104,9 @@ export async function analyzeFood(description: string): Promise<FoodItem> {
         "fat",
         "servingSize",
         "servingUnit",
-    ];
+    ] as const;
     for (const field of requiredFields) {
-        if (isNil(parsedData[field as keyof AIFoodAnalysis])) {
+        if (isNil(parsedData[field])) {
             throw new TypeError(`Missing required field: ${field}`);
         }
     }
@@ -124,9 +126,11 @@ function convertToFoodItem(data: AIFoodAnalysis): FoodItem {
         calories: Math.round(data.calories),
         carbs: Number(data.carbs.toFixed(1)),
         fat: Number(data.fat.toFixed(1)),
+        fiber: Number(data.fiber.toFixed(1)),
         id: `gemini-${Date.now()}`,
         name: data.name.trim(),
         protein: Number(data.protein.toFixed(1)),
+        saturatedFat: Number(data.saturatedFat.toFixed(1)),
         servingSize: data.servingSize,
         servingUnit: data.servingUnit,
         source: "Gemini AI Analysis",

@@ -15,7 +15,7 @@ type RecentFood = FoodItem & {
 };
 
 const MAX_RECENT_FOODS = 50;
-const MAX_AGE_DAYS = 30;
+const MAX_AGE_DAYS = 180;
 
 class RecentFoodsDatabase extends Dexie {
     declare recentFoods: Table<RecentFood>;
@@ -72,12 +72,10 @@ export async function findRecentFoodByBarcode(
     }
 }
 
-export async function getRecentFoods(userId: string, limitVal = 10): Promise<FoodItem[]> {
+export async function getRecentFoods(userId: string, limitVal: number): Promise<FoodItem[]> {
     try {
         await removeExpiredFoods(userId);
-
         const foods = await db.recentFoods.where("userId").equals(userId).sortBy("lastUsed");
-
         return foods.reverse().slice(0, limitVal);
     } catch (error) {
         logger.error(error, "RecentFoodsService", { userId });
@@ -106,9 +104,6 @@ async function cleanupRecentFoods(userId: string): Promise<void> {
 
         // Sort by use count first (keep most used), then by last used (keep most recent)
         allFoods.sort(function (a, b) {
-            if (b.useCount !== a.useCount) {
-                return b.useCount - a.useCount;
-            }
             return b.lastUsed - a.lastUsed;
         });
 

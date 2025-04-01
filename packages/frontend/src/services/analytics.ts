@@ -4,7 +4,7 @@ import type { AnalyticsData, DateRangeOption } from "../types/analytics";
 import type { HealthMetrics } from "../types/health-metrics";
 
 import { firestore } from "../firebase";
-import { getDateRangeFromOption } from "../helpers/date-utils";
+import { dateToIsoString, getDateRangeFromOption } from "../helpers/date-utils";
 import { logger } from "../logger/app-logger";
 import { getWorkoutsInDateRange } from "./workout";
 
@@ -48,8 +48,8 @@ export async function getAnalyticsData(
     try {
         const { endDate, startDate } = getDateRangeFromOption(dateRangeOption);
 
-        const startDateISOString = startDate.toISOString().split("T")[0];
-        const endDateISOString = endDate.toISOString().split("T")[0];
+        const startDateISOString = dateToIsoString(startDate);
+        const endDateISOString = dateToIsoString(endDate);
 
         const [workouts, healthMetrics] = await Promise.all([
             getWorkoutsInDateRange(userId, startDate, endDate),

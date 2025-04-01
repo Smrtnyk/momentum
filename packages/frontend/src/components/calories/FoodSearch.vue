@@ -286,10 +286,7 @@ import { findRecentFoodByBarcode, getRecentFoods } from "../../services/recent-f
 import { useAuthStore } from "../../stores/auth";
 import { useGlobalStore } from "../../stores/global";
 import RetryFetcher from "../ui/RetryFetcher.vue";
-
-const { limitRecent = 30 } = defineProps<{
-    limitRecent?: number;
-}>();
+const limitRecent = 50;
 
 interface Emits {
     (e: "close"): void;
@@ -366,6 +363,7 @@ async function loadRecentFoods(): Promise<void> {
     try {
         recentFoods.value = await getRecentFoods(authStore.nonNullableUser.uid, limitRecent);
     } catch (error) {
+        globalStore.notifyError("Failed to load recent food");
         logger.error(error, "FoodSearch");
     }
 }

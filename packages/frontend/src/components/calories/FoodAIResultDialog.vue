@@ -64,7 +64,7 @@
         <!-- Nutritional Information -->
         <div class="text-h6 mb-3">Nutritional Information</div>
 
-        <v-row>
+        <v-row dense>
             <v-col cols="12" sm="6">
                 <v-text-field
                     v-model.number="editableFood.calories"
@@ -75,53 +75,76 @@
                 ></v-text-field>
             </v-col>
 
-            <v-col cols="12" sm="6">
-                <v-row>
-                    <v-col cols="4">
-                        <v-text-field
-                            v-model.number="editableFood.protein"
-                            type="number"
-                            label="Protein (g)"
-                            variant="outlined"
-                            density="comfortable"
-                        ></v-text-field>
-                    </v-col>
+            <v-col cols="12">
+                <v-text-field
+                    v-model.number="editableFood.protein"
+                    type="number"
+                    label="Protein (g)"
+                    variant="outlined"
+                    density="comfortable"
+                ></v-text-field>
+            </v-col>
 
-                    <v-col cols="4">
-                        <div>
-                            <v-text-field
-                                v-model.number="editableFood.carbs"
-                                type="number"
-                                label="Carbs (g)"
-                                variant="outlined"
-                                density="comfortable"
-                            ></v-text-field>
+            <v-divider class="my-3"></v-divider>
 
-                            <v-text-field
-                                v-if="hasSugars"
-                                v-model.number="editableFood.sugars"
-                                type="number"
-                                label="Sugars (g)"
-                                variant="outlined"
-                                density="comfortable"
-                                hint="Part of total carbs"
-                                persistent-hint
-                                class="mt-2"
-                                hide-details="auto"
-                            ></v-text-field>
-                        </div>
-                    </v-col>
+            <v-col cols="12">
+                <v-text-field
+                    v-model.number="editableFood.carbs"
+                    type="number"
+                    label="Carbs (g)"
+                    variant="outlined"
+                    density="comfortable"
+                ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+                <v-text-field
+                    v-if="hasSugars"
+                    v-model.number="editableFood.sugars"
+                    type="number"
+                    label="Sugars (g)"
+                    variant="outlined"
+                    density="comfortable"
+                    hint="Part of total carbs"
+                    persistent-hint
+                    class="mt-2"
+                    hide-details="auto"
+                ></v-text-field>
+            </v-col>
+            <v-col cols="6">
+                <v-text-field
+                    v-if="hasFiber"
+                    v-model.number="editableFood.fiber"
+                    type="number"
+                    label="Fiber (g)"
+                    variant="outlined"
+                    density="comfortable"
+                    hint="Part of total carbs"
+                    persistent-hint
+                    class="mt-2"
+                    hide-details="auto"
+                ></v-text-field>
+            </v-col>
 
-                    <v-col cols="4">
-                        <v-text-field
-                            v-model.number="editableFood.fat"
-                            type="number"
-                            label="Fat (g)"
-                            variant="outlined"
-                            density="comfortable"
-                        ></v-text-field>
-                    </v-col>
-                </v-row>
+            <v-divider class="my-3"></v-divider>
+
+            <v-col cols="6">
+                <v-text-field
+                    v-model.number="editableFood.fat"
+                    type="number"
+                    label="Fat (g)"
+                    variant="outlined"
+                    density="comfortable"
+                ></v-text-field>
+            </v-col>
+
+            <v-col cols="6">
+                <v-text-field
+                    v-model.number="editableFood.saturatedFat"
+                    type="number"
+                    label="Saturated fat (g)"
+                    variant="outlined"
+                    density="comfortable"
+                ></v-text-field>
             </v-col>
         </v-row>
 
@@ -239,6 +262,7 @@ const editableFood = ref<FoodItem>({
 });
 
 const hasSugars = computed(() => isNotNil(food.sugars));
+const hasFiber = computed(() => isNotNil(food.fiber));
 
 function addToMeal(): void {
     const adjustedFood = {

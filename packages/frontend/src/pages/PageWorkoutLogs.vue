@@ -1,29 +1,24 @@
 <script setup lang="ts">
 import { useAsyncState } from "@vueuse/core";
-import { watch } from "vue";
 
 import type { WorkoutWithId } from "../types/workout";
 
+import RetryFetcher from "../components/ui/RetryFetcher.vue";
 import WorkoutList from "../components/workout/WorkoutList.vue";
 import { getWorkouts } from "../services/workout";
 import { useAuthStore } from "../stores/auth";
-import { useGlobalStore } from "../stores/global";
 
 const authStore = useAuthStore();
-const globalStore = useGlobalStore();
 const {
     error,
+    execute: loadWorkouts,
     isLoading,
     state: workouts,
 } = useAsyncState<WorkoutWithId[]>(() => {
-    return getWorkouts(authStore.nonNullableUser.uid);
+    return getWorkouts(authStore.nonNullableUser.uid, {
+        limit: 30,
+    });
 }, []);
-
-watch(error, function (err) {
-    if (err) {
-        globalStore.notifyError(err);
-    }
-});
 </script>
 
 <template>
@@ -104,6 +99,13 @@ watch(error, function (err) {
                 </v-card>
             </div>
         </div>
+
+        <RetryFetcher
+            title=""
+            message="Failed to load workout logs"
+            :fetcher="loadWorkouts"
+            v-else-if="error"
+        />
 
         <v-row v-else>
             <v-col cols="12">

@@ -9,7 +9,7 @@ import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
 import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
 import { connectStorageEmulator, getStorage } from "firebase/storage";
-import { getGenerativeModel, getVertexAI } from "firebase/vertexai";
+import { getVertexAI } from "firebase/vertexai";
 
 const ipAddressPattern =
     /^((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\.){3}(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)$/;
@@ -44,17 +44,19 @@ const initializeFirebase = memoize(() => {
     const auth = getAuth(firebaseApp);
     const storage = getStorage(firebaseApp);
     const vertexAI = getVertexAI(firebaseApp);
-    const geminiModel = getGenerativeModel(vertexAI, {
-        model: "gemini-2.0-flash",
-    });
-    const geminiModelThinking = getGenerativeModel(vertexAI, {
-        model: "gemini-2.0-flash-thinking-exp-01-21",
-    });
 
     if (location.hostname === "localhost" || ipAddressPattern.test(location.hostname)) {
         initEmulators(firestore, auth, functions, storage);
     }
-    return { auth, firebaseApp, firestore, functions, geminiModel, geminiModelThinking, storage };
+
+    return {
+        auth,
+        firebaseApp,
+        firestore,
+        functions,
+        storage,
+        vertexAI,
+    };
 });
 
-export const { auth, firestore, geminiModel, geminiModelThinking } = initializeFirebase();
+export const { auth, firestore, vertexAI } = initializeFirebase();

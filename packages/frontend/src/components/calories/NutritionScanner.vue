@@ -221,15 +221,9 @@ async function processImage(imageData: string): Promise<void> {
     isProcessing.value = true;
 
     try {
-        const food = await scanNutritionLabel(imageData);
-
-        if (food) {
-            scannedFood.value = food;
-        } else {
-            globalStore.notifyError("Could not extract nutrition information");
-        }
+        scannedFood.value = await scanNutritionLabel(imageData);
     } catch (err) {
-        globalStore.notifyError("Error processing nutrition label");
+        globalStore.notifyError("Could not extract nutrition information");
         logger.error(err);
     } finally {
         isProcessing.value = false;

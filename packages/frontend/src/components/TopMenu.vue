@@ -1,8 +1,5 @@
 <template>
     <v-app-bar app flat color="background" dark>
-        <v-btn v-if="showBackButton" icon @click="goBack">
-            <v-icon>mdi-arrow-left</v-icon>
-        </v-btn>
         <v-btn
             v-if="updateDismissed"
             icon
@@ -44,35 +41,19 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
 
 import { useActiveWorkoutStore } from "../stores/active-workout";
+
+type Emits = (e: "show-update-notification") => void;
 
 const { updateDismissed } = defineProps<{
     updateDismissed: boolean;
 }>();
-
-type Emits = (e: "show-update-notification") => void;
-
 const emit = defineEmits<Emits>();
-
-const router = useRouter();
-const route = useRoute();
 const activeWorkoutStore = useActiveWorkoutStore();
-
-const mainRoutes = ["Home", "Auth"];
-
-const showBackButton = computed(() => {
-    return !mainRoutes.includes(route.name as string);
-});
-
 const hasActiveWorkout = computed(function () {
     return activeWorkoutStore.isWorkoutActive;
 });
-
-function goBack(): void {
-    router.back();
-}
 </script>
 
 <style scoped>

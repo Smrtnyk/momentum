@@ -119,7 +119,7 @@ import {
     formatPercentChange,
 } from "../../helpers/exercise-comparison";
 import { logger } from "../../logger/app-logger";
-import { getPreviousExerciseExecution, getWorkoutsInDateRange } from "../../services/workout";
+import { getPreviousExerciseExecution } from "../../services/workout";
 import { useAuthStore } from "../../stores/auth";
 
 interface ExerciseComparisonProps {
@@ -143,26 +143,6 @@ const formatDate = computed(() => {
         month: "short",
     });
 });
-
-async function findPreviousWorkoutDate(
-    userId: string,
-    exerciseId: string,
-    currentDate: Date,
-): Promise<Date | undefined> {
-    const workouts = await getWorkoutsInDateRange(
-        userId,
-        // Start from earliest date
-        new Date(0),
-        currentDate,
-        { orderByDate: "desc" },
-    );
-
-    const previousWorkout = workouts.find((workout) =>
-        workout.exerciseEntries.some((entry) => entry.exerciseId === exerciseId),
-    );
-
-    return previousWorkout?.date.toDate();
-}
 
 function getTrendColor(isImprovement: boolean): string {
     return isImprovement ? "success" : "error";
@@ -188,26 +168,22 @@ async function loadExerciseComparisonData(): Promise<void> {
         const userId = authStore.nonNullableUser.uid;
         const { exerciseId } = props.exercise;
 
-        previousExercise.value = await getPreviousExerciseExecution(
+        const { exerciseEntry, workoutDate } = await getPreviousExerciseExecution(
             userId,
             exerciseId,
             props.workout.date,
         );
 
-        if (!previousExercise.value) {
+        if (!exerciseEntry || !workoutDate) {
             return;
         }
 
-        const previousDate = await findPreviousWorkoutDate(
-            userId,
-            exerciseId,
-            props.workout.date.toDate(),
-        );
+        previousExercise.value = exerciseEntry;
 
         comparison.value = calculateExerciseComparison(
             props.exercise,
             previousExercise.value,
-            previousDate,
+            workoutDate,
         );
     } catch (error) {
         logger.error("Failed to fetch previous exercise data:", "ExerciseComparison", error);

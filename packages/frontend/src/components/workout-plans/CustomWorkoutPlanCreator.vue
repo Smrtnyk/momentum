@@ -301,4 +301,9 @@ onMounted(addWorkoutDay);
 .gap-4 {
     gap: 16px;
 }
+
+:deep(.v-expansion-panel-text__wrapper) {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
 </style>

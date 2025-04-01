@@ -237,7 +237,7 @@
                                             <div class="text-h7">
                                                 {{
                                                     entry.durationSeconds
-                                                        ? entry.durationSeconds / 60
+                                                        ? (entry.durationSeconds / 60).toFixed(1)
                                                         : 0
                                                 }}
                                                 min
@@ -255,7 +255,9 @@
                                         />
                                         <div>
                                             <div class="text-caption">Distance</div>
-                                            <div class="text-h7">{{ entry.distanceKm }} km</div>
+                                            <div class="text-h7">
+                                                {{ entry.distanceKm.toFixed(1) }} km
+                                            </div>
                                         </div>
                                     </div>
                                 </v-col>

@@ -11,11 +11,11 @@
                 @update:model-value="handleDialogVisibility(dialog.id, $event)"
             >
                 <v-card rounded="lg">
-                    <v-card-title class="d-flex justify-space-between align-center">
-                        <span class="text-h5">{{ dialog.title ?? "" }}</span>
-                        <v-btn icon size="small" @click="closeDialog(dialog.id)" variant="text">
-                            <v-icon>mdi-close</v-icon>
+                    <v-card-title class="d-flex align-center pl-0">
+                        <v-btn icon @click="closeDialog(dialog.id)" variant="text">
+                            <v-icon>mdi-arrow-left</v-icon>
                         </v-btn>
+                        <span class="text-h6">{{ dialog.title ?? "" }}</span>
                     </v-card-title>
 
                     <component

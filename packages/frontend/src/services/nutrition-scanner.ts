@@ -1,53 +1,61 @@
 import { isNil, isString } from "es-toolkit";
+import { getGenerativeModel, Schema } from "firebase/vertexai";
 
 import type { FoodItem } from "../types/food";
 
-import { geminiModel } from "../firebase";
+import { vertexAI } from "../firebase";
 import { logger } from "../logger/app-logger";
 
 interface RawNutritionData {
     brand?: null | string;
-    calories?: null | number | string;
-    carbs?: null | number | string;
-    fat?: null | number | string;
-    fiber?: null | number | string;
+    calories?: null | number;
+    carbs?: null | number;
+    fat?: null | number;
+    fiber?: null | number;
     name?: null | string;
-    protein?: null | number | string;
-    servingSize?: null | number | string;
+    protein?: null | number;
+    servingSize?: null | number;
     servingUnit?: null | string;
-    sugars?: null | number | string;
+    sugars?: null | number;
 }
 
+const NUTRITION_SCHEMA = Schema.object({
+    optionalProperties: ["name", "brand", "fiber"],
+    properties: {
+        brand: Schema.string(),
+        calories: Schema.number(),
+        carbs: Schema.number(),
+        fat: Schema.number(),
+        fiber: Schema.number(),
+        name: Schema.string(),
+        protein: Schema.number(),
+        servingSize: Schema.number(),
+        servingUnit: Schema.string(),
+        sugars: Schema.number(),
+    },
+});
+
+const nutritionScannerModel = getGenerativeModel(vertexAI, {
+    generationConfig: {
+        responseMimeType: "application/json",
+        responseSchema: NUTRITION_SCHEMA,
+    },
+    model: "gemini-2.0-flash",
+});
+
 export async function scanNutritionLabel(imageData: string): Promise<FoodItem | null> {
-    try {
-        const imagePart = {
-            inlineData: {
-                data: imageData,
-                mimeType: "image/jpeg",
-            },
-        };
-        const prompt = createPrompt();
-
-        const result = await geminiModel.generateContent([prompt, imagePart]);
-        const textResponse = result.response.text();
-        logger.info(textResponse, "NutritionScanner");
-
-        const jsonString = extractJsonFromText(textResponse);
-        if (!jsonString) {
-            logger.error("No JSON found in response");
-            return null;
-        }
-
-        const parsedData = parseNutritionData(jsonString);
-        if (!parsedData) {
-            return null;
-        }
-
-        return convertToFoodItem(parsedData);
-    } catch (error) {
-        logger.error("Nutrition scanning error:", "NutritionScanner", error);
-        return null;
-    }
+    const imagePart = {
+        inlineData: {
+            data: imageData,
+            mimeType: "image/jpeg",
+        },
+    };
+    const prompt = createPrompt();
+    const result = await nutritionScannerModel.generateContent([prompt, imagePart]);
+    const textResponse = result.response.text();
+    logger.debug(textResponse, "NutritionScanner");
+    const parsedData = JSON.parse(textResponse) as RawNutritionData;
+    return convertToFoodItem(parsedData);
 }
 
 function convertToFoodItem(data: RawNutritionData): FoodItem {
@@ -68,8 +76,9 @@ function convertToFoodItem(data: RawNutritionData): FoodItem {
 
 function createPrompt(): string {
     return `Analyze this nutrition facts label image and extract the exact nutritional information.
-Return ONLY a JSON object with these fields (use numeric values, not strings):
-- name: the product name if visible (string or null)
+Return nutritional information as JSON with the following structure:
+- name: the product name if visible (string)
+- brand: the brand name if visible (string, optional)
 - servingSize: the numeric portion size (number)
 - servingUnit: the unit of measurement (g, oz, ml, etc.)
 - calories: total calories per serving (number)
@@ -77,15 +86,7 @@ Return ONLY a JSON object with these fields (use numeric values, not strings):
 - carbs: grams of carbohydrates (number)
 - sugars: grams of sugars (number)
 - fat: grams of fat (number)
-- fiber: grams of fiber if available (number or 0)
-
-Example format:
-{"name":"Protein Bar","servingSize":100,"servingUnit":"g","calories":200,"protein":20,"carbs":25,"sugars":16,"fat":8,"fiber":5}`;
-}
-
-function extractJsonFromText(text: string): null | string {
-    const jsonMatch = /```json\n([\S\s]*?)\n```/.exec(text) ?? /{[\S\s]*?}/.exec(text);
-    return jsonMatch ? (jsonMatch[1] ?? jsonMatch[0]) : null;
+- fiber: grams of fiber if available (number, optional)`;
 }
 
 function normalizeNumericValue(value: null | number | string | undefined): number {
@@ -94,19 +95,4 @@ function normalizeNumericValue(value: null | number | string | undefined): numbe
     }
 
     return isString(value) ? Number.parseFloat(value) : value;
-}
-
-function parseNutritionData(jsonString: string): null | RawNutritionData {
-    try {
-        let parsedData: RawNutritionData = JSON.parse(jsonString);
-
-        if (Array.isArray(parsedData)) {
-            parsedData = parsedData[0];
-        }
-
-        return parsedData;
-    } catch (e) {
-        logger.error("Failed to parse JSON", "NutritionScanner", e);
-        return null;
-    }
 }

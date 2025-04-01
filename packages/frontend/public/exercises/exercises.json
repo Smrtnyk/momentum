@@ -23164,5 +23164,71 @@
             "Yoga/1.jpg"
         ],
         "id": "Yoga"
+    },
+    {
+        "name": "Dynamic Stretching",
+        "force": null,
+        "level": "beginner",
+        "mechanic": "compound",
+        "equipment": "body only",
+        "primaryMuscles": [
+            "hamstrings",
+            "quadriceps",
+            "shoulders",
+            "hips"
+        ],
+        "secondaryMuscles": [
+            "calves",
+            "glutes",
+            "back"
+        ],
+        "instructions": [
+            "Perform a series of controlled, movement-based stretches to prepare the body for activity.",
+            "Focus on moving through a comfortable range of motion, gradually increasing the range with each repetition.",
+            "Examples include leg swings (forward/back and side-to-side), arm circles, torso twists, walking lunges with rotation, and hip circles.",
+            "Avoid bouncing or jerky movements.",
+            "Typically performed as part of a warm-up before a workout.",
+            "Perform a variety of chosen dynamic stretches targeting major muscle groups for the specified duration or repetitions."
+        ],
+        "category": "stretching",
+        "images": [
+            "Dynamic_Stretching/0.jpg",
+            "Dynamic_Stretching/1.jpg"
+        ],
+        "id": "Dynamic_Stretching"
+    },
+    {
+        "name": "Static Stretching",
+        "force": "static",
+        "level": "beginner",
+        "mechanic": "isolation",
+        "equipment": "body only",
+        "primaryMuscles": [
+            "hamstrings",
+            "quadriceps",
+            "calves",
+            "chest",
+            "shoulders",
+            "triceps",
+            "back"
+        ],
+        "secondaryMuscles": [
+            "glutes"
+        ],
+        "instructions": [
+            "Perform a series of stretches where a position is held to increase flexibility.",
+            "Move into the stretch position gently until a mild tension (not pain) is felt in the target muscle.",
+            "Hold the stretch position steadily without bouncing for the specified duration (typically 20-60 seconds).",
+            "Breathe deeply and relax into the stretch.",
+            "Examples include hamstring stretch (toe touch), quadriceps stretch (heel to glute), triceps stretch (elbow behind head), chest stretch (doorway stretch), calf stretch.",
+            "Typically performed after a workout during the cool-down phase or as a separate flexibility session.",
+            "Perform a variety of chosen static stretches targeting major muscle groups."
+        ],
+        "category": "stretching",
+        "images": [
+            "Static_Stretching/0.jpg",
+            "Static_Stretching/1.jpg"
+        ],
+        "id": "Static_Stretching"
     }
 ]

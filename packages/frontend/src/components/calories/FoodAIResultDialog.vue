@@ -16,16 +16,16 @@
             density="comfortable"
             class="mb-4"
         >
-            <div class="d-flex align-center">
-                <span class="text-body-2">AI Confidence:</span>
+            <div class="d-flex flex-column align-center">
+                <span class="text-body-1">AI Confidence:</span>
                 <v-progress-linear
-                    :model-value="food.aiMetadata.confidence"
+                    :model-value="food.aiMetadata.confidence * 100"
                     color="primary"
                     class="mx-2"
                     height="8"
                     rounded
                 ></v-progress-linear>
-                <span class="text-body-2">{{ food.aiMetadata.confidence }}%</span>
+                <span class="text-body-2">{{ food.aiMetadata.confidence * 100 }}%</span>
             </div>
         </v-alert>
 
@@ -155,7 +155,9 @@
                     <div class="d-flex align-center mb-2">
                         <div class="text-body-2 min-width-100">Pre-workout:</div>
                         <v-progress-linear
-                            :model-value="food.aiMetadata.fitnessInfo.workoutSuitability.preWorkout"
+                            :model-value="
+                                food.aiMetadata.fitnessInfo.workoutSuitability.preWorkout * 100
+                            "
                             color="blue"
                             class="mx-2"
                             height="8"
@@ -166,7 +168,7 @@
                         <div class="text-body-2 min-width-100">Post-workout:</div>
                         <v-progress-linear
                             :model-value="
-                                food.aiMetadata.fitnessInfo.workoutSuitability.postWorkout
+                                food.aiMetadata.fitnessInfo.workoutSuitability.postWorkout * 100
                             "
                             color="green"
                             class="mx-2"

@@ -54,7 +54,13 @@ export async function getPreviousExerciseExecution(
     userId: string,
     exerciseId: string,
     currentWorkoutDate: Timestamp,
-): Promise<null | StrengthExerciseEntry> {
+): Promise<
+    | { exerciseEntry: null; workoutDate: null }
+    | {
+          exerciseEntry: StrengthExerciseEntry;
+          workoutDate: Date;
+      }
+> {
     if (!userId || !exerciseId) {
         throw new Error("Both userId and exerciseId are required");
     }
@@ -71,17 +77,20 @@ export async function getPreviousExerciseExecution(
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
-        return null;
+        return { exerciseEntry: null, workoutDate: null };
     }
 
     const workout = { id: snapshot.docs[0].id, ...snapshot.docs[0].data() } as WorkoutWithId;
     const exerciseEntry = workout.exerciseEntries.find((entry) => entry.exerciseId === exerciseId);
 
     if (exerciseEntry && isStrengthExercise(exerciseEntry)) {
-        return exerciseEntry;
+        return {
+            exerciseEntry,
+            workoutDate: workout.date.toDate(),
+        };
     }
 
-    return null;
+    return { exerciseEntry: null, workoutDate: null };
 }
 
 export async function getWorkoutById(userId: string, workoutId: string): Promise<WorkoutWithId> {

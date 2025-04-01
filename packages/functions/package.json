@@ -21,7 +21,7 @@
     },
     "devDependencies": {
         "@faker-js/faker": "9.6.0",
-        "@types/node": "22.13.14",
+        "@types/node": "22.13.16",
         "firebase-functions-test": "3.4.1"
     },
     "private": true

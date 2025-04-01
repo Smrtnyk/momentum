@@ -70,11 +70,6 @@ async function analyzeFood(): Promise<void> {
 
         const food = await analyzeFoodWithAI(foodDescription.value);
 
-        if (!food) {
-            error.value = "Could not analyze food description. Please try again with more details.";
-            return;
-        }
-
         emit("food-analyzed", food);
         emit("close");
     } catch (err) {

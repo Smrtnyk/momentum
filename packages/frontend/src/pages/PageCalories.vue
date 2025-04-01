@@ -1,123 +1,6 @@
-<template>
-    <v-container class="pa-2 mx-auto">
-        <v-card class="px-4 py-4 rounded-lg mb-1">
-            <div class="d-flex align-center">
-                <h1 class="text-h5 text-white font-weight-bold">Calories & Nutrition</h1>
-            </div>
-        </v-card>
-        <div class="mb-1">
-            <v-btn
-                variant="text"
-                density="comfortable"
-                color="primary"
-                prepend-icon="mdi-food-apple-outline"
-                class="text-none"
-                to="/custom-food"
-                size="small"
-            >
-                My Food
-            </v-btn>
-
-            <v-btn
-                variant="text"
-                density="comfortable"
-                color="primary"
-                prepend-icon="mdi-food-apple-outline"
-                class="text-none"
-                to="/recent-food"
-                size="small"
-            >
-                Recent Food
-            </v-btn>
-
-            <v-btn
-                to="/recipes"
-                prepend-icon="mdi-silverware-fork-knife"
-                variant="text"
-                color="primary"
-                size="small"
-                class="text-none"
-                density="comfortable"
-            >
-                Recipes
-            </v-btn>
-        </div>
-
-        <!-- Date Selector -->
-        <v-card class="mb-4" flat>
-            <v-card-text class="d-flex justify-space-between align-center pa-2">
-                <v-btn icon @click="changeDate(-1)">
-                    <v-icon>mdi-chevron-left</v-icon>
-                </v-btn>
-
-                <div class="d-flex align-center">
-                    <v-btn variant="text" @click="showDatePicker = true" class="text-h6">
-                        {{ formattedDate }}
-                    </v-btn>
-
-                    <v-dialog v-model="showDatePicker" max-width="300">
-                        <v-date-picker
-                            v-model="selectedDate"
-                            @update:model-value="showDatePicker = false"
-                        ></v-date-picker>
-                    </v-dialog>
-                </div>
-
-                <v-btn icon @click="changeDate(1)" :disabled="isToday">
-                    <v-icon>mdi-chevron-right</v-icon>
-                </v-btn>
-            </v-card-text>
-        </v-card>
-
-        <!-- Loading State -->
-        <template v-if="isLoading">
-            <!-- Calories Summary Skeleton -->
-            <v-skeleton-loader type="heading" class="mb-4" />
-            <!-- Meals Skeleton mimicking the meal cards structure -->
-            <v-row>
-                <v-col v-for="n in 4" :key="n" cols="12" sm="6" lg="3">
-                    <v-skeleton-loader type="card" class="mb-4" />
-                </v-col>
-            </v-row>
-        </template>
-
-        <!-- Error State -->
-        <template v-else-if="error">
-            <RetryFetcher
-                :fetcher="refreshData"
-                title="Failed to load nutrition data"
-                message="We couldn't load your nutrition data. Please check your connection and try again."
-                height="60vh"
-                icon="mdi-food-off"
-            />
-        </template>
-
-        <!-- Loaded Content -->
-        <template v-else>
-            <!-- Calories Summary Section -->
-            <CaloriesSummary :summary="calorieSummary" @update:goal="updateCalorieGoal" />
-            <!-- Meals Section -->
-            <v-row>
-                <v-col v-for="mealType in mealTypes" :key="mealType" cols="12" sm="6" lg="3">
-                    <MealCard
-                        :meal="getMealByType(mealType)"
-                        :meal-type="mealType"
-                        @search-food="openFoodSearch(mealType)"
-                        @add-macros="openManualMacrosDialog(mealType)"
-                        @scan-label="openNutritionScanner(mealType)"
-                        @describe-food="openFoodPromptDialog(mealType)"
-                        @remove-food="(index) => removeFoodFromMeal(mealType, index)"
-                        @edit-food="(food, index) => openEditFoodDialog(food, index, mealType)"
-                    />
-                </v-col>
-            </v-row>
-        </template>
-    </v-container>
-</template>
-
 <script setup lang="ts">
-import { useAsyncState, useDateFormat, whenever } from "@vueuse/core";
-import { computed, ref } from "vue";
+import { useDateFormat } from "@vueuse/core";
+import { computed, ref, watch } from "vue";
 import { useDate } from "vuetify";
 
 import type { FoodItem } from "../types/food";
@@ -133,90 +16,22 @@ import MealCard from "../components/calories/MealCard.vue";
 import NutritionScanner from "../components/calories/NutritionScanner.vue";
 import RetryFetcher from "../components/ui/RetryFetcher.vue";
 import { globalDialog } from "../composables/useDialog";
-import { formatISODate } from "../helpers/date-utils";
-import { logger } from "../logger/app-logger";
-import {
-    addMeal,
-    deleteMeal,
-    getDailyCalorieSummary,
-    getMealsForDay,
-    setCalorieGoal,
-} from "../services/calories";
-import { createCustomFood } from "../services/custom-foods";
-import { addRecentFood } from "../services/recent-food-db";
-import { setDefaultCalorieGoal } from "../services/user";
-import { useAuthStore } from "../stores/auth";
-import { useGlobalStore } from "../stores/global";
+import { dateToIsoString, formatISODate } from "../helpers/date-utils";
+import { useCalorieMutations, useDailyCaloriesQuery } from "../queries/calories-queries";
 
-const authStore = useAuthStore();
-const globalStore = useGlobalStore();
 const dateAdapter = useDate();
-
 const today = new Date();
-const selectedDate = ref(today.toISOString().split("T")[0]);
+const selectedDate = ref(dateToIsoString(today));
 const showDatePicker = ref(false);
-
 const mealTypes = ["breakfast", "lunch", "dinner", "snack"] as const;
+const caloriesQuery = useDailyCaloriesQuery();
+const mutations = useCalorieMutations(selectedDate.value);
 
-const defaultSummary = {
-    byMeal: { breakfast: 0, dinner: 0, lunch: 0, snack: 0 },
-    carbs: 0,
-    fat: 0,
-    goal: 2000,
-    protein: 0,
-    remaining: 2000,
-    total: 0,
-};
+caloriesQuery.date.value = selectedDate.value;
 
-const {
-    error,
-    execute: refreshData,
-    isLoading,
-    state: caloriesData,
-} = useAsyncState(
-    async () => {
-        const userId = authStore.nonNullableUser.uid;
-        const dateString = selectedDate.value;
-
-        const [summary, dayMeals] = await Promise.all([
-            getDailyCalorieSummary(userId, authStore.defaultCalorieGoal, dateString),
-            getMealsForDay(userId, dateString),
-        ]);
-
-        return { meals: dayMeals, summary };
-    },
-    { meals: [], summary: defaultSummary },
-    {
-        immediate: false,
-        onError(e) {
-            logger.error(e, "PageCalories");
-        },
-    },
-);
-
-const totalSugars = computed(() => {
-    if (caloriesData.value.meals.length === 0) return 0;
-
-    let sugarsTotal = 0;
-
-    for (const meal of caloriesData.value.meals) {
-        for (const food of meal.foods) {
-            const sugars = Number(food.sugars);
-            if (!Number.isNaN(sugars)) {
-                sugarsTotal += sugars;
-            }
-        }
-    }
-
-    return sugarsTotal;
+watch(selectedDate, function (newDate) {
+    caloriesQuery.date.value = newDate;
 });
-
-const calorieSummary = computed(() => ({
-    ...caloriesData.value.summary,
-    sugars: totalSugars.value,
-}));
-
-const meals = computed(() => caloriesData.value.meals);
 
 const formattedDate = computed(() => {
     const date = new Date(selectedDate.value);
@@ -238,42 +53,12 @@ const isToday = computed(() => {
     return dateAdapter.isSameDay(new Date(selectedDate.value), today);
 });
 
-async function addFoodToMeal(
-    food: FoodItem,
-    mealType: Meal["mealType"],
-    originalFood?: FoodItem,
-): Promise<void> {
-    try {
-        globalStore.setLoading(true);
-        const userId = authStore.nonNullableUser.uid;
-        const dateString = selectedDate.value;
-        const existingMeal = getMealByType(mealType);
-
-        if (existingMeal) {
-            const updatedFoods = [...existingMeal.foods, food];
-            // Delete old meal and add new one with updated foods
-            await deleteMeal(userId, existingMeal.id, dateString, authStore.defaultCalorieGoal);
-            await addMeal(userId, mealType, updatedFoods, authStore.defaultCalorieGoal, dateString);
-        } else {
-            await addMeal(userId, mealType, [food], authStore.defaultCalorieGoal, dateString);
-        }
-
-        if (originalFood) {
-            try {
-                await addRecentFood(userId, originalFood);
-            } catch (e) {
-                logger.error(e);
-            }
-        }
-
-        await refreshData();
-        globalStore.notify("Food added successfully");
-    } catch (e) {
-        logger.error(e, "PageCalories", { mealType });
-        globalStore.notifyError("Failed to add food to meal");
-    } finally {
-        globalStore.setLoading(false);
-    }
+function addFoodToMeal(food: FoodItem, mealType: Meal["mealType"], originalFood?: FoodItem): void {
+    mutations.addFoodToMealMutation.mutate({
+        food,
+        mealType,
+        originalFood,
+    });
 }
 
 function changeDate(dayOffset: number): void {
@@ -287,33 +72,17 @@ function changeDate(dayOffset: number): void {
     selectedDate.value = formatISODate(date);
 }
 
-async function editFoodInMeal(
-    mealType: Meal["mealType"],
-    index: number,
-    adjustedFood: FoodItem,
-): Promise<void> {
-    try {
-        globalStore.setLoading(true);
-        const userId = authStore.nonNullableUser.uid;
-        const dateString = selectedDate.value;
-        const existingMeal = getMealByType(mealType);
-        if (!existingMeal) return;
-        const updatedFoods = [...existingMeal.foods];
-        updatedFoods[index] = adjustedFood;
-        await deleteMeal(userId, existingMeal.id, dateString, authStore.defaultCalorieGoal);
-        await addMeal(userId, mealType, updatedFoods, authStore.defaultCalorieGoal, dateString);
-        await refreshData();
-        globalStore.notify("Food updated successfully");
-    } catch (e) {
-        logger.error(e, "PageCalories", { index, mealType });
-        globalStore.notifyError("Failed to update food");
-    } finally {
-        globalStore.setLoading(false);
-    }
+function editFoodInMeal(mealType: Meal["mealType"], index: number, adjustedFood: FoodItem): void {
+    mutations.editFoodInMealMutation.mutate({
+        adjustedFood,
+        index,
+        mealType,
+    });
 }
 
-function getMealByType(type: Meal["mealType"]): Meal | undefined {
-    return meals.value.find((meal) => meal.mealType === type);
+function onDateChangeFromDatePicker(newDate: string): void {
+    showDatePicker.value = false;
+    selectedDate.value = formatISODate(new Date(newDate));
 }
 
 function openEditFoodDialog(food: FoodItem, index: number, mealType: Meal["mealType"]): void {
@@ -385,7 +154,7 @@ function openFoodSearch(mealType: Meal["mealType"]): void {
         FoodSearch,
         {
             mealType,
-            onSelect: (food: FoodItem) => {
+            onSelect(food: FoodItem) {
                 openFoodPortionDialog(food, mealType);
             },
         },
@@ -409,15 +178,8 @@ function openNutritionScanner(mealType: Meal["mealType"]): void {
         NutritionScanner,
         {
             mealType,
-            async onCustomFoodSaved(food: FoodItem) {
-                try {
-                    const userId = authStore.nonNullableUser.uid;
-                    await createCustomFood(userId, food);
-                    globalStore.notify(`"${food.name}" saved to your custom foods`);
-                } catch (e) {
-                    logger.error(e, "PageCalories", { food });
-                    globalStore.notifyError("Failed to save custom food");
-                }
+            onCustomFoodSaved(food: FoodItem) {
+                mutations.saveCustomFoodMutation.mutate({ food });
             },
             onFoodAdded(food: FoodItem) {
                 globalDialog.closeDialog(dialogId);
@@ -430,6 +192,10 @@ function openNutritionScanner(mealType: Meal["mealType"]): void {
     );
 }
 
+function refreshData(): void {
+    caloriesQuery.refresh();
+}
+
 async function removeFoodFromMeal(mealType: Meal["mealType"], index: number): Promise<void> {
     const confirmed = await globalDialog.confirm({
         message: "Are you sure you want to delete this meal?",
@@ -440,55 +206,136 @@ async function removeFoodFromMeal(mealType: Meal["mealType"], index: number): Pr
         return;
     }
 
-    try {
-        globalStore.setLoading(true);
-        const userId = authStore.nonNullableUser.uid;
-        const dateString = selectedDate.value;
-
-        const existingMeal = getMealByType(mealType);
-        if (!existingMeal) return;
-
-        // Create a new foods array without the removed item
-        const updatedFoods = [...existingMeal.foods];
-        updatedFoods.splice(index, 1);
-
-        // If no foods left delete the meal
-        if (updatedFoods.length === 0) {
-            await deleteMeal(userId, existingMeal.id, dateString, authStore.defaultCalorieGoal);
-        } else {
-            // Otherwise update the meal with the remaining foods
-            await deleteMeal(userId, existingMeal.id, dateString, authStore.defaultCalorieGoal);
-            await addMeal(userId, mealType, updatedFoods, authStore.defaultCalorieGoal, dateString);
-        }
-
-        await refreshData();
-        globalStore.notify("Food removed");
-    } catch (e) {
-        logger.error(e, "PageCalories", { index, mealType });
-        globalStore.notifyError("Failed to remove food");
-    } finally {
-        globalStore.setLoading(false);
-    }
+    mutations.removeFoodFromMealMutation.mutate({
+        index,
+        mealType,
+    });
 }
 
-async function updateCalorieGoal(goal: number, setAsDefault: boolean): Promise<void> {
-    try {
-        const userId = authStore.nonNullableUser.uid;
-        await setCalorieGoal(userId, goal, authStore.defaultCalorieGoal, selectedDate.value);
-        if (setAsDefault) {
-            await setDefaultCalorieGoal(userId, goal);
-        }
-        await refreshData();
-        globalStore.notify("Calorie goal updated successfully");
-    } catch (e) {
-        logger.error(e, "PageCalories", { goal });
-        globalStore.notifyError("Failed to update calorie goal");
-    }
+function updateCalorieGoal(goal: number, setAsDefault: boolean): void {
+    mutations.updateCalorieGoalMutation.mutate({
+        goal,
+        setAsDefault,
+    });
 }
-
-whenever(
-    () => selectedDate.value,
-    () => refreshData(),
-    { immediate: true },
-);
 </script>
+
+<template>
+    <v-container class="pa-2 mx-auto">
+        <v-card class="px-4 py-4 rounded-lg mb-1">
+            <div class="d-flex align-center">
+                <h1 class="text-h5 text-white font-weight-bold">Calories & Nutrition</h1>
+            </div>
+        </v-card>
+        <div class="mb-1">
+            <v-btn
+                variant="text"
+                density="comfortable"
+                color="primary"
+                prepend-icon="mdi-food-apple-outline"
+                class="text-none"
+                to="/custom-food"
+                size="small"
+            >
+                My Food
+            </v-btn>
+
+            <v-btn
+                variant="text"
+                density="comfortable"
+                color="primary"
+                prepend-icon="mdi-food-apple-outline"
+                class="text-none"
+                to="/recent-food"
+                size="small"
+            >
+                Recent Food
+            </v-btn>
+
+            <v-btn
+                to="/recipes"
+                prepend-icon="mdi-silverware-fork-knife"
+                variant="text"
+                color="primary"
+                size="small"
+                class="text-none"
+                density="comfortable"
+            >
+                Recipes
+            </v-btn>
+        </div>
+
+        <!-- Date Selector -->
+        <v-card class="mb-4" flat>
+            <v-card-text class="d-flex justify-space-between align-center pa-2">
+                <v-btn icon @click="changeDate(-1)">
+                    <v-icon>mdi-chevron-left</v-icon>
+                </v-btn>
+
+                <div class="d-flex align-center">
+                    <v-btn variant="text" @click="showDatePicker = true" class="text-h6">
+                        {{ formattedDate }}
+                    </v-btn>
+
+                    <v-dialog v-model="showDatePicker" max-width="300">
+                        <v-date-picker
+                            :model-value="selectedDate"
+                            @update:model-value="onDateChangeFromDatePicker"
+                        ></v-date-picker>
+                    </v-dialog>
+                </div>
+
+                <v-btn icon @click="changeDate(1)" :disabled="isToday">
+                    <v-icon>mdi-chevron-right</v-icon>
+                </v-btn>
+            </v-card-text>
+        </v-card>
+
+        <!-- Loading State -->
+        <template v-if="caloriesQuery.asyncStatus.value === 'loading'">
+            <!-- Calories Summary Skeleton -->
+            <v-skeleton-loader type="heading" class="mb-4" />
+            <!-- Meals Skeleton mimicking the meal cards structure -->
+            <v-row>
+                <v-col v-for="n in 4" :key="n" cols="12" sm="6" lg="3">
+                    <v-skeleton-loader type="card" class="mb-4" />
+                </v-col>
+            </v-row>
+        </template>
+
+        <!-- Error State -->
+        <template v-else-if="caloriesQuery.error.value">
+            <RetryFetcher
+                :fetcher="() => refreshData"
+                title="Failed to load nutrition data"
+                message="We couldn't load your nutrition data. Please check your connection and try again."
+                height="60vh"
+                icon="mdi-food-off"
+            />
+        </template>
+
+        <!-- Loaded Content -->
+        <template v-else>
+            <!-- Calories Summary Section -->
+            <CaloriesSummary
+                :summary="caloriesQuery.calorieSummary.value"
+                @update:goal="updateCalorieGoal"
+            />
+            <!-- Meals Section -->
+            <v-row>
+                <v-col v-for="mealType in mealTypes" :key="mealType" cols="12" sm="6" lg="3">
+                    <MealCard
+                        :meal="caloriesQuery.getMealByType(mealType)"
+                        :meal-type="mealType"
+                        @search-food="openFoodSearch(mealType)"
+                        @add-macros="openManualMacrosDialog(mealType)"
+                        @scan-label="openNutritionScanner(mealType)"
+                        @describe-food="openFoodPromptDialog(mealType)"
+                        @remove-food="(index) => removeFoodFromMeal(mealType, index)"
+                        @edit-food="(food, index) => openEditFoodDialog(food, index, mealType)"
+                    />
+                </v-col>
+            </v-row>
+        </template>
+    </v-container>
+</template>

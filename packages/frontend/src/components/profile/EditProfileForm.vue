@@ -58,6 +58,7 @@ import { computed, ref } from "vue";
 
 import type { UserProfile } from "../../types/user-profile";
 
+import { dateToIsoString } from "../../helpers/date-utils";
 import { betweenValues, required } from "../../helpers/form-validators";
 import { useAuthStore } from "../../stores/auth";
 import { useGlobalStore } from "../../stores/global";
@@ -101,7 +102,7 @@ const birthDateModel = computed({
     },
     set(newValue: Date | null) {
         if (newValue) {
-            editedProfile.value.birthDate = newValue.toISOString().split("T")[0];
+            editedProfile.value.birthDate = dateToIsoString(newValue);
         } else {
             editedProfile.value.birthDate = "";
         }

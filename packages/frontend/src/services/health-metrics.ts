@@ -17,7 +17,7 @@ import {
 import type { HealthMetrics } from "../types/health-metrics";
 
 import { firestore } from "../firebase";
-import { formatISODate, getStartOfToday } from "../helpers/date-utils";
+import { dateToIsoString, formatISODate, getStartOfToday } from "../helpers/date-utils";
 
 export interface BodyFatProgress {
     date: Date;
@@ -64,7 +64,7 @@ export async function getLatestBodyFat(userId: string): Promise<BodyFatProgress 
 export async function getLatestSteps(
     userId: string,
 ): Promise<null | { date: Date; steps: number }> {
-    const today = new Date().toISOString().split("T")[0];
+    const today = dateToIsoString(new Date());
     const metricsRef = doc(firestore, "users", userId, "health_metrics", today);
 
     const docSnap = await getDoc(metricsRef);

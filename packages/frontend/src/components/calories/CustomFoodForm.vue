@@ -77,7 +77,7 @@
                     </v-col>
 
                     <!-- Macros -->
-                    <v-col cols="6" sm="3">
+                    <v-col cols="12">
                         <v-text-field
                             v-model.number="displayCalories"
                             type="number"
@@ -124,7 +124,9 @@
                         </v-text-field>
                     </v-col>
 
-                    <v-col cols="6" sm="3">
+                    <v-divider class="my-3" />
+
+                    <v-col cols="12">
                         <v-text-field
                             v-model.number="foodData.protein"
                             type="number"
@@ -135,7 +137,9 @@
                         ></v-text-field>
                     </v-col>
 
-                    <v-col cols="6" sm="3">
+                    <v-divider class="my-3" />
+
+                    <v-col cols="12">
                         <v-text-field
                             v-model.number="foodData.carbs"
                             type="number"
@@ -145,6 +149,32 @@
                             @update:model-value="updateCalories"
                         ></v-text-field>
                     </v-col>
+
+                    <v-col cols="6">
+                        <v-text-field
+                            v-model.number="foodData.fiber"
+                            type="number"
+                            label="Fiber (g)"
+                            variant="outlined"
+                            :rules="[positiveNumber]"
+                            hint="Optional - part of total carbs"
+                            persistent-hint
+                        ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="6">
+                        <v-text-field
+                            v-model.number="foodData.sugars"
+                            type="number"
+                            label="Sugars (g)"
+                            variant="outlined"
+                            :rules="[positiveNumber]"
+                            hint="Optional - part of total carbs"
+                            persistent-hint
+                        ></v-text-field>
+                    </v-col>
+
+                    <v-divider class="my-3" />
 
                     <v-col cols="6" sm="3">
                         <v-text-field
@@ -157,15 +187,14 @@
                         ></v-text-field>
                     </v-col>
 
-                    <!-- Sugars (Optional) -->
-                    <v-col cols="6" sm="3" offset-sm="3">
+                    <v-col cols="6" sm="3">
                         <v-text-field
-                            v-model.number="foodData.sugars"
+                            v-model.number="foodData.saturatedFat"
                             type="number"
-                            label="Sugars (g)"
+                            label="Saturated Fat (g)"
                             variant="outlined"
                             :rules="[positiveNumber]"
-                            hint="Optional - part of total carbs"
+                            hint="Optional - part of total fat"
                             persistent-hint
                         ></v-text-field>
                     </v-col>
@@ -270,9 +299,11 @@ const foodData = ref<Omit<FoodItem, "id">>({
     calories: props.initialFood?.calories ?? 0,
     carbs: props.initialFood?.carbs ?? 0,
     fat: props.initialFood?.fat ?? 0,
+    fiber: props.initialFood?.fiber ?? 0,
     imageUrl: props.initialFood?.imageUrl ?? null,
     name: props.initialFood?.name ?? "",
     protein: props.initialFood?.protein ?? 0,
+    saturatedFat: props.initialFood?.saturatedFat ?? 0,
     servingSize: props.initialFood?.servingSize ?? 100,
     servingUnit: props.initialFood?.servingUnit ?? "g",
     source: "Custom Food",

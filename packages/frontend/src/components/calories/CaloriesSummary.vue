@@ -34,6 +34,8 @@
             <MacroProgress
                 :protein="summary.protein"
                 :carbs="summary.carbs"
+                :fiber="summary.fiber"
+                :saturated-fat="summary.saturatedFat"
                 :fat="summary.fat"
                 :sugars="summary.sugars"
                 :show-calories="true"
@@ -72,9 +74,11 @@ const props = defineProps<{
         };
         carbs: number;
         fat: number;
+        fiber?: number;
         goal: number;
         protein: number;
         remaining: number;
+        saturatedFat?: number;
         sugars?: number;
         total: number;
     };

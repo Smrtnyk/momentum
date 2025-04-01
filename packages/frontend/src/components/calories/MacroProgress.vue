@@ -13,12 +13,18 @@
                 <span v-if="sugars" class="text-caption text-medium-emphasis">
                     (sugars {{ sugars.toFixed(1) }}g)
                 </span>
+                <span v-if="fiber" class="text-caption text-medium-emphasis d-block">
+                    (fiber {{ fiber.toFixed(1) }}g)
+                </span>
                 <div v-if="showCalories" class="text-caption">{{ carbCalories }} cal</div>
             </div>
 
             <div class="text-center">
                 <div class="text-caption">Fat</div>
                 <div class="text-h6">{{ fat.toFixed(1) }}g</div>
+                <span v-if="saturatedFat" class="text-caption text-medium-emphasis d-block">
+                    (sat. {{ saturatedFat.toFixed(1) }}g)
+                </span>
                 <div v-if="showCalories" class="text-caption">{{ fatCalories }} cal</div>
             </div>
         </div>
@@ -37,13 +43,22 @@ import { computed } from "vue";
 interface Props {
     carbs: number;
     fat: number;
+    fiber: number | undefined;
     protein: number;
+    saturatedFat: number | undefined;
     showCalories?: boolean;
     sugars: number | undefined;
 }
 
-const { carbs, fat, protein, showCalories = false, sugars } = defineProps<Props>();
-
+const {
+    carbs,
+    fat,
+    fiber,
+    protein,
+    saturatedFat,
+    showCalories = false,
+    sugars,
+} = defineProps<Props>();
 const proteinCalories = computed(function () {
     return Math.round(protein * 4);
 });

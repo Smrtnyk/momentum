@@ -318,6 +318,8 @@
                                     :carbs="adjustedMacros.carbs"
                                     :fat="adjustedMacros.fat"
                                     :sugars="undefined"
+                                    :saturated-fat="undefined"
+                                    :fiber="undefined"
                                 />
                             </div>
 

@@ -6,7 +6,13 @@ import type { FirebaseStorage } from "firebase/storage";
 import { memoize } from "es-toolkit";
 import { initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
-import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
+import {
+    connectFirestoreEmulator,
+    getFirestore,
+    initializeFirestore,
+    persistentLocalCache,
+    persistentMultipleTabManager,
+} from "firebase/firestore";
 import { connectFunctionsEmulator, getFunctions } from "firebase/functions";
 import { connectStorageEmulator, getStorage } from "firebase/storage";
 import { getVertexAI } from "firebase/vertexai";
@@ -39,6 +45,9 @@ function initEmulators(
 
 const initializeFirebase = memoize(() => {
     const firebaseApp = initializeApp(firebaseConfig);
+    initializeFirestore(firebaseApp, {
+        localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
+    });
     const firestore = getFirestore(firebaseApp);
     const functions = getFunctions(firebaseApp, "europe-west3");
     const auth = getAuth(firebaseApp);

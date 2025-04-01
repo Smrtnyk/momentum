@@ -29,7 +29,7 @@ interface RetryFetcherProps {
     buttonIcon?: string;
     buttonSize?: string;
     buttonText?: string;
-    fetcher: () => Promise<unknown>;
+    fetcher: () => (() => unknown) | (() => void) | Promise<unknown>;
     height?: number | string;
     icon?: string;
     iconColor?: string;

@@ -16,7 +16,9 @@
                     ></v-text-field>
                 </v-col>
 
-                <v-col cols="6" sm="3">
+                <v-divider class="mb-3" />
+
+                <v-col cols="12">
                     <v-text-field
                         v-model.number="calories"
                         type="number"
@@ -28,7 +30,9 @@
                     ></v-text-field>
                 </v-col>
 
-                <v-col cols="6" sm="3">
+                <v-divider class="my-3" />
+
+                <v-col cols="12">
                     <v-text-field
                         v-model.number="protein"
                         type="number"
@@ -39,7 +43,9 @@
                     ></v-text-field>
                 </v-col>
 
-                <v-col cols="6" sm="3">
+                <v-divider class="mb-3" />
+
+                <v-col cols="12">
                     <v-text-field
                         v-model.number="carbs"
                         type="number"
@@ -49,6 +55,32 @@
                         @update:model-value="updateCalories"
                     ></v-text-field>
                 </v-col>
+
+                <v-col cols="6">
+                    <v-text-field
+                        v-model.number="sugars"
+                        type="number"
+                        label="Sugars (g)"
+                        variant="outlined"
+                        :rules="[positiveNumber]"
+                        hint="Optional - part of total carbs"
+                        persistent-hint
+                    ></v-text-field>
+                </v-col>
+
+                <v-col cols="6">
+                    <v-text-field
+                        v-model.number="fiber"
+                        type="number"
+                        label="Fiber (g)"
+                        variant="outlined"
+                        :rules="[positiveNumber]"
+                        hint="Optional - part of total carbs"
+                        persistent-hint
+                    ></v-text-field>
+                </v-col>
+
+                <v-divider class="my-3" />
 
                 <v-col cols="6" sm="3">
                     <v-text-field
@@ -61,19 +93,20 @@
                     ></v-text-field>
                 </v-col>
 
-                <!-- Sugars (Optional) -->
-                <v-col cols="6" sm="3" offset-sm="3">
+                <v-col cols="6" sm="3">
                     <v-text-field
-                        v-model.number="sugars"
+                        v-model.number="saturatedFat"
                         type="number"
-                        label="Sugars (g)"
+                        label="Saturated Fat (g)"
                         variant="outlined"
                         :rules="[positiveNumber]"
-                        hint="Optional - part of total carbs"
+                        hint="Optional - part of total fat"
                         persistent-hint
                     ></v-text-field>
                 </v-col>
             </v-row>
+
+            <v-divider class="my-3" />
 
             <v-card rounded="lg" variant="outlined" class="mt-2 pa-2">
                 <div class="text-subtitle-2">Preview</div>
@@ -86,6 +119,8 @@
                     <div>C: {{ carbs }}g</div>
                     <div>F: {{ fat }}g</div>
                     <div v-if="sugars > 0">Sugars: {{ sugars }}g</div>
+                    <div v-if="fiber > 0">Fiber: {{ fiber }}g</div>
+                    <div v-if="saturatedFat > 0">Sat Fat: {{ saturatedFat }}g</div>
                 </div>
             </v-card>
         </v-card-text>
@@ -125,6 +160,8 @@ const protein = ref(0);
 const carbs = ref(0);
 const fat = ref(0);
 const sugars = ref(0);
+const fiber = ref(0);
+const saturatedFat = ref(0);
 
 function updateCalories(): void {
     const proteinCalories = (protein.value || 0) * 4;
@@ -146,7 +183,9 @@ const isValid = computed(() => {
         protein.value >= 0 &&
         carbs.value >= 0 &&
         fat.value >= 0 &&
-        sugars.value >= 0
+        sugars.value >= 0 &&
+        fiber.value >= 0 &&
+        saturatedFat.value >= 0
     );
 });
 
@@ -158,10 +197,12 @@ function addMacros(): void {
         calories: calories.value,
         carbs: Number(carbs.value) || 0,
         fat: Number(fat.value) || 0,
+        fiber: Number(fiber.value) || 0,
         id: `manual-${Date.now()}`,
         imageUrl: null,
         name: description.value || "Manual Entry",
         protein: Number(protein.value) || 0,
+        saturatedFat: Number(saturatedFat.value) || 0,
         servingSize: 1,
         servingUnit: "serving",
         source: "Manual",

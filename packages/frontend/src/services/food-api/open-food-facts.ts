@@ -141,6 +141,18 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
             "sugars",
         ]);
 
+        const fiberPer100 = this.extractNutrient(product.nutriments, "fiber_100g", [
+            "fibers_100g",
+            "fiber",
+            "fibers",
+        ]);
+
+        const saturatedFatPer100 = this.extractNutrient(product.nutriments, "saturated-fat_100g", [
+            "saturated_fat_100g",
+            "saturated-fat",
+            "saturated_fat",
+        ]);
+
         const scaleFactor = servingSize / 100;
 
         return {
@@ -149,11 +161,13 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
             calories: Math.round(caloriesPer100 * scaleFactor),
             carbs: carbsPer100 * scaleFactor,
             fat: fatPer100 * scaleFactor,
+            fiber: fiberPer100 * scaleFactor,
             foodType: "product",
             id: product.code,
             imageUrl: product.image_url ?? null,
             name: product.product_name ?? "Unknown Product",
             protein: proteinPer100 * scaleFactor,
+            saturatedFat: saturatedFatPer100 * scaleFactor,
             servingSize,
             servingUnit,
             source: "OpenFoodFacts",

@@ -72,9 +72,19 @@
             <div class="text-caption">{{ calculatedNutrition.sugars.toFixed(1) }}g</div>
         </div>
 
+        <div class="d-flex justify-space-between mb-1" v-if="calculatedNutrition.fiber">
+            <div class="text-caption">Fiber:</div>
+            <div class="text-caption">{{ calculatedNutrition.fiber.toFixed(1) }}g</div>
+        </div>
+
         <div class="d-flex justify-space-between mb-1">
             <div class="text-body-1">Fat:</div>
             <div class="text-body-1">{{ calculatedNutrition.fat.toFixed(1) }}g</div>
+        </div>
+
+        <div class="d-flex justify-space-between mb-1" v-if="calculatedNutrition.saturatedFat">
+            <div class="text-caption">Of which saturated:</div>
+            <div class="text-caption">{{ calculatedNutrition.saturatedFat.toFixed(1) }}g</div>
         </div>
 
         <v-alert type="info" variant="tonal" class="mt-4" density="compact">
@@ -181,10 +191,12 @@ function saveFood(): void {
         calories: calculatedNutrition.value.calories,
         carbs: calculatedNutrition.value.carbs,
         fat: calculatedNutrition.value.fat,
+        fiber: calculatedNutrition.value.fiber ?? 0,
         protein: calculatedNutrition.value.protein,
+        saturatedFat: calculatedNutrition.value.saturatedFat ?? 0,
         servingSize: quantity.value,
         servingUnit: unit.value,
-        sugars: calculatedNutrition.value.sugars,
+        sugars: calculatedNutrition.value.sugars ?? 0,
     };
 
     emit("add", adjustedFood, food);

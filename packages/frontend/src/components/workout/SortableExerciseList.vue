@@ -1,7 +1,7 @@
 <template>
     <div ref="sortableContainer" class="sortable-container">
         <v-card
-            v-for="(exercise, index) in exerciseEntries"
+            v-for="(exercise, index) in localExerciseEntries"
             :key="index"
             class="mb-3 rounded-lg sortable-item"
             :class="{
@@ -354,7 +354,14 @@ const intensityOptions = ["low", "medium", "high"];
 
 const sortableContainer = ref<HTMLElement | null>(null);
 const sortableInitialized = ref(false);
-const exerciseEntries = ref(workout.exerciseEntries);
+const localExerciseEntries = computed({
+    get() {
+        return workout.exerciseEntries;
+    },
+    set(newEntries: ExerciseEntry[]): void {
+        workout.exerciseEntries = newEntries;
+    },
+});
 const exerciseIds = computed(() => {
     return workout.exerciseEntries.map((entry) => entry.exerciseId);
 });
@@ -366,8 +373,12 @@ const isLoadingNames = computed(() => {
 onMounted(async () => {
     await nextTick();
 
-    if (sortableContainer.value && exerciseEntries.value.length > 0 && !sortableInitialized.value) {
-        useSortable(sortableContainer.value, exerciseEntries.value, {
+    if (
+        sortableContainer.value &&
+        localExerciseEntries.value.length > 0 &&
+        !sortableInitialized.value
+    ) {
+        useSortable(sortableContainer.value, localExerciseEntries.value, {
             animation: 150,
             handle: ".handle",
             onUpdate: handleSortEnd,
@@ -466,14 +477,7 @@ function handleSaveExercise(index: number, updatedExercise: ExerciseEntry): void
     globalDialog.closeLatestDialog();
 }
 
-function handleSortEnd(event: { newIndex: number; oldIndex: number }): void {
-    if (event.oldIndex === event.newIndex) return;
-
-    const newEntries = [...exerciseEntries.value];
-    const movedItem = newEntries.splice(event.oldIndex, 1)[0];
-    newEntries.splice(event.newIndex, 0, movedItem);
-
-    workout.exerciseEntries = newEntries;
+function handleSortEnd(): void {
     if (isActiveWorkout(workout)) {
         activeWorkoutStore.saveToLocalStorage();
     }
@@ -615,12 +619,9 @@ function updateStrengthNotes(index: number): void {
     width: 100%;
 }
 
-.sortable-item {
-    touch-action: none;
-}
-
 .handle {
     cursor: grab;
+    touch-action: none;
 }
 
 .handle:active {

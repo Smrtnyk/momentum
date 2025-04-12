@@ -18,7 +18,7 @@ function getBuildNumber(): string {
 function getGitCommitHash(): string {
     try {
         return execSync("git rev-parse --short HEAD").toString().trim();
-    } catch (e) {
+    } catch {
         return "unknown";
     }
 }

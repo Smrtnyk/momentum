@@ -55,7 +55,7 @@ async function startWorkout(): Promise<void> {
         activeWorkoutStore.startCustomWorkout(workoutName.value);
         await router.push({ name: "CustomWorkout" });
         emit("close");
-    } catch (error) {
+    } catch {
         globalStore.notifyError("Failed to start workout");
     } finally {
         loading.value = false;

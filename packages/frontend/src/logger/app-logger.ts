@@ -42,7 +42,7 @@ export class AppLogger {
         } else {
             try {
                 message = isPlainObject(err) && isNotNil(err) ? JSON.stringify(err) : String(err);
-            } catch (jsonError) {
+            } catch {
                 message = "[Unstringifiable error object]";
             }
         }

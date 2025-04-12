@@ -46,7 +46,7 @@ function startWorkout(): void {
         loading.value = true;
         activeWorkoutStore.startWorkout(props.plan, props.day);
         globalStore.notify(`Started workout: ${props.day.name}`);
-    } catch (error) {
+    } catch {
         globalStore.notifyError("Failed to start workout");
     } finally {
         loading.value = false;

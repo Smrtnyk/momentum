@@ -119,7 +119,7 @@ async function saveProfile(): Promise<void> {
         globalStore.notify("Profile saved successfully!");
         emit("profileSaved", { ...editedProfile.value });
         emit("close");
-    } catch (error) {
+    } catch {
         globalStore.notifyError("Failed to save profile.");
     }
 }

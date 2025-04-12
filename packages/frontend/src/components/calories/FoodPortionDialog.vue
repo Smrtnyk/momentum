@@ -115,6 +115,7 @@ import {
     getAvailableUnits,
     isLiquidUnit,
     isStandardUnit,
+    normalizeUnit,
 } from "../../helpers/units-utils";
 
 const {
@@ -136,6 +137,9 @@ const emit = defineEmits<Emits>();
 
 const quantity = ref<number>(1);
 const unit = ref<string>("g");
+const normalizedServingUnit = computed(function () {
+    return normalizeUnit(food.servingUnit);
+});
 
 watch(unit, function (newUnit, oldUnit) {
     if (newUnit === oldUnit) return;
@@ -143,19 +147,23 @@ watch(unit, function (newUnit, oldUnit) {
 });
 
 const isLiquidValue = computed(function () {
-    return isLiquidUnit(food.servingUnit);
+    return isLiquidUnit(normalizedServingUnit.value);
 });
 
 const isStandardUnitValue = computed(function () {
-    return isStandardUnit(food.servingUnit);
+    return isStandardUnit(normalizedServingUnit.value);
 });
 
 const availableUnits = computed(function () {
-    return getAvailableUnits(food.servingUnit);
+    return getAvailableUnits(normalizedServingUnit.value);
 });
 
 const calculatedNutrition = computed(function () {
-    return calculateNutrition(food, quantity.value, unit.value);
+    const foodWithNormalizedUnit = {
+        ...food,
+        servingUnit: normalizedServingUnit.value,
+    };
+    return calculateNutrition(foodWithNormalizedUnit, quantity.value, unit.value);
 });
 
 const isValid = computed(function () {
@@ -164,19 +172,20 @@ const isValid = computed(function () {
 
 onMounted(function () {
     quantity.value = food.servingSize;
-    unit.value = food.servingUnit;
+
+    unit.value = normalizedServingUnit.value;
 
     // For standard units, normalize if needed
     if (isStandardUnitValue.value) {
         if (isLiquidValue.value) {
             // For liquids with standard units
-            if (food.servingUnit === "L") {
+            if (normalizedServingUnit.value === "L") {
                 unit.value = "ml";
                 quantity.value = quantity.value * 1000;
-            } else if (!["fl_oz", "ml"].includes(food.servingUnit)) {
+            } else if (!["fl_oz", "ml"].includes(normalizedServingUnit.value)) {
                 unit.value = "ml";
             }
-        } else if (!["g", "oz"].includes(food.servingUnit)) {
+        } else if (!["g", "oz"].includes(normalizedServingUnit.value)) {
             // For solids with standard units
             unit.value = "g";
         }

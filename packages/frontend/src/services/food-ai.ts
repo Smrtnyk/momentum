@@ -4,6 +4,7 @@ import { getGenerativeModel, Schema } from "firebase/vertexai";
 import type { FoodItem } from "../types/food";
 
 import { vertexAI } from "../firebase";
+import { normalizeUnit } from "../helpers/units-utils";
 import { logger } from "../logger/app-logger";
 
 interface AIFoodAnalysis {
@@ -115,6 +116,8 @@ export async function analyzeFood(description: string): Promise<FoodItem> {
 }
 
 function convertToFoodItem(data: AIFoodAnalysis): FoodItem {
+    const normalizedServingUnit = normalizeUnit(data.servingUnit);
+
     return {
         aiMetadata: {
             confidence: data.confidence,
@@ -132,7 +135,7 @@ function convertToFoodItem(data: AIFoodAnalysis): FoodItem {
         protein: Number(data.protein.toFixed(1)),
         saturatedFat: Number(data.saturatedFat.toFixed(1)),
         servingSize: data.servingSize,
-        servingUnit: data.servingUnit,
+        servingUnit: normalizedServingUnit,
         source: "Gemini AI Analysis",
         sugars: Number(data.sugars.toFixed(1)),
     };

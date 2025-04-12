@@ -30,6 +30,47 @@ enum WeightUnit {
     POUND = "lb",
 }
 
+const UNIT_VARIATIONS: Record<string, string> = {
+    c: "cup",
+    cup: "cup",
+    cups: "cups",
+    "fl oz": "fl_oz",
+    "fluid ounce": "fl_oz",
+    "fluid ounces": "fl_oz",
+    gm: "g",
+    gr: "g",
+    gram: "g",
+    gramme: "g",
+    grammes: "g",
+    grams: "g",
+    kilo: "kg",
+    kilogram: "kg",
+    kilogramme: "kg",
+    kilogrammes: "kg",
+    kilograms: "kg",
+    kilos: "kg",
+    lbs: "lb",
+    liter: "l",
+    liters: "l",
+    litre: "l",
+    litres: "l",
+    milliliter: "ml",
+    milliliters: "ml",
+    millilitre: "ml",
+    millilitres: "ml",
+    ounce: "oz",
+    ounces: "oz",
+    pound: "lb",
+    pounds: "lb",
+    tablespoon: "tbsp",
+    tablespoons: "tbsp",
+    tb: "tbsp",
+    tbl: "tbsp",
+    tbs: "tbsp",
+    teaspoon: "tsp",
+    teaspoons: "tsp",
+};
+
 type CookingConversionTable = Record<string, number>;
 
 type Unit = string | VolumeUnit | WeightUnit;
@@ -37,10 +78,15 @@ type Unit = string | VolumeUnit | WeightUnit;
 /**
  * Normalizes unit string to handle case insensitivity
  */
-function normalizeUnit(unit: Unit): Unit {
+export function normalizeUnit(unit: Unit): Unit {
     if (!unit) return unit;
 
     const lowercased = unit.toString().toLowerCase();
+
+    if (lowercased in UNIT_VARIATIONS) {
+        return UNIT_VARIATIONS[lowercased];
+    }
+
     const allUnits = { ...WeightUnit, ...VolumeUnit };
     for (const [, enumValue] of Object.entries(allUnits)) {
         if (enumValue.toLowerCase() === lowercased) {

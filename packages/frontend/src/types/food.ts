@@ -18,6 +18,7 @@ export interface FoodItem {
     foodType?: FoodType;
     id: string;
     imageUrl?: null | string;
+    loggedTimestamp: Timestamp;
     name: string;
     protein: number;
     provider?: string;

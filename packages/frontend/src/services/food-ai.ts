@@ -1,4 +1,5 @@
 import { isNil } from "es-toolkit";
+import { Timestamp } from "firebase/firestore";
 import { getGenerativeModel, Schema } from "firebase/vertexai";
 
 import type { FoodItem } from "../types/food";
@@ -131,6 +132,7 @@ function convertToFoodItem(data: AIFoodAnalysis): FoodItem {
         fat: Number(data.fat.toFixed(1)),
         fiber: Number(data.fiber.toFixed(1)),
         id: `gemini-${Date.now()}`,
+        loggedTimestamp: Timestamp.now(),
         name: data.name.trim(),
         protein: Number(data.protein.toFixed(1)),
         saturatedFat: Number(data.saturatedFat.toFixed(1)),

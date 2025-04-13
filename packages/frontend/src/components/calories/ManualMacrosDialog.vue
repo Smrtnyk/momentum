@@ -136,6 +136,7 @@
 </template>
 
 <script setup lang="ts">
+import { Timestamp } from "firebase/firestore";
 import { computed, ref, watch } from "vue";
 
 import type { FoodItem } from "../../types/food";
@@ -200,6 +201,7 @@ function addMacros(): void {
         fiber: Number(fiber.value) || 0,
         id: `manual-${Date.now()}`,
         imageUrl: null,
+        loggedTimestamp: Timestamp.now(),
         name: description.value || "Manual Entry",
         protein: Number(protein.value) || 0,
         saturatedFat: Number(saturatedFat.value) || 0,

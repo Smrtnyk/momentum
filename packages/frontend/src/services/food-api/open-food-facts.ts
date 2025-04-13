@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 import type { FoodItem, FoodSearchResult, OpenFoodFactsProduct } from "../../types/food";
 
 import { logger } from "../../logger/app-logger";
@@ -165,6 +167,7 @@ export class OpenFoodFactsApi extends AbstractFoodApi {
             foodType: "product",
             id: product.code,
             imageUrl: product.image_url ?? null,
+            loggedTimestamp: Timestamp.now(),
             name: product.product_name ?? "Unknown Product",
             protein: proteinPer100 * scaleFactor,
             saturatedFat: saturatedFatPer100 * scaleFactor,

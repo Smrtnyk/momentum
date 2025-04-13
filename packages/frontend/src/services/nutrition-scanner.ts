@@ -1,4 +1,5 @@
 import { isNil, isString } from "es-toolkit";
+import { Timestamp } from "firebase/firestore";
 import { getGenerativeModel, Schema } from "firebase/vertexai";
 
 import type { FoodItem } from "../types/food";
@@ -66,6 +67,7 @@ function convertToFoodItem(data: RawNutritionData): FoodItem {
         carbs: normalizeNumericValue(data.carbs),
         fat: normalizeNumericValue(data.fat),
         id: `scanned-${Date.now()}`,
+        loggedTimestamp: Timestamp.now(),
         name: data.name ?? "",
         protein: normalizeNumericValue(data.protein),
         servingSize: normalizeNumericValue(data.servingSize) || 1,

@@ -1,4 +1,5 @@
 import { isNotNil, isPlainObject, isString } from "es-toolkit";
+import { Timestamp } from "firebase/firestore";
 
 import type { FoodItem, FoodSearchResult, OpenFoodRepoProduct } from "../../types/food";
 
@@ -230,6 +231,7 @@ export class OpenFoodRepoApi extends AbstractFoodApi {
                 foodType: "product",
                 id: `ofr-${product.id}`,
                 imageUrl: product.images?.[0]?.medium ?? null,
+                loggedTimestamp: Timestamp.now(),
                 name,
                 protein: this.extractProtein(product),
                 saturatedFat: this.extractNutrientValue(product, "saturated_fat"),

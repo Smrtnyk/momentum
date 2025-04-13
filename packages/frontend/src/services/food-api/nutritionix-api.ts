@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 import type { FoodItem, FoodSearchResult, NutritionixFood } from "../../types/food";
 
 import { logger } from "../../logger/app-logger";
@@ -69,11 +71,11 @@ export class NutritionixApi {
             foodType: "ingredient",
             id: `nx-${food.ndb_no ?? food.food_name}`,
             imageUrl: food.photo?.thumb ?? null,
+            loggedTimestamp: Timestamp.now(),
             name: food.food_name,
             protein: food.nf_protein ?? 0,
             saturatedFat: food.nf_saturated_fat ?? 0,
             servingSize: food.serving_weight_grams ?? 100,
-            // Standardized to grams
             servingUnit: "g",
             source: "Nutritionix",
             sugars: food.nf_sugars ?? 0,

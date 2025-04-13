@@ -262,6 +262,7 @@
 </template>
 
 <script setup lang="ts">
+import { Timestamp } from "firebase/firestore";
 import { computed, ref, useTemplateRef, watch } from "vue";
 
 import type { FoodItem } from "../../types/food";
@@ -301,6 +302,7 @@ const foodData = ref<Omit<FoodItem, "id">>({
     fat: props.initialFood?.fat ?? 0,
     fiber: props.initialFood?.fiber ?? 0,
     imageUrl: props.initialFood?.imageUrl ?? null,
+    loggedTimestamp: Timestamp.now(),
     name: props.initialFood?.name ?? "",
     protein: props.initialFood?.protein ?? 0,
     saturatedFat: props.initialFood?.saturatedFat ?? 0,

@@ -25,12 +25,14 @@ const selectedDate = ref(dateToIsoString(today));
 const showDatePicker = ref(false);
 const mealTypes = ["breakfast", "lunch", "dinner", "snack"] as const;
 const caloriesQuery = useDailyCaloriesQuery();
-const mutations = useCalorieMutations(selectedDate.value);
+const mutations = useCalorieMutations();
 
 caloriesQuery.date.value = selectedDate.value;
+mutations.date.value = selectedDate.value;
 
 watch(selectedDate, function (newDate) {
     caloriesQuery.date.value = newDate;
+    mutations.date.value = newDate;
 });
 
 const formattedDate = computed(() => {

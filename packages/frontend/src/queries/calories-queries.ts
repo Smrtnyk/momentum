@@ -83,14 +83,16 @@ export const useDailyCaloriesQuery = defineQuery(() => {
     };
 });
 
-export function useCalorieMutations(date: string) {
+export function useCalorieMutations() {
     const queryCache = useQueryCache();
     const authStore = useAuthStore();
     const globalStore = useGlobalStore();
 
+    const date = ref("");
+
     const userId = authStore.nonNullableUser.uid;
     const defaultCalorieGoal = authStore.defaultCalorieGoal;
-    const queryKey = getCaloriesQueryKey(userId, date);
+    const queryKey = getCaloriesQueryKey(userId, date.value);
 
     const addFoodToMealMutation = useMutation({
         async mutation(params: {
@@ -107,10 +109,10 @@ export function useCalorieMutations(date: string) {
 
                 if (existingMeal) {
                     const updatedFoods = [...existingMeal.foods, food];
-                    await deleteMeal(userId, existingMeal.id, date, defaultCalorieGoal);
-                    await addMeal(userId, mealType, updatedFoods, defaultCalorieGoal, date);
+                    await deleteMeal(userId, existingMeal.id, date.value, defaultCalorieGoal);
+                    await addMeal(userId, mealType, updatedFoods, defaultCalorieGoal, date.value);
                 } else {
-                    await addMeal(userId, mealType, [food], defaultCalorieGoal, date);
+                    await addMeal(userId, mealType, [food], defaultCalorieGoal, date.value);
                 }
 
                 if (originalFood) {
@@ -145,10 +147,10 @@ export function useCalorieMutations(date: string) {
 
                 // If no foods left, delete meal entirely
                 if (updatedFoods.length === 0) {
-                    await deleteMeal(userId, existingMeal.id, date, defaultCalorieGoal);
+                    await deleteMeal(userId, existingMeal.id, date.value, defaultCalorieGoal);
                 } else {
-                    await deleteMeal(userId, existingMeal.id, date, defaultCalorieGoal);
-                    await addMeal(userId, mealType, updatedFoods, defaultCalorieGoal, date);
+                    await deleteMeal(userId, existingMeal.id, date.value, defaultCalorieGoal);
+                    await addMeal(userId, mealType, updatedFoods, defaultCalorieGoal, date.value);
                 }
             } finally {
                 globalStore.setLoading(false);
@@ -186,8 +188,8 @@ export function useCalorieMutations(date: string) {
                 const updatedFoods = [...existingMeal.foods];
                 updatedFoods[index] = adjustedFood;
 
-                await deleteMeal(userId, existingMeal.id, date, defaultCalorieGoal);
-                await addMeal(userId, mealType, updatedFoods, defaultCalorieGoal, date);
+                await deleteMeal(userId, existingMeal.id, date.value, defaultCalorieGoal);
+                await addMeal(userId, mealType, updatedFoods, defaultCalorieGoal, date.value);
             } finally {
                 globalStore.setLoading(false);
             }
@@ -208,7 +210,7 @@ export function useCalorieMutations(date: string) {
     const updateCalorieGoalMutation = useMutation({
         async mutation(params: { goal: number; setAsDefault: boolean }) {
             const { goal, setAsDefault } = params;
-            await setCalorieGoal(userId, goal, defaultCalorieGoal, date);
+            await setCalorieGoal(userId, goal, defaultCalorieGoal, date.value);
             if (setAsDefault) {
                 await setDefaultCalorieGoal(userId, goal);
             }
@@ -238,6 +240,7 @@ export function useCalorieMutations(date: string) {
 
     return {
         addFoodToMealMutation,
+        date,
         editFoodInMealMutation,
         removeFoodFromMealMutation,
         saveCustomFoodMutation,

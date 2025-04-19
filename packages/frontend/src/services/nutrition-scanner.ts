@@ -15,6 +15,7 @@ interface RawNutritionData {
     fiber?: null | number;
     name?: null | string;
     protein?: null | number;
+    saturatedFat?: null | number;
     servingSize?: null | number;
     servingUnit?: null | string;
     sugars?: null | number;
@@ -30,6 +31,7 @@ const NUTRITION_SCHEMA = Schema.object({
         fiber: Schema.number(),
         name: Schema.string(),
         protein: Schema.number(),
+        saturatedFat: Schema.number(),
         servingSize: Schema.number(),
         servingUnit: Schema.string(),
         sugars: Schema.number(),
@@ -66,10 +68,12 @@ function convertToFoodItem(data: RawNutritionData): FoodItem {
         calories: normalizeNumericValue(data.calories),
         carbs: normalizeNumericValue(data.carbs),
         fat: normalizeNumericValue(data.fat),
+        fiber: normalizeNumericValue(data.fiber),
         id: `scanned-${Date.now()}`,
         loggedTimestamp: Timestamp.now(),
         name: data.name ?? "",
         protein: normalizeNumericValue(data.protein),
+        saturatedFat: normalizeNumericValue(data.saturatedFat),
         servingSize: normalizeNumericValue(data.servingSize) || 1,
         servingUnit: data.servingUnit ?? "serving",
         sugars: normalizeNumericValue(data.sugars),
@@ -88,6 +92,7 @@ Return nutritional information as JSON with the following structure:
 - carbs: grams of carbohydrates (number)
 - sugars: grams of sugars (number)
 - fat: grams of fat (number)
+- saturatedFat: grams of saturated fat(number)
 - fiber: grams of fiber if available (number, optional)`;
 }
 

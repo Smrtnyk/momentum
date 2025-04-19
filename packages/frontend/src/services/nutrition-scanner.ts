@@ -41,7 +41,7 @@ const nutritionScannerModel = getGenerativeModel(vertexAI, {
         responseMimeType: "application/json",
         responseSchema: NUTRITION_SCHEMA,
     },
-    model: "gemini-2.0-flash",
+    model: "gemini-2.5-flash-preview-04-17",
 });
 
 export async function scanNutritionLabel(imageData: string): Promise<FoodItem | null> {
